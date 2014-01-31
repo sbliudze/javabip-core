@@ -1,4 +1,4 @@
-package org.bip.executor;
+package org.bip.executor.springinosgi;
 
 import org.bip.exceptions.BIPException;
 import org.osgi.framework.Constants;

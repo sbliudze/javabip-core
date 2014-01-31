@@ -32,6 +32,7 @@
 				<module>org.bip.impl</module>
 				<module>org.bip.glue</module>
 				<module>org.bip.executor</module>
+				<module>org.bip.executor.springinosgi</module>				
 				<module>org.bip.spec.examples</module>
 				<module>org.bip.itest</module>
 			</modules>
@@ -44,6 +45,7 @@
 				<module>org.bip.impl</module>
 				<module>org.bip.glue</module>
 				<module>org.bip.executor</module>
+				<module>org.bip.executor.springinosgi</module>
 				<module>org.bip.spec.examples</module>
 				<module>org.bip.itest</module>
 			</modules>

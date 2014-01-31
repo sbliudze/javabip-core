@@ -6,18 +6,18 @@
     <version>0.1.0-SNAPSHOT</version>
   </parent>
   <groupId>org.bip</groupId>
-  <artifactId>org.bip.executor</artifactId>
+  <artifactId>org.bip.executor.springinosgi</artifactId>
   <version>0.1.0-SNAPSHOT</version>
-  <name>BIP :: Core :: Executor</name>
-  <description>It contains all the classes for the BIP executor functionality.</description>
+  <name>BIP :: Core :: ExecutorForSpringInOSGi</name>
+  <description>It contains the classes for the BIP executor running in OSGI inside Spring Application Context.</description>
 
 	<properties>
-		<osgi.private></osgi.private>
-		<osgi.import>org.bip.api, org.bip.behaviour, org.bip.exceptions, org.springframework.beans.factory;version="[2.5,4)", *</osgi.import>
+		<filemover.osgi.private></filemover.osgi.private>
+		<filemover.osgi.import>org.bip.api, org.bip.behaviour, org.bip.exceptions, org.springframework.beans.factory;version="[2.5,4)", *</filemover.osgi.import>
 		<!-- The newest version is 2.9.2 -->
 		<!-- <camel-version>2.9.2</camel-version> -->
 		<!-- Older CF is using 2.6.0-fuse-01-15 -->
-		<osgi.export>org.bip.executor, org.antlr.v4.runtime, 	org.antlr.v4.runtime.atn,
+		<filemover.osgi.export>org.bip.executor, org.antlr.v4.runtime, 	org.antlr.v4.runtime.atn,
 	org.antlr.v4.runtime.dfa,
 	org.antlr.v4.runtime.misc,
 	org.antlr.v4.runtime.tree,
@@ -26,9 +26,9 @@
 	org.abego.treelayout.util, 	org.abego.treelayout.internal.util,
 	org.abego.treelayout.internal.util.java.lang,
 	org.abego.treelayout.internal.util.java.lang.string,
-	org.abego.treelayout.internal.util.java.util,</osgi.export>
-		<osgi.dynamic.import></osgi.dynamic.import>
-		<osgi.bundles></osgi.bundles>
+	org.abego.treelayout.internal.util.java.util,</filemover.osgi.export>
+		<filemover.osgi.dynamic.import></filemover.osgi.dynamic.import>
+		<filemover.osgi.bundles></filemover.osgi.bundles>
 		<camel-version>2.6.0-fuse-01-15</camel-version> <!-- TODO, remove it later as decided by parent pom -->
 	</properties>
 	
@@ -52,11 +52,16 @@
 			<version>4.0</version>
 		</dependency>
 
-<!--          <dependency>
+		<dependency>
+			<groupId>org.bip</groupId>
+  			<artifactId>org.bip.executor</artifactId>
+  			<version>0.1.0-SNAPSHOT</version>
+		</dependency>
+         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
             <version>${camel-version}</version>
-        </dependency> -->
+        </dependency>
 
 <!--  		<dependency>
 			<groupId>org.bip</groupId>
@@ -70,16 +75,14 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.6</version>
-			<scope>test</scope>
 		</dependency>
 
- 		<dependency>
+<!-- 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>1.5.11</version>
 		</dependency>
 
-<!-- 
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
@@ -93,23 +96,37 @@
 			<version>1.2.16</version>
 		</dependency>
  -->
- <!--        <dependency>
+        <dependency>
             <groupId>org.springframework.osgi</groupId>
             <artifactId>spring-osgi-core</artifactId>
             <version>1.0</version>
         </dependency>
-  -->       
-  <!--       <dependency>
+        
+        <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
             <version>4.2.0</version>
         </dependency>
- -->
+
         <dependency>
         	<groupId>org.bip</groupId>
         	<artifactId>org.bip.engine</artifactId>
         	<scope>test</scope>
         	<version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+<!--         <dependency>
+            <groupId>net.sf.javabdd</groupId>
+            <artifactId>javabdd</artifactId>
+            <version>1.0b2</version>
+            <scope>test</scope>
+        </dependency>
+ -->
+      <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>3.0.5.RELEASE</version>
+            <scope>test</scope>
         </dependency>
 
       <dependency>
@@ -179,12 +196,13 @@
 						<Embed-Transitive>true</Embed-Transitive>
 						<Bundle-Name>${project.name}</Bundle-Name>
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-						<Export-Package>${osgi.export}</Export-Package>
-						<Import-Package>${osgi.import}</Import-Package>
-						<DynamicImport-Package>${osgi.dynamic.import}</DynamicImport-Package>
-						<Private-Package>${osgi.private}</Private-Package>
-						<Require-Bundle>${osgi.bundles}</Require-Bundle>
+						<Export-Package>${filemover.osgi.export}</Export-Package>
+						<Import-Package>${filemover.osgi.import}</Import-Package>
+						<DynamicImport-Package>${filemover.osgi.dynamic.import}</DynamicImport-Package>
+						<Private-Package>${filemover.osgi.private}</Private-Package>
+						<Require-Bundle>${filemover.osgi.bundles}</Require-Bundle>
 						<Spring-Context>*;publish-context:=false;create-asynchronously:=true</Spring-Context>
+						&gt;
 						<Include-Resource>src/main/resources</Include-Resource>
 					</instructions>
 				</configuration>

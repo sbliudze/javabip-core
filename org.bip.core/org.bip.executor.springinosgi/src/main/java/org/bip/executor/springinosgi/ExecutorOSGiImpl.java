@@ -1,10 +1,11 @@
-package org.bip.executor;
+package org.bip.executor.springinosgi;
 
 import java.util.Hashtable;
 
 import org.bip.api.BIPComponent;
 import org.bip.api.Publishable;
 import org.bip.exceptions.BIPException;
+import org.bip.executor.ExecutorImpl;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
