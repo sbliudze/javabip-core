@@ -19,16 +19,37 @@
 
   <description>It contains all core packages/functionality of BIP project.</description>
   
-  <modules>
-  	<module>bip_javabdd</module> 
-  	<module>bip_engine</module> 
-    <module>org.bip.api</module>
-    <module>org.bip.impl</module>
-    <module>org.bip.glue</module>
-    <module>org.bip.executor</module>
-    <module>org.bip.spec.examples</module>
-    <module>org.bip.itest</module>
-  </modules>
+	<profiles>
+		<profile>
+			<id>ct</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+				<module>bip_javabdd</module>
+				<module>bip_engine</module>
+				<module>org.bip.api</module>
+				<module>org.bip.impl</module>
+				<module>org.bip.glue</module>
+				<module>org.bip.executor</module>
+				<module>org.bip.spec.examples</module>
+				<module>org.bip.itest</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>epfl</id>
+			<modules>
+				<module>bip_javabdd</module>
+				<module>org.bip.api</module>
+				<module>org.bip.impl</module>
+				<module>org.bip.glue</module>
+				<module>org.bip.executor</module>
+				<module>org.bip.spec.examples</module>
+				<module>org.bip.itest</module>
+			</modules>
+		</profile>
+	</profiles>
+
   
   <properties>
   	<camel-version>2.6.0-fuse-01-15</camel-version>
