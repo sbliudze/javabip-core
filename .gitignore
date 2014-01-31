@@ -1,0 +1,15 @@
+*.iml
+target/
+.idea/
+.classpath
+.classpath~
+.project
+.settings/
+.metadata/
+bin/
+*.class
+META-INF/
+.gitignore~
+*.html
+*.java~
+RemoteSystemsTempFiles/
