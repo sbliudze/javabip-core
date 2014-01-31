@@ -1,0 +1,12 @@
+RPAREN=2
+WS=7
+NEGATION=6
+ID=3
+INTERSECTION=5
+UNION=4
+LPAREN=1
+'!'=6
+'|'=4
+'('=1
+')'=2
+'&'=5

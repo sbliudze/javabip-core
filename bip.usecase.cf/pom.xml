@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+<!--
+    <parent>
+      <groupId>org.bip</groupId>
+      <artifactId>bip.components.master</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </parent>
+-->
+ 
+    <groupId>org.bip</groupId>
+    <artifactId>org.bip.cf</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+
+  <packaging>pom</packaging>
+
+  <name>BIP :: CF </name>
+
+  <description>It contains all extra packages/functionality to make it run within CF.</description>
+
+    <modules>
+        <module>bipengine</module>
+        <module>bipadmin</module>
+        <module>bipmodules</module>
+    </modules>
+
+    <properties>
+  	<camel-version>2.6.0-fuse-01-15</camel-version>
+    </properties>
+
+</project>

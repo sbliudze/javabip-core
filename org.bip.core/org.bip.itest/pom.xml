@@ -1,0 +1,271 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+<!--   <parent>
+    <groupId>org.bip</groupId>
+    <artifactId>org.bip.core</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+ -->  
+ 
+  <groupId>org.bip</groupId>
+  
+  <artifactId>org.bip.itest</artifactId>
+  
+  <version>0.1.0-SNAPSHOT</version>
+  
+  <name>BIP :: Core :: Integration Tests</name>
+  
+  <description>It contains integration tests</description>
+  
+  <properties>
+		<camel-version>2.6.0-fuse-01-15</camel-version> <!-- TODO, remove it later as decided by parent pom -->
+	</properties>
+	
+	
+  <dependencies>
+
+	  	<dependency>
+  			<groupId>org.bip</groupId>
+  			<artifactId>org.bip.api</artifactId>
+  			<version>0.1.0-SNAPSHOT</version>
+  		</dependency>
+  		
+  		<dependency>
+  			<groupId>org.bip</groupId>
+  			<artifactId>org.bip.impl</artifactId>
+	  		<version>0.1.0-SNAPSHOT</version>
+  		</dependency>  	
+
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr4</artifactId>
+			<version>4.0</version>
+		</dependency>
+
+         <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+            <version>${camel-version}</version>
+        </dependency>
+
+<!--  		<dependency>
+			<groupId>org.bip</groupId>
+			<artifactId>org.bip.spec.examples</artifactId>
+			<version>0.1.0-SNAPSHOT</version>
+			<scope>test</scope>
+		</dependency>
+ --> 
+ 
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.6</version>
+		</dependency>
+
+<!-- 		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.5.11</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.5.11</version>
+		</dependency>
+ -->
+
+<!-- 		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.16</version>
+		</dependency>
+ -->
+        <dependency>
+            <groupId>org.springframework.osgi</groupId>
+            <artifactId>spring-osgi-core</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>4.2.0</version>
+        </dependency>
+
+        <dependency>
+        	<groupId>org.bip</groupId>
+        	<artifactId>org.bip.engine</artifactId>
+        	<scope>test</scope>
+        	<version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+		<dependency>
+			<groupId>net.sf.javabdd</groupId>
+		    <artifactId>javabdd</artifactId>
+  			<version>1.0b2</version>
+  			<scope>test</scope>
+		</dependency>
+		
+<!--         <dependency>
+            <groupId>net.sf.javabdd</groupId>
+            <artifactId>javabdd</artifactId>
+            <version>1.0b2</version>
+            <scope>test</scope>
+        </dependency>
+ -->
+      <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>3.0.5.RELEASE</version>
+            <scope>test</scope>
+        </dependency>
+
+      <dependency>
+      	<groupId>org.bip</groupId>
+      	<artifactId>org.bip.glue</artifactId>
+      	<version>0.1.0-SNAPSHOT</version>
+      </dependency>
+
+
+      <dependency>
+      	<groupId>org.bip</groupId>
+      	<artifactId>org.bip.spec.examples</artifactId>
+      	<version>0.1.0-SNAPSHOT</version>
+      </dependency>
+      
+  </dependencies>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>2.12.4</version>
+			</plugin>
+		</plugins>
+	</reporting>
+
+	<build>
+
+		<pluginManagement>
+			<plugins>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-project-info-reports-plugin</artifactId>
+					<version>2.4</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-report-plugin</artifactId>
+					<version>2.9</version>
+					<executions>
+						<execution>
+							<id>html report for tests</id>
+							<phase>site</phase>
+							<goals>
+								<goal>report</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.12.4</version>
+				</plugin>
+
+			</plugins>
+
+
+
+		</pluginManagement>
+
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>2.3.5</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Embed-Transitive>true</Embed-Transitive>
+						<Bundle-Name>${project.name}</Bundle-Name>
+						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+						<Export-Package>${filemover.osgi.export}</Export-Package>
+						<Import-Package>${filemover.osgi.import}</Import-Package>
+						<DynamicImport-Package>${filemover.osgi.dynamic.import}</DynamicImport-Package>
+						<Private-Package>${filemover.osgi.private}</Private-Package>
+						<Require-Bundle>${filemover.osgi.bundles}</Require-Bundle>
+						<Spring-Context>*;publish-context:=false;create-asynchronously:=true</Spring-Context>
+						<Include-Resource>src/main/resources</Include-Resource>
+					</instructions>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.12.4</version>
+				<configuration>
+					<includes>
+						<include>**/org/bip/executor/*Tests.class</include>
+					</includes>
+					<systemPropertyVariables>
+					  <log4j.configuration>file:${basedir}/src/test/resources/log4j-build.properties</log4j.configuration>
+					</systemPropertyVariables>
+				</configuration>
+			</plugin>
+			
+
+	    <plugin>
+    	    <groupId>org.apache.maven.plugins</groupId>
+        	<artifactId>maven-compiler-plugin</artifactId>
+        	<version>3.1</version>
+        	<configuration>
+          		<source>1.5</source>
+          		<target>1.5</target>
+        	</configuration>
+      	</plugin>
+
+		</plugins>
+	</build>
+
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!-- Remote repositories declarations -->
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+	<!--
+	    N.B.: These should be properly declared in a
+	    master POM or in a maven settings.xml file.
+	-->
+
+	<!--pluginRepositories>
+		<pluginRepository>
+			<id>maven-repo</id>
+			<name>maven repo</name>
+			<url>http://repo1.maven.org/maven2/</url>
+		</pluginRepository>
+
+	</pluginRepositories-->
+
+	<repositories>
+		<repository>
+			<id>maven-repo</id>
+			<name>maven repo</name>
+			<url>http://repo1.maven.org/maven2/</url>
+		</repository>
+		<repository>
+			<id>fusesource.releases</id>
+			<name>FuseSource Releases Repository</name>
+			<url>http://repo.fusesource.com/maven2/</url>
+		</repository>
+
+	</repositories>
+  
+</project>

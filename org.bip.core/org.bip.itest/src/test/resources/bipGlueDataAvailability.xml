@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<glue>
+    <accepts>
+        <accept>
+            <effect id="a" specType="org.bip.spec.ComponentA"/>
+            <causes>
+               <port id="a" specType="org.bip.spec.ComponentB"/>
+               <port id="a" specType="org.bip.spec.ComponentC"/>
+               <port id="b" specType="org.bip.spec.ComponentB"/>
+               <port id="b" specType="org.bip.spec.ComponentC"/>
+            </causes>
+        </accept>
+         <accept>
+            <effect id="a" specType="org.bip.spec.ComponentB"/>
+            <causes>
+               <port id="a" specType="org.bip.spec.ComponentA"/>
+               <port id="a" specType="org.bip.spec.ComponentC"/>
+            </causes>
+        </accept>
+         <accept>
+            <effect id="b" specType="org.bip.spec.ComponentB"/>
+            <causes>
+               <port id="a" specType="org.bip.spec.ComponentA"/>
+               <port id="b" specType="org.bip.spec.ComponentC"/>
+            </causes>
+        </accept>
+         <accept>
+            <effect id="a" specType="org.bip.spec.ComponentC"/>
+            <causes>
+               <port id="a" specType="org.bip.spec.ComponentA"/>
+               <port id="a" specType="org.bip.spec.ComponentB"/>
+            </causes>
+        </accept>
+         <accept>
+            <effect id="b" specType="org.bip.spec.ComponentC"/>
+            <causes>
+               <port id="a" specType="org.bip.spec.ComponentA"/>
+               <port id="b" specType="org.bip.spec.ComponentB"/>
+            </causes>
+        </accept>
+    </accepts>
+    <requires>
+       <require>
+            <effect id="a" specType="org.bip.spec.ComponentA"/>
+            <causes>
+                <option>
+                    <causes>
+                        <port id="a" specType="org.bip.spec.ComponentB"/>
+                        <port id="a" specType="org.bip.spec.ComponentC"/>
+                    </causes>
+                </option>
+                <option>
+                     <causes>
+                        <port id="b" specType="org.bip.spec.ComponentB"/>
+                        <port id="b" specType="org.bip.spec.ComponentC"/>
+                     </causes>
+                </option>
+            </causes>
+        </require>
+        <require>
+            <effect id="a" specType="org.bip.spec.ComponentB"/>
+            <causes>
+                <option>
+                     <causes>
+                        <port id="a" specType="org.bip.spec.ComponentA"/>
+                        <port id="a" specType="org.bip.spec.ComponentC"/>
+                    </causes>
+                </option>
+            </causes>
+        </require>
+        <require>
+            <effect id="b" specType="org.bip.spec.ComponentB"/>
+            <causes>
+                <option>
+                     <causes>
+                        <port id="a" specType="org.bip.spec.ComponentA"/>
+                        <port id="b" specType="org.bip.spec.ComponentC"/>
+                    </causes>
+                </option>
+            </causes>
+        </require>
+        <require>
+            <effect id="a" specType="org.bip.spec.ComponentC"/>
+            <causes>
+                <option>
+                     <causes>
+                        <port id="a" specType="org.bip.spec.ComponentA"/>
+                        <port id="a" specType="org.bip.spec.ComponentB"/>
+                    </causes>
+                </option>
+            </causes>
+        </require>
+        <require>
+            <effect id="b" specType="org.bip.spec.ComponentC"/>
+            <causes>
+                <option>
+                     <causes>
+                        <port id="a" specType="org.bip.spec.ComponentA"/>
+                        <port id="b" specType="org.bip.spec.ComponentB"/>
+                    </causes>
+                </option>
+            </causes>
+        </require>
+    </requires>
+    <data>
+        <wire>
+            <from id="memoryY" specType="org.bip.spec.ComponentB"/>
+            <to id="memoryUsage" specType="org.bip.spec.ComponentA"/>
+        </wire>
+        <wire>
+            <from id="memoryZ" specType="org.bip.spec.ComponentC"/>
+            <to id="memoryUsage" specType="org.bip.spec.ComponentA"/>
+        </wire>
+    </data>
+</glue>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<glue>
+    <accepts>
+        <accept>
+            <effect id="a" specType="org.bip.spec.TwoDataTaker"/>
+            <causes>
+               <port id="a" specType="org.bip.spec.TwoDataProvider1"/>
+               <port id="a" specType="org.bip.spec.TwoDataProvider2"/>
+               <port id="b" specType="org.bip.spec.TwoDataTaker"/>
+               <port id="b" specType="org.bip.spec.TwoDataProvider2"/>
+            </causes>
+        </accept>
+         <accept>
+            <effect id="a" specType="org.bip.spec.TwoDataProvider1"/>
+            <causes>
+               <port id="a" specType="org.bip.spec.TwoDataTaker"/>
+               <port id="a" specType="org.bip.spec.TwoDataProvider2"/>
+            </causes>
+        </accept>
+         <accept>
+            <effect id="b" specType="org.bip.spec.TwoDataProvider1"/>
+            <causes>
+               <port id="a" specType="org.bip.spec.TwoDataTaker"/>
+               <port id="b" specType="org.bip.spec.TwoDataProvider2"/>
+            </causes>
+        </accept>
+         <accept>
+            <effect id="a" specType="org.bip.spec.TwoDataProvider2"/>
+            <causes>
+               <port id="a" specType="org.bip.spec.TwoDataTaker"/>
+               <port id="a" specType="org.bip.spec.TwoDataProvider1"/>
+            </causes>
+        </accept>
+         <accept>
+            <effect id="b" specType="org.bip.spec.TwoDataProvider2"/>
+            <causes>
+               <port id="a" specType="org.bip.spec.TwoDataTaker"/>
+               <port id="b" specType="org.bip.spec.TwoDataProvider1"/>
+            </causes>
+        </accept>
+    </accepts>
+    <requires>
+       <require>
+            <effect id="a" specType="org.bip.spec.TwoDataTaker"/>
+            <causes>
+                <option>
+                    <causes>
+                        <port id="a" specType="org.bip.spec.TwoDataProvider1"/>
+                        <port id="a" specType="org.bip.spec.TwoDataProvider2"/>
+                    </causes>
+                </option>
+                <option>
+                     <causes>
+                        <port id="b" specType="org.bip.spec.TwoDataProvider1"/>
+                        <port id="b" specType="org.bip.spec.TwoDataProvider2"/>
+                     </causes>
+                </option>
+            </causes>
+        </require>
+        <require>
+            <effect id="a" specType="org.bip.spec.TwoDataProvider1"/>
+            <causes>
+                <option>
+                     <causes>
+                        <port id="a" specType="org.bip.spec.TwoDataTaker"/>
+                        <port id="a" specType="org.bip.spec.TwoDataProvider2"/>
+                    </causes>
+                </option>
+            </causes>
+        </require>
+        <require>
+            <effect id="b" specType="org.bip.spec.TwoDataProvider1"/>
+            <causes>
+                <option>
+                     <causes>
+                        <port id="a" specType="org.bip.spec.TwoDataTaker"/>
+                        <port id="b" specType="org.bip.spec.TwoDataProvider2"/>
+                    </causes>
+                </option>
+            </causes>
+        </require>
+        <require>
+            <effect id="a" specType="org.bip.spec.TwoDataProvider2"/>
+            <causes>
+                <option>
+                     <causes>
+                        <port id="a" specType="org.bip.spec.TwoDataTaker"/>
+                        <port id="a" specType="org.bip.spec.TwoDataProvider1"/>
+                    </causes>
+                </option>
+            </causes>
+        </require>
+        <require>
+            <effect id="b" specType="org.bip.spec.TwoDataProvider2"/>
+            <causes>
+                <option>
+                     <causes>
+                        <port id="a" specType="org.bip.spec.TwoDataTaker"/>
+                        <port id="b" specType="org.bip.spec.TwoDataProvider1"/>
+                    </causes>
+                </option>
+            </causes>
+        </require>
+    </requires>
+    <data>
+        <wire>
+            <from id="memoryY" specType="org.bip.spec.TwoDataProvider1"/>
+            <to id="memoryUsage1" specType="org.bip.spec.TwoDataTaker"/>
+        </wire>
+        <wire>
+            <from id="memoryZ" specType="org.bip.spec.TwoDataProvider2"/>
+            <to id="memoryUsage1" specType="org.bip.spec.TwoDataTaker"/>
+        </wire>
+        <wire>
+            <from id="memoryP" specType="org.bip.spec.TwoDataProvider1"/>
+            <to id="memoryUsage2" specType="org.bip.spec.TwoDataTaker"/>
+        </wire>
+        <wire>
+            <from id="memoryQ" specType="org.bip.spec.TwoDataProvider2"/>
+            <to id="memoryUsage2" specType="org.bip.spec.TwoDataTaker"/>
+        </wire>
+    </data>
+</glue>
