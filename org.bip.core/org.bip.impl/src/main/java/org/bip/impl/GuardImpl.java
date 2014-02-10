@@ -25,6 +25,7 @@ public class GuardImpl implements Guard {
 	private Method method;
 	// The List is used here, because List interface maintains order of its items.
 	// The order is very important since one Guard may have multiple dataIn-s of the same type
+	// TODO, dataIsNeeded is a misleading name, as it is not of boolean type but a list type.
 	private List<Data<?>> dataIsNeeded = new ArrayList<Data<?>>();
 
 	public GuardImpl(String name, Method method) {

@@ -5,12 +5,21 @@
  * Author: Simon Bliudze, Alina Zolotukhina, Anastasia Mavridou, and Radoslaw Szymanek
  * Date: 10/15/12
  */
+
 package org.bip.api;
 
-//This interface is used for the port to be able to have information about the component instance it belongs to.
-//We cannot provide the component right away in the case of executable behaviour, because the ports are created without the knowledge of BIPComponent, i.e. the Executor..
+/**
+ * ComponentProvider is used for example by the Port to be able to have information about the component instance it belongs to.
+ * In case, of ExecutableBehaviour it is not possible to provide the component information right away because the ports are created without the knowledge of the BIP component. 
+ */
 public interface ComponentProvider {
 
+	// TODO, check the todo in Port class to see about the renaming suggestion as well as making Port subinterface of this interface.
+	/**
+	 * Gets the component.
+	 *
+	 * @return the component
+	 */
 	public BIPComponent getComponent();
 
 }

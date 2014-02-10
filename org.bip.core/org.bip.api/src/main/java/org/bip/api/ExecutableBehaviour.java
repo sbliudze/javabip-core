@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2012 Crossing-Tech TM Switzerland. All right reserved.
+ * Copyright (c) 2012, RiSD Laboratory, EPFL, Switzerland.
+ *
+ * Author: Simon Bliudze, Alina Zolotukhina, Anastasia Mavridou, and Radoslaw Szymanek
+ * Date: 01/27/14
+ */
+
 package org.bip.api;
 
 import java.lang.reflect.InvocationTargetException;
@@ -7,24 +15,91 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+// TODO, It looks like it could be an internal, private interface of of org.bip.executor package.
+/**
+ * It provides an executable behavior that makes it possible to execute transitions within the behavior.
+ */
 public interface ExecutableBehaviour extends Behaviour {
+	
+	/**
+	 * Gets the current state.
+	 *
+	 * @return the current state
+	 */
 	public String getCurrentState();
 
+	/**
+	 * Execute the enforceable transition as specified by the port.
+	 *
+	 * @param portId the port id
+	 */
 	public void execute(String portId);
 
+	/**
+	 * Execute the enforceable transition which needs data that is provided as map parameter.
+	 *
+	 * @param portID the port id
+	 * @param data the data for the enforceable transition.
+	 */
 	public void execute(String portID, Map<String, ?> data);
 
+	// TODO, is the javadoc correct? 
+	// TODO, does it do it recursively? I guess not, does the executor work with recursive internal transitions?
+	/**
+	 * It attempts to execute an internal transition if any is enabled. 
+	 *
+	 * @param guardToValue the guard to value
+	 */
 	public void executeInternal(Map<String, Boolean> guardToValue);
 
+	/**
+	 * Checks for transition from current state.
+	 *
+	 * @param portID the port id
+	 * @return true, if successful
+	 */
 	public boolean hasTransitionFromCurrentState(String portID);
 
+	/**
+	 * Gets the data out mapping.
+	 *
+	 * @return the data out mapping
+	 */
 	public Map<String, Method> getDataOutMapping();
 
+	/**
+	 * Check enabledness.
+	 *
+	 * @param port the port
+	 * @param data the data
+	 * @return the list
+	 * @throws IllegalAccessException the illegal access exception
+	 * @throws IllegalArgumentException the illegal argument exception
+	 * @throws InvocationTargetException the invocation target exception
+	 */
 	public List<Boolean> checkEnabledness(String port, List<Map<String, Object>> data) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException;
 
+	/**
+	 * Gets the globally disabled ports.
+	 *
+	 * @param guardToValue the guard to value
+	 * @return the globally disabled ports
+	 */
 	public Set<Port> getGloballyDisabledPorts(Map<String, Boolean> guardToValue);
 
+	/**
+	 * Exist enabled.
+	 *
+	 * @param transitionType the transition type
+	 * @param guardToValue the guard to value
+	 * @return true, if successful
+	 */
 	public boolean existEnabled(Port.Type transitionType, Map<String, Boolean> guardToValue);
 
+	/**
+	 * Compute guards.
+	 *
+	 * @return the hashtable
+	 */
 	public Hashtable<String, Boolean> computeGuards();
 }

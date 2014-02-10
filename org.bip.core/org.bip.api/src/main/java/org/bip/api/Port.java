@@ -5,20 +5,62 @@
  * Author: Simon Bliudze, Alina Zolotukhina, Anastasia Mavridou, and Radoslaw Szymanek
  * Date: 10/15/12
  */
+
 package org.bip.api;
 
+/**
+ * It specifies the functionality of the BIP component port.
+ */
 public interface Port {
 
+	// TODO, this function should be already covered by ComponentProvider interface, this maybe if 
+	// we rename ComponentProvider interface into something else, like ComponentPart (?) we could 
+	// make Port interface extend this interface and remove the function below.
+	// Moreover, it looks like some needs for ComponentProviderImpl may disappear like in AcceptsImpl class.
+	/**
+	 * It specifies the BIP component to which this port belongs to.
+	 *
+	 * @return the BIP component
+	 */
 	public BIPComponent component();
 
+	/**
+	 * It specifies the id of the port.
+	 *
+	 * @return the id
+	 */
 	public String getId();
 
+	/**
+	 * It returns the type of the port.
+	 *
+	 * @return the type
+	 */
 	public Type getType();
 
+	/**
+	 * It returns the spec type to which this port belongs to. Often it is fully qualified name of 
+	 * class specifying the BIP specification.
+	 *
+	 * @return the spec type
+	 */
 	public String getSpecType();
 
+	// TODO, There are no internal ports yet still we have an internal type within Type enum within Port class. Transition specificities are leaking into Port interface.
+	
+	/**
+	 * The Enum Type to encode different port/transition types within a BIP component.
+	 */
 	public enum Type {
-		enforceable, spontaneous, internal, unknown,
-		// upon adding rewrite the getType method
+
+		/** This port is associated with enforceable transition. */
+		enforceable, 
+		/** This port is associated with spontaneous transition. */
+		spontaneous, 
+		/** This port is associated with internal transition that does not require any external trigger. */
+		internal, 
+		/** This type is simply to make it possible to lazily instantiate the actual type of the port. */
+		unknown,
 	}
+	
 }
