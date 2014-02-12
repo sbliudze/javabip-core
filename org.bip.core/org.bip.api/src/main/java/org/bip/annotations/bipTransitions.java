@@ -11,7 +11,16 @@ package org.bip.annotations;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+/**
+ * It makes it possible to assign multiple transition annotations within one function. 
+ */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface bipTransitions {
+	
+	/**
+	 * It returns the array of transitions.
+	 *
+	 * @return array of transitions.
+	 */
 	bipTransition[] value();
 }

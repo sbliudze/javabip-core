@@ -7,11 +7,27 @@
  */
 
 package org.bip.annotations;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+/**
+ * It specifies the type of the BIP component.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface bipComponentType {
+	
+	/**
+	 * It returns the name of the type of the component.
+	 *
+	 * @return the type of the BIP component.
+	 */
 	String name();
+	
+	/**
+	 * It returns the name of the initial state in which the BIP spec is in after instantiation.
+	 *
+	 * @return the name of the initial state.
+	 */
 	String initial();
 }

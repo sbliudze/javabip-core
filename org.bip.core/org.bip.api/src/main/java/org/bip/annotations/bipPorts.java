@@ -11,7 +11,16 @@ package org.bip.annotations;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+/**
+ * It specifies/aggregates the ports for a given BIP specification.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface bipPorts {
+	
+	/**
+	 * The ports of the BIP specification.
+	 *
+	 * @return the array containing the ports of the BIP specification.
+	 */
 	bipPort[] value();
 }

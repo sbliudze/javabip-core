@@ -11,8 +11,24 @@ package org.bip.annotations;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+/**
+ * It specifies the name and the type of the port.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface bipPort {
+	
+	/**
+	 * It returns the name of the port.
+	 *
+	 * @return the name of the port.
+	 */
 	String name();
-	String type(); //spontaneous or enforceable
+	
+	/**
+	 * It specifies the type of the port. It is either spontaneous or enforceable.
+	 *
+	 * @return the type of the port.
+	 */
+	String type(); 
+	
 }
