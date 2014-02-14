@@ -20,7 +20,7 @@ import org.bip.api.Requires;
 import org.bip.impl.ComponentProviderImpl;
 import org.bip.impl.PortImpl;
 
-class RequiresImpl implements Requires {
+class RequireImpl implements Requires {
 
 	@XmlElement(name = "effect")
 	private PortImpl effect;
@@ -28,10 +28,10 @@ class RequiresImpl implements Requires {
 	@XmlJavaTypeAdapter(XmlGenericListAdapter.class)
 	private List<List<PortImpl>> causes;
 
-	public RequiresImpl() {
+	public RequireImpl() {
 	}
 
-	public RequiresImpl(Port effect, List<List<Port>> causes) {
+	public RequireImpl(Port effect, List<List<Port>> causes) {
 		this.effect = new PortImpl(effect.getId(), effect.getType().toString(), effect.getSpecType(), (ComponentProvider) new ComponentProviderImpl(effect.component()));
 		this.causes = new ArrayList<List<PortImpl>>();
 		for (List<Port> smallCauses : causes) {

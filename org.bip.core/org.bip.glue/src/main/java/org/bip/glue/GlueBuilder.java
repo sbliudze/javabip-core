@@ -37,9 +37,9 @@ public abstract class GlueBuilder {
 	Class<?> spec;
 	String portId;
 
-	Map<String, RequiresImpl> requiresMap = new HashMap<String, RequiresImpl>();
+	Map<String, RequireImpl> requiresMap = new HashMap<String, RequireImpl>();
 
-	Map<String, AcceptsImpl> acceptsMap = new HashMap<String, AcceptsImpl>();
+	Map<String, AcceptImpl> acceptsMap = new HashMap<String, AcceptImpl>();
 
 	public BIPGlue build() {
 
@@ -89,7 +89,7 @@ public abstract class GlueBuilder {
 
 	private void addRequire(Class<?> spec, String portId, List<Port> causes) {
 
-		RequiresImpl requires;
+		RequireImpl requires;
 
 		String key = computeKey(spec, portId);
 
@@ -102,17 +102,17 @@ public abstract class GlueBuilder {
 
 			List<List<Port>> causesOptions = new ArrayList<List<Port>>();
 			causesOptions.add(causes);
-			requires = new RequiresImpl(new PortImpl(portId, spec),
+			requires = new RequireImpl(new PortImpl(portId, spec),
 					causesOptions);
 
-			RequiresImpl req = glue.addRequire(requires);
+			RequireImpl req = glue.addRequire(requires);
 			requiresMap.put(key, req);
 		}
 	}
 
 	private void addAccept(Class<?> spec, String portId, Collection<Port> causes) {
 
-		AcceptsImpl accepts;
+		AcceptImpl accepts;
 
 		String key = computeKey(spec, portId);
 
@@ -126,9 +126,9 @@ public abstract class GlueBuilder {
 
 			Set<Port> setOfCauses = new LinkedHashSet<Port>(causes);
 
-			accepts = new AcceptsImpl(new PortImpl(portId, spec), setOfCauses);
+			accepts = new AcceptImpl(new PortImpl(portId, spec), setOfCauses);
 
-			AcceptsImpl acc = glue.addAccept(accepts);
+			AcceptImpl acc = glue.addAccept(accepts);
 			acceptsMap.put(key, acc);
 
 		}

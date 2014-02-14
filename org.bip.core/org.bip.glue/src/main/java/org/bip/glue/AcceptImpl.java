@@ -20,7 +20,7 @@ import org.bip.api.Port;
 import org.bip.impl.ComponentProviderImpl;
 import org.bip.impl.PortImpl;
 
-class AcceptsImpl implements Accepts {
+class AcceptImpl implements Accepts {
 
 	@XmlElement(name = "effect")
 	private PortImpl effect;
@@ -29,10 +29,10 @@ class AcceptsImpl implements Accepts {
 	@XmlElement(name = "port")
 	private Collection<PortImpl> causes;
 
-	public AcceptsImpl() {
+	public AcceptImpl() {
 	}
 
-	public AcceptsImpl(Port effect, Collection<Port> causes) {
+	public AcceptImpl(Port effect, Collection<Port> causes) {
 		this.effect = new PortImpl(effect.getId(), effect.getType().toString(), effect.getSpecType(), (ComponentProvider) new ComponentProviderImpl(effect.component()));
 
 		this.causes = new ArrayList<PortImpl>();

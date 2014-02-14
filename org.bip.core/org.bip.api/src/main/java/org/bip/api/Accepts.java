@@ -13,7 +13,6 @@ import java.util.Collection;
 /**
  * It specifies the functionality of the accept.
  */
-// TODO, should the name be Accept or Accepts?
 public interface Accepts {
 
 	/**

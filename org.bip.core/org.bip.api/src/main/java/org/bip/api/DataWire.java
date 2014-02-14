@@ -29,10 +29,9 @@ public interface DataWire {
 	 */
 	public Port getTo();
 
-	// TODO, it looks like this function in DataWireImpl is not used, even if it was used it may not
-	// be needed in the interface. If it is not need then remove from the interface.
 	/**
-	 * Checks if is incoming.
+	 * Checks if is incoming. 
+	 * The function is used by the BIP Engine
 	 *
 	 * @param inDataItem the in data item
 	 * @param componentType the component type

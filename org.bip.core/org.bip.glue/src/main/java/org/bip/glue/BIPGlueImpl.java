@@ -28,32 +28,32 @@ class BIPGlueImpl implements BIPGlue {
 
 	@XmlElementWrapper(name = "accepts")
 	@XmlElement(name = "accept")
-	private ArrayList<AcceptsImpl> acceptConstraints;
+	private ArrayList<AcceptImpl> acceptConstraints;
 
 	@XmlElementWrapper(name = "requires")
 	@XmlElement(name = "require")
-	private ArrayList<RequiresImpl> requiresConstraints;
+	private ArrayList<RequireImpl> requiresConstraints;
 
 	@XmlElementWrapper(name = "data")
 	@XmlElement(name = "wire")
 	private ArrayList<DataWireImpl> dataWires;
 
 	public BIPGlueImpl() {
-		this.acceptConstraints = new ArrayList<AcceptsImpl>();
-		this.requiresConstraints = new ArrayList<RequiresImpl>();
+		this.acceptConstraints = new ArrayList<AcceptImpl>();
+		this.requiresConstraints = new ArrayList<RequireImpl>();
 		this.dataWires = new ArrayList<DataWireImpl>();
 	}
 
 	public BIPGlueImpl(ArrayList<Accepts> acceptConstraints, ArrayList<Requires> requiresConstraints,
 			ArrayList<DataWire> dataWires) {
-		this.acceptConstraints = new ArrayList<AcceptsImpl>();
+		this.acceptConstraints = new ArrayList<AcceptImpl>();
 		for (Accepts acc : acceptConstraints) {
-			this.acceptConstraints.add(new AcceptsImpl(acc.getEffect(), acc.getCauses()));
+			this.acceptConstraints.add(new AcceptImpl(acc.getEffect(), acc.getCauses()));
 		}
 
-		this.requiresConstraints = new ArrayList<RequiresImpl>();
+		this.requiresConstraints = new ArrayList<RequireImpl>();
 		for (Requires req : requiresConstraints) {
-			this.requiresConstraints.add(new RequiresImpl(req.getEffect(), req.getCauses()));
+			this.requiresConstraints.add(new RequireImpl(req.getEffect(), req.getCauses()));
 		}
 
 		this.dataWires = new ArrayList<DataWireImpl>();
@@ -98,12 +98,12 @@ class BIPGlueImpl implements BIPGlue {
 
 	}
 
-	public AcceptsImpl addAccept(AcceptsImpl accept) {
+	public AcceptImpl addAccept(AcceptImpl accept) {
 		this.acceptConstraints.add(accept);
 		return accept;
 	}
 
-	public RequiresImpl addRequire(RequiresImpl require) {
+	public RequireImpl addRequire(RequireImpl require) {
 		this.requiresConstraints.add(require);
 		return require;
 	}

@@ -56,8 +56,6 @@ public interface BIPEngine {
 	 */
 	void informSpecific(BIPComponent decidingComponent, Port decidingPort, Map<BIPComponent, Set<Port>> disabledCombinations);
 
-	// TODO, check the Javadoc description of the functions below.
-	
 	/**
 	 * It starts the BIP engine thread.
 	 */

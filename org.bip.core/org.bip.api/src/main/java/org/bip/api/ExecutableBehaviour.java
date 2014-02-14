@@ -43,8 +43,6 @@ public interface ExecutableBehaviour extends Behaviour {
 	 */
 	public void execute(String portID, Map<String, ?> data);
 
-	// TODO, is the javadoc correct? 
-	// TODO, does it do it recursively? I guess not, does the executor work with recursive internal transitions?
 	/**
 	 * It attempts to execute an internal transition if any is enabled. 
 	 *

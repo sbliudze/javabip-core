@@ -13,6 +13,7 @@ import java.util.List;
 /**
  * It specifies the requires within BIP Glue.
  */
+// TODO change to Require
 public interface Requires {
 
 	/**
