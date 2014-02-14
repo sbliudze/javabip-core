@@ -15,9 +15,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
 import org.bip.api.Accepts;
-import org.bip.api.ComponentProvider;
 import org.bip.api.Port;
-import org.bip.impl.ComponentProviderImpl;
 import org.bip.impl.PortImpl;
 
 class AcceptImpl implements Accepts {
@@ -33,11 +31,11 @@ class AcceptImpl implements Accepts {
 	}
 
 	public AcceptImpl(Port effect, Collection<Port> causes) {
-		this.effect = new PortImpl(effect.getId(), effect.getType().toString(), effect.getSpecType(), (ComponentProvider) new ComponentProviderImpl(effect.component()));
+		this.effect = new PortImpl(effect.getId(), effect.getType().toString(), effect.getSpecType());
 
 		this.causes = new ArrayList<PortImpl>();
 		for (Port cause : causes) {
-			this.causes.add(new PortImpl(cause.getId(), cause.getType().toString(), cause.getSpecType(), (ComponentProvider) new ComponentProviderImpl(cause.component())));
+			this.causes.add(new PortImpl(cause.getId(), cause.getType().toString(), cause.getSpecType()));
 		}
 
 	}
@@ -54,12 +52,11 @@ class AcceptImpl implements Accepts {
 
 	public void addCauses(Collection<Port> causes) {
 		for (Port cause : causes) {
-			this.causes.add(new PortImpl(cause.getId(), cause.getType().toString(), cause.getSpecType(), (ComponentProvider) new ComponentProviderImpl(cause.component())));
+			this.causes.add(new PortImpl(cause.getId(), cause.getType().toString(), cause.getSpecType()));
 		}
 	}
 
-	public String toString()
-	{
+	public String toString() {
 		StringBuilder result = new StringBuilder();
 
 		result.append("Accept=(");

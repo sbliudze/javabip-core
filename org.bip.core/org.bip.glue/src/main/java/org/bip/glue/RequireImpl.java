@@ -14,10 +14,8 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.bip.api.ComponentProvider;
 import org.bip.api.Port;
 import org.bip.api.Requires;
-import org.bip.impl.ComponentProviderImpl;
 import org.bip.impl.PortImpl;
 
 class RequireImpl implements Requires {
@@ -32,12 +30,12 @@ class RequireImpl implements Requires {
 	}
 
 	public RequireImpl(Port effect, List<List<Port>> causes) {
-		this.effect = new PortImpl(effect.getId(), effect.getType().toString(), effect.getSpecType(), (ComponentProvider) new ComponentProviderImpl(effect.component()));
+		this.effect = new PortImpl(effect.getId(), effect.getType().toString(), effect.getSpecType());
 		this.causes = new ArrayList<List<PortImpl>>();
 		for (List<Port> smallCauses : causes) {
 			ArrayList<PortImpl> causesInterface = new ArrayList<PortImpl>();
 			for (Port port : smallCauses) {
-				causesInterface.add(new PortImpl(port.getId(), port.getType().toString(), port.getSpecType(), (ComponentProvider) new ComponentProviderImpl(port.component())));
+				causesInterface.add(new PortImpl(port.getId(), port.getType().toString(), port.getSpecType()));
 			}
 			this.causes.add(causesInterface);
 		}
@@ -61,7 +59,7 @@ class RequireImpl implements Requires {
 	public void addCause(List<Port> cause) {
 		ArrayList<PortImpl> causesInterface = new ArrayList<PortImpl>();
 		for (Port port : cause) {
-			causesInterface.add(new PortImpl(port.getId(), port.getType().toString(), port.getSpecType(), (ComponentProvider) new ComponentProviderImpl(port.component())));
+			causesInterface.add(new PortImpl(port.getId(), port.getType().toString(), port.getSpecType()));
 		}
 		this.causes.add(causesInterface);
 	}

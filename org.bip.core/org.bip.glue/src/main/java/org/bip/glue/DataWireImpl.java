@@ -10,10 +10,8 @@ package org.bip.glue;
 
 import javax.xml.bind.annotation.XmlElement;
 
-import org.bip.api.ComponentProvider;
 import org.bip.api.DataWire;
 import org.bip.api.Port;
-import org.bip.impl.ComponentProviderImpl;
 import org.bip.impl.PortImpl;
 
 class DataWireImpl implements DataWire {
@@ -28,8 +26,8 @@ class DataWireImpl implements DataWire {
 	}
 
 	public DataWireImpl(Port from, Port to) {
-		this.from = new PortImpl(from.getId(), from.getType().toString(), from.getSpecType(), (ComponentProvider) new ComponentProviderImpl(from.component()));
-		this.to = new PortImpl(to.getId(), to.getType().toString(), to.getSpecType(), (ComponentProvider) new ComponentProviderImpl(to.component()));
+		this.from = new PortImpl(from.getId(), from.getType().toString(), from.getSpecType());
+		this.to = new PortImpl(to.getId(), to.getType().toString(), to.getSpecType());
 	}
 
 	public Port getFrom() {
@@ -41,8 +39,7 @@ class DataWireImpl implements DataWire {
 	}
 
 	/**
-	 * Defines whether this wire provides this required data for this requiring
-	 * component
+	 * Defines whether this wire provides this required data for this requiring component
 	 * 
 	 * @param inDataItem
 	 * @param componentType
@@ -51,9 +48,8 @@ class DataWireImpl implements DataWire {
 	public boolean isIncoming(String inDataItem, String componentType) {
 		return (this.to.getId().equals(inDataItem) && this.to.getSpecType().equals(componentType));
 	}
-	
-	public String toString()
-	{
+
+	public String toString() {
 		StringBuilder result = new StringBuilder();
 
 		result.append("Require=(");

@@ -47,15 +47,9 @@ public class PortImpl implements Port {
 
 	private ComponentProvider componentProvider;
 
-	// public enum Type {
-	// enforceable, spontaneous, internal, unknown,
-	// // upon adding rewrite the getType method
-	// }
-
 	public PortImpl() {
 		// need it for the hashCode function
 		type = Type.enforceable;
-		componentProvider = new ComponentProviderImpl();
 	}
 
 	public PortImpl(String id, String type, Class<?> specificationType) {
@@ -64,15 +58,18 @@ public class PortImpl implements Port {
 		if (specificationType.getCanonicalName() == null)
 			throw new IllegalArgumentException("The provided class " + specificationType + "has no cannonical name");
 		this.specType = specificationType.getCanonicalName();
-		componentProvider = new ComponentProviderImpl();
 	}
 
-	public PortImpl(String id, String type, String specificationType, ComponentProvider behaviourProvider) {
+	public PortImpl(String id, String type, String specificationType) {
 		this.id = id;
 		this.type = getType(type);
 		// if (specificationType.getCanonicalName() == null)
 		// throw new IllegalArgumentException("The provided class " + specificationType + "has no cannonical name");
 		this.specType = specificationType;
+	}
+
+	public PortImpl(String id, String type, String specificationType, ComponentProvider behaviourProvider) {
+		this(id, type, specificationType);
 		this.componentProvider = behaviourProvider;
 	}
 
@@ -82,7 +79,6 @@ public class PortImpl implements Port {
 		if (specificationType.getCanonicalName() == null)
 			throw new IllegalArgumentException("The provided class " + specificationType + "has no cannonical name");
 		this.specType = specificationType.getCanonicalName();
-		componentProvider = new ComponentProviderImpl();
 	}
 
 	private Type getType(String portType) {
@@ -97,7 +93,10 @@ public class PortImpl implements Port {
 	}
 
 	public BIPComponent component() {
-		return componentProvider.getComponent();
+		if (componentProvider == null) {
+			return null;
+		}
+		return componentProvider.component();
 	}
 
 	public String toString() {

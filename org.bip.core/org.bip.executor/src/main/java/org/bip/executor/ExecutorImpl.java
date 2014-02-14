@@ -285,7 +285,7 @@ public class ExecutorImpl extends AbstractExecutor implements Runnable {
 
 	}
 
-	public BIPComponent getComponent() {
+	public BIPComponent component() {
 		return this;
 	}
 
