@@ -156,7 +156,7 @@ public class HanoiPeg {
 		return false;
 	}
 
-	@bipData(name = "disksize", accessTypeP = "allowedPorts", ports = { "pieceAdd", "pieceRemove" })
+	@bipData(name = "disksize", accessTypePort = "allowedPorts", ports = { "pieceAdd", "pieceRemove" })
 	public int diskSizeOnTop() {
 
 		for (int i = 0; i < size; i++) {

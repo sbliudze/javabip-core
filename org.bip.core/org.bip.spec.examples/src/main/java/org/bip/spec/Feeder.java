@@ -33,12 +33,12 @@ public class Feeder {
 		logger.debug("Transition from oneZ to zero has been performed");
 	}
 
-	@bipData(name = "memoryY", accessTypeP = "allowed", ports = { "giveY" })
+	@bipData(name = "memoryY", accessTypePort = "allowed", ports = { "giveY" })
 	public int memoryY() {
 		return memoryY;
 	}
 
-	@bipData(name = "memoryZ", accessTypeP = "allowed", ports = { "giveZ" })
+	@bipData(name = "memoryZ", accessTypePort = "allowed", ports = { "giveZ" })
 	public int memoryZ() {
 		return memoryZ;
 	}

@@ -26,12 +26,12 @@ public class TwoDataProvider1 {
 		logger.debug("Transition b of TwoDataProvider1 has been performed");
 	}
 
-	@bipData(name = "memoryY", accessTypeP = "any")
+	@bipData(name = "memoryY", accessTypePort = "any")
 	public int memoryY() {
 		return memoryY;
 	}
 	
-	@bipData(name = "memoryQ", accessTypeP = "any")
+	@bipData(name = "memoryQ", accessTypePort = "any")
 	public int memoryQ() {
 		return memoryQ;
 	}

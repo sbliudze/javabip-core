@@ -1,13 +1,13 @@
 package org.bip.executor;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.Random;
 
@@ -22,8 +22,8 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RoutePolicy;
 import org.bip.api.BIPGlue;
 import org.bip.api.Port;
-import org.bip.engine.api.BIPCoordinator;
 import org.bip.engine.BIPCoordinatorImpl;
+import org.bip.engine.api.BIPCoordinator;
 import org.bip.exceptions.BIPException;
 import org.bip.glue.GlueBuilder;
 import org.bip.glue.TwoSynchronGlueBuilder;
@@ -68,8 +68,10 @@ public class IntegrationTests {
 	@Test
 	public void bipGlueTest() {
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueExecutableBehaviour.xml");
-		assertEquals("The number of accept constraints is not appropriate", 5, bipGlue.getAcceptConstraints().size());
-		assertEquals("The number of require constraints is not appropriate", 5, bipGlue.getRequiresConstraints().size());
+		assertEquals("The number of accept constraints is not appropriate", 5,
+				bipGlue.getAcceptConstraints().size());
+		assertEquals("The number of require constraints is not appropriate", 5,
+				bipGlue.getRequiresConstraints().size());
 	}
 
 	@Test
@@ -136,21 +138,26 @@ public class IntegrationTests {
 
 			@Override
 			public void configure() throws Exception {
-				from("file:inputfolder1?delete=true").routeId("1").routePolicy(routePolicy1).process(new Processor() {
+				from("file:inputfolder1?delete=true").routeId("1")
+						.routePolicy(routePolicy1).process(new Processor() {
 
-					public void process(Exchange exchange) throws Exception {
+							public void process(Exchange exchange)
+									throws Exception {
 
-					}
-				}).to("file:outputfolder1");
+							}
+						}).to("file:outputfolder1");
 
-				from("file:inputfolder2?delete=true").routeId("2").routePolicy(routePolicy2).process(new Processor() {
+				from("file:inputfolder2?delete=true").routeId("2")
+						.routePolicy(routePolicy2).process(new Processor() {
 
-					public void process(Exchange exchange) throws Exception {
+							public void process(Exchange exchange)
+									throws Exception {
 
-					}
-				}).to("file:outputfolder2");
+							}
+						}).to("file:outputfolder2");
 
-				from("file:inputfolder3?delete=true").routeId("3").routePolicy(routePolicy3).to("file:outputfolder3");
+				from("file:inputfolder3?delete=true").routeId("3")
+						.routePolicy(routePolicy3).to("file:outputfolder3");
 			}
 		};
 		camelContext.setAutoStartup(false);
@@ -183,10 +190,14 @@ public class IntegrationTests {
 		engine.specifyGlue(bipGlue);
 		engine.start();
 
-		assertEquals("The state is not appropriate", "off", executor1.getCurrentState());
-		assertEquals("The state is not appropriate", "off", executor2.getCurrentState());
-		assertEquals("The state is not appropriate", "off", executor3.getCurrentState());
-		assertEquals("The state is not appropriate", "0", executorM.getCurrentState());
+		assertEquals("The state is not appropriate", "off",
+				executor1.getCurrentState());
+		assertEquals("The state is not appropriate", "off",
+				executor2.getCurrentState());
+		assertEquals("The state is not appropriate", "off",
+				executor3.getCurrentState());
+		assertEquals("The state is not appropriate", "0",
+				executorM.getCurrentState());
 		try {
 			t2.start();
 			t3.start();
@@ -230,9 +241,12 @@ public class IntegrationTests {
 		// get Glue object from xml file
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueExecutableBehaviour.xml");
 
-		SwitchableRouteExecutableBehavior route1 = new SwitchableRouteExecutableBehavior("1");
-		SwitchableRouteExecutableBehavior route2 = new SwitchableRouteExecutableBehavior("2");
-		SwitchableRouteExecutableBehavior route3 = new SwitchableRouteExecutableBehavior("3");
+		SwitchableRouteExecutableBehavior route1 = new SwitchableRouteExecutableBehavior(
+				"1");
+		SwitchableRouteExecutableBehavior route2 = new SwitchableRouteExecutableBehavior(
+				"2");
+		SwitchableRouteExecutableBehavior route3 = new SwitchableRouteExecutableBehavior(
+				"3");
 		final ExecutorImpl executor1 = new ExecutorImpl(route1, false);
 		final ExecutorImpl executor2 = new ExecutorImpl(route2, false);
 		final ExecutorImpl executor3 = new ExecutorImpl(route3, false);
@@ -286,21 +300,26 @@ public class IntegrationTests {
 
 			@Override
 			public void configure() throws Exception {
-				from("file:inputfolder1?delete=true").routeId("1").routePolicy(routePolicy1).process(new Processor() {
+				from("file:inputfolder1?delete=true").routeId("1")
+						.routePolicy(routePolicy1).process(new Processor() {
 
-					public void process(Exchange exchange) throws Exception {
+							public void process(Exchange exchange)
+									throws Exception {
 
-					}
-				}).to("file:outputfolder1");
+							}
+						}).to("file:outputfolder1");
 
-				from("file:inputfolder2?delete=true").routeId("2").routePolicy(routePolicy2).process(new Processor() {
+				from("file:inputfolder2?delete=true").routeId("2")
+						.routePolicy(routePolicy2).process(new Processor() {
 
-					public void process(Exchange exchange) throws Exception {
+							public void process(Exchange exchange)
+									throws Exception {
 
-					}
-				}).to("file:outputfolder2");
+							}
+						}).to("file:outputfolder2");
 
-				from("file:inputfolder3?delete=true").routeId("3").routePolicy(routePolicy3).to("file:outputfolder3");
+				from("file:inputfolder3?delete=true").routeId("3")
+						.routePolicy(routePolicy3).to("file:outputfolder3");
 			}
 		};
 		camelContext.setAutoStartup(false);
@@ -333,10 +352,14 @@ public class IntegrationTests {
 		engine.specifyGlue(bipGlue);
 		engine.start();
 
-		assertEquals("The state is not appropriate", "off", executor1.getCurrentState());
-		assertEquals("The state is not appropriate", "off", executor2.getCurrentState());
-		assertEquals("The state is not appropriate", "off", executor3.getCurrentState());
-		assertEquals("The state is not appropriate", "0", executorM.getCurrentState());
+		assertEquals("The state is not appropriate", "off",
+				executor1.getCurrentState());
+		assertEquals("The state is not appropriate", "off",
+				executor2.getCurrentState());
+		assertEquals("The state is not appropriate", "off",
+				executor3.getCurrentState());
+		assertEquals("The state is not appropriate", "0",
+				executorM.getCurrentState());
 		try {
 			t2.start();
 			t3.start();
@@ -374,9 +397,11 @@ public class IntegrationTests {
 			@Override
 			public void configure() {
 
-				port(TestSpecEnforceableSpontaneous.class, "p").requiresNothing();
+				port(TestSpecEnforceableSpontaneous.class, "p")
+						.requiresNothing();
 
-				port(TestSpecEnforceableSpontaneous.class, "p").acceptsNothing();
+				port(TestSpecEnforceableSpontaneous.class, "p")
+						.acceptsNothing();
 
 			}
 
@@ -429,7 +454,9 @@ public class IntegrationTests {
 				e.printStackTrace();
 			}
 			sleepCounter++;
-			if (sleepCounter > 2 * noOfMilisecondsBetweenS * noSpontaneousToBeSend / internalSleep + executorLoopDelay * noSpontaneousToBeSend * 2)
+			if (sleepCounter > 2 * noOfMilisecondsBetweenS
+					* noSpontaneousToBeSend / internalSleep + executorLoopDelay
+					* noSpontaneousToBeSend * 2)
 				fail("Not enough spontaneous events have been executed within a given time frame.");
 		}
 
@@ -447,9 +474,11 @@ public class IntegrationTests {
 			@Override
 			public void configure() {
 
-				port(TestSpecEnforceableSpontaneous.class, "p").requiresNothing();
+				port(TestSpecEnforceableSpontaneous.class, "p")
+						.requiresNothing();
 
-				port(TestSpecEnforceableSpontaneous.class, "p").acceptsNothing();
+				port(TestSpecEnforceableSpontaneous.class, "p")
+						.acceptsNothing();
 
 			}
 
@@ -507,8 +536,10 @@ public class IntegrationTests {
 				e.printStackTrace();
 			}
 			sleepCounter++;
-			if (sleepCounter > 2 * noOfMilisecondsBetweenS * noSpontaneousToBeSend / internalSleep)
-				fail("Not enough spontaneous events have been executed within a given time frame: " + component1.getsCounter());
+			if (sleepCounter > 2 * noOfMilisecondsBetweenS
+					* noSpontaneousToBeSend / internalSleep)
+				fail("Not enough spontaneous events have been executed within a given time frame: "
+						+ component1.getsCounter());
 		}
 
 		assertEquals(component1.getsCounter(), noSpontaneousToBeSend);
@@ -521,13 +552,17 @@ public class IntegrationTests {
 		/*
 		 * Test story.
 		 * 
-		 * Rcomponent with its port triggers an interaction where pComponent (p port) is synchronized with qComponent (q) port
+		 * Rcomponent with its port triggers an interaction where pComponent (p
+		 * port) is synchronized with qComponent (q) port
 		 * 
-		 * pComponent because it is initialized with false will not be able to execute transitions with spontaneous events. What happens then with BIP
-		 * Executor? Lets assume for a moment that queuing behavior is correct. P is always enabled. Therefore, the maximum interaction will always
-		 * choose pqr (or pr), and not just qr.
+		 * pComponent because it is initialized with false will not be able to
+		 * execute transitions with spontaneous events. What happens then with
+		 * BIP Executor? Lets assume for a moment that queuing behavior is
+		 * correct. P is always enabled. Therefore, the maximum interaction will
+		 * always choose pqr (or pr), and not just qr.
 		 * 
-		 * Components q and r have to have spontaneous events received and treated to be able to have enforceable transition enabled.
+		 * Components q and r have to have spontaneous events received and
+		 * treated to be able to have enforceable transition enabled.
 		 */
 
 		final int noIterations = 5;
@@ -540,13 +575,16 @@ public class IntegrationTests {
 
 				port(PComponent.class, "p").requires(RComponent.class, "r");
 
-				port(PComponent.class, "p").accepts(QComponent.class, "q", RComponent.class, "r");
+				port(PComponent.class, "p").accepts(QComponent.class, "q",
+						RComponent.class, "r");
 
 				port(QComponent.class, "q").requires(PComponent.class, "p");
 
-				port(QComponent.class, "q").accepts(PComponent.class, "p", RComponent.class, "r");
+				port(QComponent.class, "q").accepts(PComponent.class, "p",
+						RComponent.class, "r");
 
-				port(RComponent.class, "r").accepts(PComponent.class, "p", QComponent.class, "q");
+				port(RComponent.class, "r").accepts(PComponent.class, "p",
+						QComponent.class, "q");
 
 				// TODO, do we need the requiresNothing ? Should we need it?
 				port(RComponent.class, "r").requiresNothing();
@@ -559,15 +597,16 @@ public class IntegrationTests {
 		// adequate folder than at the root of the project.
 
 		ByteArrayOutputStream bipGlueOutputStream = new ByteArrayOutputStream();
-		
+
 		bipGlue.toXML(bipGlueOutputStream);
-		
+
 		bipGlue.toXML(System.out);
-		
-		ByteArrayInputStream bipGlueInputStream = new ByteArrayInputStream(bipGlueOutputStream.toByteArray());
+
+		ByteArrayInputStream bipGlueInputStream = new ByteArrayInputStream(
+				bipGlueOutputStream.toByteArray());
 
 		bipGlue = GlueBuilder.fromXML(bipGlueInputStream);
-		
+
 		// Component P that does not need enable signals.
 
 		PComponent pComponent = new PComponent(false);
@@ -654,7 +693,8 @@ public class IntegrationTests {
 		// e.printStackTrace();
 		// }
 		// sleepCounter++;
-		// if (sleepCounter > 2 * noOfMilisecondsBetweenS * noIterations / internalSleep + executorLoopDelay * noIterations * 2)
+		// if (sleepCounter > 2 * noOfMilisecondsBetweenS * noIterations /
+		// internalSleep + executorLoopDelay * noIterations * 2)
 		// fail("Not enough spontaneous events have been executed within a given time frame.");
 		// }
 
@@ -671,7 +711,8 @@ public class IntegrationTests {
 
 		/*
 		 * 
-		 * In place annotated with comment MISTAKE on purpose, we use the second time pComponent instead of q component to get
+		 * In place annotated with comment MISTAKE on purpose, we use the second
+		 * time pComponent instead of q component to get
 		 * ArrayIndexOutOfBoundException.
 		 */
 
@@ -685,13 +726,16 @@ public class IntegrationTests {
 
 				port(PComponent.class, "p").requires(RComponent.class, "r");
 
-				port(PComponent.class, "p").accepts(QComponent.class, "q", RComponent.class, "r");
+				port(PComponent.class, "p").accepts(QComponent.class, "q",
+						RComponent.class, "r");
 
 				port(QComponent.class, "q").requires(RComponent.class, "r");
 
-				port(QComponent.class, "q").accepts(PComponent.class, "p", RComponent.class, "r");
+				port(QComponent.class, "q").accepts(PComponent.class, "p",
+						RComponent.class, "r");
 
-				port(RComponent.class, "r").accepts(PComponent.class, "p", QComponent.class, "q");
+				port(RComponent.class, "r").accepts(PComponent.class, "p",
+						QComponent.class, "q");
 
 				// TODO, do we need the requiresNothing ? Should we need it?
 				port(RComponent.class, "r").requiresNothing();
@@ -772,7 +816,6 @@ public class IntegrationTests {
 
 		testDriver.start();
 
-
 		engine.execute();
 
 		try {
@@ -791,14 +834,18 @@ public class IntegrationTests {
 		 * 
 		 * A synchronous interaction PSS.p with R.r
 		 * 
-		 * PSS component receives two spontaneous events that are changing the status of variable used as p guard. There are twice more enabling
-		 * events than disabling events so still noIterations of pr interactions should take place.
+		 * PSS component receives two spontaneous events that are changing the
+		 * status of variable used as p guard. There are twice more enabling
+		 * events than disabling events so still noIterations of pr interactions
+		 * should take place.
 		 * 
 		 * R.s is also being sent so that R.r can be enabled.
 		 * 
-		 * [DONE] This test assumes a new treatment of spontaneous events, namely that if one spontaneous event has arrived then if it guard evaluates
-		 * to true (or guard does not exist) then there is no exception if enforceable transition also evaluates to true. Spontaneous transition will
-		 * have a precedence over enforceable one.
+		 * [DONE] This test assumes a new treatment of spontaneous events,
+		 * namely that if one spontaneous event has arrived then if it guard
+		 * evaluates to true (or guard does not exist) then there is no
+		 * exception if enforceable transition also evaluates to true.
+		 * Spontaneous transition will have a precedence over enforceable one.
 		 */
 
 		final int noIterations = 5;
@@ -955,7 +1002,9 @@ public class IntegrationTests {
 				e.printStackTrace();
 			}
 			sleepCounter++;
-			if (sleepCounter > 2 * noOfMilisecondsBetweenS * noIterations / internalSleep + executorLoopDelay * noIterations * 2 / internalSleep + 1)
+			if (sleepCounter > 2 * noOfMilisecondsBetweenS * noIterations
+					/ internalSleep + executorLoopDelay * noIterations * 2
+					/ internalSleep + 1)
 				break;
 		}
 
@@ -1021,26 +1070,32 @@ public class IntegrationTests {
 			e.printStackTrace();
 		}
 
-		assertEquals((int) Math.pow(2, size) - 1, hanoiMonitor.getNumberOfMoves());
+		assertEquals((int) Math.pow(2, size) - 1,
+				hanoiMonitor.getNumberOfMoves());
 	}
 
 	@Test
 	@Ignore
-	public void testBinaryInteractionLargeBehavior() throws NoSuchMethodException, BIPException {
+	public void testBinaryInteractionLargeBehavior()
+			throws NoSuchMethodException, BIPException {
 
 		/*
 		 * Test story.
 		 * 
-		 * PResizableComponent is a component with one enforceable transition and two spontaneous. SR does the rollback of enforceable transition. SE
-		 * enables next p transition.
+		 * PResizableComponent is a component with one enforceable transition
+		 * and two spontaneous. SR does the rollback of enforceable transition.
+		 * SE enables next p transition.
 		 * 
-		 * QComponent has q transition that participates in the interaction with p.
+		 * QComponent has q transition that participates in the interaction with
+		 * p.
 		 * 
-		 * PResizable component has a large state space (e.g. 1000 states decided upon the construction).
+		 * PResizable component has a large state space (e.g. 1000 states
+		 * decided upon the construction).
 		 * 
 		 * 
 		 * 
-		 * Components q and r have to have spontaneous events recceived and treated to be able to have enforceable transition enabled.
+		 * Components q and r have to have spontaneous events recceived and
+		 * treated to be able to have enforceable transition enabled.
 		 */
 
 		final int noIterations = 100; // no of states in PResizableComponent
@@ -1052,13 +1107,17 @@ public class IntegrationTests {
 			@Override
 			public void configure() {
 
-				port(PResizableBehaviorComponent.class, "p").requires(QComponent.class, "q");
+				port(PResizableBehaviorComponent.class, "p").requires(
+						QComponent.class, "q");
 
-				port(PResizableBehaviorComponent.class, "p").accepts(QComponent.class, "q");
+				port(PResizableBehaviorComponent.class, "p").accepts(
+						QComponent.class, "q");
 
-				port(QComponent.class, "q").requires(PResizableBehaviorComponent.class, "p");
+				port(QComponent.class, "q").requires(
+						PResizableBehaviorComponent.class, "p");
 
-				port(QComponent.class, "q").accepts(PResizableBehaviorComponent.class, "p");
+				port(QComponent.class, "q").accepts(
+						PResizableBehaviorComponent.class, "p");
 
 			}
 
@@ -1068,7 +1127,8 @@ public class IntegrationTests {
 
 		// Component P that does not need enable signals.
 
-		PResizableBehaviorComponent pComponent = new PResizableBehaviorComponent(true, noIterations);
+		PResizableBehaviorComponent pComponent = new PResizableBehaviorComponent(
+				true, noIterations);
 
 		final ExecutorImpl pExecutor = new ExecutorImpl(pComponent, false);
 
@@ -1119,7 +1179,8 @@ public class IntegrationTests {
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					// This spontaneous signal has no guard so it will be always executed.
+					// This spontaneous signal has no guard so it will be always
+					// executed.
 
 					pExecutor.inform("sr");
 
@@ -1157,7 +1218,8 @@ public class IntegrationTests {
 				e.printStackTrace();
 			}
 			sleepCounter++;
-			if (sleepCounter > 2 * noOfMilisecondsBetweenS * noIterations / internalSleep + executorLoopDelay * noIterations * 2)
+			if (sleepCounter > 2 * noOfMilisecondsBetweenS * noIterations
+					/ internalSleep + executorLoopDelay * noIterations * 2)
 				fail("Not enough spontaneous events have been executed within a given time frame.");
 		}
 
@@ -1180,20 +1242,29 @@ public class IntegrationTests {
 			@Override
 			public void configure() {
 
-				synchron(SwitchableRouteDataTransfers.class, "on").to(MemoryMonitor.class, "add");
-				synchron(SwitchableRouteDataTransfers.class, "finished").to(MemoryMonitor.class, "rm");
-				port(SwitchableRouteDataTransfers.class, "off").acceptsNothing();
-				port(SwitchableRouteDataTransfers.class, "off").requiresNothing();
-				data(SwitchableRouteDataTransfers.class, "deltaMemoryOnTransition").to(MemoryMonitor.class, "memoryUsage");
+				synchron(SwitchableRouteDataTransfers.class, "on").to(
+						MemoryMonitor.class, "add");
+				synchron(SwitchableRouteDataTransfers.class, "finished").to(
+						MemoryMonitor.class, "rm");
+				port(SwitchableRouteDataTransfers.class, "off")
+						.acceptsNothing();
+				port(SwitchableRouteDataTransfers.class, "off")
+						.requiresNothing();
+				data(SwitchableRouteDataTransfers.class,
+						"deltaMemoryOnTransition").to(MemoryMonitor.class,
+						"memoryUsage");
 
 			}
 
 		}.build();
 
 		glue.toXML(System.out);
-		assertEquals("Incorrect number of accepts ", 5, glue.getAcceptConstraints().size());
-		assertEquals("Incorrect number of requires ", 5, glue.getRequiresConstraints().size());
-		assertEquals("Incorrect number of data wires ", 1, glue.getDataWires().size());
+		assertEquals("Incorrect number of accepts ", 5, glue
+				.getAcceptConstraints().size());
+		assertEquals("Incorrect number of requires ", 5, glue
+				.getRequiresConstraints().size());
+		assertEquals("Incorrect number of data wires ", 1, glue.getDataWires()
+				.size());
 
 	}
 

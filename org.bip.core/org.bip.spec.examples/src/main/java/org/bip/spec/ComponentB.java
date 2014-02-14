@@ -26,7 +26,7 @@ public class ComponentB {
 		logger.debug("Transition b of ComponentB has been performed");
 	}
 
-	@bipData(name = "memoryY", accessTypeP = "allowed", ports = {"a"})
+	@bipData(name = "memoryY", accessTypePort = "allowed", ports = {"a"})
 	public int memoryY() {
 		return memoryY;
 	}

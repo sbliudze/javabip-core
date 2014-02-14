@@ -7,6 +7,7 @@
  */
 
 package org.bip.annotations;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -15,28 +16,27 @@ import java.lang.annotation.RetentionPolicy;
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface bipData {
-	
+
 	/**
 	 * It returns the name of the data.
-	 *
+	 * 
 	 * @return the string
 	 */
 	String name();
-	
+
 	/**
-	 * It returns the access type of the data. 
-	 *
+	 * It returns the access type of the data.
+	 * 
 	 * @return the string
 	 */
-	// TODO, why it is accessTypeP, what is P for?
 	// TODO, use Enum instead of String?
-	String accessTypeP() default "";  //any, witness, list 
-	
+	String accessTypePort() default ""; // any, witness, list
+
 	/**
 	 * It returns the ports (if required) for a specific access type being used.
-	 *
+	 * 
 	 * @return the array of ports.
 	 */
 	String[] ports() default "";
-	
+
 }

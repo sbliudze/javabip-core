@@ -22,10 +22,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import org.bip.api.Accepts;
 import org.bip.api.BIPGlue;
 import org.bip.api.Port;
-import org.bip.api.Requires;
 import org.bip.impl.PortImpl;
 
 public abstract class GlueBuilder {
@@ -34,14 +32,14 @@ public abstract class GlueBuilder {
 		glue = new BIPGlueImpl();
 	}
 
-	BIPGlue glue;
+	BIPGlueImpl glue;
 
 	Class<?> spec;
 	String portId;
 
-	Map<String, Requires> requiresMap = new HashMap<String, Requires>();
+	Map<String, RequiresImpl> requiresMap = new HashMap<String, RequiresImpl>();
 
-	Map<String, Accepts> acceptsMap = new HashMap<String, Accepts>();
+	Map<String, AcceptsImpl> acceptsMap = new HashMap<String, AcceptsImpl>();
 
 	public BIPGlue build() {
 
@@ -59,7 +57,8 @@ public abstract class GlueBuilder {
 		if (spec == null)
 			throw new IllegalArgumentException("Spec type can not be null");
 		if (portId.equals(""))
-			throw new IllegalArgumentException("PortId can not be an empty string.");
+			throw new IllegalArgumentException(
+					"PortId can not be an empty string.");
 
 		this.spec = spec;
 		this.portId = portId;
@@ -71,10 +70,12 @@ public abstract class GlueBuilder {
 	public void requiresNothing() {
 
 		if (spec == null)
-			throw new IllegalStateException("The port type for which requires nothing is called was not specified.");
+			throw new IllegalStateException(
+					"The port type for which requires nothing is called was not specified.");
 
 		if (portId == null)
-			throw new IllegalStateException("The portId for which requires nothing is called was not specified.");
+			throw new IllegalStateException(
+					"The portId for which requires nothing is called was not specified.");
 
 		// empty list of causes.
 		ArrayList<Port> causes = new ArrayList<Port>();
@@ -88,7 +89,7 @@ public abstract class GlueBuilder {
 
 	private void addRequire(Class<?> spec, String portId, List<Port> causes) {
 
-		Requires requires;
+		RequiresImpl requires;
 
 		String key = computeKey(spec, portId);
 
@@ -101,16 +102,17 @@ public abstract class GlueBuilder {
 
 			List<List<Port>> causesOptions = new ArrayList<List<Port>>();
 			causesOptions.add(causes);
-			requires = new RequiresImpl(new PortImpl(portId, spec), causesOptions);
+			requires = new RequiresImpl(new PortImpl(portId, spec),
+					causesOptions);
 
-			Requires req = glue.addRequire(requires);
+			RequiresImpl req = glue.addRequire(requires);
 			requiresMap.put(key, req);
 		}
 	}
 
 	private void addAccept(Class<?> spec, String portId, Collection<Port> causes) {
 
-		Accepts accepts;
+		AcceptsImpl accepts;
 
 		String key = computeKey(spec, portId);
 
@@ -126,7 +128,7 @@ public abstract class GlueBuilder {
 
 			accepts = new AcceptsImpl(new PortImpl(portId, spec), setOfCauses);
 
-			Accepts acc = glue.addAccept(accepts);
+			AcceptsImpl acc = glue.addAccept(accepts);
 			acceptsMap.put(key, acc);
 
 		}
@@ -138,10 +140,12 @@ public abstract class GlueBuilder {
 		try {
 
 			if (spec == null)
-				throw new IllegalStateException("The port type for which requires is called was not specified.");
+				throw new IllegalStateException(
+						"The port type for which requires is called was not specified.");
 
 			if (portId == null)
-				throw new IllegalStateException("The portId for which requires is called was not specified.");
+				throw new IllegalStateException(
+						"The portId for which requires is called was not specified.");
 
 			if (args.length == 0) {
 				requiresNothing();
@@ -164,10 +168,12 @@ public abstract class GlueBuilder {
 	public void acceptsNothing() {
 
 		if (spec == null)
-			throw new IllegalStateException("The port type for which accepts nothing is called was not specified.");
+			throw new IllegalStateException(
+					"The port type for which accepts nothing is called was not specified.");
 
 		if (portId == null)
-			throw new IllegalStateException("The portId for which accepts nothing is called was not specified.");
+			throw new IllegalStateException(
+					"The portId for which accepts nothing is called was not specified.");
 
 		// empty list of causes.
 		ArrayList<Port> causes = new ArrayList<Port>();
@@ -184,10 +190,12 @@ public abstract class GlueBuilder {
 		try {
 
 			if (spec == null)
-				throw new IllegalStateException("The port type for which accepts is called was not specified.");
+				throw new IllegalStateException(
+						"The port type for which accepts is called was not specified.");
 
 			if (portId == null)
-				throw new IllegalStateException("The portId for which accepts is called was not specified.");
+				throw new IllegalStateException(
+						"The portId for which accepts is called was not specified.");
 
 			if (args.length == 0) {
 				acceptsNothing();
@@ -224,7 +232,9 @@ public abstract class GlueBuilder {
 				continue;
 			}
 
-			throw new IllegalArgumentException("Any argument within requires function must be either of type Class or String" + o.getClass());
+			throw new IllegalArgumentException(
+					"Any argument within requires function must be either of type Class or String"
+							+ o.getClass());
 
 		}
 
@@ -242,7 +252,8 @@ public abstract class GlueBuilder {
 		if (dataId == null)
 			throw new IllegalArgumentException("DataId can not be null.");
 		if (dataId.equals(""))
-			throw new IllegalArgumentException("DataId can not be an empty string.");
+			throw new IllegalArgumentException(
+					"DataId can not be an empty string.");
 
 		return new DataWireBuilder(new PortImpl(dataId, spec));
 
@@ -263,7 +274,8 @@ public abstract class GlueBuilder {
 			if (spec == null)
 				throw new IllegalArgumentException("Spec type can not be null");
 			if (dataId.equals(""))
-				throw new IllegalArgumentException("DataId can not be an empty string.");
+				throw new IllegalArgumentException(
+						"DataId can not be an empty string.");
 
 			glue.addDataWire(new DataWireImpl(from, new PortImpl(dataId, spec)));
 
@@ -277,7 +289,8 @@ public abstract class GlueBuilder {
 		try {
 			context = JAXBContext.newInstance(BIPGlueImpl.class);
 			Unmarshaller um = context.createUnmarshaller();
-			return (BIPGlueImpl) um.unmarshal(new InputStreamReader(inputStream));
+			return (BIPGlueImpl) um
+					.unmarshal(new InputStreamReader(inputStream));
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}

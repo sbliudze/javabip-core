@@ -44,9 +44,8 @@ class BIPGlueImpl implements BIPGlue {
 		this.dataWires = new ArrayList<DataWireImpl>();
 	}
 
-
-
-	public BIPGlueImpl(ArrayList<Accepts> acceptConstraints, ArrayList<Requires> requiresConstraints, ArrayList<DataWire> dataWires) {
+	public BIPGlueImpl(ArrayList<Accepts> acceptConstraints, ArrayList<Requires> requiresConstraints,
+			ArrayList<DataWire> dataWires) {
 		this.acceptConstraints = new ArrayList<AcceptsImpl>();
 		for (Accepts acc : acceptConstraints) {
 			this.acceptConstraints.add(new AcceptsImpl(acc.getEffect(), acc.getCauses()));
@@ -99,20 +98,18 @@ class BIPGlueImpl implements BIPGlue {
 
 	}
 
-	public Accepts addAccept(Accepts accept) {
-		AcceptsImpl acc = new AcceptsImpl(accept.getEffect(), accept.getCauses());
-		this.acceptConstraints.add(acc);
-		return acc;
+	public AcceptsImpl addAccept(AcceptsImpl accept) {
+		this.acceptConstraints.add(accept);
+		return accept;
 	}
 
-	public Requires addRequire(Requires require) {
-		RequiresImpl req = new RequiresImpl(require.getEffect(), require.getCauses());
-		this.requiresConstraints.add(req);
-		return req;
+	public RequiresImpl addRequire(RequiresImpl require) {
+		this.requiresConstraints.add(require);
+		return require;
 	}
 
-	public void addDataWire(DataWire dataWire) {
-		this.dataWires.add(new DataWireImpl(dataWire.getFrom(), dataWire.getTo()));
+	public void addDataWire(DataWireImpl dataWire) {
+		this.dataWires.add(dataWire);
 	}
 
 }

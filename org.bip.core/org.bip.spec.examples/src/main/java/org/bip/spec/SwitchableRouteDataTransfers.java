@@ -123,7 +123,7 @@ public class SwitchableRouteDataTransfers implements CamelContextAware, Initiali
 
 	// It is inferred that this is Data Out as the annotation is provided within a function that returns smth. The
 	// type of the DataOut is the type of the return.
-	@bipData(name = "deltaMemoryOnTransition", accessTypeP = "allowed", ports = { "on", "finished" })
+	@bipData(name = "deltaMemoryOnTransition", accessTypePort = "allowed", ports = { "on", "finished" })
 	public int deltaMemoryOnTransition() {
 		return deltaMemory;
 	}

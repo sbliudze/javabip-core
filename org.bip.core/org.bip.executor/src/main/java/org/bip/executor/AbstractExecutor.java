@@ -171,7 +171,7 @@ public abstract class AbstractExecutor implements Executor, ComponentProvider {
 				} else if (annotation instanceof bipData) { // DATA OUT
 					bipData dataAnnotation = (bipData) annotation;
 					String name = dataAnnotation.name();
-					String type = dataAnnotation.accessTypeP();
+					String type = dataAnnotation.accessTypePort();
 					String[] ports = dataAnnotation.ports();
 					DataOut<?> data = createData(name, method.getReturnType(), type, ports);
 					builder.addDataOut(data, method);
