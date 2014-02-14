@@ -15,12 +15,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-// TODO, It looks like it could be an internal, private interface of of org.bip.executor package.
 /**
  * It provides an executable behavior that makes it possible to execute transitions within the behavior.
  */
 public interface ExecutableBehaviour extends Behaviour {
-	
+	// It is put in the API and made public in order for developers to be able to use it while doing their own executors.
 	/**
 	 * Gets the current state.
 	 *

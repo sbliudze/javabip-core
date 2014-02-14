@@ -6,14 +6,17 @@
  * Date: 01/27/14
  */
 
-package org.bip.api;
+package org.bip.executor;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Map;
 
-// TODO, It seems that this interface can be an internal interface in org.bip.executor package.
-public interface ExecutableTransition {
+import org.bip.api.Data;
+import org.bip.api.Guard;
+import org.bip.api.Port;
+
+interface ExecutableTransition {
 
 	public Method method();
 
@@ -24,14 +27,14 @@ public interface ExecutableTransition {
 	public boolean hasDataOnGuards();
 
 	public boolean guardIsTrue(Map<String, Boolean> guardToValue);
-	
+
 	public Port.Type getType();
-	
-	public String name() ;
+
+	public String name();
 
 	public String source();
 
-	public String target() ;
+	public String target();
 
 	public boolean hasGuard();
 

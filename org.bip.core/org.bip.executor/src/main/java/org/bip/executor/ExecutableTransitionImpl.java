@@ -9,7 +9,6 @@ import java.util.Map;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.bip.api.Data;
-import org.bip.api.ExecutableTransition;
 import org.bip.api.Guard;
 import org.bip.api.Port;
 import org.bip.exceptions.BIPException;

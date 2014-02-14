@@ -20,7 +20,6 @@ import java.util.Set;
 import org.bip.api.Data;
 import org.bip.api.DataOut;
 import org.bip.api.ExecutableBehaviour;
-import org.bip.api.ExecutableTransition;
 import org.bip.api.Guard;
 import org.bip.api.Port;
 import org.bip.exceptions.BIPException;
