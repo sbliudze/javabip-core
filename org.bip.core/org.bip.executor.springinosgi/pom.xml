@@ -11,6 +11,8 @@
   <name>BIP :: Core :: ExecutorForSpringInOSGi</name>
   <description>It contains the classes for the BIP executor running in OSGI inside Spring Application Context.</description>
 
+<packaging>bundle</packaging>
+
 	<properties>
 		<filemover.osgi.private></filemover.osgi.private>
 		<filemover.osgi.import>org.bip.api, org.bip.behaviour, org.bip.exceptions, org.springframework.beans.factory;version="[2.5,4)", *</filemover.osgi.import>
@@ -202,8 +204,7 @@
 						<Private-Package>${filemover.osgi.private}</Private-Package>
 						<Require-Bundle>${filemover.osgi.bundles}</Require-Bundle>
 						<Spring-Context>*;publish-context:=false;create-asynchronously:=true</Spring-Context>
-						&gt;
-						<Include-Resource>src/main/resources</Include-Resource>
+						<!-- <Include-Resource>src/main/resources</Include-Resource> -->
 					</instructions>
 				</configuration>
 			</plugin>
