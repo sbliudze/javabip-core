@@ -37,19 +37,6 @@ public interface Guard {
 	 */
 	public Boolean hasData();
 
-	// TODO, this function is subsumed by the other one and could be removed, as well in GuardImpl.
-	/**
-	 * Evaluate guard.
-	 * 
-	 * @param component
-	 *            the component
-	 * @return true, if successful
-	 * @throws IllegalAccessException
-	 * @throws IllegalArgumentException
-	 * @throws InvocationTargetException
-	 */
-	public boolean evaluateGuard(Object component) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException;
-
 	// TODO, maybe any exception that can be thrown by a given implementation of the guard should be simply wrapped in BIP Exception?
 	/**
 	 * Evaluate guard.

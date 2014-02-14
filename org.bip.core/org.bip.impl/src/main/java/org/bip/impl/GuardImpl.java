@@ -14,7 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Provides information about the guard of a transition. Has methods to evaluate the guard given the object to invoke method and the arguments.
+ * Provides information about the guard of a transition. Has methods to evaluate the guard given the object to invoke method and the
+ * arguments.
  * 
  */
 public class GuardImpl implements Guard {
@@ -88,13 +89,8 @@ public class GuardImpl implements Guard {
 		return result.toString();
 	}
 
-	public boolean evaluateGuard(Object component) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Object guardValue = method.invoke(component);
-		boolean res = (Boolean) guardValue;
-		return res;
-	}
-
-	public boolean evaluateGuard(Object component, Object... args) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public boolean evaluateGuard(Object component, Object... args) throws IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException {
 		logger.debug("For component {}:", component.getClass());
 		logger.debug("Evaluation of guard {} with args {}.", this.name, args);
 		Object guardValue = method.invoke(component, args);
