@@ -230,7 +230,7 @@ public class ExecutorImpl extends AbstractExecutor implements Runnable {
 				throw new IllegalArgumentException("The type " + methodResult.getClass() + " of the required data variable " + name + " from the component " + bipComponent.getClass().getName()
 						+ " does not correspond to the specified return type " + clazz);
 			}
-			result = (T) methodResult;
+			result = clazz.cast(methodResult);
 		} catch (IllegalAccessException e) {
 			ExceptionHelper.printExceptionTrace(logger, e);
 			e.printStackTrace();

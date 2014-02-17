@@ -168,7 +168,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 		for (DataOut<?> data : dataOut) {
 			dataOutString.add(data.name());
 			if (data.portSpecificationType().equals(DataOut.Type.any)) {
-				this.dataOut.add(new DataImpl(data.name(), data.type(), new HashSet<Port>(this.enforceablePorts)));
+				this.dataOut.add(createData(data.name(), data.type(), new HashSet<Port>(this.enforceablePorts)));
 				// data.addPorts(this.enforceablePorts);
 			} else if (data.portSpecificationType().equals(DataOut.Type.allowed)) {
 				HashSet<Port> allowedPorts = new HashSet<Port>();
@@ -191,7 +191,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 				// ArrayList<Port> allowedPorts = (ArrayList<Port>) this.enforceablePorts.clone();
 				// allowedPorts.removeAll(data.unallowedPorts());
 				// data.addPorts(allowedPorts);
-				this.dataOut.add(new DataImpl(data.name(), data.type(), allowedPorts));
+				this.dataOut.add(createData(data.name(), data.type(), allowedPorts));
 			} else if (data.portSpecificationType().equals(DataOut.Type.unallowed)) {
 				HashSet<Port> allowedPorts = new HashSet<Port>();
 				boolean portFound = false;
@@ -212,7 +212,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 				// ArrayList<Port> allowedPorts = (ArrayList<Port>) this.enforceablePorts.clone();
 				// allowedPorts.removeAll(data.unallowedPorts());
 				// data.addPorts(allowedPorts);
-				this.dataOut.add(new DataImpl(data.name(), data.type(), allowedPorts));
+				this.dataOut.add(createData(data.name(), data.type(), allowedPorts));
 			}
 		}
 	}
@@ -688,5 +688,11 @@ class BehaviourImpl implements ExecutableBehaviour {
 		}
 		return new HashSet<Port>();
 	}
+	
+	// TODO find a way not to copy this method among classes
+		<T> DataImpl<T> createData(String dataName, Class<T> type, Set<Port> ports) {
+			DataImpl<T> toReturn = new DataImpl<T>(dataName, type, ports);
+			return toReturn;
+		}
 
 }
