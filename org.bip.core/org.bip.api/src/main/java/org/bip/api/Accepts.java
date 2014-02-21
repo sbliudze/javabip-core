@@ -20,13 +20,13 @@ public interface Accepts {
 	 * 
 	 * @return the effect
 	 */
-	public Port getEffect();
+	public PortBase getEffect();
 
 	/**
 	 * It returns causes for a given effect of accept.
 	 * 
 	 * @return the causes of the given accept.
 	 */
-	public Collection<Port> getCauses();
+	public Collection<PortBase> getCauses();
 
 }

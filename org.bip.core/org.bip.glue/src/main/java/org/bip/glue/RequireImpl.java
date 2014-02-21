@@ -14,52 +14,52 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.bip.api.Port;
+import org.bip.api.PortBase;
 import org.bip.api.Requires;
-import org.bip.impl.PortImpl;
+import org.bip.impl.PortBaseImpl;
 
 class RequireImpl implements Requires {
 
 	@XmlElement(name = "effect")
-	private PortImpl effect;
+	private PortBaseImpl effect;
 
 	@XmlJavaTypeAdapter(XmlGenericListAdapter.class)
-	private List<List<PortImpl>> causes;
+	private List<List<PortBaseImpl>> causes;
 
 	public RequireImpl() {
 	}
 
-	public RequireImpl(Port effect, List<List<Port>> causes) {
-		this.effect = new PortImpl(effect.getId(), effect.getType().toString(), effect.getSpecType());
-		this.causes = new ArrayList<List<PortImpl>>();
-		for (List<Port> smallCauses : causes) {
-			ArrayList<PortImpl> causesInterface = new ArrayList<PortImpl>();
-			for (Port port : smallCauses) {
-				causesInterface.add(new PortImpl(port.getId(), port.getType().toString(), port.getSpecType()));
+	public RequireImpl(PortBase effect, List<List<PortBase>> causes) {
+		this.effect = new PortBaseImpl(effect.getId(),  effect.getSpecType());
+		this.causes = new ArrayList<List<PortBaseImpl>>();
+		for (List<PortBase> smallCauses : causes) {
+			ArrayList<PortBaseImpl> causesInterface = new ArrayList<PortBaseImpl>();
+			for (PortBase port : smallCauses) {
+				causesInterface.add(new PortBaseImpl(port.getId(),  port.getSpecType()));
 			}
 			this.causes.add(causesInterface);
 		}
 
 	}
 
-	public Port getEffect() {
+	public PortBase getEffect() {
 		return effect;
 	}
 
-	public List<List<Port>> getCauses() {
-		List<List<Port>> result = new ArrayList<List<Port>>();
-		for (List<PortImpl> smallCauses : causes) {
-			ArrayList<Port> causesInterface = new ArrayList<Port>();
+	public List<List<PortBase>> getCauses() {
+		List<List<PortBase>> result = new ArrayList<List<PortBase>>();
+		for (List<PortBaseImpl> smallCauses : causes) {
+			ArrayList<PortBase> causesInterface = new ArrayList<PortBase>();
 			causesInterface.addAll(smallCauses);
 			result.add(causesInterface);
 		}
 		return result;
 	}
 
-	public void addCause(List<Port> cause) {
-		ArrayList<PortImpl> causesInterface = new ArrayList<PortImpl>();
-		for (Port port : cause) {
-			causesInterface.add(new PortImpl(port.getId(), port.getType().toString(), port.getSpecType()));
+	public void addCause(List<PortBase> cause) {
+		ArrayList<PortBaseImpl> causesInterface = new ArrayList<PortBaseImpl>();
+		for (PortBase port : cause) {
+			causesInterface.add(new PortBaseImpl(port.getId(), port.getSpecType()));
 		}
 		this.causes.add(causesInterface);
 	}

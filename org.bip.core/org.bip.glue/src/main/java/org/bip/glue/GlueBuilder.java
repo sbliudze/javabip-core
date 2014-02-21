@@ -23,8 +23,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.bip.api.BIPGlue;
-import org.bip.api.Port;
-import org.bip.impl.PortImpl;
+import org.bip.api.PortBase;
+import org.bip.impl.PortBaseImpl;
 
 public abstract class GlueBuilder {
 
@@ -78,7 +78,7 @@ public abstract class GlueBuilder {
 					"The portId for which requires nothing is called was not specified.");
 
 		// empty list of causes.
-		ArrayList<Port> causes = new ArrayList<Port>();
+		ArrayList<PortBase> causes = new ArrayList<PortBase>();
 
 		addRequire(spec, portId, causes);
 
@@ -87,7 +87,7 @@ public abstract class GlueBuilder {
 
 	}
 
-	private void addRequire(Class<?> spec, String portId, List<Port> causes) {
+	private void addRequire(Class<?> spec, String portId, List<PortBase> causes) {
 
 		RequireImpl requires;
 
@@ -100,9 +100,9 @@ public abstract class GlueBuilder {
 			requires.addCause(causes);
 		} else {
 
-			List<List<Port>> causesOptions = new ArrayList<List<Port>>();
+			List<List<PortBase>> causesOptions = new ArrayList<List<PortBase>>();
 			causesOptions.add(causes);
-			requires = new RequireImpl(new PortImpl(portId, spec),
+			requires = new RequireImpl(new PortBaseImpl(portId, spec.getCanonicalName()),
 					causesOptions);
 
 			RequireImpl req = glue.addRequire(requires);
@@ -110,7 +110,7 @@ public abstract class GlueBuilder {
 		}
 	}
 
-	private void addAccept(Class<?> spec, String portId, Collection<Port> causes) {
+	private void addAccept(Class<?> spec, String portId, Collection<PortBase> causes) {
 
 		AcceptImpl accepts;
 
@@ -124,9 +124,9 @@ public abstract class GlueBuilder {
 
 		} else {
 
-			Set<Port> setOfCauses = new LinkedHashSet<Port>(causes);
+			Set<PortBase> setOfCauses = new LinkedHashSet<PortBase>(causes);
 
-			accepts = new AcceptImpl(new PortImpl(portId, spec), setOfCauses);
+			accepts = new AcceptImpl(new PortBaseImpl(portId, spec.getCanonicalName()), setOfCauses);
 
 			AcceptImpl acc = glue.addAccept(accepts);
 			acceptsMap.put(key, acc);
@@ -152,7 +152,7 @@ public abstract class GlueBuilder {
 				return;
 			}
 
-			ArrayList<Port> causes = parseCauses(spec, args);
+			ArrayList<PortBase> causes = parseCauses(spec, args);
 
 			addRequire(spec, portId, causes);
 
@@ -176,7 +176,7 @@ public abstract class GlueBuilder {
 					"The portId for which accepts nothing is called was not specified.");
 
 		// empty list of causes.
-		ArrayList<Port> causes = new ArrayList<Port>();
+		ArrayList<PortBase> causes = new ArrayList<PortBase>();
 
 		addAccept(spec, portId, causes);
 
@@ -202,7 +202,7 @@ public abstract class GlueBuilder {
 				return;
 			}
 
-			ArrayList<Port> causes = parseCauses(spec, args);
+			ArrayList<PortBase> causes = parseCauses(spec, args);
 
 			addAccept(spec, portId, causes);
 
@@ -215,9 +215,9 @@ public abstract class GlueBuilder {
 
 	}
 
-	private ArrayList<Port> parseCauses(Class<?> currentSpec, Object... args) {
+	private ArrayList<PortBase> parseCauses(Class<?> currentSpec, Object... args) {
 
-		ArrayList<Port> result = new ArrayList<Port>();
+		ArrayList<PortBase> result = new ArrayList<PortBase>();
 
 		for (Object o : args) {
 
@@ -228,7 +228,7 @@ public abstract class GlueBuilder {
 
 			if (o instanceof String) {
 				String effectPortId = (String) o;
-				result.add(new PortImpl(effectPortId, currentSpec));
+				result.add(new PortBaseImpl(effectPortId, currentSpec.getCanonicalName()));
 				continue;
 			}
 
@@ -255,15 +255,15 @@ public abstract class GlueBuilder {
 			throw new IllegalArgumentException(
 					"DataId can not be an empty string.");
 
-		return new DataWireBuilder(new PortImpl(dataId, spec));
+		return new DataWireBuilder(new PortBaseImpl(dataId, spec.getCanonicalName()));
 
 	}
 
 	public class DataWireBuilder {
 
-		Port from;
+		PortBase from;
 
-		public DataWireBuilder(Port from) {
+		public DataWireBuilder(PortBase from) {
 			this.from = from;
 		}
 
@@ -277,7 +277,7 @@ public abstract class GlueBuilder {
 				throw new IllegalArgumentException(
 						"DataId can not be an empty string.");
 
-			glue.addDataWire(new DataWireImpl(from, new PortImpl(dataId, spec)));
+			glue.addDataWire(new DataWireImpl(from, new PortBaseImpl(dataId, spec.getCanonicalName())));
 
 		}
 

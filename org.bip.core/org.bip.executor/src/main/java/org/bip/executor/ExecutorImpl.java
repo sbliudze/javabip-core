@@ -19,6 +19,7 @@ import java.util.concurrent.Semaphore;
 import org.bip.api.BIPComponent;
 import org.bip.api.BIPEngine;
 import org.bip.api.Port;
+import org.bip.api.PortBase;
 import org.bip.exceptions.BIPException;
 import org.bip.util.ExceptionHelper;
 import org.slf4j.Logger;
@@ -245,7 +246,7 @@ public class ExecutorImpl extends AbstractExecutor implements Runnable {
 		return result;
 	}
 
-	public List<Boolean> checkEnabledness(Port port, List<Map<String, Object>> data) {
+	public List<Boolean> checkEnabledness(PortBase port, List<Map<String, Object>> data) {
 		try {
 			return behaviour.checkEnabledness(port.getId(), data);
 		} catch (IllegalAccessException e) {

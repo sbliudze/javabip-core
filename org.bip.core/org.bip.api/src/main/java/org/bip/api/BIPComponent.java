@@ -50,7 +50,7 @@ public interface BIPComponent extends Identifiable {
 	 * @param data specifies a list of data parameters, where each map is a complete set of data needed by the transition.
 	 * @return the list of booleans specifying for each map if the transition is enabled or not.
 	 */
-	public List<Boolean> checkEnabledness(Port port, List<Map<String, Object>> data);
+	public List<Boolean> checkEnabledness(PortBase port, List<Map<String, Object>> data);
 
 	/**
 	 * Provides data to a BIP component for a given data dependent transition that will be soon enforced. 

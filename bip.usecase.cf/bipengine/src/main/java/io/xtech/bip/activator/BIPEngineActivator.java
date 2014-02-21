@@ -13,7 +13,7 @@ import org.bip.api.BIPComponent;
 import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
 import org.bip.api.Behaviour;
-import org.bip.api.Port;
+import org.bip.api.PortBase;
 import org.bip.engine.BIPCoordinatorImpl;
 import org.bip.engine.DataCoordinatorImpl;
 import org.bip.exceptions.BIPEngineException;
@@ -38,7 +38,7 @@ public class BIPEngineActivator implements BundleActivator {
 					engine.register(component, behaviour);
 				}
 
-				public void inform(BIPComponent component, String currentState, Set<Port> disabledPorts) {
+				public void inform(BIPComponent component, String currentState, Set<PortBase> disabledPorts) {
 					//System.out.println("BIP Engine was informed that component " + component + " is in state " + currentState + " with the following ports disabled : " + disabledPorts);
 					engine.inform(component, currentState, disabledPorts);
 				}
@@ -59,7 +59,7 @@ public class BIPEngineActivator implements BundleActivator {
 
 				}
 
-				public void informSpecific(BIPComponent decidingComponent, Port decidingPort, Map<BIPComponent, Set<Port>> disabledCombinations) throws BIPEngineException {
+				public void informSpecific(BIPComponent decidingComponent, PortBase decidingPort, Map<BIPComponent, Set<PortBase>> disabledCombinations) throws BIPEngineException {
 					engine.informSpecific(decidingComponent, decidingPort, disabledCombinations);
 					
 				}

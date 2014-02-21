@@ -16,6 +16,7 @@ import org.bip.api.DataOut;
 import org.bip.api.ExecutableBehaviour;
 import org.bip.api.Guard;
 import org.bip.api.Port;
+import org.bip.api.PortBase;
 import org.bip.exceptions.BIPException;
 import org.bip.impl.PortImpl;
 import org.bip.impl.TransitionImpl;

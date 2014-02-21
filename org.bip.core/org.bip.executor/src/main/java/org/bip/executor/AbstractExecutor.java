@@ -22,6 +22,7 @@ import org.bip.api.ExecutableBehaviour;
 import org.bip.api.Executor;
 import org.bip.api.Guard;
 import org.bip.api.Port;
+import org.bip.api.PortBase;
 import org.bip.exceptions.BIPException;
 import org.bip.impl.DataImpl;
 import org.bip.impl.GuardImpl;

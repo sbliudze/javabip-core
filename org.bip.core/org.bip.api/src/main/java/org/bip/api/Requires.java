@@ -21,13 +21,13 @@ public interface Requires {
 	 * 
 	 * @return the effect
 	 */
-	public Port getEffect();
+	public PortBase getEffect();
 
 	/**
 	 * Gets the causes.
 	 * 
 	 * @return the causes
 	 */
-	public List<List<Port>> getCauses();
+	public List<List<PortBase>> getCauses();
 
 }

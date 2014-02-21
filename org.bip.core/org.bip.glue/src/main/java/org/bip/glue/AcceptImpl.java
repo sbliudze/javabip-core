@@ -15,44 +15,44 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
 import org.bip.api.Accepts;
-import org.bip.api.Port;
-import org.bip.impl.PortImpl;
+import org.bip.api.PortBase;
+import org.bip.impl.PortBaseImpl;
 
 class AcceptImpl implements Accepts {
 
 	@XmlElement(name = "effect")
-	private PortImpl effect;
+	private PortBaseImpl effect;
 
 	@XmlElementWrapper(name = "causes")
 	@XmlElement(name = "port")
-	private Collection<PortImpl> causes;
+	private Collection<PortBaseImpl> causes;
 
 	public AcceptImpl() {
 	}
 
-	public AcceptImpl(Port effect, Collection<Port> causes) {
-		this.effect = new PortImpl(effect.getId(), effect.getType().toString(), effect.getSpecType());
+	public AcceptImpl(PortBase effect, Collection<PortBase> causes) {
+		this.effect = new PortBaseImpl(effect.getId(), effect.getSpecType());
 
-		this.causes = new ArrayList<PortImpl>();
-		for (Port cause : causes) {
-			this.causes.add(new PortImpl(cause.getId(), cause.getType().toString(), cause.getSpecType()));
+		this.causes = new ArrayList<PortBaseImpl>();
+		for (PortBase cause : causes) {
+			this.causes.add(new PortBaseImpl(cause.getId(),  cause.getSpecType()));
 		}
 
 	}
 
-	public Port getEffect() {
+	public PortBase getEffect() {
 		return effect;
 	}
 
-	public Collection<Port> getCauses() {
-		ArrayList<Port> causesInterface = new ArrayList<Port>();
+	public Collection<PortBase> getCauses() {
+		ArrayList<PortBase> causesInterface = new ArrayList<PortBase>();
 		causesInterface.addAll(causes);
 		return causesInterface;
 	}
 
-	public void addCauses(Collection<Port> causes) {
-		for (Port cause : causes) {
-			this.causes.add(new PortImpl(cause.getId(), cause.getType().toString(), cause.getSpecType()));
+	public void addCauses(Collection<PortBase> causes) {
+		for (PortBase cause : causes) {
+			this.causes.add(new PortBaseImpl(cause.getId(), cause.getSpecType()));
 		}
 	}
 

@@ -20,14 +20,14 @@ public interface DataWire {
 	 *
 	 * @return the port from which the data is obtained.
 	 */
-	public Port getFrom();
+	public PortBase getFrom();
 
 	/**
 	 * Gets the port to which the data is being sent to.
 	 *
 	 * @return the port to which the data is being sent to.
 	 */
-	public Port getTo();
+	public PortBase getTo();
 
 	/**
 	 * Checks if is incoming. 

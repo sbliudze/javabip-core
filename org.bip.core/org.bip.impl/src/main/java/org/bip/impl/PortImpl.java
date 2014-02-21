@@ -19,53 +19,48 @@ import org.bip.api.Port;
  * Provides information about the port: id, specification type and port type which can be enforceable or spontaneous.
  * 
  */
-public class PortImpl implements Port {
+public class PortImpl extends PortBaseImpl implements Port {
 
-	// TODO check if fields can be made private
-	@XmlAttribute
-	private String id;
+//	@XmlAttribute
+//	private String id;
 
 	@XmlTransient
-	private Type type;
+	private Port.Type type;
 
 	// TODO, Improvement, move this attribute to new class GlueSpecPort (?) and
 	// put this class within glue?
-	@XmlAttribute
-	private String specType;
+//	@XmlAttribute
+//	private String specType;
 
-	public String getId() {
-		return id;
-	}
+//	public String getId() {
+//		return id;
+//	}
 
 	public Port.Type getType() {
 		return type;
 	}
 
-	public String getSpecType() {
-		return specType;
-	}
+//	public String getSpecType() {
+//		return specType;
+//	}
 
 	private ComponentProvider componentProvider;
 
 	public PortImpl() {
 		// need it for the hashCode function
-		type = Type.enforceable;
+		type = Port.Type.enforceable;
 	}
 
 	public PortImpl(String id, String type, Class<?> specificationType) {
-		this.id = id;
+		super (id, specificationType.getCanonicalName());
 		this.type = getType(type);
 		if (specificationType.getCanonicalName() == null)
 			throw new IllegalArgumentException("The provided class " + specificationType + "has no cannonical name");
-		this.specType = specificationType.getCanonicalName();
 	}
 
 	public PortImpl(String id, String type, String specificationType) {
-		this.id = id;
+		super (id, specificationType);
 		this.type = getType(type);
-		// if (specificationType.getCanonicalName() == null)
-		// throw new IllegalArgumentException("The provided class " + specificationType + "has no cannonical name");
-		this.specType = specificationType;
 	}
 
 	public PortImpl(String id, String type, String specificationType, ComponentProvider behaviourProvider) {
@@ -73,23 +68,23 @@ public class PortImpl implements Port {
 		this.componentProvider = behaviourProvider;
 	}
 
-	public PortImpl(String id, Class<?> specificationType) {
-		this.id = id;
-		this.type = Type.enforceable;
-		if (specificationType.getCanonicalName() == null)
-			throw new IllegalArgumentException("The provided class " + specificationType + "has no cannonical name");
-		this.specType = specificationType.getCanonicalName();
-	}
+//	public PortImpl(String id, Class<?> specificationType) {
+//		this.id = id;
+//		this.type = Type.enforceable;
+//		if (specificationType.getCanonicalName() == null)
+//			throw new IllegalArgumentException("The provided class " + specificationType + "has no cannonical name");
+//		this.specType = specificationType.getCanonicalName();
+//	}
 
-	private Type getType(String portType) {
-		if (portType.equals(Type.enforceable.toString())) {
-			return Type.enforceable;
-		} else if (portType.equals(Type.spontaneous.toString())) {
-			return Type.spontaneous;
-		} else if (portType.equals(Type.internal.toString())) {
-			return Type.internal;
+	private Port.Type getType(String portType) {
+		if (portType.equals(Port.Type.enforceable.toString())) {
+			return Port.Type.enforceable;
+		} else if (portType.equals(Port.Type.spontaneous.toString())) {
+			return Port.Type.spontaneous;
+		} else if (portType.equals(Port.Type.internal.toString())) {
+			return Port.Type.internal;
 		}
-		return Type.unknown;
+		return Port.Type.unknown;
 	}
 
 	public BIPComponent component() {

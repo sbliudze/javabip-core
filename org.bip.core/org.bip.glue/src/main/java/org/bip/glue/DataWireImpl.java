@@ -11,30 +11,30 @@ package org.bip.glue;
 import javax.xml.bind.annotation.XmlElement;
 
 import org.bip.api.DataWire;
-import org.bip.api.Port;
-import org.bip.impl.PortImpl;
+import org.bip.api.PortBase;
+import org.bip.impl.PortBaseImpl;
 
 class DataWireImpl implements DataWire {
 
 	@XmlElement(name = "from")
-	private PortImpl from;
+	private PortBaseImpl from;
 
 	@XmlElement(name = "to")
-	private PortImpl to;
+	private PortBaseImpl to;
 
 	public DataWireImpl() {
 	}
 
-	public DataWireImpl(Port from, Port to) {
-		this.from = new PortImpl(from.getId(), from.getType().toString(), from.getSpecType());
-		this.to = new PortImpl(to.getId(), to.getType().toString(), to.getSpecType());
+	public DataWireImpl(PortBase from, PortBase to) {
+		this.from = new PortBaseImpl(from.getId(), from.getSpecType());
+		this.to = new PortBaseImpl(to.getId(), to.getSpecType());
 	}
 
-	public Port getFrom() {
+	public PortBase getFrom() {
 		return from;
 	}
 
-	public Port getTo() {
+	public PortBase getTo() {
 		return to;
 	}
 

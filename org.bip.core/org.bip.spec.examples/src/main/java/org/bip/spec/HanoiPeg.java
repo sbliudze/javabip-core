@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import org.bip.annotations.bipExecutableBehaviour;
 import org.bip.api.Guard;
 import org.bip.api.Port;
+import org.bip.api.PortBase;
 import org.bip.executor.BehaviourBuilder;
 import org.bip.impl.GuardImpl;
 import org.bip.impl.PortImpl;

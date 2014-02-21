@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.bip.api.DataOut;
 import org.bip.api.Port;
+import org.bip.api.PortBase;
 import org.bip.exceptions.BIPException;
 
 /**

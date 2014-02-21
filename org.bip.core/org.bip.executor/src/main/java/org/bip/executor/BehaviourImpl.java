@@ -22,6 +22,8 @@ import org.bip.api.DataOut;
 import org.bip.api.ExecutableBehaviour;
 import org.bip.api.Guard;
 import org.bip.api.Port;
+import org.bip.api.Port;
+import org.bip.api.PortBase;
 import org.bip.exceptions.BIPException;
 import org.bip.impl.DataImpl;
 import org.bip.impl.TransitionImpl;
@@ -406,6 +408,8 @@ class BehaviourImpl implements ExecutableBehaviour {
 		if (portToDataInForGuard.contains(port)) {
 			return this.portToDataInForGuard.get(port);
 		}
+		// TODO do we really need to check spectype?
+		// Anyway, do it differently: check once against this behaviour but not against every port
 		// else check if there is a port with the same id and spec type
 		else {
 			for (Port keyPort : portToDataInForGuard.keySet()) {
