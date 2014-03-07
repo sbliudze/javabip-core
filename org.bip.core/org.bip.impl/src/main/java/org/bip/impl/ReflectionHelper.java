@@ -68,11 +68,7 @@ public class ReflectionHelper {
 		Annotation[] annotations = method.getAnnotations();
 		for (Annotation annotation : annotations) {
 			if (annotation instanceof bipData) { // DATA OUT
-				bipData dataAnnotation = (bipData) annotation;
-				String name = dataAnnotation.name();
-				String type = dataAnnotation.accessTypePort();
-				String[] ports = dataAnnotation.ports();
-				return createData(name, method.getReturnType(), type, ports);
+				return createData(method, (bipData)annotation);
 			}
 		}
 
@@ -81,5 +77,15 @@ public class ReflectionHelper {
 		throw new BIPException("Method " + method + " does not have BIPData annotation for Data Out");
 
 	}
+		
+	public static DataOut<?> createData(Method method, bipData dataAnnotation) {
+
+		String name = dataAnnotation.name();
+		String type = dataAnnotation.accessTypePort();
+		String[] ports = dataAnnotation.ports();
+		return createData(name, method.getReturnType(), type, ports);
+
+	}
+	
 	
 }

@@ -96,6 +96,9 @@ public class BehaviourBuilder {
 	public void addTransition(TransitionImpl transition) {
 		allTransitions.add(transition);
 
+		// TODO, damn why do we have those side effects, to make it work properly? At least need to change the name
+		// to avoid confusion of what is the purpose of this function.
+		
 		// update the states list
 		if (!states.contains(transition.source())) {
 			states.add(transition.source());
@@ -131,7 +134,7 @@ public class BehaviourBuilder {
 			  				  Method method) {			
 
 
-			allTransitions.add(new TransitionImpl(name, source, target, guard, method));
+			addTransition(new TransitionImpl(name, source, target, guard, method));
 	
 	}
 

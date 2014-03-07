@@ -32,7 +32,7 @@ import org.bip.exceptions.BIPException;
 import org.bip.impl.DataImpl;
 import org.bip.impl.GuardImpl;
 import org.bip.impl.PortImpl;
-import org.bip.impl.TransitionImpl;
+import org.bip.impl.ReflectionHelper;
 
 /**
  * Creates a Behaviour for the future use of the Executor
@@ -152,14 +152,14 @@ public abstract class AbstractExecutor implements Executor, ComponentProvider {
 			for (Annotation annotation : annotations) {
 				if (annotation instanceof bipTransition) {
 					
-					addTransition(method, annotation, builder);
+					addTransition(method, (bipTransition) annotation, builder);
 
 				} else if (annotation instanceof bipTransitions) {
 					bipTransitions transitionsAnnotation = (bipTransitions) annotation;
 					Annotation[] transitionAnnotations = transitionsAnnotation.value();
 					for (Annotation bipTransitionAnnotation : transitionAnnotations) {
 						
-						addTransition(method, bipTransitionAnnotation, builder);
+						addTransition(method, (bipTransition) bipTransitionAnnotation, builder);
 					}
 
 				} else if (annotation instanceof bipGuard) {
@@ -167,11 +167,9 @@ public abstract class AbstractExecutor implements Executor, ComponentProvider {
 					builder.addGuard(guard);
 
 				} else if (annotation instanceof bipData) { // DATA OUT
-					bipData dataAnnotation = (bipData) annotation;
-					String name = dataAnnotation.name();
-					String type = dataAnnotation.accessTypePort();
-					String[] ports = dataAnnotation.ports();
-					DataOut<?> data = createData(name, method.getReturnType(), type, ports);
+										
+					DataOut<?> data = ReflectionHelper.createData(method, (bipData)annotation);
+					
 					builder.addDataOut(data, method);
 
 				} else if (annotation instanceof bipPorts) {
@@ -194,12 +192,7 @@ public abstract class AbstractExecutor implements Executor, ComponentProvider {
 		}
 		return builder;
 	}
-
-	<T> DataOut<T> createData(String dataName, Class<T> type, String accessType, String[] ports) throws BIPException {
-		DataOut<T> toReturn = new DataImpl<T>(dataName, type, accessType, ports);
-		return toReturn;
-	}
-
+	
 	private Guard extractGuards(Method method, Annotation annotation) throws BIPException {
 		Class<?> returnType = method.getReturnType();
 		if (!Boolean.class.isAssignableFrom(returnType) && !boolean.class.isAssignableFrom(returnType)) {
@@ -210,12 +203,10 @@ public abstract class AbstractExecutor implements Executor, ComponentProvider {
 		return new GuardImpl(guardAnnotation.name(), method);
 	}
 
-	private void addTransition(Method method, Annotation annotation, BehaviourBuilder builder) {
-		bipTransition transitionAnnotation = (bipTransition) annotation;
-		// We store method so that there are no problems if there
-		// are the same method names with different parameters
-		TransitionImpl transition = new TransitionImpl(transitionAnnotation.name(), transitionAnnotation.source(), transitionAnnotation.target(), transitionAnnotation.guard(), method);
-		builder.addTransition(transition);
+	private void addTransition(Method method, bipTransition transitionAnnotation, BehaviourBuilder builder) {
+		
+		builder.addTransition(transitionAnnotation.name(), transitionAnnotation.source(), transitionAnnotation.target(), transitionAnnotation.guard(), method);
+
 	}
 	
 }
