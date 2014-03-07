@@ -154,15 +154,15 @@ public abstract class AbstractExecutor implements Executor, ComponentProvider {
 			Annotation[] annotations = method.getAnnotations();
 			for (Annotation annotation : annotations) {
 				if (annotation instanceof bipTransition) {
-					Iterable<Data<?>> transitionData = extractParamAnnotations(method);
-					addTransition(method, annotation, transitionData, builder);
+					
+					addTransition(method, annotation, builder);
 
 				} else if (annotation instanceof bipTransitions) {
 					bipTransitions transitionsAnnotation = (bipTransitions) annotation;
 					Annotation[] transitionAnnotations = transitionsAnnotation.value();
 					for (Annotation bipTransitionAnnotation : transitionAnnotations) {
-						Iterable<Data<?>> transitionData = extractParamAnnotations(method);
-						addTransition(method, bipTransitionAnnotation, transitionData, builder);
+						
+						addTransition(method, bipTransitionAnnotation, builder);
 					}
 
 				} else if (annotation instanceof bipGuard) {
@@ -193,35 +193,11 @@ public abstract class AbstractExecutor implements Executor, ComponentProvider {
 				}
 
 			}
-			// extractParamAnnotations(method);
+
 		}
 		return builder;
 	}
 
-	private List<Data<?>> extractParamAnnotations(Method method) {
-		// deal with method parameters: there might be a dataIn
-		ArrayList<Data<?>> dataIn = new ArrayList<Data<?>>();
-		Class<?> paramTypes[] = method.getParameterTypes();
-		Annotation[][] paramsAnnotations = method.getParameterAnnotations();
-		for (int i = 0; i < paramsAnnotations.length; i++) {
-			// for (Annotation[] paramAnnotations : paramsAnnotations) {
-			for (Annotation annotation : paramsAnnotations[i]) {
-				if (annotation instanceof bipData) {
-					bipData dataAnnotation = (bipData) annotation;
-					Data<?> data = createData(dataAnnotation.name(), paramTypes[i]);
-					dataIn.add(data);
-				}
-			}
-		}
-		return dataIn;
-	}
-	
-	//TODO find a way not to copy this method among classes
-	<T> Data<T> createData(String dataName, Class<T> type) {
-		Data<T> toReturn = new DataImpl<T>(dataName, type);
-		return toReturn;
-	}
-	
 	<T> DataOut<T> createData(String dataName, Class<T> type, String accessType, String[] ports) throws BIPException {
 		DataOut<T> toReturn = new DataImpl<T>(dataName, type, accessType, ports);
 		return toReturn;
@@ -237,12 +213,12 @@ public abstract class AbstractExecutor implements Executor, ComponentProvider {
 		return new GuardImpl(guardAnnotation.name(), method);
 	}
 
-	private void addTransition(Method method, Annotation annotation, Iterable<Data<?>> transitionData, BehaviourBuilder builder) {
+	private void addTransition(Method method, Annotation annotation, BehaviourBuilder builder) {
 		bipTransition transitionAnnotation = (bipTransition) annotation;
 		// We store method so that there are no problems if there
 		// are the same method names with different parameters
-		TransitionImpl transition = new TransitionImpl(transitionAnnotation.name(), transitionAnnotation.source(), transitionAnnotation.target(), transitionAnnotation.guard(), method,
-				transitionData);
+		TransitionImpl transition = new TransitionImpl(transitionAnnotation.name(), transitionAnnotation.source(), transitionAnnotation.target(), transitionAnnotation.guard(), method);
 		builder.addTransition(transition);
 	}
+	
 }

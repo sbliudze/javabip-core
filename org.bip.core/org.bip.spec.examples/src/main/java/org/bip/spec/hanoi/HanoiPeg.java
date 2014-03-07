@@ -63,8 +63,7 @@ public class HanoiPeg {
 		//TRANSITIONS
 
 		behaviourBuilder.addTransition("pieceAdd", initialState, initialState, "isPieceAddable", 
-									   this.getClass().getMethod("addPiece", int.class), 
-									   Arrays.asList( "addedDisk") );
+									   this.getClass().getMethod("addPiece", int.class) );
 		
 		behaviourBuilder.addTransition("pieceRemove", initialState, initialState, "isPieceRemovable", 
 				   					   this.getClass().getMethod("removePiece"));
@@ -103,7 +102,7 @@ public class HanoiPeg {
 		return toReturn;
 	}
 
-	public void addPiece(int no) {
+	public void addPiece(@bipData(name = "addedDisk") int no) {
 		logger.debug("EXECUTION: component " + this.getClass().getName() + " has added a piece.");
 		pieces[no - 1] = true;
 		logger.debug("Piece no. " + no + " is being added.");

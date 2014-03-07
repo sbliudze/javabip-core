@@ -1,12 +1,19 @@
+/*
+ * Copyright (c) 2012 Crossing-Tech TM Switzerland. All right reserved.
+ * Copyright (c) 2012, RiSD Laboratory, EPFL, Switzerland.
+ *
+ * Author: Simon Bliudze, Alina Zolotukhina, Anastasia Mavridou, and Radoslaw Szymanek
+ * Date: 01/27/14
+ */
+
 package org.bip.impl;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 
 import org.bip.api.Data;
 
 public class TransitionImpl {
-
+		
 	protected String source;
 	protected String target;
 	protected String name;
@@ -14,10 +21,6 @@ public class TransitionImpl {
 	protected Method method;
 	protected String guard;
 	protected Iterable<Data<?>> dataRequired;
-
-	public TransitionImpl(String name, String source, String target, String guard, Method method) {
-		this(name, source, target, guard, method, new ArrayList<Data<?>>());
-	}
 
 	// TODO, what if name and source state are switched in spec make a precomputation check
 
@@ -31,14 +34,15 @@ public class TransitionImpl {
 	 * @param method
 	 * @param dataIsNeeded
 	 */
-	public TransitionImpl(String name, String source, String target, String guard, Method method, Iterable<Data<?>> dataIsNeeded) {
+	public TransitionImpl(String name, String source, String target, String guard, Method method) {
 		this.source = source;
 		this.target = target;
 		this.name = name;
 		this.method = method;
 		this.guard = guard;
-		this.dataRequired = dataIsNeeded;
+		this.dataRequired = ReflectionHelper.extractParamAnnotations(method);
 	}
+	
 	
 	public TransitionImpl(TransitionImpl transition)
 	{
@@ -61,4 +65,5 @@ public class TransitionImpl {
 	public String name() {
 		return this.name;
 	}
+		
 }

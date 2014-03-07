@@ -142,25 +142,6 @@ public class BehaviourBuilder {
 	<T> DataOut<T> createData(String dataName, Class<T> type, String accessType) {
 		return new DataImpl<T>(dataName, type, accessType);
 	}
-
-	public void addTransition(String name, String source, 
-							  String target, String guard, 
-							  Method method, Iterable<String> dataIsNeeded) {			
-			
-			ArrayList<Data<?>> trData = new ArrayList<Data<?>>();
-			
-			// TODO Add check that both methodParameters and methodParameterNames have the same length.
-			Class<?>[] methodParameters = method.getParameterTypes();
-			Iterator<String> methodParameterNames = dataIsNeeded.iterator();
-			
-			
-			for (int i = 0; i < methodParameters.length; i++) {
-				trData.add(createData(methodParameterNames.next(), methodParameters[i]));
-			}
-			
-			allTransitions.add(new TransitionImpl(name, source, target, guard, method, trData));
-					
-	}
 	
 	public void addTransition(String name, String source, 
 			  				  String target, String guard, 

@@ -1,13 +1,19 @@
+/*
+ * Copyright (c) 2012 Crossing-Tech TM Switzerland. All right reserved.
+ * Copyright (c) 2012, RiSD Laboratory, EPFL, Switzerland.
+ *
+ * Author: Simon Bliudze, Alina Zolotukhina, Anastasia Mavridou, and Radoslaw Szymanek
+ * Date: 01/27/14
+ */
+
 package org.bip.impl;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.bip.annotations.bipData;
 import org.bip.api.Data;
 import org.bip.api.Guard;
 import org.slf4j.Logger;
@@ -19,6 +25,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class GuardImpl implements Guard {
+
 
 	private Logger logger = LoggerFactory.getLogger(GuardImpl.class);
 
@@ -32,33 +39,7 @@ public class GuardImpl implements Guard {
 	public GuardImpl(String name, Method method) {
 		this.name = name;
 		this.method = method;
-		this.dataIsNeeded = extractParamAnnotations(method);
-	}
-
-	private List<Data<?>> extractParamAnnotations(Method method) {
-		// deal with method parameters: there might be a dataIn
-		ArrayList<Data<?>> dataIn = new ArrayList<Data<?>>();
-		Class<?> paramTypes[] = method.getParameterTypes();
-		if (paramTypes == null || paramTypes.length == 0) {
-			return new ArrayList<Data<?>>();
-		}
-		Annotation[][] paramsAnnotations = method.getParameterAnnotations();
-		for (int i = 0; i < paramsAnnotations.length; i++) {
-			for (Annotation annotation : paramsAnnotations[i]) {
-				if (annotation instanceof bipData) {
-					bipData dataAnnotation = (bipData) annotation;
-					Data<?> data = createData(dataAnnotation.name(), paramTypes[i]);
-					dataIn.add(data);
-				}
-			}
-		}
-		return dataIn;
-	}
-
-	// TODO find a way not to copy this method among classes
-	<T> Data<T> createData(String dataName, Class<T> type) {
-		Data<T> toReturn = new DataImpl<T>(dataName, type);
-		return toReturn;
+		this.dataIsNeeded = ReflectionHelper.extractParamAnnotations(method);
 	}
 
 	public String name() {

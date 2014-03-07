@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2012 Crossing-Tech TM Switzerland. All right reserved.
+ * Copyright (c) 2012, RiSD Laboratory, EPFL, Switzerland.
+ *
+ * Author: Simon Bliudze, Alina Zolotukhina, Anastasia Mavridou, and Radoslaw Szymanek
+ * Date: 01/27/14
+ */
+
 package org.bip.impl;
 
 import java.util.HashSet;
@@ -5,7 +13,6 @@ import java.util.Set;
 
 import org.bip.api.DataOut;
 import org.bip.api.Port;
-import org.bip.api.PortBase;
 import org.bip.exceptions.BIPException;
 
 /**
