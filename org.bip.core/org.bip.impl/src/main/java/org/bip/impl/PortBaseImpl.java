@@ -9,7 +9,6 @@
 package org.bip.impl;
 
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
 
 import org.bip.api.BIPComponent;
 import org.bip.api.PortBase;

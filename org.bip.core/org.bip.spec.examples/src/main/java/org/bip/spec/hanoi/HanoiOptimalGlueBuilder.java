@@ -11,12 +11,6 @@ import org.bip.glue.GlueBuilder;
 
 public class HanoiOptimalGlueBuilder extends GlueBuilder {
 
-    private int size;
-
-    public HanoiOptimalGlueBuilder(int size) {
-        this.size = size;
-    }
-
     @Override
     public void configure() {
 

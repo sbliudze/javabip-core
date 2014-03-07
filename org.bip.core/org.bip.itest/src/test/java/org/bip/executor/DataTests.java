@@ -58,7 +58,7 @@ public class DataTests {
 
 		int size = 8;
 
-		BIPGlue bipGlue4Hanoi = new org.bip.spec.hanoi.HanoiOptimalGlueBuilder(size).build();
+		BIPGlue bipGlue4Hanoi = new org.bip.spec.hanoi.HanoiOptimalGlueBuilder().build();
 
 		bipGlue4Hanoi.toXML(System.out);
 

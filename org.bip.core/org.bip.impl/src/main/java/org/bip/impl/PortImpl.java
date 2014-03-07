@@ -8,7 +8,6 @@
 
 package org.bip.impl;
 
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.bip.api.BIPComponent;
@@ -21,28 +20,12 @@ import org.bip.api.Port;
  */
 public class PortImpl extends PortBaseImpl implements Port {
 
-//	@XmlAttribute
-//	private String id;
-
 	@XmlTransient
 	private Port.Type type;
-
-	// TODO, Improvement, move this attribute to new class GlueSpecPort (?) and
-	// put this class within glue?
-//	@XmlAttribute
-//	private String specType;
-
-//	public String getId() {
-//		return id;
-//	}
 
 	public Port.Type getType() {
 		return type;
 	}
-
-//	public String getSpecType() {
-//		return specType;
-//	}
 
 	private ComponentProvider componentProvider;
 
@@ -67,14 +50,6 @@ public class PortImpl extends PortBaseImpl implements Port {
 		this(id, type, specificationType);
 		this.componentProvider = behaviourProvider;
 	}
-
-//	public PortImpl(String id, Class<?> specificationType) {
-//		this.id = id;
-//		this.type = Type.enforceable;
-//		if (specificationType.getCanonicalName() == null)
-//			throw new IllegalArgumentException("The provided class " + specificationType + "has no cannonical name");
-//		this.specType = specificationType.getCanonicalName();
-//	}
 
 	private Port.Type getType(String portType) {
 		if (portType.equals(Port.Type.enforceable.toString())) {

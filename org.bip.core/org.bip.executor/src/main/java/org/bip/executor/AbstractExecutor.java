@@ -1,10 +1,17 @@
+/*
+ * Copyright (c) 2012 Crossing-Tech TM Switzerland. All right reserved.
+ * Copyright (c) 2012, RiSD Laboratory, EPFL, Switzerland.
+ *
+ * Author: Simon Bliudze, Alina Zolotukhina, Anastasia Mavridou, and Radoslaw Szymanek
+ * Date: 10/15/12
+ */
+
 package org.bip.executor;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.bip.annotations.bipComponentType;
 import org.bip.annotations.bipData;
@@ -16,26 +23,16 @@ import org.bip.annotations.bipTransition;
 import org.bip.annotations.bipTransitions;
 import org.bip.api.BIPEngine;
 import org.bip.api.ComponentProvider;
-import org.bip.api.Data;
 import org.bip.api.DataOut;
 import org.bip.api.ExecutableBehaviour;
 import org.bip.api.Executor;
 import org.bip.api.Guard;
 import org.bip.api.Port;
-import org.bip.api.PortBase;
 import org.bip.exceptions.BIPException;
 import org.bip.impl.DataImpl;
 import org.bip.impl.GuardImpl;
 import org.bip.impl.PortImpl;
 import org.bip.impl.TransitionImpl;
-
-/*
- * Copyright (c) 2012 Crossing-Tech TM Switzerland. All right reserved.
- * Copyright (c) 2012, RiSD Laboratory, EPFL, Switzerland.
- *
- * Author: Simon Bliudze, Alina Zolotukhina, Anastasia Mavridou, and Radoslaw Szymanek
- * Date: 10/15/12
- */
 
 /**
  * Creates a Behaviour for the future use of the Executor
@@ -83,7 +80,7 @@ public abstract class AbstractExecutor implements Executor, ComponentProvider {
 			builder = getExecutableBehaviour(builder);
 		}
 
-		this.behaviour = builder.buildWithData(this);
+		this.behaviour = builder.build(this);
 		componentName = behaviour.getComponentType();
 	}
 

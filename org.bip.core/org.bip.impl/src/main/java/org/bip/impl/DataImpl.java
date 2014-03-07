@@ -8,7 +8,6 @@
 
 package org.bip.impl;
 
-import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,16 +30,9 @@ public class DataImpl<T> implements DataOut<T> {
 	private Type portSpecificationType;
 	private Set<Port> allowedPorts = new HashSet<Port>();
 	private String[] stringPorts;
-
-	/**
-	 * 
-	 * For type any: all the ports can give the data For type witness: data is given without ports participating For type allowedPorts: specify the
-	 * ports that are allowed to give the data For type unallowedPorts: specify the ports that are not allowed to give the data
-	 */
-	// public enum Type {
-	// any, witness, allowed, unallowed, unknown,
-	// // upon adding rewrite the getType method
-	// }
+	
+	// TODO, BUG, DESIGN ISSUE, stringPorts and allowedPorts are not connected. Depending on the constructor
+	// one of the attributes will be empty. 
 	
 	public DataImpl(String name, Class<T> clazz) {
 		this.name = name;
@@ -58,6 +50,7 @@ public class DataImpl<T> implements DataOut<T> {
 		this.allowedPorts = ports;
 	}
 
+	// TODO, Given the Set of ports constructor given above, maybe there is no need for it after refactoring. 
 	public DataImpl(String name, Class<T> clazz, String type, String[] ports) throws BIPException {
 		this(name, clazz, type);
 
@@ -102,10 +95,6 @@ public class DataImpl<T> implements DataOut<T> {
 	public String[] stringPorts() {
 		return this.stringPorts;
 	}
-
-//	public void addPorts(List<Port> allowedPorts) {
-//		this.allowedPorts.addAll(allowedPorts);
-//	}
 
 	public Type portSpecificationType() {
 		return this.portSpecificationType;
