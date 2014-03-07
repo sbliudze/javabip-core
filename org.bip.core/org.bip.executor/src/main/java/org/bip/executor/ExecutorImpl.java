@@ -10,6 +10,8 @@ package org.bip.executor;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -224,14 +226,17 @@ public class ExecutorImpl extends AbstractExecutor implements Runnable {
 		}
 
 		T result = null;
+		
 		try {
 			logger.debug("Component {} getting data {}.", behaviour.getComponentType(), name);
 			Object methodResult = behaviour.getDataOutMapping().get(name).invoke(bipComponent);
+			
 			if (!methodResult.getClass().isAssignableFrom(clazz)) {
-				throw new IllegalArgumentException("The type " + methodResult.getClass() + " of the required data variable " + name + " from the component " + bipComponent.getClass().getName()
-						+ " does not correspond to the specified return type " + clazz);
+				result = getPrimitiveData(name, methodResult, clazz);
 			}
-			result = clazz.cast(methodResult);
+			else
+				result = clazz.cast(methodResult);
+			
 		} catch (IllegalAccessException e) {
 			ExceptionHelper.printExceptionTrace(logger, e);
 			e.printStackTrace();
@@ -244,6 +249,29 @@ public class ExecutorImpl extends AbstractExecutor implements Runnable {
 			e.printStackTrace();
 		}
 		return result;
+	}
+	
+	Set<Class<?>> primitiveTypes = new HashSet<Class<?>>(Arrays.<Class<?>>asList(int.class, float.class, 
+										double.class, byte.class, long.class, short.class,
+										boolean.class, char.class));
+	
+		
+	<T> T getPrimitiveData(String name, Object methodResult, Class<T> clazz) {
+
+		if (primitiveTypes.contains(clazz)) {
+	
+			// For primitive types, as specified in primitiveTypes set, 
+			// we use direct casting that will employ autoboxing
+			// feature from Java. Therefore, we suppress unchecked 
+			@SuppressWarnings("unchecked")
+			T result = (T) methodResult;
+	
+			return result;
+		}
+		else
+			throw new IllegalArgumentException("The type " + methodResult.getClass() + " of the required data variable " + name + " from the component " + bipComponent.getClass().getName()
+				+ " does not correspond to the specified return type " + clazz);		
+
 	}
 
 	public List<Boolean> checkEnabledness(PortBase port, List<Map<String, Object>> data) {

@@ -13,7 +13,7 @@ public class TransitionImpl {
 
 	protected Method method;
 	protected String guard;
-	protected Iterable<Data<?>> dataIsNeeded;
+	protected Iterable<Data<?>> dataRequired;
 
 	public TransitionImpl(String name, String source, String target, String guard, Method method) {
 		this(name, source, target, guard, method, new ArrayList<Data<?>>());
@@ -37,7 +37,7 @@ public class TransitionImpl {
 		this.name = name;
 		this.method = method;
 		this.guard = guard;
-		this.dataIsNeeded = dataIsNeeded;
+		this.dataRequired = dataIsNeeded;
 	}
 	
 	public TransitionImpl(TransitionImpl transition)
@@ -47,7 +47,7 @@ public class TransitionImpl {
 		this.name = transition.name;
 		this.method = transition.method;
 		this.guard = transition.guard;
-		this.dataIsNeeded = transition.dataIsNeeded;
+		this.dataRequired = transition.dataRequired;
 	}
 	
 	public String source() {

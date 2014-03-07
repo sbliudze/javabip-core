@@ -67,7 +67,7 @@ class ExecutableTransitionImpl extends TransitionImpl implements ExecutableTrans
 	}
 
 	public Iterable<Data<?>> dataRequired() {
-		return dataIsNeeded;
+		return dataRequired;
 	}
 
 	public Collection<Guard> transitionGuards()

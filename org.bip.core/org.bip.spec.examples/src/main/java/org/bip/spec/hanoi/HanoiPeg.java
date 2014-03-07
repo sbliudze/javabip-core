@@ -8,22 +8,14 @@
 
 package org.bip.spec.hanoi;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.Arrays;
 
 import org.bip.annotations.bipData;
 import org.bip.annotations.bipExecutableBehaviour;
-import org.bip.api.Data;
 import org.bip.api.DataOut;
-import org.bip.api.Guard;
 import org.bip.api.Port;
-import org.bip.api.PortBase;
 import org.bip.executor.BehaviourBuilder;
 import org.bip.impl.DataImpl;
-import org.bip.impl.GuardImpl;
-import org.bip.impl.PortImpl;
-import org.bip.impl.TransitionImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,51 +50,49 @@ public class HanoiPeg {
 	@bipExecutableBehaviour
 	public BehaviourBuilder initializeBehavior() throws NoSuchMethodException {
 
-		String componentType = this.getClass().getCanonicalName();
-		ArrayList<String> states = new ArrayList<String>();
-
-		ArrayList<TransitionImpl> allTransitions = new ArrayList<TransitionImpl>();
-		ArrayList<Port> allPorts = new ArrayList<Port>();
-		ArrayList<Guard> guards = new ArrayList<Guard>();
-
-		String currentState = "start";
-
-		states.add(currentState);
-
-		//DATA IN
+		BehaviourBuilder behaviourBuilder = new BehaviourBuilder();
 		
-		Data<Integer> dataAdd = new DataImpl<Integer>("addedDisk", Integer.class);
-		ArrayList<Data<?>> trData = new ArrayList<Data<?>>();
-		trData.add(dataAdd);
+		behaviourBuilder.setComponentType( this.getClass().getCanonicalName() );
 		
+		String initialState = "start";
+		
+		behaviourBuilder.setInitialState(initialState);
+		
+		behaviourBuilder.addState(initialState);
+				
 		//TRANSITIONS
+
+		behaviourBuilder.addTransition("pieceAdd", initialState, initialState, "isPieceAddable", 
+									   this.getClass().getMethod("addPiece", int.class), 
+									   Arrays.asList( "addedDisk") );
 		
-		allTransitions.add(new TransitionImpl("pieceAdd", "start", "start", "isPieceAddable", this.getClass().getMethod("addPiece", int.class), trData));
-		allTransitions.add(new TransitionImpl("pieceRemove", "start", "start", "isPieceRemovable", this.getClass().getMethod("removePiece")));
+		behaviourBuilder.addTransition("pieceRemove", initialState, initialState, "isPieceRemovable", 
+				   					   this.getClass().getMethod("removePiece"));
+		
 
 		//PORTS
 		
-		Port add = new PortImpl("pieceAdd", Port.Type.enforceable.toString(), this.getClass());
-		Port rm = new PortImpl("pieceRemove", Port.Type.enforceable.toString(), this.getClass());
-		allPorts.add(rm);
-		allPorts.add(add);
-		
+		behaviourBuilder.addPort("pieceAdd", Port.Type.enforceable.toString(), this.getClass());
+		behaviourBuilder.addPort("pieceRemove", Port.Type.enforceable.toString(), this.getClass());
+				
 		//GUARDS
 		
-		guards.add(new GuardImpl("isPieceAddable", this.getClass().getMethod("isPieceAddable", Integer.class)));
-		guards.add(new GuardImpl("isPieceRemovable", this.getClass().getMethod("isPieceRemovable")));
-
+		// TODO, It looks like guard does not have to specify the names of BIP data? It should also required Array.asList( "addedDisk" ); in its definition.
+		// TODO, add addGuard function that has no guardName parameter since it is inferred from the name of the method.
+		behaviourBuilder.addGuard("isPieceAddable", this.getClass().getMethod("isPieceAddable", int.class) );
+		behaviourBuilder.addGuard("isPieceRemovable", this.getClass().getMethod("isPieceRemovable"));
+		
 		//DATA OUT
 		
-		DataOut<?> outData = createData("disksize", int.class, "any");
-		ArrayList<DataOut<?>> dataOut = new ArrayList<DataOut<?>>();
-		dataOut.add(outData);
-		Hashtable<String, Method> dataOutName = new Hashtable<String, Method>();
-		dataOutName.put("disksize", this.getClass().getMethod("diskSizeOnTop"));
-
+		// TODO, There is mismatch between what is defined here and in BIP annotation.
+		// TODO, check todo in bipData annotation, maybe addDataOut should only accept Method parameter and 
+		// read other things from the method?
+		behaviourBuilder.addDataOut("disksize", this.getClass().getMethod("diskSizeOnTop"), "any" );
+		
 		//BUILD
 		
-		BehaviourBuilder behaviourBuilder = new BehaviourBuilder(componentType, currentState, allTransitions, allPorts, states, guards, dataOutName, dataOut, this);
+		behaviourBuilder.setComponent(this);
+		
 
 		return behaviourBuilder;
 	}
@@ -130,7 +120,8 @@ public class HanoiPeg {
 
 	}
 
-	public boolean isPieceAddable(@bipData(name = "addedDisk") Integer no) {
+	// TODO, autoboxing between for example int and Integer may be a good feature to help wire data from multiple components.
+	public boolean isPieceAddable(@bipData(name = "addedDisk") int no) {
 
 		if (no == -1)
 			return false;

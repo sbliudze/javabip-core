@@ -14,6 +14,10 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * It is used to annotated data sent between BIP components.
  */
+// TODO, How do we specify data? Maybe always as annotation and no need to specify it programmatically? 
+// If annotation is not specified then what is the default name? maybe name of the method.1 for 
+// input parameters and method.out for the return parameter? Moreover, what is the default value for accessType
+// port?
 @Retention(RetentionPolicy.RUNTIME)
 public @interface bipData {
 

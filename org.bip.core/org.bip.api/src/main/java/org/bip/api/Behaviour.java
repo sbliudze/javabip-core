@@ -15,6 +15,7 @@ import java.util.Set;
 /**
  * It specifies the behaviour of any BIP component.
  */
+// TODO, List and Set interface allows for mutation, use Iterable interface instead.
 public interface Behaviour {
 
 	/**
@@ -50,6 +51,9 @@ public interface Behaviour {
 	 *
 	 * @return the map
 	 */
+	// TODO, do we really need to return the whole Map structure? Maybe simple function to query for Iterable
+	// of Data for a given port is sufficient? We avoid mutability and avoid brining the whole part of behavior outside of it.
+	// The function below just exactly that so maybe build on 
 	public Map<Port, Set<Data<?>>> portToDataInForGuard();
 
 	// TODO, what if a given port is associated with different transitions within behavior and these transitions 

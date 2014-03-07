@@ -10,14 +10,17 @@ package org.bip.executor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Iterator;
 
 import org.bip.api.ComponentProvider;
+import org.bip.api.Data;
 import org.bip.api.DataOut;
 import org.bip.api.ExecutableBehaviour;
 import org.bip.api.Guard;
 import org.bip.api.Port;
-import org.bip.api.PortBase;
 import org.bip.exceptions.BIPException;
+import org.bip.impl.DataImpl;
+import org.bip.impl.GuardImpl;
 import org.bip.impl.PortImpl;
 import org.bip.impl.TransitionImpl;
 
@@ -42,6 +45,7 @@ public class BehaviourBuilder {
 	private Hashtable<String, Method> dataOutName;
 	private ArrayList<DataOut<?>> dataOut;
 
+	@Deprecated
 	public BehaviourBuilder(String type, String currentState, ArrayList<TransitionImpl> allTransitions, ArrayList<Port> allPorts, ArrayList<String> states, ArrayList<Guard> guards,
 			Object component) {
 		this.componentType = type;
@@ -53,6 +57,7 @@ public class BehaviourBuilder {
 		this.component = component;
 	}
 
+	@Deprecated
 	public BehaviourBuilder(String type, String currentState, ArrayList<TransitionImpl> allTransitions, ArrayList<Port> allPorts, ArrayList<String> states, ArrayList<Guard> guards,
 			Hashtable<String, Method> dataOutName, ArrayList<DataOut<?>> dataOut, Object component) {
 		this(type, currentState, allTransitions, allPorts, states, guards, component);
@@ -113,6 +118,10 @@ public class BehaviourBuilder {
 		allPorts.add(port);
 	}
 
+	public void addPort(String id, String type, Class<?> specificationType) {
+		allPorts.add(new PortImpl(id, type, specificationType));
+	}
+	
 	public void addGuard(Guard guard) {
 		guards.add(guard);
 	}
@@ -121,4 +130,59 @@ public class BehaviourBuilder {
 		dataOutName.put(data.name(), method);
 		dataOut.add(data);
 	}
+
+	public void addState(String state) {		
+		states.add(state);		
+	}
+	
+	<T> Data<T> createData(String name, Class<T> type) {
+		return new DataImpl<T>(name, type);
+	}
+	
+	<T> DataOut<T> createData(String dataName, Class<T> type, String accessType) {
+		return new DataImpl<T>(dataName, type, accessType);
+	}
+
+	public void addTransition(String name, String source, 
+							  String target, String guard, 
+							  Method method, Iterable<String> dataIsNeeded) {			
+			
+			ArrayList<Data<?>> trData = new ArrayList<Data<?>>();
+			
+			// TODO Add check that both methodParameters and methodParameterNames have the same length.
+			Class<?>[] methodParameters = method.getParameterTypes();
+			Iterator<String> methodParameterNames = dataIsNeeded.iterator();
+			
+			
+			for (int i = 0; i < methodParameters.length; i++) {
+				trData.add(createData(methodParameterNames.next(), methodParameters[i]));
+			}
+			
+			allTransitions.add(new TransitionImpl(name, source, target, guard, method, trData));
+					
+	}
+	
+	public void addTransition(String name, String source, 
+			  				  String target, String guard, 
+			  				  Method method) {			
+
+
+			allTransitions.add(new TransitionImpl(name, source, target, guard, method));
+	
+	}
+
+	public void addGuard(String string, Method method) {
+		
+		guards.add(new GuardImpl(string, method));
+		
+	}
+
+	public void addDataOut(String name, Method method, String accessType) {
+	
+		dataOut.add( createData(name, method.getReturnType(), accessType) );
+		
+		dataOutName.put(name, method);
+				
+	}
+	
 }
