@@ -135,15 +135,7 @@ public class BehaviourBuilder {
 	public void addState(String state) {		
 		states.add(state);		
 	}
-	
-//	<T> Data<T> createData(String name, Class<T> type) {
-//		return new DataImpl<T>(name, type);
-//	}
-//	
-//	<T> DataOut<T> createData(String dataName, Class<T> type, String accessType) {
-//		return new DataImpl<T>(dataName, type, accessType);
-//	}
-	
+		
 	public void addTransition(String name, String source, 
 			  				  String target, String guard, 
 			  				  Method method) {			

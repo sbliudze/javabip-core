@@ -8,14 +8,10 @@
 
 package org.bip.spec.hanoi;
 
-import java.util.Arrays;
-
 import org.bip.annotations.bipData;
 import org.bip.annotations.bipExecutableBehaviour;
-import org.bip.api.DataOut;
 import org.bip.api.Port;
 import org.bip.executor.BehaviourBuilder;
-import org.bip.impl.DataImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
