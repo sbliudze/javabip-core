@@ -15,8 +15,10 @@ import java.util.List;
 
 import org.bip.annotations.bipData;
 import org.bip.api.Data;
+import org.bip.api.DataOut;
+import org.bip.exceptions.BIPException;
 
-class ReflectionHelper {
+public class ReflectionHelper {
 
 	// Separator between method name and parameter number to generate default data in name.
 	private static final String SEPARATOR = ".";
@@ -54,6 +56,30 @@ class ReflectionHelper {
 	public static <T> Data<T> createData(String dataName, Class<T> type) {
 		Data<T> toReturn = new DataImpl<T>(dataName, type);
 		return toReturn;
+	}
+	
+	public static <T> DataOut<T> createData(String dataName, Class<T> type, String accessType, String[] ports) {
+		DataOut<T> toReturn = new DataImpl<T>(dataName, type, accessType, ports);
+		return toReturn;
+	}
+	
+	public static DataOut<?> createData(Method method) {
+
+		Annotation[] annotations = method.getAnnotations();
+		for (Annotation annotation : annotations) {
+			if (annotation instanceof bipData) { // DATA OUT
+				bipData dataAnnotation = (bipData) annotation;
+				String name = dataAnnotation.name();
+				String type = dataAnnotation.accessTypePort();
+				String[] ports = dataAnnotation.ports();
+				return createData(name, method.getReturnType(), type, ports);
+			}
+		}
+
+		// TODO refactor DataOut interface to check for availability, so no need to store all the ports 
+		// within the data, no need to give ports here.
+		throw new BIPException("Method " + method + " does not have BIPData annotation for Data Out");
+
 	}
 	
 }

@@ -34,12 +34,12 @@ public class GuardImpl implements Guard {
 	// The List is used here, because List interface maintains order of its items.
 	// The order is very important since one Guard may have multiple dataIn-s of the same type
 	// TODO, dataIsNeeded is a misleading name, as it is not of boolean type but a list type.
-	private List<Data<?>> dataIsNeeded = new ArrayList<Data<?>>();
+	private List<Data<?>> dataRequired = new ArrayList<Data<?>>();
 
 	public GuardImpl(String name, Method method) {
 		this.name = name;
 		this.method = method;
-		this.dataIsNeeded = ReflectionHelper.extractParamAnnotations(method);
+		this.dataRequired = ReflectionHelper.extractParamAnnotations(method);
 	}
 
 	public String name() {
@@ -51,11 +51,11 @@ public class GuardImpl implements Guard {
 	}
 
 	public Collection<Data<?>> dataRequired() {
-		return dataIsNeeded;
+		return dataRequired;
 	}
 
 	public Boolean hasData() {
-		return !dataIsNeeded.isEmpty();
+		return !dataRequired.isEmpty();
 	}
 
 	public String toString() {

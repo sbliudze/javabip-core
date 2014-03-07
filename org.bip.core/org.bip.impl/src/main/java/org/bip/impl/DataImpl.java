@@ -8,6 +8,7 @@
 
 package org.bip.impl;
 
+import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -40,7 +41,7 @@ public class DataImpl<T> implements DataOut<T> {
 	// any, witness, allowed, unallowed, unknown,
 	// // upon adding rewrite the getType method
 	// }
-
+	
 	public DataImpl(String name, Class<T> clazz) {
 		this.name = name;
 		this.clazz = clazz;

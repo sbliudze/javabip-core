@@ -22,6 +22,7 @@ import org.bip.exceptions.BIPException;
 import org.bip.impl.DataImpl;
 import org.bip.impl.GuardImpl;
 import org.bip.impl.PortImpl;
+import org.bip.impl.ReflectionHelper;
 import org.bip.impl.TransitionImpl;
 
 // TODO, all classes should have a header and description of its purpose for nice looking JavaDoc document.
@@ -135,13 +136,13 @@ public class BehaviourBuilder {
 		states.add(state);		
 	}
 	
-	<T> Data<T> createData(String name, Class<T> type) {
-		return new DataImpl<T>(name, type);
-	}
-	
-	<T> DataOut<T> createData(String dataName, Class<T> type, String accessType) {
-		return new DataImpl<T>(dataName, type, accessType);
-	}
+//	<T> Data<T> createData(String name, Class<T> type) {
+//		return new DataImpl<T>(name, type);
+//	}
+//	
+//	<T> DataOut<T> createData(String dataName, Class<T> type, String accessType) {
+//		return new DataImpl<T>(dataName, type, accessType);
+//	}
 	
 	public void addTransition(String name, String source, 
 			  				  String target, String guard, 
@@ -158,11 +159,13 @@ public class BehaviourBuilder {
 		
 	}
 
-	public void addDataOut(String name, Method method, String accessType) {
+	public void addDataOut(Method method) {
 	
-		dataOut.add( createData(name, method.getReturnType(), accessType) );
+		DataOut<?> data = ReflectionHelper.createData(method);
 		
-		dataOutName.put(name, method);
+		dataOut.add ( data );
+		
+		dataOutName.put(data.name(), method);		
 				
 	}
 	

@@ -34,6 +34,7 @@ public @interface bipData {
 	 * @return the string
 	 */
 	// TODO, use Enum instead of String?
+	// TODO, why default is empty string and not for example "any"?
 	String accessTypePort() default ""; // any, witness, list
 
 	/**

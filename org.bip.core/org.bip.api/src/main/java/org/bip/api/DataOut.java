@@ -15,6 +15,7 @@ package org.bip.api;
  */
 public interface DataOut<T> extends Data<T> {
 
+	// TODO why not having function isAvailable(String port) that returns true if the data out is available.
 	/**
 	 * It specifies the ports for which the specification of data out applies.
 	 *

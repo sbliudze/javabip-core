@@ -86,8 +86,9 @@ public class HanoiPeg {
 		// TODO, There is mismatch between what is defined here and in BIP annotation.
 		// TODO, check todo in bipData annotation, maybe addDataOut should only accept Method parameter and 
 		// read other things from the method?
-		behaviourBuilder.addDataOut("disksize", this.getClass().getMethod("diskSizeOnTop"), "any" );
+		//behaviourBuilder.addDataOut("disksize", this.getClass().getMethod("diskSizeOnTop"), "any" );
 		
+		behaviourBuilder.addDataOut(this.getClass().getMethod("diskSizeOnTop") );
 		//BUILD
 		
 		behaviourBuilder.setComponent(this);
@@ -96,12 +97,6 @@ public class HanoiPeg {
 		return behaviourBuilder;
 	}
 	
-	//TODO find a way not to copy this method among classes
-	<T> DataOut<T> createData(String dataName, Class<T> type, String accessType) {
-		DataOut<T> toReturn = new DataImpl<T>(dataName, type, accessType);
-		return toReturn;
-	}
-
 	public void addPiece(@bipData(name = "addedDisk") int no) {
 		logger.debug("EXECUTION: component " + this.getClass().getName() + " has added a piece.");
 		pieces[no - 1] = true;
@@ -147,7 +142,7 @@ public class HanoiPeg {
 		return false;
 	}
 
-	@bipData(name = "disksize", accessTypePort = "allowedPorts", ports = { "pieceAdd", "pieceRemove" })
+	@bipData(name = "disksize", accessTypePort = "allowed", ports = { "pieceAdd", "pieceRemove" })
 	public int diskSizeOnTop() {
 
 		for (int i = 0; i < size; i++) {
