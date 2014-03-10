@@ -756,9 +756,8 @@ public class IntegrationTests {
 
 		// Component Q
 
-		QComponent qComponent = new QComponent();
-
-		// MISTAKE on purpose.
+		// QComponent qComponent = new QComponent();
+		// MISTAKE on purpose, so the above line can be commented out.
 		final ExecutorImpl qExecutor = new ExecutorImpl(pComponent);
 
 		Thread t2 = new Thread(qExecutor, "QComponent");

@@ -8,18 +8,12 @@
 
 package org.bip.spec;
 
-import java.util.ArrayList;
-
 import org.bip.annotations.bipComponentType;
 import org.bip.annotations.bipExecutableBehaviour;
 import org.bip.annotations.bipPort;
 import org.bip.annotations.bipPorts;
-import org.bip.api.Guard;
 import org.bip.api.Port;
 import org.bip.executor.BehaviourBuilder;
-import org.bip.impl.GuardImpl;
-import org.bip.impl.PortImpl;
-import org.bip.impl.TransitionImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,54 +47,62 @@ public class PResizableBehaviorComponent {
 	// @bipExecutableBehaviour
 	public BehaviourBuilder initializeBehavior(int size) throws NoSuchMethodException {
 
-		String componentType = this.getClass().getCanonicalName();
+		BehaviourBuilder behaviourBuilder = new BehaviourBuilder();
+		
+		behaviourBuilder.setComponentType(this.getClass().getCanonicalName());
+		
+		//String componentType = this.getClass().getCanonicalName();
 
 		String currentState = "state0";
-	
+
+		behaviourBuilder.setInitialState(currentState);
+		behaviourBuilder.addState(currentState);
+		
 		// [off, on, wait, done]
-		ArrayList<String> states = new ArrayList<String>();
+		/*ArrayList<String> states = new ArrayList<String>();
 		states.add(currentState);
 		ArrayList<TransitionImpl> allTransitions = new ArrayList<TransitionImpl>();
-
+*/
 		for (int i = 0; i < size; i++) {
 
-			states.add("state" + (i + 1));
+			behaviourBuilder.addState("state" + (i + 1));
 
 			// ExecutorTransition=(name = on, source = off -> target = on, guard
 			// = , method = public void
 			// org.bip.spec.SwitchableRoute.startRoute() throws
 			// java.lang.Exception),
-			allTransitions.add(new TransitionImpl("p", "state" + (i), "state" + (i + 1), "isPEnabled", PResizableBehaviorComponent.class.getMethod("enforceableP")));
+			behaviourBuilder.addTransition("p", "state" + (i), "state" + (i + 1), "isPEnabled", PResizableBehaviorComponent.class.getMethod("enforceableP"));
 
 			// ExecutorTransition=(name = off, source = on -> target = wait,
 			// guard = , method = public void
 			// org.bip.spec.SwitchableRoute.stopRoute() throws
 			// java.lang.Exception),
-			allTransitions.add(new TransitionImpl("sr", "state" + (i + 1), "state" + (i), "", PResizableBehaviorComponent.class.getMethod("rollbackP")));
+			behaviourBuilder.addTransition("sr", "state" + (i + 1), "state" + (i), "", PResizableBehaviorComponent.class.getMethod("rollbackP"));
 
 			// ExecutorTransition=(name = end, source = wait -> target = done,
 			// guard = !isFinished, method = public void
 			// org.bip.spec.SwitchableRoute.spontaneousEnd() throws
 			// java.lang.Exception),
-			allTransitions.add(new TransitionImpl("se", "state" + (i), "state" + (i), "", PResizableBehaviorComponent.class.getMethod("enableP")));
+			behaviourBuilder.addTransition("se", "state" + (i), "state" + (i), "", PResizableBehaviorComponent.class.getMethod("enableP"));
 
 		}
 
-		ArrayList<Port> allPorts = new ArrayList<Port>();
-
 		// [Port=(id = sr, specType = null, type = spontaneous),
-		allPorts.add(new PortImpl("sr", Port.Type.spontaneous.toString(), this.getClass()));
+		behaviourBuilder.addPort("sr", Port.Type.spontaneous.toString(), this.getClass());
 
-		allPorts.add(new PortImpl("se", Port.Type.spontaneous.toString(), this.getClass()));
+		behaviourBuilder.addPort("se", Port.Type.spontaneous.toString(), this.getClass());
 
-		allPorts.add(new PortImpl("p", Port.Type.enforceable.toString(), this.getClass()));
+		behaviourBuilder.addPort("p", Port.Type.enforceable.toString(), this.getClass());
 
 		// [Guard=(name = isFinished, method = isFinished)]
-		ArrayList<Guard> guards = new ArrayList<Guard>();
-		guards.add(new GuardImpl("isPEnabled", this.getClass().getMethod("isPEnabled")));
+		//ArrayList<Guard> guards = new ArrayList<Guard>();
+		//guards.add(new GuardImpl("isPEnabled", this.getClass().getMethod("isPEnabled")));
+		
+		behaviourBuilder.addGuard("isPEnabled", this.getClass().getMethod("isPEnabled"));
 
-		BehaviourBuilder behaviourBuilder = new BehaviourBuilder(componentType, currentState, allTransitions, allPorts, states, guards, this);
+		//BehaviourBuilder behaviourBuilder = new BehaviourBuilder(componentType, currentState, allTransitions, allPorts, states, guards, this);
 
+		behaviourBuilder.setComponent(this);
 		return behaviourBuilder;
 	}
 

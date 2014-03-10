@@ -19,12 +19,8 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RoutePolicy;
 import org.bip.annotations.bipExecutableBehaviour;
 import org.bip.api.Executor;
-import org.bip.api.Guard;
 import org.bip.api.Port;
 import org.bip.executor.BehaviourBuilder;
-import org.bip.impl.GuardImpl;
-import org.bip.impl.PortImpl;
-import org.bip.impl.TransitionImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -45,56 +41,64 @@ public class SwitchableRouteExecutableBehavior implements CamelContextAware, Ini
 	@bipExecutableBehaviour
     public BehaviourBuilder getExecutableBehavior() throws NoSuchMethodException {
 
-        String componentType = this.getClass().getCanonicalName();
+		BehaviourBuilder behaviourBuilder = new BehaviourBuilder();
+				
+		behaviourBuilder.setComponentType(this.getClass().getCanonicalName());
+        //String componentType = this.getClass().getCanonicalName();
 
         String currentState = "off";
 
-        ArrayList<TransitionImpl> allTransitions = new ArrayList<TransitionImpl>();
+        behaviourBuilder.setInitialState(currentState);
+        
+        
+        //ArrayList<TransitionImpl> allTransitions = new ArrayList<TransitionImpl>();
 
         // ExecutorTransition=(name = on, source = off -> target = on, guard = , method = public void org.bip.spec.SwitchableRoute.startRoute() throws java.lang.Exception),
-        allTransitions.add(new TransitionImpl("on","off", "on",  "", SwitchableRouteExecutableBehavior.class.getMethod("startRoute")));
+        behaviourBuilder.addTransition("on","off", "on",  "", SwitchableRouteExecutableBehavior.class.getMethod("startRoute"));
 
         // ExecutorTransition=(name = off, source = on -> target = wait, guard = , method = public void org.bip.spec.SwitchableRoute.stopRoute() throws java.lang.Exception),
-        allTransitions.add(new TransitionImpl("off","on", "wait",  "", SwitchableRouteExecutableBehavior.class.getMethod("stopRoute")));
+        behaviourBuilder.addTransition("off","on", "wait",  "", SwitchableRouteExecutableBehavior.class.getMethod("stopRoute"));
 
         // ExecutorTransition=(name = end, source = wait -> target = done, guard = !isFinished, method = public void org.bip.spec.SwitchableRoute.spontaneousEnd() throws java.lang.Exception),
-        allTransitions.add(new TransitionImpl("end","wait", "done",  "!isFinished", SwitchableRouteExecutableBehavior.class.getMethod("spontaneousEnd")));
+        behaviourBuilder.addTransition("end","wait", "done",  "!isFinished", SwitchableRouteExecutableBehavior.class.getMethod("spontaneousEnd"));
 
         // ExecutorTransition=(name = , source = wait -> target = done, guard = isFinished, method = public void org.bip.spec.SwitchableRoute.internalEnd() throws java.lang.Exception),
-        allTransitions.add(new TransitionImpl("","wait", "done",  "isFinished", SwitchableRouteExecutableBehavior.class.getMethod("internalEnd")));
+        behaviourBuilder.addTransition("","wait", "done",  "isFinished", SwitchableRouteExecutableBehavior.class.getMethod("internalEnd"));
 
         // ExecutorTransition=(name = finished, source = done -> target = off, guard = , method = public void org.bip.spec.SwitchableRoute.finishedTransition() throws java.lang.Exception)]
-        allTransitions.add(new TransitionImpl( "finished","done", "off", "", SwitchableRouteExecutableBehavior.class.getMethod("finishedTransition")));
-
-        ArrayList<Port> allPorts = new ArrayList<Port>();
+        behaviourBuilder.addTransition( "finished","done", "off", "", SwitchableRouteExecutableBehavior.class.getMethod("finishedTransition"));
 
         // [Port=(id = end, specType = null, type = spontaneous),
-        allPorts.add(new PortImpl("end", Port.Type.spontaneous.toString(), this.getClass()));
+        behaviourBuilder.addPort("end", Port.Type.spontaneous.toString(), this.getClass());
 
         // Port=(id = on, specType = null, type = enforceable),
-        allPorts.add(new PortImpl("on", Port.Type.enforceable.toString(), this.getClass()));
+        behaviourBuilder.addPort("on", Port.Type.enforceable.toString(), this.getClass());
 
         // Port=(id = off, specType = null, type = enforceable),
-        allPorts.add(new PortImpl("off", Port.Type.enforceable.toString(), this.getClass()));
+        behaviourBuilder.addPort("off", Port.Type.enforceable.toString(), this.getClass());
 
         // Port=(id = finished, specType = null, type = enforceable)]
-        allPorts.add(new PortImpl("finished", Port.Type.enforceable.toString(), this.getClass()));
+        behaviourBuilder.addPort("finished", Port.Type.enforceable.toString(), this.getClass());
 
         // [off, on, wait, done]
-        ArrayList<String> states = new ArrayList<String>();
-        states.add("off");
-        states.add("on");
-        states.add("wait");
-        states.add("done");
+        
+        behaviourBuilder.addState("off");
+        behaviourBuilder.addState("on");
+        behaviourBuilder.addState("wait");
+        behaviourBuilder.addState("done");
 
         // [Guard=(name = isFinished, method = isFinished)]
-        ArrayList<Guard> guards = new ArrayList<Guard>();
-		guards.add(new GuardImpl("isFinished", this.getClass().getMethod("isFinished")));
+    //    ArrayList<Guard> guards = new ArrayList<Guard>();
+	//	guards.add(new GuardImpl("isFinished", this.getClass().getMethod("isFinished")));
 
-        BehaviourBuilder behaviourBuilder = new BehaviourBuilder(componentType,
+		behaviourBuilder.addGuard("isFinished", this.getClass().getMethod("isFinished"));
+		
+/*        BehaviourBuilder behaviourBuilder = new BehaviourBuilder(componentType,
                 currentState,
                 allTransitions, allPorts, states, guards, this);
-
+*/
+		
+		behaviourBuilder.setComponent(this);
         return behaviourBuilder;
     }
 

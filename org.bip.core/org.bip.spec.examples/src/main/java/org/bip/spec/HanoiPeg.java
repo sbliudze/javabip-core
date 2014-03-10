@@ -8,15 +8,9 @@
 
 package org.bip.spec;
 
-import java.util.ArrayList;
-
 import org.bip.annotations.bipExecutableBehaviour;
-import org.bip.api.Guard;
 import org.bip.api.Port;
 import org.bip.executor.BehaviourBuilder;
-import org.bip.impl.GuardImpl;
-import org.bip.impl.PortImpl;
-import org.bip.impl.TransitionImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,38 +46,28 @@ public class HanoiPeg {
     @bipExecutableBehaviour
     public BehaviourBuilder initializeBehavior() throws NoSuchMethodException {
 
-        String componentType = this.getClass().getCanonicalName();
-        ArrayList<String> states = new ArrayList<String>();
-
-        ArrayList<TransitionImpl> allTransitions = new ArrayList<TransitionImpl>();
-        ArrayList<Port> allPorts = new ArrayList<Port>();
-        ArrayList<Guard> guards = new ArrayList<Guard>();
-
-        String currentState = "start";
-
-        states.add(currentState);
+    	BehaviourBuilder behaviourBuilder = new BehaviourBuilder();
+    	
+    	behaviourBuilder.setComponentType(this.getClass().getCanonicalName());
+    	
+    	String currentState = "start";
+    	
+        behaviourBuilder.setInitialState(currentState);
+        
+        behaviourBuilder.addState(currentState);
 
         for (int i = 0; i < size; i++) {
 
-            // ExecutorTransition=(name = on, source = off -> target = on, guard = , method = public void org.bip.spec.SwitchableRoute.startRoute() throws java.lang.Exception),
-            // TODO, nice to have parametrized methods,
-            // Object[] guardsArgs = { i };
-            // Object[] transitionArgs = { i };
-            //allTransitions.add(new ExecutorTransition("piece-" + (i+1), "start", "start", HanoiPeg.class.getMethod("isPieceMovable", int.class), guardsArgs, HanoiPeg.class.getMethod("movePiece", int.class), transitionArgs));
-
-
-            allTransitions.add(new TransitionImpl("piece" + (i+1) + "Add",    "start", "start", "isPiece"+ (i+1) + "Addable",   this.getClass().getMethod("movePiece" + (i+1))));
-            allTransitions.add(new TransitionImpl("piece" + (i+1) + "Remove", "start", "start", "isPiece"+ (i+1) + "Removable", this.getClass().getMethod("movePiece" + (i+1))));
-            allPorts.add(new PortImpl("piece" + (i+1) + "Add", Port.Type.enforceable.toString(), this.getClass()));
-            allPorts.add(new PortImpl("piece" + (i+1) + "Remove", Port.Type.enforceable.toString(), this.getClass()));
-			guards.add(new GuardImpl("isPiece" + (i + 1) + "Addable", this.getClass().getMethod("isPiece" + (i + 1) + "Addable")));
-			guards.add(new GuardImpl("isPiece" + (i + 1) + "Removable", this.getClass().getMethod("isPiece" + (i + 1) + "Removable")));
+            behaviourBuilder.addTransition("piece" + (i+1) + "Add",    "start", "start", "isPiece"+ (i+1) + "Addable",   this.getClass().getMethod("movePiece" + (i+1)));
+            behaviourBuilder.addTransition("piece" + (i+1) + "Remove", "start", "start", "isPiece"+ (i+1) + "Removable", this.getClass().getMethod("movePiece" + (i+1)));
+            behaviourBuilder.addPort("piece" + (i+1) + "Add", Port.Type.enforceable.toString(), this.getClass());
+            behaviourBuilder.addPort("piece" + (i+1) + "Remove", Port.Type.enforceable.toString(), this.getClass());
+			behaviourBuilder.addGuard("isPiece" + (i + 1) + "Addable", this.getClass().getMethod("isPiece" + (i + 1) + "Addable"));
+			behaviourBuilder.addGuard("isPiece" + (i + 1) + "Removable", this.getClass().getMethod("isPiece" + (i + 1) + "Removable"));
         }
-
-        BehaviourBuilder behaviourBuilder = new BehaviourBuilder(componentType,
-                currentState,
-                allTransitions, allPorts, states, guards, this);
-
+        
+        behaviourBuilder.setComponent(this);
+        
         return behaviourBuilder;
     }
 
