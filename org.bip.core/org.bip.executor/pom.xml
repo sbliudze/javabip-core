@@ -48,12 +48,24 @@
 			<version>4.0</version>
 		</dependency>
 
-		<!-- <dependency> <groupId>org.apache.camel</groupId> <artifactId>camel-core</artifactId> 
-			<version>${camel-version}</version> </dependency> -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.5.11</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.5.11</version>
+		</dependency>
 
-		<!-- <dependency> <groupId>org.bip</groupId> <artifactId>org.bip.spec.examples</artifactId> 
-			<version>0.1.0-SNAPSHOT</version> <scope>test</scope> </dependency> -->
-
+ 		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.16</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -61,33 +73,6 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.5.11</version>
-		</dependency>
-
-		<!-- <dependency> <groupId>org.slf4j</groupId> <artifactId>slf4j-log4j12</artifactId> 
-			<version>1.5.11</version> </dependency> -->
-
-		<!-- <dependency> <groupId>log4j</groupId> <artifactId>log4j</artifactId> 
-			<version>1.2.16</version> </dependency> -->
-		<!-- <dependency> <groupId>org.springframework.osgi</groupId> <artifactId>spring-osgi-core</artifactId> 
-			<version>1.0</version> </dependency> -->
-		<!-- <dependency> <groupId>org.osgi</groupId> <artifactId>org.osgi.core</artifactId> 
-			<version>4.2.0</vefalsersion> </dependency> -->
-		<dependency>
-			<groupId>org.bip</groupId>
-			<artifactId>org.bip.engine</artifactId>
-			<scope>test</scope>
-			<version>0.1.0-SNAPSHOT</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.bip</groupId>
-			<artifactId>org.bip.glue</artifactId>
-			<version>0.1.0-SNAPSHOT</version>
-		</dependency>
 	</dependencies>
 
 	<reporting>
@@ -211,8 +196,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
 				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
+					<source>1.6</source>
+					<target>1.6</target>
 				</configuration>
 			</plugin>
 

@@ -12,6 +12,16 @@
   <description>${project.name}</description>
   <packaging>jar</packaging>
   
+  <dependencies>
+
+	<dependency>
+		<groupId>net.sf.javabdd</groupId>
+		<artifactId>javabdd</artifactId>
+		<version>1.0b2</version>
+	</dependency>
+  
+  </dependencies>
+  
   <build>
     <plugins>
 
