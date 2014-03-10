@@ -93,6 +93,7 @@ public class BehaviourBuilder {
 		this.currentState = state;
 	}
 
+	@Deprecated
 	public void addTransition(TransitionImpl transition) {
 		allTransitions.add(transition);
 
