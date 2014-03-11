@@ -36,7 +36,7 @@
   <properties>
 		<osgi.private></osgi.private>
 		<osgi.import>*</osgi.import>
-		<osgi.export>*</osgi.export>
+		<osgi.export>org.bip.glue</osgi.export>
 		<osgi.dynamic.import></osgi.dynamic.import>
 	</properties>
 	

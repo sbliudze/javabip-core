@@ -22,7 +22,7 @@
 	<properties>
 		<osgi.private></osgi.private>
 		<osgi.import>*</osgi.import>
-		<osgi.export>*</osgi.export>
+		<osgi.export>org.bip.impl, org.bip.jmx, org.bip.util</osgi.export>
 		<osgi.dynamic.import></osgi.dynamic.import>
 	</properties>
 	
