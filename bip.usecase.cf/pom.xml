@@ -11,6 +11,9 @@
       <version>1.0.0-SNAPSHOT</version>
     </parent>
 -->
+
+<!-- TODO change group id to io.xtech.bip.usecase and 
+     artifactid to switchableroute.* -->
  
     <groupId>org.bip</groupId>
     <artifactId>org.bip.cf</artifactId>
