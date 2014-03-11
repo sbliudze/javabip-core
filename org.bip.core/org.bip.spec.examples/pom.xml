@@ -24,8 +24,6 @@
 		<osgi.import>*</osgi.import>
 		<osgi.export>*</osgi.export>
 		<osgi.dynamic.import></osgi.dynamic.import>
-		
-		<camel-core.version>2.10.0.redhat-60024</camel-core.version>
 	</properties>
 
   <dependencies>

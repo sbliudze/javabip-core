@@ -25,12 +25,6 @@
 		</osgi.export>
 		<osgi.dynamic.import></osgi.dynamic.import>
 		<osgi.bundles></osgi.bundles>
-		
-		<!-- TODO, remove it later as decided by parent pom -->
-		<slf4j-api.version>1.5.11</slf4j-api.version>
- 		<log4j.version>1.2.16</log4j.version>
- 		<junit.version>4.11</junit.version>
- 		<antlr4.version>4.0</antlr4.version>
  		
 	</properties>
 

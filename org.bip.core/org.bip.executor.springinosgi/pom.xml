@@ -24,16 +24,7 @@
 		<osgi.import>*</osgi.import>
  		<osgi.export>org.bip.executor.springinosgi</osgi.export>
 		<osgi.dynamic.import></osgi.dynamic.import>
-		<osgi.bundles></osgi.bundles>
-
-		<!--  TODO, remove it later as decided by parent pom -->	
- 
- 		<slf4j-api.version>1.5.11</slf4j-api.version>
- 		<log4j.version>1.2.16</log4j.version>
- 		<spring-osgi-core.version>1.0</spring-osgi-core.version>
- 		<org.osgi.core.version>4.2.0</org.osgi.core.version>
- 		<junit.version>4.11</junit.version>
- 		
+		<osgi.bundles></osgi.bundles> 		
  	</properties>
 	
 	<dependencies>

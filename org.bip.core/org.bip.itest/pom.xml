@@ -17,13 +17,6 @@
   
   <description>It contains integration tests</description>
   
-  <properties>
-  		<camel-core.version>2.10.0.redhat-60024</camel-core.version> 
-<!--   		<camel-core.version>2.6.0-fuse-01-15</camel-core.version> -->
-  		<junit.version>4.11</junit.version>
-		
-  </properties>
-	
 	
   <dependencies>
 
