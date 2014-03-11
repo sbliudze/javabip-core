@@ -106,6 +106,26 @@ public class IntegrationTests {
 
 			public void onExchangeBegin(Route route, Exchange exchange) {
 			}
+
+			@Override
+			public void onRemove(Route arg0) {
+			}
+
+			@Override
+			public void onResume(Route arg0) {
+			}
+
+			@Override
+			public void onStart(Route arg0) {
+			}
+
+			@Override
+			public void onStop(Route arg0) {
+			}
+
+			@Override
+			public void onSuspend(Route arg0) {
+			}
 		};
 
 		final RoutePolicy routePolicy2 = new RoutePolicy() {
@@ -120,7 +140,28 @@ public class IntegrationTests {
 
 			public void onExchangeBegin(Route route, Exchange exchange) {
 			}
+
+			@Override
+			public void onRemove(Route arg0) {
+			}
+
+			@Override
+			public void onResume(Route arg0) {
+			}
+
+			@Override
+			public void onStart(Route arg0) {
+			}
+
+			@Override
+			public void onStop(Route arg0) {
+			}
+
+			@Override
+			public void onSuspend(Route arg0) {
+			}
 		};
+		
 		final RoutePolicy routePolicy3 = new RoutePolicy() {
 
 			public void onInit(Route route) {
@@ -132,6 +173,26 @@ public class IntegrationTests {
 			}
 
 			public void onExchangeBegin(Route route, Exchange exchange) {
+			}
+
+			@Override
+			public void onRemove(Route arg0) {
+			}
+
+			@Override
+			public void onResume(Route arg0) {
+			}
+
+			@Override
+			public void onStart(Route arg0) {
+			}
+
+			@Override
+			public void onStop(Route arg0) {
+			}
+
+			@Override
+			public void onSuspend(Route arg0) {
 			}
 		};
 		RouteBuilder builder1 = new RouteBuilder() {
@@ -268,6 +329,26 @@ public class IntegrationTests {
 
 			public void onExchangeBegin(Route route, Exchange exchange) {
 			}
+
+			@Override
+			public void onRemove(Route arg0) {
+			}
+
+			@Override
+			public void onResume(Route arg0) {
+			}
+
+			@Override
+			public void onStart(Route arg0) {
+			}
+
+			@Override
+			public void onStop(Route arg0) {
+			}
+
+			@Override
+			public void onSuspend(Route arg0) {
+			}
 		};
 
 		final RoutePolicy routePolicy2 = new RoutePolicy() {
@@ -282,6 +363,26 @@ public class IntegrationTests {
 
 			public void onExchangeBegin(Route route, Exchange exchange) {
 			}
+
+			@Override
+			public void onRemove(Route route) {
+			}
+
+			@Override
+			public void onStart(Route route) {
+			}
+
+			@Override
+			public void onStop(Route route) {
+			}
+
+			@Override
+			public void onSuspend(Route route) {
+			}
+
+			@Override
+			public void onResume(Route route) {
+			}
 		};
 		final RoutePolicy routePolicy3 = new RoutePolicy() {
 
@@ -294,6 +395,26 @@ public class IntegrationTests {
 			}
 
 			public void onExchangeBegin(Route route, Exchange exchange) {
+			}
+
+			@Override
+			public void onRemove(Route route) {
+			}
+
+			@Override
+			public void onStart(Route route) {
+			}
+
+			@Override
+			public void onStop(Route route) {
+			}
+
+			@Override
+			public void onSuspend(Route route) {
+			}
+
+			@Override
+			public void onResume(Route route) {
 			}
 		};
 		RouteBuilder builder1 = new RouteBuilder() {

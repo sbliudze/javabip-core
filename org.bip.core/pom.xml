@@ -17,6 +17,11 @@
 
   <name>BIP :: Core </name>
 
+  <!-- <properties>
+
+	<slf4j-api-version>1.5.11</slf4j-api-version>
+  </properties>
+ -->
   <description>It contains all core packages/functionality of BIP project.</description>
   
 	<profiles>

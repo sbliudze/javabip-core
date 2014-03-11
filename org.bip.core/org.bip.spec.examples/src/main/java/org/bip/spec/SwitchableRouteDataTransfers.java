@@ -15,6 +15,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RoutePolicy;
 import org.bip.annotations.bipComponentType;
@@ -43,7 +44,7 @@ import org.springframework.beans.factory.InitializingBean;
 @bipComponentType(initial = "off", name = "org.bip.spec.SwitchableRouteDataTransfers")
 public class SwitchableRouteDataTransfers implements CamelContextAware, InitializingBean, DisposableBean {
 
-	public CamelContext camelContext;
+	public ModelCamelContext camelContext;
 
 	public String routeId;
 
@@ -56,7 +57,8 @@ public class SwitchableRouteDataTransfers implements CamelContextAware, Initiali
 	private int deltaMemory = 100;
 
 	public void setCamelContext(CamelContext camelContext) {
-		this.camelContext = camelContext;
+		// TODO, find a better way to obtain ModelCamelContext, instead of relaying that DefaultCamelContext is provided.
+		this.camelContext = (ModelCamelContext) camelContext;
 	}
 
 	public void setExecutor(Executor executor) {
@@ -118,7 +120,7 @@ public class SwitchableRouteDataTransfers implements CamelContextAware, Initiali
 
 	@bipGuard(name = "isFinished")
 	public boolean isFinished() {
-		return camelContext.getInflightRepository().size(camelContext.getRoute(routeId).getEndpoint()) == 0;
+		return camelContext.getInflightRepository().size(routeId) == 0;
 	}
 
 	// It is inferred that this is Data Out as the annotation is provided within a function that returns smth. The
@@ -150,6 +152,26 @@ public class SwitchableRouteDataTransfers implements CamelContextAware, Initiali
 
 			public void onExchangeDone(Route route, Exchange exchange) {
 				finalExecutor.inform("end");
+			}
+
+			@Override
+			public void onRemove(Route arg0) {
+			}
+
+			@Override
+			public void onResume(Route arg0) {
+			}
+
+			@Override
+			public void onStart(Route arg0) {
+			}
+
+			@Override
+			public void onStop(Route arg0) {
+			}
+
+			@Override
+			public void onSuspend(Route arg0) {
 			}
 		};
 

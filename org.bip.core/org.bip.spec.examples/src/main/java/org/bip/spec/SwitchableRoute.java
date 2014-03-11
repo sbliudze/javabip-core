@@ -15,6 +15,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RoutePolicy;
 import org.bip.annotations.bipComponentType;
@@ -44,7 +45,7 @@ import org.springframework.beans.factory.InitializingBean;
 //TODO get rid of component name
 public class SwitchableRoute implements CamelContextAware, InitializingBean, DisposableBean {
 
-	public CamelContext camelContext;
+	public ModelCamelContext camelContext;
 
 	public String routeId;
 
@@ -55,7 +56,8 @@ public class SwitchableRoute implements CamelContextAware, InitializingBean, Dis
 	private RoutePolicy notifier;
 
 	public void setCamelContext(CamelContext camelContext) {
-		this.camelContext = camelContext;
+		// TODO, find a better method to inject ModelCamelContext, instead of relaying on DefaultCamelContext being injected.
+		this.camelContext = (ModelCamelContext)camelContext;
 	}
 
 	public void setExecutor(Executor executor) {
@@ -112,7 +114,7 @@ public class SwitchableRoute implements CamelContextAware, InitializingBean, Dis
 
 	@bipGuard(name = "isFinished")
 	public boolean isFinished() {
-		return camelContext.getInflightRepository().size(camelContext.getRoute(routeId).getEndpoint()) == 0;
+		return camelContext.getInflightRepository().size(routeId) == 0;
 	}
 
 	public void afterPropertiesSet() throws Exception {
@@ -137,6 +139,26 @@ public class SwitchableRoute implements CamelContextAware, InitializingBean, Dis
 
 			public void onExchangeDone(Route route, Exchange exchange) {
 				finalExecutor.inform("end");
+			}
+
+			@Override
+			public void onRemove(Route arg0) {			
+			}
+
+			@Override
+			public void onResume(Route arg0) {
+			}
+
+			@Override
+			public void onStart(Route arg0) {
+			}
+
+			@Override
+			public void onStop(Route arg0) {
+			}
+
+			@Override
+			public void onSuspend(Route arg0) {
 			}
 		};
 

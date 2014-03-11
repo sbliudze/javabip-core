@@ -24,7 +24,8 @@
 		<osgi.import>*</osgi.import>
 		<osgi.export>*</osgi.export>
 		<osgi.dynamic.import></osgi.dynamic.import>
-		<camel-version>2.6.0-fuse-01-15</camel-version>
+		
+		<camel-core.version>2.10.0.redhat-60024</camel-core.version>
 	</properties>
 
   <dependencies>
@@ -39,7 +40,7 @@
       <dependency>
           <groupId>org.apache.camel</groupId>
           <artifactId>camel-core</artifactId>
-          <version>${camel-version}</version>
+          <version>${camel-core.version}</version>
       </dependency>
        	      
           <dependency>

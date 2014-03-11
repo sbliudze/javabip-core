@@ -309,6 +309,26 @@ public class DataTests {
 
 			public void onExchangeBegin(Route route, Exchange exchange) {
 			}
+
+			@Override
+			public void onRemove(Route arg0) {
+			}
+
+			@Override
+			public void onResume(Route arg0) {
+			}
+
+			@Override
+			public void onStart(Route arg0) {	
+			}
+
+			@Override
+			public void onStop(Route arg0) {
+			}
+
+			@Override
+			public void onSuspend(Route arg0) {
+			}
 		};
 
 		final RoutePolicy routePolicy2 = new RoutePolicy() {
@@ -323,7 +343,28 @@ public class DataTests {
 
 			public void onExchangeBegin(Route route, Exchange exchange) {
 			}
+
+			@Override
+			public void onRemove(Route arg0) {
+			}
+
+			@Override
+			public void onResume(Route arg0) {
+			}
+
+			@Override
+			public void onStart(Route arg0) {
+			}
+
+			@Override
+			public void onStop(Route arg0) {
+			}
+
+			@Override
+			public void onSuspend(Route arg0) {
+			}
 		};
+		
 		final RoutePolicy routePolicy3 = new RoutePolicy() {
 
 			public void onInit(Route route) {
@@ -336,7 +377,28 @@ public class DataTests {
 
 			public void onExchangeBegin(Route route, Exchange exchange) {
 			}
+
+			@Override
+			public void onRemove(Route arg0) {
+			}
+
+			@Override
+			public void onResume(Route arg0) {
+			}
+
+			@Override
+			public void onStart(Route arg0) {
+			}
+
+			@Override
+			public void onStop(Route arg0) {
+			}
+
+			@Override
+			public void onSuspend(Route arg0) {
+			}
 		};
+		
 		RouteBuilder builder1 = new RouteBuilder() {
 
 			@Override

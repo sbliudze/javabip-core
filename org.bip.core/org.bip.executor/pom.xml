@@ -25,7 +25,13 @@
 		</osgi.export>
 		<osgi.dynamic.import></osgi.dynamic.import>
 		<osgi.bundles></osgi.bundles>
-		<camel-version>2.6.0-fuse-01-15</camel-version> <!-- TODO, remove it later as decided by parent pom -->
+		
+		<!-- TODO, remove it later as decided by parent pom -->
+		<slf4j-api.version>1.5.11</slf4j-api.version>
+ 		<log4j.version>1.2.16</log4j.version>
+ 		<junit.version>4.11</junit.version>
+ 		<antlr4.version>4.0</antlr4.version>
+ 		
 	</properties>
 
 	<dependencies>
@@ -45,31 +51,31 @@
 		<dependency>
 			<groupId>org.antlr</groupId>
 			<artifactId>antlr4</artifactId>
-			<version>4.0</version>
+			<version>${antlr4.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.5.11</version>
+			<version>${slf4j-api.version}</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.5.11</version>
+			<version>${slf4j-api.version}</version>
 		</dependency>
 
  		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-			<version>1.2.16</version>
+			<version>${log4j.version}</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.6</version>
+			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
 
