@@ -13,10 +13,9 @@ import org.bip.api.BIPComponent;
 import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
 import org.bip.api.Behaviour;
-import org.bip.api.PortBase;
+import org.bip.api.Port;
 import org.bip.engine.BIPCoordinatorImpl;
 import org.bip.engine.DataCoordinatorImpl;
-import org.bip.exceptions.BIPEngineException;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -38,11 +37,6 @@ public class BIPEngineActivator implements BundleActivator {
 					engine.register(component, behaviour);
 				}
 
-				public void inform(BIPComponent component, String currentState, Set<PortBase> disabledPorts) {
-					//System.out.println("BIP Engine was informed that component " + component + " is in state " + currentState + " with the following ports disabled : " + disabledPorts);
-					engine.inform(component, currentState, disabledPorts);
-				}
-
 				public void start() {
 					engine.start();
 					System.out.println("BIP Engine was told to start");
@@ -59,7 +53,16 @@ public class BIPEngineActivator implements BundleActivator {
 
 				}
 
-				public void informSpecific(BIPComponent decidingComponent, PortBase decidingPort, Map<BIPComponent, Set<PortBase>> disabledCombinations) throws BIPEngineException {
+
+				public void inform(BIPComponent component, String currentState,
+						Set<Port> disabledPorts) {
+					engine.inform(component, currentState, disabledPorts);
+					
+				}
+
+				public void informSpecific(BIPComponent decidingComponent,
+						Port decidingPort,
+						Map<BIPComponent, Set<Port>> disabledCombinations) {
 					engine.informSpecific(decidingComponent, decidingPort, disabledCombinations);
 					
 				}
