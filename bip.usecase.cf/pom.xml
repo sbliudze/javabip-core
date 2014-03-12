@@ -41,6 +41,7 @@
  		<org.bip.api.version>0.1.0-SNAPSHOT</org.bip.api.version>
  		<org.bip.executor.version>0.1.0-SNAPSHOT</org.bip.executor.version>
  		<org.bip.glue.version>0.1.0-SNAPSHOT</org.bip.glue.version>
+ 		<org.bip.executor.springinosgi.version>0.1.0-SNAPSHOT</org.bip.executor.springinosgi.version>
   		<javabdd.version>1.0b2</javabdd.version>  		
   		<spring.beans.version>3.0.5.RELEASE</spring.beans.version>  	
   		<org.apache.karaf.shell.console.version>2.1.4-fuse-00-15</org.apache.karaf.shell.console.version>

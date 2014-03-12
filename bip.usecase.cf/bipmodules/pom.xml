@@ -26,10 +26,6 @@
         <activator>io.xtech.bip.activator.ServiceActivator</activator>
         <osgi.private>io.xtech.bip.activator.*</osgi.private>
         <osgi.import>org.bip.api, org.bip.executor, org.bip.spec, *</osgi.import>
-        <!-- The newest version is 2.9.2 -->
-<!--        <camel-version>2.9.2</camel-version> -->
-        <!-- Older CF is using 2.6.0-fuse-01-15 -->
-        <!--<camel-version>2.6.0-fuse-01-15</camel-version>-->
         <osgi.export>com.xtech.cfa.filemover</osgi.export>
         <osgi.dynamic.import></osgi.dynamic.import>
         <osgi.bundles></osgi.bundles>
@@ -40,13 +36,13 @@
           <dependency>
               <groupId>org.osgi</groupId>
               <artifactId>org.osgi.core</artifactId>
-              <version>4.2.0</version>
+              <version>${org.osgi.core.version}</version>
           </dependency>
           
           <dependency>
             <groupId>org.bip</groupId>
   		    <artifactId>org.bip.executor.springinosgi</artifactId>
-  			<version>0.1.0-SNAPSHOT</version>          
+  			<version>${org.bip.executor.springinosgi.version}</version>          
           </dependency>
 
           <dependency>
@@ -61,86 +57,29 @@
             <version>${camel-core.version}</version>
         </dependency>
 
-<!--           when using XStream data format
-          <dependency>
-              <groupId>org.apache.camel</groupId>
-              <artifactId>camel-xstream</artifactId>
-              <version>${camel-version}</version>
-          </dependency>
-
-
-          when using JAXB data format
-          <dependency>
-              <groupId>org.apache.camel</groupId>
-              <artifactId>camel-jaxb</artifactId>
-              <version>${camel-version}</version>
-          </dependency>
-
-          when using CSV data format
-          <dependency>
-              <groupId>org.apache.camel</groupId>
-              <artifactId>camel-csv</artifactId>
-              <version>${camel-version}</version>
-          </dependency>
-
-          when using Bindy data format
-          <dependency>
-              <groupId>org.apache.camel</groupId>
-              <artifactId>camel-bindy</artifactId>
-              <version>${camel-version}</version>
-          </dependency>
-
-          when using velocity templating language
-          <dependency>
-              <groupId>org.apache.camel</groupId>
-              <artifactId>camel-velocity</artifactId>
-              <version>${camel-version}</version>
-          </dependency>
-
-          when using JSON data format
-          <dependency>
-              <groupId>org.apache.camel</groupId>
-              <artifactId>camel-jackson</artifactId>
-              <version>${camel-version}</version>
-          </dependency>
-
-          is used when testing JSON to simulate a http server
-          <dependency>
-              <groupId>org.apache.camel</groupId>
-              <artifactId>camel-jetty</artifactId>
-              <version>${camel-version}</version>
-          </dependency>
- -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test</artifactId>
-            <version>${camel-core.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
+<!--         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <version>3.0.5.RELEASE</version>
             <scope>test</scope>
         </dependency>
-
+ -->
           <dependency>
               <groupId>org.slf4j</groupId>
               <artifactId>slf4j-api</artifactId>
-              <version>1.5.11</version>
+              <version>${slf4j-api.version}</version>
           </dependency>
 
           <dependency>
               <groupId>org.slf4j</groupId>
               <artifactId>slf4j-log4j12</artifactId>
-              <version>1.5.11</version>
+              <version>${slf4j-api.version}</version>
           </dependency>
 
           <dependency>
               <groupId>log4j</groupId>
               <artifactId>log4j</artifactId>
-              <version>1.2.16</version>
+              <version>${log4j.version}</version>
           </dependency>
 
     </dependencies>

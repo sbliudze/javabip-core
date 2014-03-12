@@ -26,7 +26,7 @@
 
     <properties>
         <activator>io.xtech.bip.activator.BIPEngineActivator</activator>
-        <osgi.private>io.xtech.bip.activator.*, org.bip.engine, net.sf.javabdd</osgi.private>
+        <osgi.private>io.xtech.bip.activator.*, org.bip.engine, org.bip.engine.api, net.sf.javabdd</osgi.private>
         <osgi.import>!sun.misc, org.bip.api, jdd.bdd; resolution:=optional, jdd.util; resolution:=optional, *</osgi.import>
 <!--         <osgi.export>org.bip.engine, org.bip.engine.api</osgi.export> -->
     </properties>
