@@ -5,8 +5,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-      <groupId>org.bip</groupId>
-      <artifactId>org.bip.cf</artifactId>
+      <groupId>io.xtech.bip</groupId>
+      <artifactId>bip.usecase.switchableroute</artifactId>
       <version>0.1.0-SNAPSHOT</version>
   </parent>
 
@@ -14,26 +14,25 @@
       It is a simple bundle containing controllable BIP modules.
   </description>
 
-  <artifactId>bip.usecase.bipmodules</artifactId>
-
   <groupId>io.xtech.bip</groupId>
-
+  <artifactId>bip.usecase.switchableroute.bipmodules</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  
   <packaging>bundle</packaging>
 
   <name>XTech :: BIP :: BIPModules </name>
-  <version>1.0.0-SNAPSHOT</version>
 
     <properties>
         <activator>io.xtech.bip.activator.ServiceActivator</activator>
-        <filemover.osgi.private>io.xtech.bip.activator.*</filemover.osgi.private>
-        <filemover.osgi.import>org.bip.api, org.bip.executor, org.bip.spec, *</filemover.osgi.import>
+        <osgi.private>io.xtech.bip.activator.*</osgi.private>
+        <osgi.import>org.bip.api, org.bip.executor, org.bip.spec, *</osgi.import>
         <!-- The newest version is 2.9.2 -->
 <!--        <camel-version>2.9.2</camel-version> -->
         <!-- Older CF is using 2.6.0-fuse-01-15 -->
         <!--<camel-version>2.6.0-fuse-01-15</camel-version>-->
-        <filemover.osgi.export>com.xtech.cfa.filemover</filemover.osgi.export>
-        <filemover.osgi.dynamic.import></filemover.osgi.dynamic.import>
-        <filemover.osgi.bundles></filemover.osgi.bundles>
+        <osgi.export>com.xtech.cfa.filemover</osgi.export>
+        <osgi.dynamic.import></osgi.dynamic.import>
+        <osgi.bundles></osgi.bundles>
     </properties>
 
       <dependencies>
@@ -43,20 +42,26 @@
               <artifactId>org.osgi.core</artifactId>
               <version>4.2.0</version>
           </dependency>
+          
+          <dependency>
+            <groupId>org.bip</groupId>
+  		    <artifactId>org.bip.executor.springinosgi</artifactId>
+  			<version>0.1.0-SNAPSHOT</version>          
+          </dependency>
 
           <dependency>
               <groupId>org.springframework</groupId>
               <artifactId>spring-beans</artifactId>
-              <version>3.0.5.RELEASE</version>
+              <version>${spring.beans.version}</version>
           </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
-            <version>${camel-version}</version>
+            <version>${camel-core.version}</version>
         </dependency>
 
-          <!-- when using XStream data format -->
+<!--           when using XStream data format
           <dependency>
               <groupId>org.apache.camel</groupId>
               <artifactId>camel-xstream</artifactId>
@@ -64,52 +69,52 @@
           </dependency>
 
 
-          <!-- when using JAXB data format -->
+          when using JAXB data format
           <dependency>
               <groupId>org.apache.camel</groupId>
               <artifactId>camel-jaxb</artifactId>
               <version>${camel-version}</version>
           </dependency>
 
-          <!-- when using CSV data format -->
+          when using CSV data format
           <dependency>
               <groupId>org.apache.camel</groupId>
               <artifactId>camel-csv</artifactId>
               <version>${camel-version}</version>
           </dependency>
 
-          <!-- when using Bindy data format -->
+          when using Bindy data format
           <dependency>
               <groupId>org.apache.camel</groupId>
               <artifactId>camel-bindy</artifactId>
               <version>${camel-version}</version>
           </dependency>
 
-          <!-- when using velocity templating language -->
+          when using velocity templating language
           <dependency>
               <groupId>org.apache.camel</groupId>
               <artifactId>camel-velocity</artifactId>
               <version>${camel-version}</version>
           </dependency>
 
-          <!-- when using JSON data format -->
+          when using JSON data format
           <dependency>
               <groupId>org.apache.camel</groupId>
               <artifactId>camel-jackson</artifactId>
               <version>${camel-version}</version>
           </dependency>
 
-          <!-- is used when testing JSON to simulate a http server -->
+          is used when testing JSON to simulate a http server
           <dependency>
               <groupId>org.apache.camel</groupId>
               <artifactId>camel-jetty</artifactId>
               <version>${camel-version}</version>
           </dependency>
-
+ -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test</artifactId>
-            <version>${camel-version}</version>
+            <version>${camel-core.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -201,11 +206,11 @@
                         <Bundle-Name>${project.name}</Bundle-Name>
                         <Bundle-Activator>${activator}</Bundle-Activator>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>${filemover.osgi.export}</Export-Package>
-                        <Import-Package>${filemover.osgi.import}</Import-Package>
-                        <DynamicImport-Package>${filemover.osgi.dynamic.import}</DynamicImport-Package>
-                        <Private-Package>${filemover.osgi.private}</Private-Package>
-                        <Require-Bundle>${filemover.osgi.bundles}</Require-Bundle>
+                        <Export-Package>${osgi.export}</Export-Package>
+                        <Import-Package>${osgi.import}</Import-Package>
+                        <DynamicImport-Package>${osgi.dynamic.import}</DynamicImport-Package>
+                        <Private-Package>${osgi.private}</Private-Package>
+                        <Require-Bundle>${osgi.bundles}</Require-Bundle>
                         <Spring-Context>*;publish-context:=false;create-asynchronously:=true</Spring-Context>&gt;
                         <Include-Resource>src/main/resources</Include-Resource>
                     </instructions>
@@ -223,6 +228,16 @@
                 </configuration>
             </plugin>
 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			
     </plugins>
   </build>
   

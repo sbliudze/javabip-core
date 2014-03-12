@@ -1,14 +1,25 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   
-  <groupId>org.bip</groupId>
+  <parent>
+     <groupId>io.xtech.bip</groupId>
+    <artifactId>bip.usecase.switchableroute</artifactId>
+      <version>0.1.0-SNAPSHOT</version>
+  </parent>
   
-  <artifactId>org.bip.engine</artifactId>
+  <groupId>io.xtech.bip</groupId>
+  
+  <artifactId>bip.usecase.switchableroute.engine</artifactId>
   
   <version>0.1.xtech-bipengine-00001</version>
   
   <name>BIP :: Core :: Engine</name>
 
+<!-- 
+	It takes BIP engine jar file provided as jar dependency and packages it as OSGi bundle. 
+	TODO, check javabdd package and maybe improve the pom to create javabdd artefact (e.g. add dependency to it as maven artefacts).
+	TODO, should jdd.bdd and jdd.util package be private instead of optional imports?
+ -->
   <description>It contains the engine repackaging project.</description>    
 
     <packaging>bundle</packaging>
@@ -17,130 +28,35 @@
         <activator>io.xtech.bip.activator.BIPEngineActivator</activator>
         <osgi.private>io.xtech.bip.activator.*, org.bip.engine, net.sf.javabdd</osgi.private>
         <osgi.import>!sun.misc, org.bip.api, jdd.bdd; resolution:=optional, jdd.util; resolution:=optional, *</osgi.import>
-        <osgi.export>org.bip.engine, org.bip.engine.api</osgi.export>
+<!--         <osgi.export>org.bip.engine, org.bip.engine.api</osgi.export> -->
     </properties>
-
+ 		
     <dependencies>
 
          <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
-            <version>4.2.0</version>
+            <version>${org.osgi.core.version}</version>
         </dependency>
  
          <dependency>
         	<groupId>org.bip</groupId>
         	<artifactId>org.bip.engine</artifactId>
-        	<version>0.1.0-SNAPSHOT</version>
+        	<version>${org.bip.engine.version}</version>
         </dependency>
  
     	<dependency>
     		<groupId>org.bip</groupId>
     		<artifactId>org.bip.api</artifactId>
-    		<version>0.1.0-SNAPSHOT</version>
+    		<version>${org.bip.api.version}</version>
     	</dependency>
         
-  		<dependency>
+<!--   		<dependency>
 			<groupId>net.sf.javabdd</groupId>
 			<artifactId>javabdd</artifactId>
-			<version>1.0b2</version>
+			<version>${javabdd.version}</version>
 		</dependency>        
- 
- 
-<!--         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-            <version>3.0.5.RELEASE</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
-            <version>${camel-version}</version>
-        </dependency>
-
-        when using XStream data format
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-xstream</artifactId>
-            <version>${camel-version}</version>
-        </dependency>
-
-
-        when using JAXB data format
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jaxb</artifactId>
-            <version>${camel-version}</version>
-        </dependency>
-
-        when using CSV data format
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-csv</artifactId>
-            <version>${camel-version}</version>
-        </dependency>
-
-        when using Bindy data format
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-bindy</artifactId>
-            <version>${camel-version}</version>
-        </dependency>
-
-        when using velocity templating language
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-velocity</artifactId>
-            <version>${camel-version}</version>
-        </dependency>
-
-        when using JSON data format
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jackson</artifactId>
-            <version>${camel-version}</version>
-        </dependency>
-
-        is used when testing JSON to simulate a http server
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jetty</artifactId>
-            <version>${camel-version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test</artifactId>
-            <version>${camel-version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>3.0.5.RELEASE</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.5.11</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.5.11</version>
-        </dependency>
-
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.16</version>
-        </dependency>
- -->
+  -->
 
     </dependencies>
 
@@ -214,6 +130,16 @@
                     </instructions>
                 </configuration>
             </plugin>
+            
+            <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
 
         </plugins>
     </build>

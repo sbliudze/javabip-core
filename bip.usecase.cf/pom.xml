@@ -12,11 +12,8 @@
     </parent>
 -->
 
-<!-- TODO change group id to io.xtech.bip.usecase and 
-     artifactid to switchableroute.* -->
- 
-    <groupId>org.bip</groupId>
-    <artifactId>org.bip.cf</artifactId>
+    <groupId>io.xtech.bip</groupId>
+    <artifactId>bip.usecase.switchableroute</artifactId>
     <version>0.1.0-SNAPSHOT</version>
 
   <packaging>pom</packaging>
@@ -31,8 +28,24 @@
         <module>bipmodules</module>
     </modules>
 
-    <properties>
-  	<camel-version>2.6.0-fuse-01-15</camel-version>
-    </properties>
+  <properties>	
+   
+		<slf4j-api.version>1.5.11</slf4j-api.version>
+ 		<log4j.version>1.2.16</log4j.version>
+ 		<junit.version>4.11</junit.version>
+ 		<antlr4.version>4.0</antlr4.version> 
+ 		<spring-osgi-core.version>1.0</spring-osgi-core.version>
+ 		<org.osgi.core.version>4.2.0</org.osgi.core.version> 		
+ 		<camel-core.version>2.10.0.redhat-60024</camel-core.version> 	
+ 		<org.bip.engine.version>0.1.0-SNAPSHOT</org.bip.engine.version>
+ 		<org.bip.api.version>0.1.0-SNAPSHOT</org.bip.api.version>
+ 		<org.bip.executor.version>0.1.0-SNAPSHOT</org.bip.executor.version>
+ 		<org.bip.glue.version>0.1.0-SNAPSHOT</org.bip.glue.version>
+  		<javabdd.version>1.0b2</javabdd.version>  		
+  		<spring.beans.version>3.0.5.RELEASE</spring.beans.version>  	
+  		<org.apache.karaf.shell.console.version>2.1.4-fuse-00-15</org.apache.karaf.shell.console.version>
+  		
+  </properties>
+ 
 
 </project>
