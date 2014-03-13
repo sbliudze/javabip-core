@@ -24,9 +24,10 @@
 
     <properties>
         <activator>io.xtech.bip.activator.ServiceActivator</activator>
-        <osgi.private>io.xtech.bip.activator.*</osgi.private>
-        <osgi.import>org.bip.api, org.bip.executor, org.bip.spec, *</osgi.import>
-        <osgi.export>com.xtech.cfa.filemover</osgi.export>
+        <osgi.private>io.xtech.bip.activator, com.xtech.cfa.filemover</osgi.private>
+        <osgi.import>org.bip.api, org.bip.executor, org.bip.executor.springinosgi, org.bip.spec,
+        			 org.springframework.beans.factory;version="[2.5,4)", *</osgi.import>
+        <osgi.export></osgi.export>
         <osgi.dynamic.import></osgi.dynamic.import>
         <osgi.bundles></osgi.bundles>
     </properties>
@@ -48,7 +49,7 @@
           <dependency>
               <groupId>org.springframework</groupId>
               <artifactId>spring-beans</artifactId>
-              <version>${spring.beans.version}</version>
+              <version>${spring.version}</version>
           </dependency>
 
         <dependency>
