@@ -103,48 +103,11 @@
 
     <build>
 
-        <pluginManagement>
-            <plugins>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-project-info-reports-plugin</artifactId>
-                    <version>2.4</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-report-plugin</artifactId>
-                    <version>2.9</version>
-                    <executions>
-                        <execution>
-                            <id>html report for tests</id>
-                            <phase>site</phase>
-                            <goals>
-                                <goal>report</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.12.4</version>
-                </plugin>
-
-            </plugins>
-
-
-
-        </pluginManagement>
-
         <plugins>
 
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <version>2.3.5</version>
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
@@ -157,27 +120,15 @@
                         <DynamicImport-Package>${osgi.dynamic.import}</DynamicImport-Package>
                         <Private-Package>${osgi.private}</Private-Package>
                         <Require-Bundle>${osgi.bundles}</Require-Bundle>
-                        <Spring-Context>*;publish-context:=false;create-asynchronously:=true</Spring-Context>&gt;
+                        <Spring-Context>*;publish-context:=false;create-asynchronously:=true</Spring-Context>
                         <Include-Resource>src/main/resources</Include-Resource>
                     </instructions>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.12.4</version>
-                <configuration>
-                    <includes>
-                        <include>**/com/xtech/cfa/filemover/*Tests.class</include>
-                    </includes>
                 </configuration>
             </plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>

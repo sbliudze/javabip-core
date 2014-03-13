@@ -23,21 +23,21 @@
 	<dependency>
 		<groupId>org.bip</groupId>
 		<artifactId>org.bip.api</artifactId>
-		<version>0.1.0-SNAPSHOT</version>
+		<version>${org.bip.api.version}</version>
 		<scope>test</scope>
 	</dependency>
 
 	<dependency>
 		<groupId>org.bip</groupId>
 		<artifactId>org.bip.engine</artifactId>
-		<version>0.1.0-SNAPSHOT</version>
+		<version>${org.bip.engine.version}</version>
 		<scope>test</scope>
 	</dependency>
 
 	<dependency>
 		<groupId>org.bip</groupId>
 		<artifactId>org.bip.glue</artifactId>
-		<version>0.1.0-SNAPSHOT</version>
+		<version>${org.bip.glue.version}</version>
 		<scope>test</scope>
 	</dependency>
 
@@ -45,7 +45,7 @@
 	<dependency>
 		<groupId>org.bip</groupId>
 		<artifactId>org.bip.spec.examples</artifactId>
-		<version>0.1.0-SNAPSHOT</version>
+		<version>${org.bip.spec.examples.version}</version>
 		<scope>test</scope>
 	</dependency>
 
@@ -77,48 +77,11 @@
 
 	<build>
 
-		<pluginManagement>
-			<plugins>
-
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-project-info-reports-plugin</artifactId>
-					<version>2.4</version>
-				</plugin>
-
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-surefire-report-plugin</artifactId>
-					<version>2.9</version>
-					<executions>
-						<execution>
-							<id>html report for tests</id>
-							<phase>site</phase>
-							<goals>
-								<goal>report</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.12.4</version>
-				</plugin>
-
-			</plugins>
-
-
-
-		</pluginManagement>
-
 		<plugins>
 
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
-				<version>2.3.5</version>
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
@@ -139,7 +102,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.12.4</version>
 				<configuration>
 					<includes>
 						<include>**/org/bip/executor/*Tests.class</include>
@@ -154,7 +116,6 @@
 	    <plugin>
     	    <groupId>org.apache.maven.plugins</groupId>
         	<artifactId>maven-compiler-plugin</artifactId>
-        	<version>3.1</version>
         	<configuration>
           		<source>1.6</source>
           		<target>1.6</target>
