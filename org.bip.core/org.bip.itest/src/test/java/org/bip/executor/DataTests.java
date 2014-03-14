@@ -58,7 +58,8 @@ public class DataTests {
 
 		int size = 8;
 
-		BIPGlue bipGlue4Hanoi = new org.bip.spec.hanoi.HanoiOptimalGlueBuilder().build();
+		BIPGlue bipGlue4Hanoi = new org.bip.spec.hanoi.HanoiOptimalGlueBuilder()
+				.build();
 
 		bipGlue4Hanoi.toXML(System.out);
 
@@ -66,15 +67,18 @@ public class DataTests {
 		final ExecutorImpl hanoiExecutor = new ExecutorImpl(hanoiMonitor, false);
 		Thread t1 = new Thread(hanoiExecutor, "hanoiMonitor");
 
-		org.bip.spec.hanoi.LeftHanoiPeg leftHanoiPeg = new org.bip.spec.hanoi.LeftHanoiPeg(size);
+		org.bip.spec.hanoi.LeftHanoiPeg leftHanoiPeg = new org.bip.spec.hanoi.LeftHanoiPeg(
+				size);
 		final ExecutorImpl lExecutor = new ExecutorImpl(leftHanoiPeg, false);
 		Thread t2 = new Thread(lExecutor, "LeftHanoiPeg");
 
-		org.bip.spec.hanoi.MiddleHanoiPeg middleHanoiPeg = new org.bip.spec.hanoi.MiddleHanoiPeg(size);
+		org.bip.spec.hanoi.MiddleHanoiPeg middleHanoiPeg = new org.bip.spec.hanoi.MiddleHanoiPeg(
+				size);
 		final ExecutorImpl mExecutor = new ExecutorImpl(middleHanoiPeg, false);
 		Thread t3 = new Thread(mExecutor, "MiddleHanoiPeg");
 
-		org.bip.spec.hanoi.RightHanoiPeg rightHanoiPeg = new org.bip.spec.hanoi.RightHanoiPeg(size);
+		org.bip.spec.hanoi.RightHanoiPeg rightHanoiPeg = new org.bip.spec.hanoi.RightHanoiPeg(
+				size);
 		final ExecutorImpl rExecutor = new ExecutorImpl(rightHanoiPeg, false);
 		Thread t4 = new Thread(rExecutor, "RightHanoiPeg");
 
@@ -121,37 +125,48 @@ public class DataTests {
 			e.printStackTrace();
 		}
 
-		assertEquals((int) Math.pow(2, size) - 1, hanoiMonitor.getNumberOfMoves());
+		assertEquals((int) Math.pow(2, size) - 1,
+				hanoiMonitor.getNumberOfMoves());
 	}
 
-	// No asserts yet, just to see if the whole thing does not blow at initialization time and due to first few cycles.
+	// No asserts yet, just to see if the whole thing does not blow at
+	// initialization time and due to first few cycles.
 	@Test
-	public void bipRandomLargerHannoiWithDataTest() throws JAXBException, BIPException {
+	public void bipRandomLargerHannoiWithDataTest() throws JAXBException,
+			BIPException {
 
 		int size = 3;
 
-		BIPGlue bipGlue4Hanoi = new org.bip.spec.hanoi.HanoiRandomGlueBuilder().build();
+		BIPGlue bipGlue4Hanoi = new org.bip.spec.hanoi.HanoiRandomGlueBuilder()
+				.build();
 
 		bipGlue4Hanoi.toXML(System.out);
 
-		org.bip.spec.hanoi.HanoiPeg leftHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(size, false);
+		org.bip.spec.hanoi.HanoiPeg leftHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(
+				size, false);
 		final ExecutorImpl lExecutor = new ExecutorImpl(leftHanoiPeg, false);
 		Thread t2 = new Thread(lExecutor, "LeftHanoiPeg");
 
-		org.bip.spec.hanoi.HanoiPeg middleHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(size, true);
+		org.bip.spec.hanoi.HanoiPeg middleHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(
+				size, true);
 		final ExecutorImpl mExecutor = new ExecutorImpl(middleHanoiPeg, false);
 		Thread t3 = new Thread(mExecutor, "MiddleHanoiPeg");
 
-		org.bip.spec.hanoi.HanoiPeg rightHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(size, true);
+		org.bip.spec.hanoi.HanoiPeg rightHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(
+				size, true);
 		final ExecutorImpl rExecutor = new ExecutorImpl(rightHanoiPeg, false);
 		Thread t4 = new Thread(rExecutor, "RightHanoiPeg");
 
-		org.bip.spec.hanoi.HanoiPeg rightMiddleHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(size, true);
-		final ExecutorImpl rMExecutor = new ExecutorImpl(rightMiddleHanoiPeg, false);
+		org.bip.spec.hanoi.HanoiPeg rightMiddleHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(
+				size, true);
+		final ExecutorImpl rMExecutor = new ExecutorImpl(rightMiddleHanoiPeg,
+				false);
 		Thread t5 = new Thread(rMExecutor, "RightMiddleHanoiPeg");
 
-		org.bip.spec.hanoi.HanoiPeg leftMiddleHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(size, false);
-		final ExecutorImpl lMExecutor = new ExecutorImpl(leftMiddleHanoiPeg, false);
+		org.bip.spec.hanoi.HanoiPeg leftMiddleHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(
+				size, false);
+		final ExecutorImpl lMExecutor = new ExecutorImpl(leftMiddleHanoiPeg,
+				false);
 		Thread t6 = new Thread(lMExecutor, "LeftMiddleHanoiPeg");
 
 		// BIP engine.
@@ -201,25 +216,31 @@ public class DataTests {
 		}
 	}
 
-	// No asserts yet, just to see if the whole thing does not blow at initialization time and due to first few cycles.
+	// No asserts yet, just to see if the whole thing does not blow at
+	// initialization time and due to first few cycles.
 	@Test
-	public void bipRandomHannoiWithDataTest() throws JAXBException, BIPException {
+	public void bipRandomHannoiWithDataTest() throws JAXBException,
+			BIPException {
 
 		int size = 3;
 
-		BIPGlue bipGlue4Hanoi = new org.bip.spec.hanoi.HanoiRandomGlueBuilder().build();
+		BIPGlue bipGlue4Hanoi = new org.bip.spec.hanoi.HanoiRandomGlueBuilder()
+				.build();
 
 		bipGlue4Hanoi.toXML(System.out);
 
-		org.bip.spec.hanoi.HanoiPeg leftHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(size, false);
+		org.bip.spec.hanoi.HanoiPeg leftHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(
+				size, false);
 		final ExecutorImpl lExecutor = new ExecutorImpl(leftHanoiPeg, false);
 		Thread t2 = new Thread(lExecutor, "LeftHanoiPeg");
 
-		org.bip.spec.hanoi.HanoiPeg middleHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(size, true);
+		org.bip.spec.hanoi.HanoiPeg middleHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(
+				size, true);
 		final ExecutorImpl mExecutor = new ExecutorImpl(middleHanoiPeg, false);
 		Thread t3 = new Thread(mExecutor, "MiddleHanoiPeg");
 
-		org.bip.spec.hanoi.HanoiPeg rightHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(size, true);
+		org.bip.spec.hanoi.HanoiPeg rightHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(
+				size, true);
 		final ExecutorImpl rExecutor = new ExecutorImpl(rightHanoiPeg, false);
 		Thread t4 = new Thread(rExecutor, "RightHanoiPeg");
 
@@ -262,31 +283,42 @@ public class DataTests {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		// assertEquals( (int) Math.pow(2, size) - 1, hanoiMonitor.getNumberOfMoves() );
+		// assertEquals( (int) Math.pow(2, size) - 1,
+		// hanoiMonitor.getNumberOfMoves() );
 	}
 
 	@Test
 	public void bipDataTransferTest() throws BIPException {
 
-		// BIPGlue bipGlue = createGlue("src/test/resources/bipGlueExecutableBehaviourDataTransfers.xml");
+		// BIPGlue bipGlue =
+		// createGlue("src/test/resources/bipGlueExecutableBehaviourDataTransfers.xml");
 
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
 			public void configure() {
 
-				synchron(SwitchableRouteDataTransfers.class, "on").to(MemoryMonitor.class, "add");
-				synchron(SwitchableRouteDataTransfers.class, "finished").to(MemoryMonitor.class, "rm");
-				port(SwitchableRouteDataTransfers.class, "off").acceptsNothing();
-				port(SwitchableRouteDataTransfers.class, "off").requiresNothing();
-				data(SwitchableRouteDataTransfers.class, "deltaMemoryOnTransition").to(MemoryMonitor.class, "memoryUsage");
+				synchron(SwitchableRouteDataTransfers.class, "on").to(
+						MemoryMonitor.class, "add");
+				synchron(SwitchableRouteDataTransfers.class, "finished").to(
+						MemoryMonitor.class, "rm");
+				port(SwitchableRouteDataTransfers.class, "off")
+						.acceptsNothing();
+				port(SwitchableRouteDataTransfers.class, "off")
+						.requiresNothing();
+				data(SwitchableRouteDataTransfers.class,
+						"deltaMemoryOnTransition").to(MemoryMonitor.class,
+						"memoryUsage");
 
 			}
 
 		}.build();
 
-		SwitchableRouteDataTransfers route1 = new SwitchableRouteDataTransfers("1");
-		SwitchableRouteDataTransfers route2 = new SwitchableRouteDataTransfers("2");
-		SwitchableRouteDataTransfers route3 = new SwitchableRouteDataTransfers("3");
+		SwitchableRouteDataTransfers route1 = new SwitchableRouteDataTransfers(
+				"1");
+		SwitchableRouteDataTransfers route2 = new SwitchableRouteDataTransfers(
+				"2");
+		SwitchableRouteDataTransfers route3 = new SwitchableRouteDataTransfers(
+				"3");
 		final ExecutorImpl executor1 = new ExecutorImpl(route1, true);
 		final ExecutorImpl executor2 = new ExecutorImpl(route2, true);
 		final ExecutorImpl executor3 = new ExecutorImpl(route3, true);
@@ -310,7 +342,6 @@ public class DataTests {
 			public void onExchangeBegin(Route route, Exchange exchange) {
 			}
 
-			@Override
 			public void onRemove(Route arg0) {
 			}
 
@@ -319,7 +350,7 @@ public class DataTests {
 			}
 
 			@Override
-			public void onStart(Route arg0) {	
+			public void onStart(Route arg0) {
 			}
 
 			@Override
@@ -364,7 +395,7 @@ public class DataTests {
 			public void onSuspend(Route arg0) {
 			}
 		};
-		
+
 		final RoutePolicy routePolicy3 = new RoutePolicy() {
 
 			public void onInit(Route route) {
@@ -398,26 +429,31 @@ public class DataTests {
 			public void onSuspend(Route arg0) {
 			}
 		};
-		
+
 		RouteBuilder builder1 = new RouteBuilder() {
 
 			@Override
 			public void configure() throws Exception {
-				from("file:inputfolder1?delete=true").routeId("1").routePolicy(routePolicy1).process(new Processor() {
+				from("file:inputfolder1?delete=true").routeId("1")
+						.routePolicy(routePolicy1).process(new Processor() {
 
-					public void process(Exchange exchange) throws Exception {
+							public void process(Exchange exchange)
+									throws Exception {
 
-					}
-				}).to("file:outputfolder1");
+							}
+						}).to("file:outputfolder1");
 
-				from("file:inputfolder2?delete=true").routeId("2").routePolicy(routePolicy2).process(new Processor() {
+				from("file:inputfolder2?delete=true").routeId("2")
+						.routePolicy(routePolicy2).process(new Processor() {
 
-					public void process(Exchange exchange) throws Exception {
+							public void process(Exchange exchange)
+									throws Exception {
 
-					}
-				}).to("file:outputfolder2");
+							}
+						}).to("file:outputfolder2");
 
-				from("file:inputfolder3?delete=true").routeId("3").routePolicy(routePolicy3).to("file:outputfolder3");
+				from("file:inputfolder3?delete=true").routeId("3")
+						.routePolicy(routePolicy3).to("file:outputfolder3");
 			}
 		};
 		camelContext.setAutoStartup(false);
@@ -450,10 +486,247 @@ public class DataTests {
 		engine.specifyGlue(bipGlue);
 		engine.start();
 
-		assertEquals("The state is not appropriate", "off", executor1.getCurrentState());
-		assertEquals("The state is not appropriate", "off", executor2.getCurrentState());
-		assertEquals("The state is not appropriate", "off", executor3.getCurrentState());
-		assertEquals("The state is not appropriate", "one", executorM.getCurrentState());
+		assertEquals("The state is not appropriate", "off",
+				executor1.getCurrentState());
+		assertEquals("The state is not appropriate", "off",
+				executor2.getCurrentState());
+		assertEquals("The state is not appropriate", "off",
+				executor3.getCurrentState());
+		assertEquals("The state is not appropriate", "one",
+				executorM.getCurrentState());
+		try {
+			t2.start();
+			t3.start();
+			t1.start();
+			tM.start();
+
+		} catch (IllegalArgumentException e) {
+
+			e.printStackTrace();
+		} catch (SecurityException e) {
+
+			e.printStackTrace();
+		}
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		engine.execute();
+		try {
+			Thread.sleep(8000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void bipDataTransferFromFileTest() throws BIPException {
+
+		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueExecutableBehaviourDataTransfers.xml");
+		bipGlue.toXML(System.out);
+
+		// BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
+		// @Override
+		// public void configure() {
+		//
+		// synchron(SwitchableRouteDataTransfers.class, "on").to(
+		// MemoryMonitor.class, "add");
+		// synchron(SwitchableRouteDataTransfers.class, "finished").to(
+		// MemoryMonitor.class, "rm");
+		// port(SwitchableRouteDataTransfers.class, "off")
+		// .acceptsNothing();
+		// port(SwitchableRouteDataTransfers.class, "off")
+		// .requiresNothing();
+		// data(SwitchableRouteDataTransfers.class,
+		// "deltaMemoryOnTransition").to(MemoryMonitor.class,
+		// "memoryUsage");
+		//
+		// }
+		//
+		// }.build();
+
+		SwitchableRouteDataTransfers route1 = new SwitchableRouteDataTransfers(
+				"1");
+		SwitchableRouteDataTransfers route2 = new SwitchableRouteDataTransfers(
+				"2");
+		SwitchableRouteDataTransfers route3 = new SwitchableRouteDataTransfers(
+				"3");
+		final ExecutorImpl executor1 = new ExecutorImpl(route1, true);
+		final ExecutorImpl executor2 = new ExecutorImpl(route2, true);
+		final ExecutorImpl executor3 = new ExecutorImpl(route3, true);
+		MemoryMonitor routeOnOffMonitor = new MemoryMonitor(200);
+		final ExecutorImpl executorM = new ExecutorImpl(routeOnOffMonitor, true);
+
+		DataCoordinator engine = new DataCoordinatorImpl(null);
+
+		CamelContext camelContext = new DefaultCamelContext();
+
+		final RoutePolicy routePolicy1 = new RoutePolicy() {
+
+			public void onInit(Route route) {
+			}
+
+			public void onExchangeDone(Route route, Exchange exchange) {
+
+				executor1.inform("end");
+			}
+
+			public void onExchangeBegin(Route route, Exchange exchange) {
+			}
+
+			public void onRemove(Route arg0) {
+			}
+
+			@Override
+			public void onResume(Route arg0) {
+			}
+
+			@Override
+			public void onStart(Route arg0) {
+			}
+
+			@Override
+			public void onStop(Route arg0) {
+			}
+
+			@Override
+			public void onSuspend(Route arg0) {
+			}
+		};
+
+		final RoutePolicy routePolicy2 = new RoutePolicy() {
+
+			public void onInit(Route route) {
+			}
+
+			public void onExchangeDone(Route route, Exchange exchange) {
+
+				executor2.inform("end");
+			}
+
+			public void onExchangeBegin(Route route, Exchange exchange) {
+			}
+
+			@Override
+			public void onRemove(Route arg0) {
+			}
+
+			@Override
+			public void onResume(Route arg0) {
+			}
+
+			@Override
+			public void onStart(Route arg0) {
+			}
+
+			@Override
+			public void onStop(Route arg0) {
+			}
+
+			@Override
+			public void onSuspend(Route arg0) {
+			}
+		};
+
+		final RoutePolicy routePolicy3 = new RoutePolicy() {
+
+			public void onInit(Route route) {
+			}
+
+			public void onExchangeDone(Route route, Exchange exchange) {
+
+				executor3.inform("end");
+			}
+
+			public void onExchangeBegin(Route route, Exchange exchange) {
+			}
+
+			@Override
+			public void onRemove(Route arg0) {
+			}
+
+			@Override
+			public void onResume(Route arg0) {
+			}
+
+			@Override
+			public void onStart(Route arg0) {
+			}
+
+			@Override
+			public void onStop(Route arg0) {
+			}
+
+			@Override
+			public void onSuspend(Route arg0) {
+			}
+		};
+
+		RouteBuilder builder1 = new RouteBuilder() {
+
+			@Override
+			public void configure() throws Exception {
+				from("file:inputfolder1?delete=true").routeId("1")
+						.routePolicy(routePolicy1).process(new Processor() {
+
+							public void process(Exchange exchange)
+									throws Exception {
+
+							}
+						}).to("file:outputfolder1");
+
+				from("file:inputfolder2?delete=true").routeId("2")
+						.routePolicy(routePolicy2).process(new Processor() {
+
+							public void process(Exchange exchange)
+									throws Exception {
+
+							}
+						}).to("file:outputfolder2");
+
+				from("file:inputfolder3?delete=true").routeId("3")
+						.routePolicy(routePolicy3).to("file:outputfolder3");
+			}
+		};
+		camelContext.setAutoStartup(false);
+		try {
+			camelContext.addRoutes(builder1);
+			camelContext.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		route1.setCamelContext(camelContext);
+		route2.setCamelContext(camelContext);
+		route3.setCamelContext(camelContext);
+
+		Thread t1 = new Thread(executor1, "SW1");
+		Thread t2 = new Thread(executor2, "SW2");
+		Thread t3 = new Thread(executor3, "SW3");
+		Thread tM = new Thread(executorM, "M");
+
+		executor1.setEngine(engine);
+		executor2.setEngine(engine);
+		executor3.setEngine(engine);
+		executorM.setEngine(engine);
+		executorM.register(engine);
+		executor1.register(engine);
+
+		executor2.register(engine);
+		executor3.register(engine);
+
+		engine.specifyGlue(bipGlue);
+		engine.start();
+
+		assertEquals("The state is not appropriate", "off",
+				executor1.getCurrentState());
+		assertEquals("The state is not appropriate", "off",
+				executor2.getCurrentState());
+		assertEquals("The state is not appropriate", "off",
+				executor3.getCurrentState());
+		assertEquals("The state is not appropriate", "one",
+				executorM.getCurrentState());
 		try {
 			t2.start();
 			t3.start();
@@ -527,7 +800,8 @@ public class DataTests {
 		}
 	}
 
-	// No asserts yet, just to see if the whole thing does not blow at initialization time and due to first few cycles.
+	// No asserts yet, just to see if the whole thing does not blow at
+	// initialization time and due to first few cycles.
 	@Test
 	public void bipDataAvailabilityTest() throws BIPException {
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueDataAvailability.xml");

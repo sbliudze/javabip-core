@@ -36,19 +36,22 @@ public class ExecutorImpl extends AbstractExecutor implements Runnable {
 	// defines whether this component has already been registered
 	protected boolean registered = false;
 
-	// Used to ensure that we do not go into the next cycle before we finish the previous
+	// Used to ensure that we do not go into the next cycle before we finish the
+	// previous
 	private Semaphore semaphore;
 
 	private Logger logger = LoggerFactory.getLogger(ExecutorImpl.class);
 
 	// defines whether the executor is idle waiting for a spontaneous event
-	// if it is, and the spontaneous event is received, the semaphore should be released
+	// if it is, and the spontaneous event is received, the semaphore should be
+	// released
 	private boolean waitingSpontaneous = false;
 
 	private Map<String, Object> dataEvaluation = new Hashtable<String, Object>();
 
 	/**
-	 * By default, the Executor is created for a component with annotations. If you want to create the Executor for a component with behaviour, use
+	 * By default, the Executor is created for a component with annotations. If
+	 * you want to create the Executor for a component with behaviour, use
 	 * another constructor
 	 * 
 	 * @param bipComponent
@@ -58,13 +61,15 @@ public class ExecutorImpl extends AbstractExecutor implements Runnable {
 		this(bipComponent, true);
 	}
 
-	public ExecutorImpl(Object bipComponent, boolean useSpec) throws BIPException {
+	public ExecutorImpl(Object bipComponent, boolean useSpec)
+			throws BIPException {
 		super(bipComponent, useSpec);
 		this.notifiers = new ArrayList<String>();
 		semaphore = new Semaphore(1);
 	}
 
-	public ExecutorImpl(Object bipComponent, boolean useSpec, BIPEngine engine) throws BIPException {
+	public ExecutorImpl(Object bipComponent, boolean useSpec, BIPEngine engine)
+			throws BIPException {
 		super(bipComponent, useSpec);
 		this.engine = engine;
 		this.notifiers = new ArrayList<String>();
@@ -93,19 +98,22 @@ public class ExecutorImpl extends AbstractExecutor implements Runnable {
 	}
 
 	public void run() {
-		logger.debug("Executor thread started: " + Thread.currentThread().getName());
+		logger.debug("Executor thread started: "
+				+ Thread.currentThread().getName());
 		synchronized (this) {
 			while (!registered) {
 				try {
 					wait();
 				} catch (InterruptedException e) {
-					logger.debug("Executor thread interrupted: " + Thread.currentThread().getName());
+					logger.debug("Executor thread interrupted: "
+							+ Thread.currentThread().getName());
 					return;
 				}
 			}
 		}
 		loop();
-		logger.debug("Executor thread terminated: " + Thread.currentThread().getName());
+		logger.debug("Executor thread terminated: "
+				+ Thread.currentThread().getName());
 	}
 
 	public void loop() {
@@ -138,14 +146,20 @@ public class ExecutorImpl extends AbstractExecutor implements Runnable {
 		Hashtable<String, Boolean> guardToValue = behaviour.computeGuards();
 
 		// we have to compute this in order to be able to raise an exception
-		boolean existInternal = behaviour.existEnabled(Port.Type.internal, guardToValue);
-		boolean existSpontaneous = behaviour.existEnabled(Port.Type.spontaneous, guardToValue);
-		Set<Port> globallyDisabledPorts = behaviour.getGloballyDisabledPorts(guardToValue);
-		boolean existEnforceable = behaviour.existEnabled(Port.Type.enforceable, guardToValue);
+		boolean existInternal = behaviour.existEnabled(Port.Type.internal,
+				guardToValue);
+		boolean existSpontaneous = behaviour.existEnabled(
+				Port.Type.spontaneous, guardToValue);
+		Set<Port> globallyDisabledPorts = behaviour
+				.getGloballyDisabledPorts(guardToValue);
+		boolean existEnforceable = behaviour.existEnabled(
+				Port.Type.enforceable, guardToValue);
 		// globallyDisabledPorts.isEmpty()
-		// && (globallyDisabledPorts.size()!= ((ArrayList<Port>)behaviour.getStateTransitions(behaviour.getCurrentState())).size());
+		// && (globallyDisabledPorts.size()!=
+		// ((ArrayList<Port>)behaviour.getStateTransitions(behaviour.getCurrentState())).size());
 
-		// TODO, code injection to make different options possible at different times
+		// TODO, code injection to make different options possible at different
+		// times
 
 		// if (existEnforceable && existInternal) {
 		// throw new BIPException("In component " + this.getName() +
@@ -160,7 +174,8 @@ public class ExecutorImpl extends AbstractExecutor implements Runnable {
 		} else if (existSpontaneous) {
 			// TODO if disabled transition informs, it will be executed
 			logger.debug("There will be a spontaneous transition.");
-			// TODO get rid of this thread sleep - check test conditions, they do not work without
+			// TODO get rid of this thread sleep - check test conditions, they
+			// do not work without
 			try {
 				Thread.sleep(1000); // TestEnforceable2 was set to 10.000
 			} catch (InterruptedException e) {
@@ -188,9 +203,12 @@ public class ExecutorImpl extends AbstractExecutor implements Runnable {
 			}
 		}
 		if (existEnforceable) {
-			engine.inform(this, behaviour.getCurrentState(), globallyDisabledPorts);
+			engine.inform(this, behaviour.getCurrentState(),
+					globallyDisabledPorts);
 		} else if (!existSpontaneous) {
-			throw new BIPException("No transition of known type from state " + behaviour.getCurrentState() + " in component " + this.getId());
+			throw new BIPException("No transition of known type from state "
+					+ behaviour.getCurrentState() + " in component "
+					+ this.getId());
 		}
 	}
 
@@ -209,7 +227,8 @@ public class ExecutorImpl extends AbstractExecutor implements Runnable {
 		if (portID == null || portID.isEmpty()) {
 			return;
 		}
-		logger.info("{} was informed of a spontaneous transition {}", this.getId(), portID);
+		logger.info("{} was informed of a spontaneous transition {}",
+				this.getId(), portID);
 
 		synchronized (notifiers) {
 			notifiers.add(portID);
@@ -222,21 +241,25 @@ public class ExecutorImpl extends AbstractExecutor implements Runnable {
 	public <T> T getData(String name, Class<T> clazz) {
 
 		if (name == null || name.isEmpty()) {
-			throw new IllegalArgumentException("The name of the required data variable from the component " + bipComponent.getClass().getName() + " cannot be null or empty.");
+			throw new IllegalArgumentException(
+					"The name of the required data variable from the component "
+							+ bipComponent.getClass().getName()
+							+ " cannot be null or empty.");
 		}
 
 		T result = null;
-		
+
 		try {
-			logger.debug("Component {} getting data {}.", behaviour.getComponentType(), name);
-			Object methodResult = behaviour.getDataOutMapping().get(name).invoke(bipComponent);
-			
+			logger.debug("Component {} getting data {}.",
+					behaviour.getComponentType(), name);
+			Object methodResult = behaviour.getDataOutMapping().get(name)
+					.invoke(bipComponent);
+
 			if (!methodResult.getClass().isAssignableFrom(clazz)) {
 				result = getPrimitiveData(name, methodResult, clazz);
-			}
-			else
+			} else
 				result = clazz.cast(methodResult);
-			
+
 		} catch (IllegalAccessException e) {
 			ExceptionHelper.printExceptionTrace(logger, e);
 			e.printStackTrace();
@@ -250,31 +273,36 @@ public class ExecutorImpl extends AbstractExecutor implements Runnable {
 		}
 		return result;
 	}
-	
-	Set<Class<?>> primitiveTypes = new HashSet<Class<?>>(Arrays.<Class<?>>asList(int.class, float.class, 
-										double.class, byte.class, long.class, short.class,
-										boolean.class, char.class));
-	
-		
+
+	Set<Class<?>> primitiveTypes = new HashSet<Class<?>>(
+			Arrays.<Class<?>> asList(int.class, float.class, double.class,
+					byte.class, long.class, short.class, boolean.class,
+					char.class));
+
 	<T> T getPrimitiveData(String name, Object methodResult, Class<T> clazz) {
 
 		if (primitiveTypes.contains(clazz)) {
-	
-			// For primitive types, as specified in primitiveTypes set, 
+
+			// For primitive types, as specified in primitiveTypes set,
 			// we use direct casting that will employ autoboxing
-			// feature from Java. Therefore, we suppress unchecked 
+			// feature from Java. Therefore, we suppress unchecked
 			@SuppressWarnings("unchecked")
 			T result = (T) methodResult;
-	
+
 			return result;
-		}
-		else
-			throw new IllegalArgumentException("The type " + methodResult.getClass() + " of the required data variable " + name + " from the component " + bipComponent.getClass().getName()
-				+ " does not correspond to the specified return type " + clazz);		
+		} else
+			throw new IllegalArgumentException("The type "
+					+ methodResult.getClass()
+					+ " of the required data variable " + name
+					+ " from the component "
+					+ bipComponent.getClass().getName()
+					+ " does not correspond to the specified return type "
+					+ clazz);
 
 	}
 
-	public List<Boolean> checkEnabledness(PortBase port, List<Map<String, Object>> data) {
+	public List<Boolean> checkEnabledness(PortBase port,
+			List<Map<String, Object>> data) {
 		try {
 			return behaviour.checkEnabledness(port.getId(), data);
 		} catch (IllegalAccessException e) {
@@ -332,5 +360,9 @@ public class ExecutorImpl extends AbstractExecutor implements Runnable {
 
 		return result.toString();
 
+	}
+
+	public String getType() {
+		return behaviour.getComponentType();
 	}
 }
