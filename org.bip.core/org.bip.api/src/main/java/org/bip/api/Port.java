@@ -2,6 +2,9 @@ package org.bip.api;
 
 public interface Port extends PortBase , ComponentProvider  {
 
+	// TODO, Question, Should getType and Type Enum be in PortBase interface? If so, then this interface will be
+	// just composition of two interfaces (PortBase and ComponentProvider).
+	
 	/**
 	 * It returns the type of the port.
 	 * 
