@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camel-osgi="http://camel.apache.org/schema/osgi"
+	xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
+	xmlns:ctx="http://www.springframework.org/schema/context" xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+       http://camel.apache.org/schema/osgi http://camel.apache.org/schema/osgi/camel-osgi.xsd
+       http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+
+	<!-- bundle external configuration with properties -->
+	<osgix:cm-properties id="bundleConfig"
+		persistent-id="io.xtech.bip.bipmodules">
+		<prop key="cfa.filemover.infolder1"></prop>
+		<prop key="cfa.filemover.outfolder1"></prop>
+		<prop key="cfa.filemover.infolder2"></prop>
+		<prop key="cfa.filemover.outfolder2"></prop>
+		<prop key="cfa.filemover.infolder3"></prop>
+		<prop key="cfa.filemover.outfolder3"></prop>
+	</osgix:cm-properties>
+
+	<camel-osgi:camelContext xmlns="http://camel.apache.org/schema/spring"
+		id="filemover-camelContext">
+		<contextScan />
+	</camel-osgi:camelContext>
+
+	<ctx:property-placeholder properties-ref="bundleConfig" />
+
+	<!-- // BIP module for the first route. -->
+
+	<bean id="spec-1" class="org.bip.spec.SwitchableRouteDataTransfers">
+		<constructor-arg index="0" value="filemoverRoute-1" />
+		<property name="executor" ref="osgi-executor-1" />
+	</bean>
+
+	<osgi:reference id="bipEngine" interface="org.bip.api.BIPEngine" />
+
+	<bean id="osgi-executor-1" class="org.bip.executor.springinosgi.ExecutorOSGiInSpringImpl">
+		<constructor-arg index="0" ref="spec-1" />
+		<property name="engine" ref="bipEngine" />
+	</bean>
+
+	<bean id="filemoverRouteBuilder-1" class="com.xtech.cfa.filemover.FilePollerRouteBuilder">
+		<property name="inFolder" value="${cfa.filemover.infolder1}" />
+		<property name="outFolder" value="${cfa.filemover.outfolder1}" />
+		<property name="routeId" value="filemoverRoute-1" />
+	</bean>
+
+	<!-- // BIP module for the second route. -->
+
+	<bean id="spec-2" class="org.bip.spec.SwitchableRouteDataTransfers">
+		<constructor-arg index="0" value="filemoverRoute-2" />
+		<property name="executor" ref="osgi-executor-2" />
+	</bean>
+
+	<bean id="osgi-executor-2" class="org.bip.executor.springinosgi.ExecutorOSGiInSpringImpl">
+		<constructor-arg index="0" ref="spec-2" />
+		<property name="engine" ref="bipEngine" />
+	</bean>
+
+	<bean id="filemoverRouteBuilder-2" class="com.xtech.cfa.filemover.FilePollerRouteBuilder">
+		<property name="inFolder" value="${cfa.filemover.infolder2}" />
+		<property name="outFolder" value="${cfa.filemover.outfolder2}" />
+		<property name="routeId" value="filemoverRoute-2" />
+	</bean>
+
+	<!-- // BIP module for the third route. -->
+
+	<bean id="spec-3" class="org.bip.spec.SwitchableRouteDataTransfers">
+		<constructor-arg index="0" value="filemoverRoute-3" />
+		<property name="executor" ref="osgi-executor-3" />
+	</bean>
+
+	<bean id="osgi-executor-3" class="org.bip.executor.springinosgi.ExecutorOSGiInSpringImpl">
+		<constructor-arg index="0" ref="spec-3" />
+		<property name="engine" ref="bipEngine" />
+	</bean>
+
+	<bean id="filemoverRouteBuilder-3" class="com.xtech.cfa.filemover.FilePollerRouteBuilder">
+		<property name="inFolder" value="${cfa.filemover.infolder3}" />
+		<property name="outFolder" value="${cfa.filemover.outfolder3}" />
+		<property name="routeId" value="filemoverRoute-3" />
+	</bean>
+
+	<!-- // BIP module RouteOnOffMonitor -->
+
+	<bean id="spec-4" class="org.bip.spec.MemoryMonitor">
+		<constructor-arg index="0" value="203" />
+	</bean>
+
+	<bean id="osgi-executor-4" class="org.bip.executor.springinosgi.ExecutorOSGiInSpringImpl">
+		<constructor-arg index="0" ref="spec-4" />
+		<property name="engine" ref="bipEngine" />
+	</bean>
+
+</beans>
