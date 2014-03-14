@@ -8,7 +8,6 @@ target/
 .metadata/
 bin/
 *.class
-META-INF/
 .gitignore~
 *.html
 *.java~
