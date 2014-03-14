@@ -1,0 +1,10 @@
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.0.0">
+    <feature name="bip-core" version="0.1">
+        <bundle>mvn:org.bip/org.bip.api/0.1.0-SNAPSHOT</bundle>
+        <bundle>mvn:org.bip/org.bip.executor/0.1.0-SNAPSHOT</bundle>
+        <bundle>mvn:org.bip/org.bip.executor.springinosgi/0.1.0-SNAPSHOT</bundle>
+        <bundle>mvn:org.bip/org.bip.glue/0.1.0-SNAPSHOT</bundle>
+        <bundle>mvn:org.bip/org.bip.impl/0.1.0-SNAPSHOT</bundle>
+        <bundle>mvn:org.bip/org.bip.spec.examples/0.1.0-SNAPSHOT</bundle>
+    </feature>
+</features>
