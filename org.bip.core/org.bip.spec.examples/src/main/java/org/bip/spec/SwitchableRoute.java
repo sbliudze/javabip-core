@@ -123,6 +123,9 @@ public class SwitchableRoute implements CamelContextAware, InitializingBean, Dis
 		if (routeDefinition == null)
 			throw new IllegalStateException("The route with a given id " + routeId + " can not be found in the CamelContext.");
 
+		if (executor == null)
+			throw new IllegalStateException("BIP Executor for handling this bip spec has not been injected thus no spontaneous even notification can be established.");
+		
 		List<RoutePolicy> routePolicyList = routeDefinition.getRoutePolicies();
 
 		if (routePolicyList == null) {
