@@ -9,20 +9,20 @@
    
   <groupId>org.bip</groupId>
   
-  <artifactId>org.bip.impl</artifactId>
+  <artifactId>org.bip.jmx</artifactId>
   
   <version>0.1.0-SNAPSHOT</version>
   
-  <name>BIP :: Core :: Impl</name>
+  <name>BIP :: Core :: JMX</name>
   
-  <description>It contains simple implementation (helper classes) for common interfaces.</description>
+  <description>It contains simple implementation of JMX bean for Executor.</description>
   
   <packaging>bundle</packaging>
 	
 	<properties>
 		<osgi.private></osgi.private>
 		<osgi.import>*</osgi.import>
-		<osgi.export>org.bip.impl, org.bip.jmx, org.bip.util</osgi.export>
+		<osgi.export>org.bip.jmx</osgi.export>
 		<osgi.dynamic.import></osgi.dynamic.import>
 	</properties>
 	

@@ -52,6 +52,12 @@
   		  <version>${org.bip.glue.version}</version>
         </dependency>
 
+		<dependency>
+		  <groupId>org.bip</groupId>
+		  <artifactId>org.bip.jmx</artifactId>
+  		  <version>${org.bip.jmx.version}</version>
+		</dependency>
+
 <!--         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>

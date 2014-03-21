@@ -23,7 +23,6 @@ import org.bip.api.BIPEngine;
 import org.bip.api.Port;
 import org.bip.api.PortBase;
 import org.bip.exceptions.BIPException;
-import org.bip.util.ExceptionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

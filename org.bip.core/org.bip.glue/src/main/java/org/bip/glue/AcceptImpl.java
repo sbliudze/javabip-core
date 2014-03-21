@@ -16,7 +16,6 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 
 import org.bip.api.Accepts;
 import org.bip.api.PortBase;
-import org.bip.impl.PortBaseImpl;
 
 class AcceptImpl implements Accepts {
 

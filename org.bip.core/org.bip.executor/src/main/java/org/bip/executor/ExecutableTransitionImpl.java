@@ -14,7 +14,6 @@ import org.bip.api.Port;
 import org.bip.exceptions.BIPException;
 import org.bip.executor.guardparser.boolLexer;
 import org.bip.executor.guardparser.boolParser;
-import org.bip.impl.TransitionImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -27,11 +27,6 @@
 			<version>${org.bip.api.version}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>org.bip</groupId>
-			<artifactId>org.bip.impl</artifactId>
-			<version>${org.bip.impl.version}</version>
-		</dependency>
 	</dependencies>
 
 	<properties>

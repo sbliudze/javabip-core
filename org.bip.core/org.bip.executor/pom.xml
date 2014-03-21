@@ -18,7 +18,7 @@
 			org.bip.executor.guardparser
 		</osgi.private>
 		<osgi.import>org.bip.annotations, org.bip.api, org.bip.exceptions,
-			org.bip.impl, org.bip.util, org.bip.glue, org.slf4j, *
+			org.bip.util, org.bip.glue, org.slf4j, *
 		</osgi.import>
 		<osgi.export>
 			org.bip.executor 
@@ -34,12 +34,6 @@
 			<groupId>org.bip</groupId>
 			<artifactId>org.bip.api</artifactId>
 			<version>${org.bip.api.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.bip</groupId>
-			<artifactId>org.bip.impl</artifactId>
-			<version>${org.bip.impl.version}</version>
 		</dependency>
 
 		<dependency>

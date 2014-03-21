@@ -29,9 +29,6 @@ import org.bip.api.Executor;
 import org.bip.api.Guard;
 import org.bip.api.Port;
 import org.bip.exceptions.BIPException;
-import org.bip.impl.GuardImpl;
-import org.bip.impl.PortImpl;
-import org.bip.impl.ReflectionHelper;
 
 /**
  * Creates a Behaviour for the future use of the Executor

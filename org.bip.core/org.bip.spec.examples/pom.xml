@@ -80,12 +80,6 @@
 
 		<dependency>
 			<groupId>org.bip</groupId>
-			<artifactId>org.bip.impl</artifactId>
-			<version>${org.bip.impl.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.bip</groupId>
 			<artifactId>org.bip.executor</artifactId>
 			<version>${org.bip.executor.version}</version>
 		</dependency>

@@ -23,9 +23,6 @@ import org.bip.api.ExecutableBehaviour;
 import org.bip.api.Guard;
 import org.bip.api.Port;
 import org.bip.exceptions.BIPException;
-import org.bip.impl.DataImpl;
-import org.bip.impl.TransitionImpl;
-import org.bip.util.ExceptionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

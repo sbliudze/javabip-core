@@ -17,10 +17,6 @@ import org.bip.api.ExecutableBehaviour;
 import org.bip.api.Guard;
 import org.bip.api.Port;
 import org.bip.exceptions.BIPException;
-import org.bip.impl.GuardImpl;
-import org.bip.impl.PortImpl;
-import org.bip.impl.ReflectionHelper;
-import org.bip.impl.TransitionImpl;
 
 // TODO, all classes should have a header and description of its purpose for nice looking JavaDoc document.
 // For example check BIPSpecification for an example.

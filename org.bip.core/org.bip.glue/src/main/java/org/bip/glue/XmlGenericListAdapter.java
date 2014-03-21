@@ -5,8 +5,6 @@ import java.util.List;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-import org.bip.impl.PortBaseImpl;
-
 class XmlGenericListAdapter<T extends List<PortBaseImpl>> extends XmlAdapter<ListType<T>, List<T>> {
 
     @Override

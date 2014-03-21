@@ -24,7 +24,6 @@ import javax.xml.bind.Unmarshaller;
 
 import org.bip.api.BIPGlue;
 import org.bip.api.PortBase;
-import org.bip.impl.PortBaseImpl;
 
 public abstract class GlueBuilder {
 

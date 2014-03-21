@@ -6,7 +6,7 @@
  * Date: 01/27/14
  */
 
-package org.bip.impl;
+package org.bip.glue;
 
 import javax.xml.bind.annotation.XmlAttribute;
 

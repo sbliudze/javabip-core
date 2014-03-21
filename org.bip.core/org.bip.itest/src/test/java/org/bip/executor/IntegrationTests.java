@@ -27,7 +27,6 @@ import org.bip.engine.api.BIPCoordinator;
 import org.bip.exceptions.BIPException;
 import org.bip.glue.GlueBuilder;
 import org.bip.glue.TwoSynchronGlueBuilder;
-import org.bip.impl.PortImpl;
 import org.bip.spec.HanoiGlueBuilder;
 import org.bip.spec.HanoiMonitor;
 import org.bip.spec.LeftHanoiPeg;

@@ -16,7 +16,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.bip.api.PortBase;
 import org.bip.api.Requires;
-import org.bip.impl.PortBaseImpl;
 
 class RequireImpl implements Requires {
 

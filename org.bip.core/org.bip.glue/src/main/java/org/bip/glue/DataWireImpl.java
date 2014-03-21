@@ -12,7 +12,6 @@ import javax.xml.bind.annotation.XmlElement;
 
 import org.bip.api.DataWire;
 import org.bip.api.PortBase;
-import org.bip.impl.PortBaseImpl;
 
 class DataWireImpl implements DataWire {
 

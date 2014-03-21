@@ -6,7 +6,7 @@
  * Date: 10/15/12
  */
 
-package org.bip.impl;
+package org.bip.executor;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
