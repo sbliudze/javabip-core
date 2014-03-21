@@ -5,9 +5,9 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 
-import org.bip.impl.PortImpl;
+import org.bip.impl.PortBaseImpl;
 
-class ListType<T extends List<PortImpl>> {
+class ListType<T extends List<PortBaseImpl>> {
 
 	private List<ListElementType<T>> list = new ArrayList<ListElementType<T>>();
 

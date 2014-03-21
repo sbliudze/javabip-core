@@ -5,9 +5,9 @@ import java.util.List;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-import org.bip.impl.PortImpl;
+import org.bip.impl.PortBaseImpl;
 
-class XmlGenericListAdapter<T extends List<PortImpl>> extends XmlAdapter<ListType<T>, List<T>> {
+class XmlGenericListAdapter<T extends List<PortBaseImpl>> extends XmlAdapter<ListType<T>, List<T>> {
 
     @Override
     public List<T> unmarshal(ListType<T> v) throws Exception {

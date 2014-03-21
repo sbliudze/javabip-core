@@ -10,7 +10,6 @@ package org.bip.impl;
 
 import javax.xml.bind.annotation.XmlAttribute;
 
-import org.bip.api.BIPComponent;
 import org.bip.api.PortBase;
 
 public class PortBaseImpl implements PortBase {
@@ -29,11 +28,6 @@ public class PortBaseImpl implements PortBase {
 
 	public String getSpecType() {
 		return specType;
-	}
-
-	public BIPComponent component() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	public PortBaseImpl(String id, String specificationType) {
