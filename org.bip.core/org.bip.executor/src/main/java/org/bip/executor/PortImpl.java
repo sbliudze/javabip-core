@@ -19,7 +19,7 @@ import org.bip.api.Port;
  * Provides information about the port: id, specification type and port type which can be enforceable or spontaneous.
  * 
  */
-public class PortImpl implements Port {
+class PortImpl implements Port {
 
 	@XmlTransient
 	private Port.Type type;

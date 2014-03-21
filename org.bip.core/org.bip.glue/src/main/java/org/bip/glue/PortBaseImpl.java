@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 
 import org.bip.api.PortBase;
 
-public class PortBaseImpl implements PortBase {
+class PortBaseImpl implements PortBase {
 
 	@XmlAttribute
 	protected String id;

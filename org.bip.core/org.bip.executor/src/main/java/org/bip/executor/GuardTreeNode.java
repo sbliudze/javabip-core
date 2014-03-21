@@ -7,6 +7,7 @@ import java.util.Map;
 import org.bip.api.Guard;
 import org.bip.exceptions.BIPException;
 
+// TODO do we have to keep this class public?, make it private refactor guardparser into this package.
 public class GuardTreeNode {
 
 	public ArrayList<GuardTreeNode> children = new ArrayList<GuardTreeNode>();

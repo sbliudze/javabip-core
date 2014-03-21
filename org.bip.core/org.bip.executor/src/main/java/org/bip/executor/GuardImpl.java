@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
  * arguments.
  * 
  */
-public class GuardImpl implements Guard {
+class GuardImpl implements Guard {
 
 
 	private Logger logger = LoggerFactory.getLogger(GuardImpl.class);

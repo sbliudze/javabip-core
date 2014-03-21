@@ -18,7 +18,7 @@ import org.bip.api.Data;
 import org.bip.api.DataOut;
 import org.bip.exceptions.BIPException;
 
-public class ReflectionHelper {
+class ReflectionHelper {
 
 	// Separator between method name and parameter number to generate default data in name.
 	private static final String SEPARATOR = ".";

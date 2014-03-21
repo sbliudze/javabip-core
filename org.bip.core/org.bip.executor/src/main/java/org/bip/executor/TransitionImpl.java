@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
 
 import org.bip.api.Data;
 
-public class TransitionImpl {
+class TransitionImpl {
 		
 	protected String source;
 	protected String target;

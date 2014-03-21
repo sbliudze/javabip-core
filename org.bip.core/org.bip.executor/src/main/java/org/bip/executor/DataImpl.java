@@ -22,7 +22,7 @@ import org.bip.exceptions.BIPException;
  * @param <T>
  *            The type of the data value
  */
-public class DataImpl<T> implements DataOut<T> {
+class DataImpl<T> implements DataOut<T> {
 
 	private String name;
 	private Class<T> clazz;
