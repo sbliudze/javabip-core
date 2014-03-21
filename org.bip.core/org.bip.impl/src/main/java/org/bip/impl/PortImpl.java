@@ -8,6 +8,7 @@
 
 package org.bip.impl;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.bip.api.BIPComponent;
@@ -18,10 +19,40 @@ import org.bip.api.Port;
  * Provides information about the port: id, specification type and port type which can be enforceable or spontaneous.
  * 
  */
-public class PortImpl extends PortBaseImpl implements Port {
+public class PortImpl implements Port {
 
 	@XmlTransient
 	private Port.Type type;
+
+	@XmlAttribute
+	protected String id;
+
+	// TODO, Improvement, move this attribute to new class GlueSpecPort (?) and
+	// put this class within glue?
+	@XmlAttribute
+	protected String specType;
+
+	public String getId() {
+		return id;
+	}
+
+	public String getSpecType() {
+		return specType;
+	}
+
+	private PortImpl(String id, String specificationType) {
+		if (id == null) {
+			throw new IllegalArgumentException(
+					"Port id cannot be null for specification type "
+							+ specificationType);
+		}
+		if (specificationType == null) {
+				throw new IllegalArgumentException(
+						"Port spec type cannot be null for port id " + id);
+		}
+		this.id = id;
+		this.specType = specificationType;
+	}
 
 	public Port.Type getType() {
 		return type;
@@ -35,14 +66,13 @@ public class PortImpl extends PortBaseImpl implements Port {
 	}
 
 	public PortImpl(String id, String type, Class<?> specificationType) {
-		super (id, specificationType.getCanonicalName());
-		this.type = getType(type);
+		this (id, type, specificationType.getCanonicalName());
 		if (specificationType.getCanonicalName() == null)
 			throw new IllegalArgumentException("The provided class " + specificationType + "has no cannonical name");
 	}
 
 	public PortImpl(String id, String type, String specificationType) {
-		super (id, specificationType);
+		this (id, specificationType);
 		this.type = getType(type);
 	}
 
