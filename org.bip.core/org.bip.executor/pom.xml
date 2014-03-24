@@ -25,6 +25,7 @@
 		</osgi.export>
 		<osgi.dynamic.import></osgi.dynamic.import>
 		<osgi.bundles></osgi.bundles>
+		<osgi.embed.depdendencies>antlr4, antlr4-runtime, org.abego.treelayout.core, antlr-runtime, antlr, ST4, stringtemplate</osgi.embed.depdendencies>
  		
 	</properties>
 
@@ -98,7 +99,7 @@
 						<Private-Package>${osgi.private}</Private-Package>
 						<Require-Bundle>${osgi.bundles}</Require-Bundle>
 						<Spring-Context>*;publish-context:=false;create-asynchronously:=true</Spring-Context>
-						<Embed-Dependency>antlr4, antlr4-runtime, org.abego.treelayout.core, antlr-runtime, antlr, ST4, stringtemplate</Embed-Dependency>
+						<Embed-Dependency>${osgi.embed.depdendencies}</Embed-Dependency>
 						<!-- <Include-Resource>src/main/resources</Include-Resource> -->
 					</instructions>
 				</configuration>
