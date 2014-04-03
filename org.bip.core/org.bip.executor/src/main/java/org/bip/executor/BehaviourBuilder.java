@@ -39,26 +39,6 @@ public class BehaviourBuilder {
 	private Hashtable<String, Method> dataOutName;
 	private ArrayList<DataOut<?>> dataOut;
 
-	@Deprecated
-	public BehaviourBuilder(String type, String currentState, ArrayList<TransitionImpl> allTransitions, ArrayList<Port> allPorts, ArrayList<String> states, ArrayList<Guard> guards,
-			Object component) {
-		this.componentType = type;
-		this.currentState = currentState;
-		this.allTransitions = allTransitions;
-		this.allPorts = allPorts;
-		this.states = states;
-		this.guards = guards;
-		this.component = component;
-	}
-
-	@Deprecated
-	public BehaviourBuilder(String type, String currentState, ArrayList<TransitionImpl> allTransitions, ArrayList<Port> allPorts, ArrayList<String> states, ArrayList<Guard> guards,
-			Hashtable<String, Method> dataOutName, ArrayList<DataOut<?>> dataOut, Object component) {
-		this(type, currentState, allTransitions, allPorts, states, guards, component);
-		this.dataOut = dataOut;
-		this.dataOutName = dataOutName;
-	}
-
 	public BehaviourBuilder() {
 		allTransitions = new ArrayList<TransitionImpl>();
 		allPorts = new ArrayList<Port>();
