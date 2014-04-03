@@ -15,7 +15,9 @@ import java.util.Set;
 /**
  * It specifies the behaviour of any BIP component.
  */
-// TODO, List and Set interface allows for mutation, use Iterable interface instead.
+// TODO, List and Set interface allows for mutation, use Iterable interface instead. Iterator returned by interface
+// also allows for modifications therefore it is not really good reason to change. Except if we create our own iterator
+// implementations that throw exception if remove method is called on the iterator.
 public interface Behaviour {
 
 	/**

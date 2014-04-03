@@ -12,9 +12,6 @@ package org.bip.api;
  */
 public interface DataWire {
 	
-	// TODO, should we have a simplified port that does not have aspects concerning enforceable aspect.
-	// Maybe current Port should be renamed to ExecutablePort and new interface Port is to cover Data Ports.
-	// Moreover, the newer simple Port should implement interface ComponentPart interface to provide information about component.
 	/**
 	 * Gets the port from which the data is obtained.
 	 *
