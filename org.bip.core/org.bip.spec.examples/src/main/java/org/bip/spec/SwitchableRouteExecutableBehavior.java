@@ -18,9 +18,9 @@ import org.apache.camel.Route;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RoutePolicy;
-import org.bip.annotations.bipExecutableBehaviour;
+import org.bip.annotations.ExecutableBehaviour;
 import org.bip.api.Executor;
-import org.bip.api.Port;
+import org.bip.api.PortType;
 import org.bip.executor.BehaviourBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +39,7 @@ import org.springframework.beans.factory.InitializingBean;
 
 public class SwitchableRouteExecutableBehavior implements CamelContextAware, InitializingBean, DisposableBean {
 
-	@bipExecutableBehaviour
+	@ExecutableBehaviour
     public BehaviourBuilder getExecutableBehavior() throws NoSuchMethodException {
 
 		BehaviourBuilder behaviourBuilder = new BehaviourBuilder();
@@ -70,16 +70,16 @@ public class SwitchableRouteExecutableBehavior implements CamelContextAware, Ini
         behaviourBuilder.addTransition( "finished","done", "off", "", SwitchableRouteExecutableBehavior.class.getMethod("finishedTransition"));
 
         // [Port=(id = end, specType = null, type = spontaneous),
-        behaviourBuilder.addPort("end", Port.Type.spontaneous.toString(), this.getClass());
+        behaviourBuilder.addPort("end", PortType.spontaneous.toString(), this.getClass());
 
         // Port=(id = on, specType = null, type = enforceable),
-        behaviourBuilder.addPort("on", Port.Type.enforceable.toString(), this.getClass());
+        behaviourBuilder.addPort("on", PortType.enforceable.toString(), this.getClass());
 
         // Port=(id = off, specType = null, type = enforceable),
-        behaviourBuilder.addPort("off", Port.Type.enforceable.toString(), this.getClass());
+        behaviourBuilder.addPort("off", PortType.enforceable.toString(), this.getClass());
 
         // Port=(id = finished, specType = null, type = enforceable)]
-        behaviourBuilder.addPort("finished", Port.Type.enforceable.toString(), this.getClass());
+        behaviourBuilder.addPort("finished", PortType.enforceable.toString(), this.getClass());
 
         // [off, on, wait, done]
         

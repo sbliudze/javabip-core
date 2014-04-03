@@ -8,17 +8,17 @@
 
 package org.bip.spec;
 
-import org.bip.annotations.bipComponentType;
-import org.bip.annotations.bipExecutableBehaviour;
-import org.bip.annotations.bipPort;
-import org.bip.annotations.bipPorts;
-import org.bip.api.Port;
+import org.bip.annotations.ComponentType;
+import org.bip.annotations.ExecutableBehaviour;
+import org.bip.annotations.Port;
+import org.bip.annotations.Ports;
+import org.bip.api.PortType;
 import org.bip.executor.BehaviourBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@bipPorts({ @bipPort(name = "sr", type = "spontaneous"), @bipPort(name = "se", type = "spontaneous"), @bipPort(name = "p", type = "enforceable") })
-@bipComponentType(initial = "state0", name = "org.bip.spec.PComponent")
+@Ports({ @Port(name = "sr", type = "spontaneous"), @Port(name = "se", type = "spontaneous"), @Port(name = "p", type = "enforceable") })
+@ComponentType(initial = "state0", name = "org.bip.spec.PComponent")
 public class PResizableBehaviorComponent {
 
 	// sr spontaneous is rolling back to previous state.
@@ -39,12 +39,12 @@ public class PResizableBehaviorComponent {
 		behavior = initializeBehavior(size);
 	}
 
-	@bipExecutableBehaviour
+	@ExecutableBehaviour
 	public BehaviourBuilder getExecutableBehavior() throws NoSuchMethodException {
 		return behavior;
 	}
 
-	// @bipExecutableBehaviour
+	// @ExecutableBehaviour
 	public BehaviourBuilder initializeBehavior(int size) throws NoSuchMethodException {
 
 		BehaviourBuilder behaviourBuilder = new BehaviourBuilder();
@@ -88,11 +88,11 @@ public class PResizableBehaviorComponent {
 		}
 
 		// [Port=(id = sr, specType = null, type = spontaneous),
-		behaviourBuilder.addPort("sr", Port.Type.spontaneous.toString(), this.getClass());
+		behaviourBuilder.addPort("sr", PortType.spontaneous.toString(), this.getClass());
 
-		behaviourBuilder.addPort("se", Port.Type.spontaneous.toString(), this.getClass());
+		behaviourBuilder.addPort("se", PortType.spontaneous.toString(), this.getClass());
 
-		behaviourBuilder.addPort("p", Port.Type.enforceable.toString(), this.getClass());
+		behaviourBuilder.addPort("p", PortType.enforceable.toString(), this.getClass());
 
 		// [Guard=(name = isFinished, method = isFinished)]
 		//ArrayList<Guard> guards = new ArrayList<Guard>();
@@ -109,14 +109,14 @@ public class PResizableBehaviorComponent {
 	/*
 	 * Check what are the conditions for throwing the exception.
 	 */
-//	@bipTransition(name = "p", source = "start", target = "start", guard = "isPEnabled")
+//	@Transition(name = "p", source = "start", target = "start", guard = "isPEnabled")
 	public void enforceableP() throws Exception {
 		logger.debug("P transition is being executed.");
 		pCounter++;
 		pEnabled--;
 	}
 
-//	@bipGuard(name = "isPEnabled")
+//	@Guard(name = "isPEnabled")
 	public boolean isPEnabled() {
 		return !needExternalEnable || pEnabled > 0;
 	}

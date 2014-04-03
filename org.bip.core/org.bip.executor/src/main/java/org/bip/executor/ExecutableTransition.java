@@ -14,7 +14,7 @@ import java.util.Map;
 
 import org.bip.api.Data;
 import org.bip.api.Guard;
-import org.bip.api.Port;
+import org.bip.api.PortType;
 
 interface ExecutableTransition {
 
@@ -28,7 +28,7 @@ interface ExecutableTransition {
 
 	public boolean guardIsTrue(Map<String, Boolean> guardToValue);
 
-	public Port.Type getType();
+	public PortType getType();
 
 	public String name();
 

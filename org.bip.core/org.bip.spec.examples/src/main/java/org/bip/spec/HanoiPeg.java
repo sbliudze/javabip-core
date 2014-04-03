@@ -8,8 +8,8 @@
 
 package org.bip.spec;
 
-import org.bip.annotations.bipExecutableBehaviour;
-import org.bip.api.Port;
+import org.bip.annotations.ExecutableBehaviour;
+import org.bip.api.PortType;
 import org.bip.executor.BehaviourBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +43,7 @@ public class HanoiPeg {
     }
 
 
-    @bipExecutableBehaviour
+    @ExecutableBehaviour
     public BehaviourBuilder initializeBehavior() throws NoSuchMethodException {
 
     	BehaviourBuilder behaviourBuilder = new BehaviourBuilder();
@@ -60,8 +60,8 @@ public class HanoiPeg {
 
             behaviourBuilder.addTransition("piece" + (i+1) + "Add",    "start", "start", "isPiece"+ (i+1) + "Addable",   this.getClass().getMethod("movePiece" + (i+1)));
             behaviourBuilder.addTransition("piece" + (i+1) + "Remove", "start", "start", "isPiece"+ (i+1) + "Removable", this.getClass().getMethod("movePiece" + (i+1)));
-            behaviourBuilder.addPort("piece" + (i+1) + "Add", Port.Type.enforceable.toString(), this.getClass());
-            behaviourBuilder.addPort("piece" + (i+1) + "Remove", Port.Type.enforceable.toString(), this.getClass());
+            behaviourBuilder.addPort("piece" + (i+1) + "Add", PortType.enforceable.toString(), this.getClass());
+            behaviourBuilder.addPort("piece" + (i+1) + "Remove", PortType.enforceable.toString(), this.getClass());
 			behaviourBuilder.addGuard("isPiece" + (i + 1) + "Addable", this.getClass().getMethod("isPiece" + (i + 1) + "Addable"));
 			behaviourBuilder.addGuard("isPiece" + (i + 1) + "Removable", this.getClass().getMethod("isPiece" + (i + 1) + "Removable"));
         }

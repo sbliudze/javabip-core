@@ -18,11 +18,11 @@ import org.apache.camel.Route;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RoutePolicy;
-import org.bip.annotations.bipComponentType;
-import org.bip.annotations.bipGuard;
-import org.bip.annotations.bipPort;
-import org.bip.annotations.bipPorts;
-import org.bip.annotations.bipTransition;
+import org.bip.annotations.ComponentType;
+import org.bip.annotations.Guard;
+import org.bip.annotations.Port;
+import org.bip.annotations.Ports;
+import org.bip.annotations.Transition;
 import org.bip.api.Executor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,8 +40,8 @@ import org.springframework.beans.factory.InitializingBean;
  * 
  */
 
-@bipPorts({ @bipPort(name = "end", type = "spontaneous"), @bipPort(name = "on", type = "enforceable"), @bipPort(name = "off", type = "enforceable"), @bipPort(name = "finished", type = "enforceable") })
-@bipComponentType(initial = "off", name = "org.bip.spec.SwitchableRoute")
+@Ports({ @Port(name = "end", type = "spontaneous"), @Port(name = "on", type = "enforceable"), @Port(name = "off", type = "enforceable"), @Port(name = "finished", type = "enforceable") })
+@ComponentType(initial = "off", name = "org.bip.spec.SwitchableRoute")
 //TODO get rid of component name
 public class SwitchableRoute implements CamelContextAware, InitializingBean, DisposableBean {
 
@@ -75,7 +75,7 @@ public class SwitchableRoute implements CamelContextAware, InitializingBean, Dis
 	/**
 	 * In some cases you may want to execute
 	 */
-	// @bipPort(name="end", type="spontaneous")
+	// @Port(name="end", type="spontaneous")
 	public void workDone() {
 		logger.debug("Port handler for end port is executing.");
 		workDone = true;
@@ -84,35 +84,35 @@ public class SwitchableRoute implements CamelContextAware, InitializingBean, Dis
 	/*
 	 * Check what are the conditions for throwing the exception.
 	 */
-	@bipTransition(name = "off", source = "on", target = "wait", guard = "")
+	@Transition(name = "off", source = "on", target = "wait", guard = "")
 	public void stopRoute() throws Exception {
 		logger.debug("Stop transition handler for {} is being executed.", routeId);
 		camelContext.suspendRoute(routeId);
 
 	}
 
-	@bipTransition(name = "end", source = "wait", target = "done", guard = "!isFinished")
+	@Transition(name = "end", source = "wait", target = "done", guard = "!isFinished")
 	public void spontaneousEnd() throws Exception {
 		logger.info("Received end notification for the route {}.", routeId);
 	}
 
-	@bipTransition(name = "", source = "wait", target = "done", guard = "isFinished")
+	@Transition(name = "", source = "wait", target = "done", guard = "isFinished")
 	public void internalEnd() throws Exception {
 		logger.info("Transitioning to done state directly since work within {} is already finished.", routeId);
 	}
 
-	@bipTransition(name = "finished", source = "done", target = "off", guard = "")
+	@Transition(name = "finished", source = "done", target = "off", guard = "")
 	public void finishedTransition() throws Exception {
 		logger.debug("Transitioning to off state from done for {}.", routeId);
 	}
 
-	@bipTransition(name = "on", source = "off", target = "on", guard = "")
+	@Transition(name = "on", source = "off", target = "on", guard = "")
 	public void startRoute() throws Exception {
 		logger.debug("Start transition handler for {} is being executed.", routeId);
 		camelContext.resumeRoute(routeId);
 	}
 
-	@bipGuard(name = "isFinished")
+	@Guard(name = "isFinished")
 	public boolean isFinished() {
 		return camelContext.getInflightRepository().size(routeId) == 0;
 	}

@@ -8,16 +8,16 @@
 
 package org.bip.spec;
 
-import org.bip.annotations.bipComponentType;
-import org.bip.annotations.bipGuard;
-import org.bip.annotations.bipPort;
-import org.bip.annotations.bipPorts;
-import org.bip.annotations.bipTransition;
+import org.bip.annotations.ComponentType;
+import org.bip.annotations.Guard;
+import org.bip.annotations.Port;
+import org.bip.annotations.Ports;
+import org.bip.annotations.Transition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@bipPorts({ @bipPort(name = "s", type = "spontaneous"), @bipPort(name = "p", type = "enforceable") })
-@bipComponentType(initial = "start", name = "org.bip.spec.PComponent")
+@Ports({ @Port(name = "s", type = "spontaneous"), @Port(name = "p", type = "enforceable") })
+@ComponentType(initial = "start", name = "org.bip.spec.PComponent")
 public class PComponent {
 
     Logger logger = LoggerFactory.getLogger(SwitchableRoute.class);
@@ -36,19 +36,19 @@ public class PComponent {
     /*
       * Check what are the conditions for throwing the exception.
       */
-    @bipTransition(name = "p", source = "start", target = "start", guard = "isPEnabled")
+    @Transition(name = "p", source = "start", target = "start", guard = "isPEnabled")
     public void enforceableP() throws Exception {
         logger.debug("P transition is being executed.");
         pCounter++;
         pEnabled = false;
     }
 
-    @bipGuard(name = "isPEnabled")
+    @Guard(name = "isPEnabled")
     public boolean isPEnabled() {
         return !needExternalEnable || pEnabled;
     }
 
-    @bipTransition(name = "s", source = "start", target = "start", guard = "!isPEnabled")
+    @Transition(name = "s", source = "start", target = "start", guard = "!isPEnabled")
     public void enableP() {
         pEnabled = true;
     }

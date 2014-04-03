@@ -12,23 +12,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * It specifies the name and the type of the port.
+ * It specifies/aggregates the ports for a given BIP specification.
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface bipPort {
+public @interface Ports {
 	
 	/**
-	 * It returns the name of the port.
+	 * The ports of the BIP specification.
 	 *
-	 * @return the name of the port.
+	 * @return the array containing the ports of the BIP specification.
 	 */
-	String name();
-	
-	/**
-	 * It specifies the type of the port. It is either spontaneous or enforceable.
-	 *
-	 * @return the type of the port.
-	 */
-	String type(); 
-	
+	Port[] value();
 }

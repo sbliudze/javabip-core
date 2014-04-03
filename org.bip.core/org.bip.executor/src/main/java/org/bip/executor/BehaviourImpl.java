@@ -22,6 +22,7 @@ import org.bip.api.DataOut;
 import org.bip.api.ExecutableBehaviour;
 import org.bip.api.Guard;
 import org.bip.api.Port;
+import org.bip.api.PortType;
 import org.bip.exceptions.BIPException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -180,7 +181,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 						}
 					}
 					if (!portFound) {
-						throw new BIPException("There is no port instance specified in bipPorts for the port " + port + " mentioned in data " + data.name());
+						throw new BIPException("There is no port instance specified in Ports for the port " + port + " mentioned in data " + data.name());
 					}
 				}
 
@@ -234,7 +235,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 		// create list of enforceable ports
 		for (Port port : allPorts) {
-			if (port.getType() == Port.Type.enforceable) {
+			if (port.getType() == PortType.enforceable) {
 				enforceablePorts.add(port);
 				portToDataInForGuard.put(port, new HashSet<Data<?>>());
 				portToDataInForTransition.put(port, new HashSet<Data<?>>());
@@ -249,7 +250,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 			// set type for the transitions
 			if (transition.name().equals("")) {
-				typedTransition = new ExecutableTransitionImpl(transition, Port.Type.internal, guards);
+				typedTransition = new ExecutableTransitionImpl(transition, PortType.internal, guards);
 				this.allTransitions.add(typedTransition);
 				internalTransitions.add(typedTransition);
 			} else {
@@ -259,7 +260,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 						this.allTransitions.add(typedTransition);
 						// if port is enforceable, add it to the list of state
 						// ports
-						if (port.getType().equals(Port.Type.enforceable)) {
+						if (port.getType().equals(PortType.enforceable)) {
 							enforceableTransitions.add(typedTransition);
 							transitionToPort.put(typedTransition, port);
 							InjectDataInfo(port, typedTransition);
@@ -271,7 +272,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 							}
 							stateports.add(port);
 
-						} else if (port.getType().equals(Port.Type.spontaneous)) {
+						} else if (port.getType().equals(PortType.spontaneous)) {
 							spontaneousTransitions.add(typedTransition);
 						}
 						break;
@@ -420,7 +421,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 	// GET ENABLED TRANSITIONS, TYPED TRANSITIONS
 
-	public boolean existEnabled(Port.Type transitionType, Map<String, Boolean> guardToValue) throws BIPException {
+	public boolean existEnabled(PortType transitionType, Map<String, Boolean> guardToValue) throws BIPException {
 		switch (transitionType) {
 		case enforceable: {
 			for (ExecutableTransition transition : enforceableTransitions) {
@@ -482,7 +483,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 	public Set<Port> getGloballyDisabledPorts(Map<String, Boolean> guardToValue) {
 		HashSet<Port> result = new HashSet<Port>();
 		for (ExecutableTransition transition : getStateTransitions(currentState)) {
-			if (!transition.getType().equals(Port.Type.enforceable)) {
+			if (!transition.getType().equals(PortType.enforceable)) {
 				continue;
 			}
 			String guardExpression = transition.guard();
@@ -534,7 +535,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 	public void executeInternal(Map<String, Boolean> guardToValue) throws BIPException {
 		ExecutableTransition transition = null;
 		for (ExecutableTransition tr : getStateTransitions(currentState)) {
-			if (tr.getType().equals(Port.Type.internal) && tr.guardIsTrue(guardToValue)) {
+			if (tr.getType().equals(PortType.internal) && tr.guardIsTrue(guardToValue)) {
 				transition = tr;
 				break;
 			}

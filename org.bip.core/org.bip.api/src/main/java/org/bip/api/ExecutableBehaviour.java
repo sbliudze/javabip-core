@@ -91,7 +91,7 @@ public interface ExecutableBehaviour extends Behaviour {
 	 * @param guardToValue the guard to value
 	 * @return true, if successful
 	 */
-	public boolean existEnabled(Port.Type transitionType, Map<String, Boolean> guardToValue);
+	public boolean existEnabled(PortType transitionType, Map<String, Boolean> guardToValue);
 
 	// TODO, Change Hashtable into an interface, map.
 	/**

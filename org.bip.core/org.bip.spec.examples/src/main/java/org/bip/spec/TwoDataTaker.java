@@ -1,16 +1,16 @@
 package org.bip.spec;
 
-import org.bip.annotations.bipComponentType;
-import org.bip.annotations.bipData;
-import org.bip.annotations.bipGuard;
-import org.bip.annotations.bipPort;
-import org.bip.annotations.bipPorts;
-import org.bip.annotations.bipTransition;
+import org.bip.annotations.ComponentType;
+import org.bip.annotations.Data;
+import org.bip.annotations.Guard;
+import org.bip.annotations.Port;
+import org.bip.annotations.Ports;
+import org.bip.annotations.Transition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@bipPorts({ @bipPort(name = "a", type = "enforceable") })
-@bipComponentType(initial = "zero", name = "org.bip.spec.TwoDataTaker")
+@Ports({ @Port(name = "a", type = "enforceable") })
+@ComponentType(initial = "zero", name = "org.bip.spec.TwoDataTaker")
 public class TwoDataTaker {
 	Logger logger = LoggerFactory.getLogger(TwoDataTaker.class);
 	final private int memoryLimit;
@@ -21,19 +21,19 @@ public class TwoDataTaker {
 		this.memoryLimit = memoryLimit;
 	}
 
-	@bipTransition(name = "a", source = "zero", target = "zero", guard = "hasCapacity")
-	public void enforceableOfA(@bipData(name = "memoryUsageX") Integer memoryUsage1, @bipData(name = "memoryUsageR") Integer memoryUsage2) {
+	@Transition(name = "a", source = "zero", target = "zero", guard = "hasCapacity")
+	public void enforceableOfA(@Data(name = "memoryUsageX") Integer memoryUsage1, @Data(name = "memoryUsageR") Integer memoryUsage2) {
 		currentCapacity += (memoryUsage1+memoryUsage2);
 		logger.debug("Current capacity: " + currentCapacity + ", limit: " + memoryLimit);
 	}
 
-//	@bipTransition(name = "b", source = "zero", target = "zero")
+//	@Transition(name = "b", source = "zero", target = "zero")
 //	public void spontaneousOfA() {
 //		logger.debug("Spontaneous transition b of component TwoDataTaker is being executed. ");
 //	}
 	
-	@bipGuard(name = "hasCapacity")
-	public boolean hasCapacity(@bipData(name = "memoryUsageX") Integer memoryUsage1, @bipData(name = "memoryUsageR") Integer memoryUsage2) {
+	@Guard(name = "hasCapacity")
+	public boolean hasCapacity(@Data(name = "memoryUsageX") Integer memoryUsage1, @Data(name = "memoryUsageR") Integer memoryUsage2) {
 		logger.debug("currentCapacity + memoryUsage < memoryLimit: " + currentCapacity + " + " + memoryUsage1+memoryUsage2 + " < " + memoryLimit + " " );
 		return ((currentCapacity + memoryUsage1+memoryUsage2 < memoryLimit) );
 	}

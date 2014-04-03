@@ -19,7 +19,7 @@ import java.lang.annotation.RetentionPolicy;
 // input parameters and method.out for the return parameter? Moreover, what is the default value for accessType
 // port?
 @Retention(RetentionPolicy.RUNTIME)
-public @interface bipData {
+public @interface Data {
 
 	/**
 	 * It returns the name of the data.

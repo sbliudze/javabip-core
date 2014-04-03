@@ -13,7 +13,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bip.annotations.bipData;
 import org.bip.api.Data;
 import org.bip.api.DataOut;
 import org.bip.exceptions.BIPException;
@@ -34,15 +33,15 @@ class ReflectionHelper {
 		Annotation[][] paramsAnnotations = method.getParameterAnnotations();
 		for (int i = 0; i < paramsAnnotations.length; i++) {
 			for (Annotation annotation : paramsAnnotations[i]) {
-				if (annotation instanceof bipData) {
-					bipData dataAnnotation = (bipData) annotation;
+				if (annotation instanceof org.bip.annotations.Data) {
+					org.bip.annotations.Data dataAnnotation = (org.bip.annotations.Data) annotation;
 					Data<?> data = createData(dataAnnotation.name(), paramTypes[i]);
 					dataIn.add(data);
 					break;
 				}
 			}
 			// TODO, write a test that will deal with the case when an annotation is missing. 
-			// Maybe create a default name as specified in bipData todo.
+			// Maybe create a default name as specified in Data todo.
 			if (dataIn.size() < i + 1) {
 				// BipData annotation is missing for i-th parameter, thus a default name is taken. 
 				dataIn.add(createData(method.getName() + SEPARATOR + i, paramTypes[i]));
@@ -67,8 +66,8 @@ class ReflectionHelper {
 
 		Annotation[] annotations = method.getAnnotations();
 		for (Annotation annotation : annotations) {
-			if (annotation instanceof bipData) { // DATA OUT
-				return createData(method, (bipData)annotation);
+			if (annotation instanceof org.bip.annotations.Data) { // DATA OUT
+				return createData(method, (org.bip.annotations.Data)annotation);
 			}
 		}
 
@@ -78,7 +77,7 @@ class ReflectionHelper {
 
 	}
 		
-	public static DataOut<?> createData(Method method, bipData dataAnnotation) {
+	public static DataOut<?> createData(Method method, org.bip.annotations.Data dataAnnotation) {
 
 		String name = dataAnnotation.name();
 		String type = dataAnnotation.accessTypePort();

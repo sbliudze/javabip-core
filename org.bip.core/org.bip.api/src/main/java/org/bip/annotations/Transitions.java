@@ -12,15 +12,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * It specifies/aggregates the ports for a given BIP specification.
+ * It makes it possible to assign multiple transition annotations within one function. 
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface bipPorts {
+public @interface Transitions {
 	
 	/**
-	 * The ports of the BIP specification.
+	 * It returns the array of transitions.
 	 *
-	 * @return the array containing the ports of the BIP specification.
+	 * @return array of transitions.
 	 */
-	bipPort[] value();
+	Transition[] value();
 }

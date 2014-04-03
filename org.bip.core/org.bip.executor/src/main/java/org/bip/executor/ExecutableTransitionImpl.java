@@ -10,7 +10,7 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.bip.api.Data;
 import org.bip.api.Guard;
-import org.bip.api.Port;
+import org.bip.api.PortType;
 import org.bip.exceptions.BIPException;
 import org.bip.executor.guardparser.boolLexer;
 import org.bip.executor.guardparser.boolParser;
@@ -23,22 +23,22 @@ import org.slf4j.LoggerFactory;
  */
 class ExecutableTransitionImpl extends TransitionImpl implements ExecutableTransition {
 
-	private Port.Type type;
+	private PortType portType;
 	private GuardTreeNode guardTree;
 
 	private Logger logger = LoggerFactory.getLogger(ExecutableTransitionImpl.class);
 
-	public ExecutableTransitionImpl(TransitionImpl transition, Port.Type type, List<Guard> guards) {
+	public ExecutableTransitionImpl(TransitionImpl transition, PortType portType, List<Guard> guards) {
 		super(transition);
-		this.type = type;
+		this.portType = portType;
 		if (hasGuard()) {
 			this.guardTree = parseANTLR(guard);
 			this.guardTree.createGuardList(guards);
 		}
 	}
 
-	public Port.Type getType() {
-		return this.type;
+	public PortType getType() {
+		return this.portType;
 	}
 
 	public String name() {

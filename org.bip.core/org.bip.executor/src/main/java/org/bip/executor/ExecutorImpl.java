@@ -22,6 +22,7 @@ import org.bip.api.BIPComponent;
 import org.bip.api.BIPEngine;
 import org.bip.api.Port;
 import org.bip.api.PortBase;
+import org.bip.api.PortType;
 import org.bip.exceptions.BIPException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,14 +146,14 @@ public class ExecutorImpl extends AbstractExecutor implements Runnable {
 		Hashtable<String, Boolean> guardToValue = behaviour.computeGuards();
 
 		// we have to compute this in order to be able to raise an exception
-		boolean existInternal = behaviour.existEnabled(Port.Type.internal,
+		boolean existInternal = behaviour.existEnabled(PortType.internal,
 				guardToValue);
 		boolean existSpontaneous = behaviour.existEnabled(
-				Port.Type.spontaneous, guardToValue);
+				PortType.spontaneous, guardToValue);
 		Set<Port> globallyDisabledPorts = behaviour
 				.getGloballyDisabledPorts(guardToValue);
 		boolean existEnforceable = behaviour.existEnabled(
-				Port.Type.enforceable, guardToValue);
+				PortType.enforceable, guardToValue);
 		// globallyDisabledPorts.isEmpty()
 		// && (globallyDisabledPorts.size()!=
 		// ((ArrayList<Port>)behaviour.getStateTransitions(behaviour.getCurrentState())).size());

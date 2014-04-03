@@ -14,15 +14,16 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.bip.api.BIPComponent;
 import org.bip.api.ComponentProvider;
 import org.bip.api.Port;
+import org.bip.api.PortType;
 
 /**
- * Provides information about the port: id, specification type and port type which can be enforceable or spontaneous.
+ * Provides information about the port: id, specification type and portType which can be enforceable or spontaneous.
  * 
  */
 class PortImpl implements Port {
 
 	@XmlTransient
-	private Port.Type type;
+	private PortType portType;
 
 	@XmlAttribute
 	protected String id;
@@ -43,26 +44,26 @@ class PortImpl implements Port {
 	private PortImpl(String id, String specificationType) {
 		if (id == null) {
 			throw new IllegalArgumentException(
-					"Port id cannot be null for specification type "
+					"Port id cannot be null for specification portType "
 							+ specificationType);
 		}
 		if (specificationType == null) {
 				throw new IllegalArgumentException(
-						"Port spec type cannot be null for port id " + id);
+						"Port spec portType cannot be null for port id " + id);
 		}
 		this.id = id;
 		this.specType = specificationType;
 	}
 
-	public Port.Type getType() {
-		return type;
+	public PortType getType() {
+		return portType;
 	}
 
 	private ComponentProvider componentProvider;
 
 	public PortImpl() {
 		// need it for the hashCode function
-		type = Port.Type.enforceable;
+		portType = PortType.enforceable;
 	}
 
 	public PortImpl(String id, String type, Class<?> specificationType) {
@@ -73,7 +74,7 @@ class PortImpl implements Port {
 
 	public PortImpl(String id, String type, String specificationType) {
 		this (id, specificationType);
-		this.type = getType(type);
+		this.portType = getType(type);
 	}
 
 	public PortImpl(String id, String type, String specificationType, ComponentProvider behaviourProvider) {
@@ -81,15 +82,15 @@ class PortImpl implements Port {
 		this.componentProvider = behaviourProvider;
 	}
 
-	private Port.Type getType(String portType) {
-		if (portType.equals(Port.Type.enforceable.toString())) {
-			return Port.Type.enforceable;
-		} else if (portType.equals(Port.Type.spontaneous.toString())) {
-			return Port.Type.spontaneous;
-		} else if (portType.equals(Port.Type.internal.toString())) {
-			return Port.Type.internal;
+	private PortType getType(String portType) {
+		if (portType.equals(PortType.enforceable.toString())) {
+			return PortType.enforceable;
+		} else if (portType.equals(PortType.spontaneous.toString())) {
+			return PortType.spontaneous;
+		} else if (portType.equals(PortType.internal.toString())) {
+			return PortType.internal;
 		}
-		return Port.Type.unknown;
+		return PortType.unknown;
 	}
 
 	public BIPComponent component() {
@@ -105,7 +106,7 @@ class PortImpl implements Port {
 
 		result.append("Port=(");
 		result.append("id = " + id);
-		result.append(", type = " + type);
+		result.append(", portType = " + portType);
 		result.append(", specType = " + specType);
 		result.append(")");
 
@@ -145,7 +146,7 @@ class PortImpl implements Port {
 		int result = id.hashCode();
 		if (specType != null)
 			result = 31 * result + specType.hashCode();
-		result = 31 * result + type.hashCode();
+		result = 31 * result + portType.hashCode();
 		return result;
 	}
 

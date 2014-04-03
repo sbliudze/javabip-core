@@ -8,9 +8,9 @@
 
 package org.bip.spec.hanoi;
 
-import org.bip.annotations.bipData;
-import org.bip.annotations.bipExecutableBehaviour;
-import org.bip.api.Port;
+import org.bip.annotations.Data;
+import org.bip.annotations.ExecutableBehaviour;
+import org.bip.api.PortType;
 import org.bip.executor.BehaviourBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +43,7 @@ public class HanoiPeg {
 
 	}
 
-	@bipExecutableBehaviour
+	@ExecutableBehaviour
 	public BehaviourBuilder initializeBehavior() throws NoSuchMethodException {
 
 		BehaviourBuilder behaviourBuilder = new BehaviourBuilder();
@@ -67,8 +67,8 @@ public class HanoiPeg {
 
 		//PORTS
 		
-		behaviourBuilder.addPort("pieceAdd", Port.Type.enforceable.toString(), this.getClass());
-		behaviourBuilder.addPort("pieceRemove", Port.Type.enforceable.toString(), this.getClass());
+		behaviourBuilder.addPort("pieceAdd", PortType.enforceable.toString(), this.getClass());
+		behaviourBuilder.addPort("pieceRemove", PortType.enforceable.toString(), this.getClass());
 				
 		//GUARDS
 		
@@ -80,7 +80,7 @@ public class HanoiPeg {
 		//DATA OUT
 		
 		// TODO, There is mismatch between what is defined here and in BIP annotation.
-		// TODO, check todo in bipData annotation, maybe addDataOut should only accept Method parameter and 
+		// TODO, check todo in Data annotation, maybe addDataOut should only accept Method parameter and 
 		// read other things from the method?
 		//behaviourBuilder.addDataOut("disksize", this.getClass().getMethod("diskSizeOnTop"), "any" );
 		
@@ -93,7 +93,7 @@ public class HanoiPeg {
 		return behaviourBuilder;
 	}
 	
-	public void addPiece(@bipData(name = "addedDisk") int no) {
+	public void addPiece(@Data(name = "addedDisk") int no) {
 		logger.debug("EXECUTION: component " + this.getClass().getName() + " has added a piece.");
 		pieces[no - 1] = true;
 		logger.debug("Piece no. " + no + " is being added.");
@@ -111,7 +111,7 @@ public class HanoiPeg {
 	}
 
 	// TODO, autoboxing between for example int and Integer may be a good feature to help wire data from multiple components.
-	public boolean isPieceAddable(@bipData(name = "addedDisk") int no) {
+	public boolean isPieceAddable(@Data(name = "addedDisk") int no) {
 
 		if (no == -1)
 			return false;
@@ -138,7 +138,7 @@ public class HanoiPeg {
 		return false;
 	}
 
-	@bipData(name = "disksize", accessTypePort = "allowed", ports = { "pieceAdd", "pieceRemove" })
+	@Data(name = "disksize", accessTypePort = "allowed", ports = { "pieceAdd", "pieceRemove" })
 	public int diskSizeOnTop() {
 
 		for (int i = 0; i < size; i++) {

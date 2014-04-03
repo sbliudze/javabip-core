@@ -2,9 +2,9 @@ package org.bip.spec;
 
 import org.bip.annotations.*;
 
-@bipPorts({ @bipPort(name = "add", type = "enforceable"),
-		    @bipPort(name = "rm", type = "enforceable") })
-@bipComponentType(initial = "0", name = "monitor")
+@Ports({ @Port(name = "add", type = "enforceable"),
+		    @Port(name = "rm", type = "enforceable") })
+@ComponentType(initial = "0", name = "monitor")
 
 public class RouteOnOffMonitorSplitted {
 
@@ -16,26 +16,26 @@ public class RouteOnOffMonitorSplitted {
         this.routeLimit = routeLimit;
     }
 
-    @bipTransitions({
-    @bipTransition(name = "add", source = "0", target = "1a", guard = "hasCapacity"),
-    @bipTransition(name = "add", source = "1a", target = "2", guard = "hasCapacity")})
+    @Transitions({
+    @Transition(name = "add", source = "0", target = "1a", guard = "hasCapacity"),
+    @Transition(name = "add", source = "1a", target = "2", guard = "hasCapacity")})
 	public void addRoute() {
         routeOnCounter++;
 	}
 
-	@bipTransitions({
-	@bipTransition(name = "rm", source = "2", target = "1r", guard = "hasRouteRunning"),
-	@bipTransition(name = "rm", source = "1r", target = "0", guard = "hasRouteRunning")})
+	@Transitions({
+	@Transition(name = "rm", source = "2", target = "1r", guard = "hasRouteRunning"),
+	@Transition(name = "rm", source = "1r", target = "0", guard = "hasRouteRunning")})
 	public void removeRoute() {
         routeOnCounter--;
 	}
 
-    @bipGuard(name = "hasCapacity")
+    @Guard(name = "hasCapacity")
     public boolean hasCapacity() {
         return routeOnCounter < routeLimit;
     }
 
-    @bipGuard(name = "hasRouteRunning")
+    @Guard(name = "hasRouteRunning")
     public boolean hasRouteRunning() {
         return routeOnCounter > 0;
     }

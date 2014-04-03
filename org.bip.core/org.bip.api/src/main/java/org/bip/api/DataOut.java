@@ -31,7 +31,7 @@ public interface DataOut<T> extends Data<T> {
 	public Type portSpecificationType();
 
 	/**
-	 * The Enum Type.
+	 * The Enum PortType.
 	 */
 	public enum Type {
 

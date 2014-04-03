@@ -8,16 +8,16 @@
 
 package org.bip.spec;
 
-import org.bip.annotations.bipComponentType;
-import org.bip.annotations.bipGuard;
-import org.bip.annotations.bipPort;
-import org.bip.annotations.bipPorts;
-import org.bip.annotations.bipTransition;
+import org.bip.annotations.ComponentType;
+import org.bip.annotations.Guard;
+import org.bip.annotations.Port;
+import org.bip.annotations.Ports;
+import org.bip.annotations.Transition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@bipPorts({ @bipPort(name = "s", type = "spontaneous"), @bipPort(name = "r", type = "enforceable") })
-@bipComponentType(initial = "start", name = "org.bip.spec.RComponent")
+@Ports({ @Port(name = "s", type = "spontaneous"), @Port(name = "r", type = "enforceable") })
+@ComponentType(initial = "start", name = "org.bip.spec.RComponent")
 public class RComponent {
 
     Logger logger = LoggerFactory.getLogger(SwitchableRoute.class);
@@ -29,19 +29,19 @@ public class RComponent {
     /*
       * Check what are the conditions for throwing the exception.
       */
-    @bipTransition(name = "r", source = "start", target = "start", guard = "isREnabled")
+    @Transition(name = "r", source = "start", target = "start", guard = "isREnabled")
     public void enforceableR() throws Exception {
         logger.debug("R transition is being executed.");
         rCounter++;
         rEnabled = false;
     }
 
-    @bipGuard(name = "isREnabled")
+    @Guard(name = "isREnabled")
     public boolean isREnabled() {
         return rEnabled;
     }
 
-    @bipTransition(name = "s", source = "start", target = "start", guard = "!isREnabled")
+    @Transition(name = "s", source = "start", target = "start", guard = "!isREnabled")
     public void enableR() {
     	logger.debug("S transition is being executed.");
         rEnabled = true;

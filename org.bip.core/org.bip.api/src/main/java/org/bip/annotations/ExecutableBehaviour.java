@@ -12,15 +12,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * It makes it possible to assign multiple transition annotations within one function. 
+ * It annotates the function within BIP specification to indicate that this function can be used to obtain 
+ * an Executable Behavior for the BIP Specification. 
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface bipTransitions {
-	
-	/**
-	 * It returns the array of transitions.
-	 *
-	 * @return array of transitions.
-	 */
-	bipTransition[] value();
+public @interface ExecutableBehaviour {
+
 }

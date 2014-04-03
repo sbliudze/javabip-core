@@ -15,7 +15,7 @@ import java.lang.annotation.RetentionPolicy;
  * It annotates function with information about transition it is performing.
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface bipTransition {
+public @interface Transition {
 	
 	/**
 	 * It returns the name of the transition. 

@@ -27,8 +27,8 @@ In each case, a total of 2ⁿ-1 moves are made.
 
 */
 
-import org.bip.annotations.bipExecutableBehaviour;
-import org.bip.api.Port;
+import org.bip.annotations.ExecutableBehaviour;
+import org.bip.api.PortType;
 import org.bip.executor.BehaviourBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +53,7 @@ public class HanoiMonitor {
     // MiddleHanoiPeg is denoted as B.
     // RightHanoiPeg is denoted as C.
 
-    @bipExecutableBehaviour
+    @ExecutableBehaviour
     public BehaviourBuilder initializeBehavior() throws NoSuchMethodException {
     	
     	BehaviourBuilder behaviourBuilder = new BehaviourBuilder();
@@ -113,11 +113,11 @@ public class HanoiMonitor {
         }
 
         // [Port=(id = sr, specType = null, type = spontaneous),
-        behaviourBuilder.addPort("ab", Port.Type.enforceable.toString(), this.getClass());
+        behaviourBuilder.addPort("ab", PortType.enforceable.toString(), this.getClass());
 
-        behaviourBuilder.addPort("ac", Port.Type.enforceable.toString(), this.getClass());
+        behaviourBuilder.addPort("ac", PortType.enforceable.toString(), this.getClass());
 
-        behaviourBuilder.addPort("bc", Port.Type.enforceable.toString(), this.getClass());
+        behaviourBuilder.addPort("bc", PortType.enforceable.toString(), this.getClass());
         
         behaviourBuilder.setComponent(this);
 

@@ -12,22 +12,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * It specifies the type of the BIP component.
+ * It annotates the function with the name of the guard.
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface bipComponentType {
+public @interface Guard {
 	
 	/**
-	 * It returns the name of the type of the component.
+	 * It returns the name of the guard.
 	 *
-	 * @return the type of the BIP component.
+	 * @return the name of the guard.
 	 */
 	String name();
-	
-	/**
-	 * It returns the name of the initial state in which the BIP spec is in after instantiation.
-	 *
-	 * @return the name of the initial state.
-	 */
-	String initial();
 }

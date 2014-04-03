@@ -12,10 +12,23 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * It annotates the function within BIP specification to indicate that this function can be used to obtain 
- * an Executable Behavior for the BIP Specification. 
+ * It specifies the name and the type of the port.
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface bipExecutableBehaviour {
-
+public @interface Port {
+	
+	/**
+	 * It returns the name of the port.
+	 *
+	 * @return the name of the port.
+	 */
+	String name();
+	
+	/**
+	 * It specifies the type of the port. It is either spontaneous or enforceable.
+	 *
+	 * @return the type of the port.
+	 */
+	String type(); 
+	
 }
