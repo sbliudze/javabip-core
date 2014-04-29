@@ -44,7 +44,7 @@ public class ExecutorOSGiInSpringImpl extends ExecutorOSGiImpl implements Initia
 
 		publish();
 		String serviceID = serviceRegistration.getReference().getProperty(Constants.SERVICE_ID).toString();
-		this.id = this.componentName + serviceID;
+		this.id = this.behaviour.getComponentType() + serviceID;
 		executorThread = new Thread(this, this.behaviour.getComponentType() + serviceID);
 		logger.info("Executor thread created: " + this.behaviour.getComponentType() + serviceID);
 		executorThread.start();

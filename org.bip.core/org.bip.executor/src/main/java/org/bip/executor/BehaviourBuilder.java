@@ -117,7 +117,7 @@ public class BehaviourBuilder {
 
 	public void addGuard(String string, Method method) {
 		
-		guards.add(new GuardImpl(string, method));
+		guards.add(new GuardImpl(string, method, ReflectionHelper.extractParamAnnotations(method)));
 		
 	}
 

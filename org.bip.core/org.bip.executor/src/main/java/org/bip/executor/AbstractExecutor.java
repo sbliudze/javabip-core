@@ -32,7 +32,6 @@ import org.bip.exceptions.BIPException;
 public abstract class AbstractExecutor implements Executor, ComponentProvider {
 
 	protected Object bipComponent;
-	protected String componentName;
 	protected ExecutableBehaviour behaviour;
 	protected Class<?> componentClass;
 
@@ -42,13 +41,17 @@ public abstract class AbstractExecutor implements Executor, ComponentProvider {
 	// TODO find a way to get a unique name that is persistent across different
 	// CF executions
 	private String uniqueName;
-	private boolean useSpec;
 
-	public AbstractExecutor(Object bipComponent, boolean useSpec) throws BIPException {
+	public AbstractExecutor(Object bipComponent, boolean useAnnotationSpec) throws BIPException {
 		this.bipComponent = bipComponent;
 		this.componentClass = bipComponent.getClass();
-		this.useSpec = useSpec;
-		this.initialize();
+		
+		if (useAnnotationSpec) {
+			this.behaviour = parseAnnotations( bipComponent.getClass() ).build(this);
+		} else {
+			this.behaviour = getExecutableBehaviour( bipComponent.getClass() ).build(this);
+		}
+
 	}
 
 	public void register(BIPEngine engine) {
@@ -64,19 +67,8 @@ public abstract class AbstractExecutor implements Executor, ComponentProvider {
 //		uniqueName = uniqueGlobalId;
 //	}
 
-	private void initialize() throws BIPException {
+	private BehaviourBuilder getExecutableBehaviour( Class<?> componentClass ) throws BIPException {
 		BehaviourBuilder builder = new BehaviourBuilder();
-		if (useSpec) {
-			builder = parseAnnotations(builder);
-		} else {
-			builder = getExecutableBehaviour(builder);
-		}
-
-		this.behaviour = builder.build(this);
-		componentName = behaviour.getComponentType();
-	}
-
-	private BehaviourBuilder getExecutableBehaviour(BehaviourBuilder builder) throws BIPException {
 		// TODO: executable behaviour must be got not from the annotation but
 		// from the method name? or return type?
 		Method[] componentMethods = componentClass.getMethods();
@@ -108,16 +100,15 @@ public abstract class AbstractExecutor implements Executor, ComponentProvider {
 	}
 
 	// TODO create type for Transitions or make three classes for int, sp, enf
-	private BehaviourBuilder parseAnnotations(BehaviourBuilder builder) throws BIPException {
+	private BehaviourBuilder parseAnnotations( Class<?> componentClass ) throws BIPException {
+		BehaviourBuilder builder = new BehaviourBuilder();
 		builder.setComponent(bipComponent);
 		Annotation classAnnotation = componentClass.getAnnotation(ComponentType.class);
 		// get component name and type
 		if (classAnnotation instanceof ComponentType) {
 			ComponentType initialState = (ComponentType) classAnnotation;
-			String initial = initialState.initial();
-			componentName = initialState.name();
-			builder.setComponentType(componentName);
-			builder.setInitialState(initial);
+			builder.setComponentType( initialState.name() );
+			builder.setInitialState( initialState.initial() );
 		} else {
 			throw new BIPException("ComponentType annotation is not specified.");
 		}
@@ -192,7 +183,7 @@ public abstract class AbstractExecutor implements Executor, ComponentProvider {
 		}
 		org.bip.annotations.Guard guardAnnotation = (org.bip.annotations.Guard) annotation;
 
-		return new GuardImpl(guardAnnotation.name(), method);
+		return new GuardImpl(guardAnnotation.name(), method, ReflectionHelper.extractParamAnnotations(method));
 	}
 
 	private void addTransition(Method method, org.bip.annotations.Transition transitionAnnotation, BehaviourBuilder builder) {

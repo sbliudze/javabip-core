@@ -31,15 +31,15 @@ class GuardImpl implements Guard {
 
 	private String name;
 	private Method method;
+	
 	// The List is used here, because List interface maintains order of its items.
 	// The order is very important since one Guard may have multiple dataIn-s of the same type
-	// TODO, dataIsNeeded is a misleading name, as it is not of boolean type but a list type.
 	private List<Data<?>> dataRequired = new ArrayList<Data<?>>();
 
-	public GuardImpl(String name, Method method) {
+	public GuardImpl(String name, Method method, List<Data<?>> dataRequired) {
 		this.name = name;
 		this.method = method;
-		this.dataRequired = ReflectionHelper.extractParamAnnotations(method);
+		this.dataRequired = dataRequired;
 	}
 
 	public String name() {
