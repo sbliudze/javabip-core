@@ -58,10 +58,10 @@ public class HanoiPeg {
 				
 		//TRANSITIONS
 
-		behaviourBuilder.addTransition("pieceAdd", initialState, initialState, "isPieceAddable", 
+		behaviourBuilder.addTransitionAndStates("pieceAdd", initialState, initialState, "isPieceAddable", 
 									   this.getClass().getMethod("addPiece", int.class) );
 		
-		behaviourBuilder.addTransition("pieceRemove", initialState, initialState, "isPieceRemovable", 
+		behaviourBuilder.addTransitionAndStates("pieceRemove", initialState, initialState, "isPieceRemovable", 
 				   					   this.getClass().getMethod("removePiece"));
 		
 

@@ -11,7 +11,6 @@ package org.bip.executor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 
 import org.bip.annotations.ComponentType;
 import org.bip.annotations.Data;
@@ -20,7 +19,6 @@ import org.bip.annotations.Transitions;
 import org.bip.api.ComponentProvider;
 import org.bip.api.DataOut;
 import org.bip.api.ExecutableBehaviour;
-import org.bip.api.Port;
 import org.bip.exceptions.BIPException;
 
 /**
@@ -79,7 +77,9 @@ public abstract class SpecificationParser implements ComponentProvider {
 	// TODO create type for Transitions or make three classes for int, sp, enf
 	private BehaviourBuilder parseAnnotations( Class<?> componentClass ) throws BIPException {
 		BehaviourBuilder builder = new BehaviourBuilder();
+		
 		builder.setComponent(bipComponent);
+		
 		Annotation classAnnotation = componentClass.getAnnotation(ComponentType.class);
 		// get component name and type
 		if (classAnnotation instanceof ComponentType) {
@@ -95,9 +95,11 @@ public abstract class SpecificationParser implements ComponentProvider {
 		if (classAnnotation instanceof Ports) {
 			Ports ports = (Ports) classAnnotation;
 			org.bip.annotations.Port[] portArray = ports.value();
-			for (org.bip.annotations.Port port : portArray) {
-				Port p = new PortImpl(port.name(), port.type(), componentClass.getCanonicalName(), this);
-				builder.addPort(p);
+			for (org.bip.annotations.Port bipPortAnnotation : portArray) {
+				
+				if (bipPortAnnotation instanceof org.bip.annotations.Port)
+					addPort((org.bip.annotations.Port) bipPortAnnotation, componentClass, builder);
+
 			}
 		} else {
 			throw new BIPException("Port information for the BIP component is not specified.");
@@ -110,14 +112,14 @@ public abstract class SpecificationParser implements ComponentProvider {
 			for (Annotation annotation : annotations) {
 				if (annotation instanceof org.bip.annotations.Transition) {
 					
-					addTransition(method, (org.bip.annotations.Transition) annotation, builder);
+					addTransitionAndStates(method, (org.bip.annotations.Transition) annotation, builder);
 
 				} else if (annotation instanceof Transitions) {
 					Transitions transitionsAnnotation = (Transitions) annotation;
 					Annotation[] transitionAnnotations = transitionsAnnotation.value();
 					for (Annotation bipTransitionAnnotation : transitionAnnotations) {
 						
-						addTransition(method, (org.bip.annotations.Transition) bipTransitionAnnotation, builder);
+						addTransitionAndStates(method, (org.bip.annotations.Transition) bipTransitionAnnotation, builder);
 					}
 
 				} else if (annotation instanceof org.bip.annotations.Guard) {
@@ -125,25 +127,24 @@ public abstract class SpecificationParser implements ComponentProvider {
 						addGuard(method, (org.bip.annotations.Guard) annotation, builder);						
 
 				} else if (annotation instanceof Data) { // DATA OUT
-										
-					DataOut<?> data = ReflectionHelper.createData(method, (Data)annotation);
+	
+					addData(method, (Data)annotation, builder);
 					
-					builder.addDataOut(data, method);
-
 				// TODO, Do we really make it possible to specify Port(s) directly within the function?
 				} else if (annotation instanceof Ports) {
 					Ports portsAnnotation = (Ports) annotation;
 					Annotation[] portAnnotations = portsAnnotation.value();
 					for (Annotation bipPortAnnotation : portAnnotations) {
-						org.bip.annotations.Port portAnnotation = (org.bip.annotations.Port) bipPortAnnotation;
-						Port port = new PortImpl(portAnnotation.name(), portAnnotation.type(), componentClass.getCanonicalName(), this);
-						builder.addPort(port);
+						
+						if (bipPortAnnotation instanceof org.bip.annotations.Port)
+							addPort((org.bip.annotations.Port) bipPortAnnotation, componentClass, builder);
+						
 					}
 
 				} else if (annotation instanceof org.bip.annotations.Port) {
-					org.bip.annotations.Port portAnnotation = (org.bip.annotations.Port) annotation;
-					Port port = new PortImpl(portAnnotation.name(), portAnnotation.type(), componentClass.getCanonicalName(), this);
-					builder.addPort(port);
+				
+					addPort((org.bip.annotations.Port) annotation, componentClass, builder);
+					
 				}
 
 			}
@@ -162,13 +163,27 @@ public abstract class SpecificationParser implements ComponentProvider {
 			throw new BIPException("Guard method " + method.getName() + " should be a boolean function");
 		}
 
-		builder.addGuard(annotation.name(), method);
+		builder.addGuard(annotation.name(), method, ReflectionHelper.parseDataAnnotations(method));
 		
 	}
+	
+	private void addData(Method method, Data annotation, BehaviourBuilder builder) {
 
-	private void addTransition(Method method, org.bip.annotations.Transition transitionAnnotation, BehaviourBuilder builder) {
+		DataOut<?> data = ReflectionHelper.createData(method, annotation);
 		
-		builder.addTransition(transitionAnnotation.name(), transitionAnnotation.source(), transitionAnnotation.target(), transitionAnnotation.guard(), method);
+		builder.addDataOut(data, method);
+
+	}
+
+	private void addTransitionAndStates(Method method, org.bip.annotations.Transition transitionAnnotation, BehaviourBuilder builder) {
+		
+		builder.addTransitionAndStates(transitionAnnotation.name(), transitionAnnotation.source(), transitionAnnotation.target(), transitionAnnotation.guard(), method);
+
+	}
+
+	private void addPort(org.bip.annotations.Port portAnnotation, Class<?> componentClass, BehaviourBuilder builder) {
+		
+		builder.addPort( portAnnotation.name(), portAnnotation.type(), componentClass );
 
 	}
 	

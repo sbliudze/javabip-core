@@ -100,22 +100,21 @@ public abstract class AbstractExecutor extends SpecificationParser implements Ru
 	}
 
 	public void run() {
-		logger.debug("Executor thread started: "
-				+ Thread.currentThread().getName());
+		
+		logger.debug("Executor thread started: " + Thread.currentThread().getName());
+		
 		synchronized (this) {
 			while (!registered) {
 				try {
 					wait();
 				} catch (InterruptedException e) {
-					logger.debug("Executor thread interrupted: "
-							+ Thread.currentThread().getName());
+					logger.debug("Executor thread interrupted: " + Thread.currentThread().getName());
 					return;
 				}
 			}
 		}
 		loop();
-		logger.debug("Executor thread terminated: "
-				+ Thread.currentThread().getName());
+		logger.debug("Executor thread terminated: "	+ Thread.currentThread().getName());
 	}
 
 	public void loop() {

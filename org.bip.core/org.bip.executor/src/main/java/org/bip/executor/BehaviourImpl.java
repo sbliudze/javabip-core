@@ -60,6 +60,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 	private Hashtable<Port, Set<Data<?>>> portToDataInForGuard;
 	// for each port provides data it needs for transitions
 	private Hashtable<Port, Set<Data<?>>> portToDataInForTransition;
+	// TODO after changing the interface to Set, change this to HashSet.
 	private ArrayList<String> states;
 	private ArrayList<Guard> guards;
 	// the list of guards whose evaluation does not depend on data
@@ -92,7 +93,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 	 * @param component
 	 * @throws BIPException
 	 */
-	public BehaviourImpl(String type, String currentState, ArrayList<TransitionImpl> allTransitions, ArrayList<Port> allPorts, ArrayList<String> states, ArrayList<Guard> guards, Object component)
+	public BehaviourImpl(String type, String currentState, ArrayList<TransitionImpl> allTransitions, ArrayList<Port> allPorts, HashSet<String> states, ArrayList<Guard> guards, Object component)
 			throws BIPException {
 		if (type == null || type.isEmpty()) {
 			throw new NullPointerException("Component type for object " + component + " cannot be null or empty.");
@@ -116,7 +117,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 		this.currentState = currentState;
 		// this.allTransitions = allTransitions;
 		this.allPorts = allPorts;
-		this.states = states;
+		this.states = new ArrayList<String>(states);
 		this.guards = guards;
 		this.guardsWithoutData = new ArrayList<Guard>();
 		this.guardsWithData = new ArrayList<Guard>();
@@ -150,7 +151,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 	 * @param component
 	 * @throws BIPException
 	 */
-	public BehaviourImpl(String type, String currentState, ArrayList<TransitionImpl> allTransitions, ArrayList<Port> allPorts, ArrayList<String> states, ArrayList<Guard> guards,
+	public BehaviourImpl(String type, String currentState, ArrayList<TransitionImpl> allTransitions, ArrayList<Port> allPorts, HashSet<String> states, ArrayList<Guard> guards,
 			ArrayList<DataOut<?>> dataOut, Hashtable<String, Method> dataOutName, Object component) throws BIPException {
 		// setUpBehaviourData is called inside. we can do so since dataOut and
 		// dataOutName are not used in the method setUpBehaviourData

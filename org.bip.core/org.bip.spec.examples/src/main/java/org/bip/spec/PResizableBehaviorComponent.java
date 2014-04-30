@@ -71,19 +71,19 @@ public class PResizableBehaviorComponent {
 			// = , method = public void
 			// org.bip.spec.SwitchableRoute.startRoute() throws
 			// java.lang.Exception),
-			behaviourBuilder.addTransition("p", "state" + (i), "state" + (i + 1), "isPEnabled", PResizableBehaviorComponent.class.getMethod("enforceableP"));
+			behaviourBuilder.addTransitionAndStates("p", "state" + (i), "state" + (i + 1), "isPEnabled", PResizableBehaviorComponent.class.getMethod("enforceableP"));
 
 			// ExecutorTransition=(name = off, source = on -> target = wait,
 			// guard = , method = public void
 			// org.bip.spec.SwitchableRoute.stopRoute() throws
 			// java.lang.Exception),
-			behaviourBuilder.addTransition("sr", "state" + (i + 1), "state" + (i), "", PResizableBehaviorComponent.class.getMethod("rollbackP"));
+			behaviourBuilder.addTransitionAndStates("sr", "state" + (i + 1), "state" + (i), "", PResizableBehaviorComponent.class.getMethod("rollbackP"));
 
 			// ExecutorTransition=(name = end, source = wait -> target = done,
 			// guard = !isFinished, method = public void
 			// org.bip.spec.SwitchableRoute.spontaneousEnd() throws
 			// java.lang.Exception),
-			behaviourBuilder.addTransition("se", "state" + (i), "state" + (i), "", PResizableBehaviorComponent.class.getMethod("enableP"));
+			behaviourBuilder.addTransitionAndStates("se", "state" + (i), "state" + (i), "", PResizableBehaviorComponent.class.getMethod("enableP"));
 
 		}
 

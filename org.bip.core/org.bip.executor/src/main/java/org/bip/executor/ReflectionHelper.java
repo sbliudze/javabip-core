@@ -22,7 +22,7 @@ class ReflectionHelper {
 	// Separator between method name and parameter number to generate default data in name.
 	private static final String SEPARATOR = ".";
 		
-	public static List<Data<?>> extractParamAnnotations(Method method) {
+	public static List<Data<?>> parseDataAnnotations(Method method) {
 		// deal with method parameters: there might be a dataIn
 		ArrayList<Data<?>> dataIn = new ArrayList<Data<?>>();
 		Class<?> paramTypes[] = method.getParameterTypes();
@@ -62,7 +62,7 @@ class ReflectionHelper {
 		return toReturn;
 	}
 	
-	public static DataOut<?> createData(Method method) {
+	public static DataOut<?> parseReturnDataAnnotation(Method method) {
 
 		Annotation[] annotations = method.getAnnotations();
 		for (Annotation annotation : annotations) {

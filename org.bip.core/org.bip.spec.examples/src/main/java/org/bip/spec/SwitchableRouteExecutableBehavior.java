@@ -55,19 +55,19 @@ public class SwitchableRouteExecutableBehavior implements CamelContextAware, Ini
         //ArrayList<TransitionImpl> allTransitions = new ArrayList<TransitionImpl>();
 
         // ExecutorTransition=(name = on, source = off -> target = on, guard = , method = public void org.bip.spec.SwitchableRoute.startRoute() throws java.lang.Exception),
-        behaviourBuilder.addTransition("on","off", "on",  "", SwitchableRouteExecutableBehavior.class.getMethod("startRoute"));
+        behaviourBuilder.addTransitionAndStates("on","off", "on",  "", SwitchableRouteExecutableBehavior.class.getMethod("startRoute"));
 
         // ExecutorTransition=(name = off, source = on -> target = wait, guard = , method = public void org.bip.spec.SwitchableRoute.stopRoute() throws java.lang.Exception),
-        behaviourBuilder.addTransition("off","on", "wait",  "", SwitchableRouteExecutableBehavior.class.getMethod("stopRoute"));
+        behaviourBuilder.addTransitionAndStates("off","on", "wait",  "", SwitchableRouteExecutableBehavior.class.getMethod("stopRoute"));
 
         // ExecutorTransition=(name = end, source = wait -> target = done, guard = !isFinished, method = public void org.bip.spec.SwitchableRoute.spontaneousEnd() throws java.lang.Exception),
-        behaviourBuilder.addTransition("end","wait", "done",  "!isFinished", SwitchableRouteExecutableBehavior.class.getMethod("spontaneousEnd"));
+        behaviourBuilder.addTransitionAndStates("end","wait", "done",  "!isFinished", SwitchableRouteExecutableBehavior.class.getMethod("spontaneousEnd"));
 
         // ExecutorTransition=(name = , source = wait -> target = done, guard = isFinished, method = public void org.bip.spec.SwitchableRoute.internalEnd() throws java.lang.Exception),
-        behaviourBuilder.addTransition("","wait", "done",  "isFinished", SwitchableRouteExecutableBehavior.class.getMethod("internalEnd"));
+        behaviourBuilder.addTransitionAndStates("","wait", "done",  "isFinished", SwitchableRouteExecutableBehavior.class.getMethod("internalEnd"));
 
         // ExecutorTransition=(name = finished, source = done -> target = off, guard = , method = public void org.bip.spec.SwitchableRoute.finishedTransition() throws java.lang.Exception)]
-        behaviourBuilder.addTransition( "finished","done", "off", "", SwitchableRouteExecutableBehavior.class.getMethod("finishedTransition"));
+        behaviourBuilder.addTransitionAndStates( "finished","done", "off", "", SwitchableRouteExecutableBehavior.class.getMethod("finishedTransition"));
 
         // [Port=(id = end, specType = null, type = spontaneous),
         behaviourBuilder.addPort("end", PortType.spontaneous.toString(), this.getClass());

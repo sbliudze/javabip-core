@@ -9,6 +9,7 @@
 package org.bip.executor;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 import org.bip.api.Data;
 
@@ -34,13 +35,13 @@ class TransitionImpl {
 	 * @param method
 	 * @param dataIsNeeded
 	 */
-	public TransitionImpl(String name, String source, String target, String guard, Method method) {
+	public TransitionImpl(String name, String source, String target, String guard, Method method, List<Data<?>> dataRequired) {
 		this.source = source;
 		this.target = target;
 		this.name = name;
 		this.method = method;
 		this.guard = guard;
-		this.dataRequired = ReflectionHelper.extractParamAnnotations(method);
+		this.dataRequired = dataRequired;
 	}
 	
 	

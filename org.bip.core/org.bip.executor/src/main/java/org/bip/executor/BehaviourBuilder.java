@@ -9,6 +9,7 @@ package org.bip.executor;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class BehaviourBuilder {
 	public String currentState;
 	private ArrayList<TransitionImpl> allTransitions;
 	private ArrayList<Port> allPorts;
-	private ArrayList<String> states;
+	private HashSet<String> states;
 	private ArrayList<Guard> guards;
 	private Object component;
 
@@ -44,7 +45,7 @@ public class BehaviourBuilder {
 	public BehaviourBuilder() {
 		allTransitions = new ArrayList<TransitionImpl>();
 		allPorts = new ArrayList<Port>();
-		states = new ArrayList<String>();
+		states = new HashSet<String>();
 		guards = new ArrayList<Guard>();
 		dataOutName = new Hashtable<String, Method>();
 		dataOut = new ArrayList<DataOut<?>>();
@@ -69,75 +70,86 @@ public class BehaviourBuilder {
 
 	public void setInitialState(String state) {
 		this.currentState = state;
-	}
-
-	@Deprecated
-	public void addTransition(TransitionImpl transition) {
-		allTransitions.add(transition);
-
-		// TODO, damn why do we have those side effects, to make it work properly? At least need to change the name
-		// to avoid confusion of what is the purpose of this function.
-		
-		// update the states list
-		if (!states.contains(transition.source())) {
-			states.add(transition.source());
-		}
-		if (!states.contains(transition.target())) {
-			states.add(transition.target());
-		}
-	}
-
-	public void addPort(Port port) {
-		allPorts.add(port);
+		states.add(state);
 	}
 
 	public void addPort(String id, String type, Class<?> specificationType) {
 		allPorts.add(new PortImpl(id, type, specificationType));
 	}
 	
-	public void addGuard(Guard guard) {
-		guards.add(guard);
-	}
-
-	public void addDataOut(DataOut<?> data, Method method) {
-		dataOutName.put(data.name(), method);
-		dataOut.add(data);
-	}
-
 	public void addState(String state) {		
 		states.add(state);		
 	}
 		
+	public void addTransitionAndStates(String name, String source, 
+			  				  		   String target, String guard, 
+			  				  		   Method method) {			
+	
+			addTransitionAndStates(name, source, target, guard, method, ReflectionHelper.parseDataAnnotations(method));
+					
+	}
+	
+	public void addTransitionAndStates(String name, String source, 
+									   String target, String guard, 
+									   Method method, List<Data<?>> data) {			
+
+		addState(source);
+		addState(target);
+
+		allTransitions.add( new TransitionImpl(name, source, target, guard, method, data) );
+
+
+	}
+
 	public void addTransition(String name, String source, 
-			  				  String target, String guard, 
-			  				  Method method) {			
+	  		   				  String target, String guard, 
+	  		   				  Method method) {			
 
+		addTransition(name, source, target, guard, method, ReflectionHelper.parseDataAnnotations(method));
 
-			addTransition(new TransitionImpl(name, source, target, guard, method));
-	
 	}
 
-	@Deprecated
-	public void addGuard(String string, Method method) {
-		
-		guards.add(new GuardImpl(string, method, ReflectionHelper.extractParamAnnotations(method)));
-		
+	public void addTransition(String name, String source, 
+			   				  String target, String guard, 
+			   				  Method method, List<Data<?>> data) {			
+
+		if (!states.contains(source))
+			throw new BIPException("Transition " + name + " is specifying source state " + source + " that has not been explicitly stated before.");
+
+		if (!states.contains(target))
+			throw new BIPException("Transition " + name + " is specifying target state " + target + " that has not been explicitly stated before.");
+
+		addState(source);
+		addState(target);
+
+		allTransitions.add( new TransitionImpl(name, source, target, guard, method, data) );
+
+	}	
+
+	/**
+	 * It adds the guard by providing directly the method parameter. The method 
+	 * parameter needs to be annotated to convey information about the data required by the method.
+	 * 
+	 * This function is left for the user convenience so the annotations can still be used to specify data.
+	 *  
+	 * @param name name of the guard
+	 * @param method the method that is invoked to compute given guard.
+	 */
+	public void addGuard(String name, Method method) {		
+		addGuard(name, method, ReflectionHelper.parseDataAnnotations(method));		
 	}
 	
-	public void addGuard(String name, Method method, List<Data<?>> data) {
-		
-		guards.add(new GuardImpl(name, method, data));
-		
+	public void addGuard(String name, Method method, List<Data<?>> data) {		
+		guards.add(new GuardImpl(name, method, data));		
 	}
 
-	public void addDataOut(Method method) {
-	
-		DataOut<?> data = ReflectionHelper.createData(method);
-		
-		dataOut.add ( data );
-		
+	public void addDataOut(Method method) {		
+		addDataOut(ReflectionHelper.parseReturnDataAnnotation(method), method);						
+	}
+
+	public void addDataOut(DataOut<?> data, Method method) {
+		dataOut.add(data);
 		dataOutName.put(data.name(), method);		
-				
 	}
 	
 }
