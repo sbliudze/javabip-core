@@ -69,7 +69,6 @@ class BehaviourImpl implements ExecutableBehaviour {
 	private ArrayList<Guard> guardsWithData;
 	// the list of dataOut variables for this component
 	private ArrayList<DataImpl<?>> dataOut;
-	private ArrayList<String> dataOutString;
 	// the map between the name of the out variable and the method computing it
 	private Hashtable<String, Method> dataOutName;
 	private Object bipComponent;
@@ -160,12 +159,11 @@ class BehaviourImpl implements ExecutableBehaviour {
 		this.dataOut = new ArrayList<DataImpl<?>>();
 		this.dataOutName = dataOutName;
 
-		dataOutString = new ArrayList<String>();
 		if (dataOut == null) {
 			return;
 		}
 		for (DataOut<?> data : dataOut) {
-			dataOutString.add(data.name());
+
 			if (data.portSpecificationType().equals(DataOut.Type.any)) {
 				this.dataOut.add(createData(data.name(), data.type(), new HashSet<Port>(this.enforceablePorts)));
 				// data.addPorts(this.enforceablePorts);
@@ -370,10 +368,6 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 	public Map<String, Method> getDataOutMapping() {
 		return dataOutName;
-	}
-
-	public Iterable<String> getDataOut() {
-		return dataOutString;
 	}
 
 	public Iterable<Data<?>> portToDataInForTransition(Port port) {
