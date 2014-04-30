@@ -41,18 +41,6 @@ class ExecutableTransitionImpl extends TransitionImpl implements ExecutableTrans
 		return this.portType;
 	}
 
-	public String name() {
-		return this.name;
-	}
-
-	public String source() {
-		return this.source;
-	}
-
-	public String target() {
-		return this.target;
-	}
-
 	public Method method() {
 		return this.method;
 	}

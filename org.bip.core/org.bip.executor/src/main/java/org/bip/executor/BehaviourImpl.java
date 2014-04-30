@@ -588,6 +588,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 		if (!transition.hasGuard()) {
 			for (int i = data.size(); i > 0; i--) {
 				result.add(true);
+				// TODO, BUG, missing return? as the for loop below will also add data.size() number of booleans.
 			}
 		}
 		// for each different row of the data evaluation table
