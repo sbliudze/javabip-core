@@ -56,4 +56,12 @@ public class ExecutorOSGiInSpringImpl extends ExecutorOSGiImpl implements Initia
 	public String getId() {
 		return this.id;
 	}
+	
+	// we use it for the ability to persist administration setup within
+	// BIPengine
+	// so where CF restarts the BIP coordination can automatically restart.
+	// TODO find a way to get a unique name that is persistent across different
+	// CF executions
+	// private String uniqueName;
+
 }

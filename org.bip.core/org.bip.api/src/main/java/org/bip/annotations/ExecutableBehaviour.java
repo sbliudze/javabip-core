@@ -14,6 +14,8 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * It annotates the function within BIP specification to indicate that this function can be used to obtain 
  * an Executable Behavior for the BIP Specification. 
+ * 
+ * Function must return BehaviourBuilder class and require no parameters. 
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ExecutableBehaviour {

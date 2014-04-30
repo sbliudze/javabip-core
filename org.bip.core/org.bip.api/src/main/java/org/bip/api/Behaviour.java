@@ -58,7 +58,7 @@ public interface Behaviour {
 	// The function below just exactly that so maybe build on 
 	public Map<Port, Set<Data<?>>> portToDataInForGuard();
 
-	// TODO, what if a given port is associated with different transitions within behavior and these transitions 
+	// TODO, BUG, what if a given port is associated with different transitions within behavior and these transitions 
 	// have different guards associated to them? This comment applies to both functions of portToDataInForGuard.
 	/**
 	 * Port to data in for guard.

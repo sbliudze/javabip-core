@@ -10,8 +10,10 @@ package org.bip.executor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.bip.api.ComponentProvider;
+import org.bip.api.Data;
 import org.bip.api.DataOut;
 import org.bip.api.ExecutableBehaviour;
 import org.bip.api.Guard;
@@ -115,9 +117,16 @@ public class BehaviourBuilder {
 	
 	}
 
+	@Deprecated
 	public void addGuard(String string, Method method) {
 		
 		guards.add(new GuardImpl(string, method, ReflectionHelper.extractParamAnnotations(method)));
+		
+	}
+	
+	public void addGuard(String name, Method method, List<Data<?>> data) {
+		
+		guards.add(new GuardImpl(name, method, data));
 		
 	}
 

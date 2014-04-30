@@ -64,22 +64,22 @@ public class DataTests {
 		bipGlue4Hanoi.toXML(System.out);
 
 		HanoiOptimalMonitor hanoiMonitor = new HanoiOptimalMonitor(size);
-		final ExecutorImpl hanoiExecutor = new ExecutorImpl(hanoiMonitor, false);
+		final ExecutorImpl hanoiExecutor = new ExecutorImpl("", hanoiMonitor, false);
 		Thread t1 = new Thread(hanoiExecutor, "hanoiMonitor");
 
 		org.bip.spec.hanoi.LeftHanoiPeg leftHanoiPeg = new org.bip.spec.hanoi.LeftHanoiPeg(
 				size);
-		final ExecutorImpl lExecutor = new ExecutorImpl(leftHanoiPeg, false);
+		final ExecutorImpl lExecutor = new ExecutorImpl("", leftHanoiPeg, false);
 		Thread t2 = new Thread(lExecutor, "LeftHanoiPeg");
 
 		org.bip.spec.hanoi.MiddleHanoiPeg middleHanoiPeg = new org.bip.spec.hanoi.MiddleHanoiPeg(
 				size);
-		final ExecutorImpl mExecutor = new ExecutorImpl(middleHanoiPeg, false);
+		final ExecutorImpl mExecutor = new ExecutorImpl("", middleHanoiPeg, false);
 		Thread t3 = new Thread(mExecutor, "MiddleHanoiPeg");
 
 		org.bip.spec.hanoi.RightHanoiPeg rightHanoiPeg = new org.bip.spec.hanoi.RightHanoiPeg(
 				size);
-		final ExecutorImpl rExecutor = new ExecutorImpl(rightHanoiPeg, false);
+		final ExecutorImpl rExecutor = new ExecutorImpl("", rightHanoiPeg, false);
 		Thread t4 = new Thread(rExecutor, "RightHanoiPeg");
 
 		// BIP engine.
@@ -144,28 +144,28 @@ public class DataTests {
 
 		org.bip.spec.hanoi.HanoiPeg leftHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(
 				size, false);
-		final ExecutorImpl lExecutor = new ExecutorImpl(leftHanoiPeg, false);
+		final ExecutorImpl lExecutor = new ExecutorImpl("", leftHanoiPeg, false);
 		Thread t2 = new Thread(lExecutor, "LeftHanoiPeg");
 
 		org.bip.spec.hanoi.HanoiPeg middleHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(
 				size, true);
-		final ExecutorImpl mExecutor = new ExecutorImpl(middleHanoiPeg, false);
+		final ExecutorImpl mExecutor = new ExecutorImpl("", middleHanoiPeg, false);
 		Thread t3 = new Thread(mExecutor, "MiddleHanoiPeg");
 
 		org.bip.spec.hanoi.HanoiPeg rightHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(
 				size, true);
-		final ExecutorImpl rExecutor = new ExecutorImpl(rightHanoiPeg, false);
+		final ExecutorImpl rExecutor = new ExecutorImpl("", rightHanoiPeg, false);
 		Thread t4 = new Thread(rExecutor, "RightHanoiPeg");
 
 		org.bip.spec.hanoi.HanoiPeg rightMiddleHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(
 				size, true);
-		final ExecutorImpl rMExecutor = new ExecutorImpl(rightMiddleHanoiPeg,
+		final ExecutorImpl rMExecutor = new ExecutorImpl("", rightMiddleHanoiPeg,
 				false);
 		Thread t5 = new Thread(rMExecutor, "RightMiddleHanoiPeg");
 
 		org.bip.spec.hanoi.HanoiPeg leftMiddleHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(
 				size, false);
-		final ExecutorImpl lMExecutor = new ExecutorImpl(leftMiddleHanoiPeg,
+		final ExecutorImpl lMExecutor = new ExecutorImpl("", leftMiddleHanoiPeg,
 				false);
 		Thread t6 = new Thread(lMExecutor, "LeftMiddleHanoiPeg");
 
@@ -231,17 +231,17 @@ public class DataTests {
 
 		org.bip.spec.hanoi.HanoiPeg leftHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(
 				size, false);
-		final ExecutorImpl lExecutor = new ExecutorImpl(leftHanoiPeg, false);
+		final ExecutorImpl lExecutor = new ExecutorImpl("", leftHanoiPeg, false);
 		Thread t2 = new Thread(lExecutor, "LeftHanoiPeg");
 
 		org.bip.spec.hanoi.HanoiPeg middleHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(
 				size, true);
-		final ExecutorImpl mExecutor = new ExecutorImpl(middleHanoiPeg, false);
+		final ExecutorImpl mExecutor = new ExecutorImpl("", middleHanoiPeg, false);
 		Thread t3 = new Thread(mExecutor, "MiddleHanoiPeg");
 
 		org.bip.spec.hanoi.HanoiPeg rightHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(
 				size, true);
-		final ExecutorImpl rExecutor = new ExecutorImpl(rightHanoiPeg, false);
+		final ExecutorImpl rExecutor = new ExecutorImpl("", rightHanoiPeg, false);
 		Thread t4 = new Thread(rExecutor, "RightHanoiPeg");
 
 		// BIP engine.
@@ -319,11 +319,11 @@ public class DataTests {
 				"2");
 		SwitchableRouteDataTransfers route3 = new SwitchableRouteDataTransfers(
 				"3");
-		final ExecutorImpl executor1 = new ExecutorImpl(route1, true);
-		final ExecutorImpl executor2 = new ExecutorImpl(route2, true);
-		final ExecutorImpl executor3 = new ExecutorImpl(route3, true);
+		final ExecutorImpl executor1 = new ExecutorImpl("", route1, true);
+		final ExecutorImpl executor2 = new ExecutorImpl("", route2, true);
+		final ExecutorImpl executor3 = new ExecutorImpl("", route3, true);
 		MemoryMonitor routeOnOffMonitor = new MemoryMonitor(200);
-		final ExecutorImpl executorM = new ExecutorImpl(routeOnOffMonitor, true);
+		final ExecutorImpl executorM = new ExecutorImpl("", routeOnOffMonitor, true);
 
 		DataCoordinator engine = new DataCoordinatorImpl(null);
 
@@ -552,11 +552,11 @@ public class DataTests {
 				"2");
 		SwitchableRouteDataTransfers route3 = new SwitchableRouteDataTransfers(
 				"3");
-		final ExecutorImpl executor1 = new ExecutorImpl(route1, true);
-		final ExecutorImpl executor2 = new ExecutorImpl(route2, true);
-		final ExecutorImpl executor3 = new ExecutorImpl(route3, true);
+		final ExecutorImpl executor1 = new ExecutorImpl("", route1, true);
+		final ExecutorImpl executor2 = new ExecutorImpl("", route2, true);
+		final ExecutorImpl executor3 = new ExecutorImpl("", route3, true);
 		MemoryMonitor routeOnOffMonitor = new MemoryMonitor(200);
-		final ExecutorImpl executorM = new ExecutorImpl(routeOnOffMonitor, true);
+		final ExecutorImpl executorM = new ExecutorImpl("", routeOnOffMonitor, true);
 
 		DataCoordinator engine = new DataCoordinatorImpl(null);
 
@@ -759,9 +759,9 @@ public class DataTests {
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueFeederConsumer.xml");
 
 		Feeder feeder = new Feeder();
-		final ExecutorImpl executorF = new ExecutorImpl(feeder, true);
+		final ExecutorImpl executorF = new ExecutorImpl("", feeder, true);
 		Consumer consumer = new Consumer(350);
-		final ExecutorImpl executorC = new ExecutorImpl(consumer, true);
+		final ExecutorImpl executorC = new ExecutorImpl("", consumer, true);
 
 		DataCoordinator engine = new DataCoordinatorImpl(null);
 
@@ -807,11 +807,11 @@ public class DataTests {
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueDataAvailability.xml");
 
 		ComponentA componentA = new ComponentA(250);
-		final ExecutorImpl executorA = new ExecutorImpl(componentA, true);
+		final ExecutorImpl executorA = new ExecutorImpl("", componentA, true);
 		ComponentB componentB = new ComponentB();
-		final ExecutorImpl executorB = new ExecutorImpl(componentB, true);
+		final ExecutorImpl executorB = new ExecutorImpl("", componentB, true);
 		ComponentC componentC = new ComponentC();
-		final ExecutorImpl executorC = new ExecutorImpl(componentC, true);
+		final ExecutorImpl executorC = new ExecutorImpl("", componentC, true);
 
 		DataCoordinator engine = new DataCoordinatorImpl(null);
 
@@ -856,11 +856,11 @@ public class DataTests {
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueTwoData.xml");
 
 		TwoDataTaker componentA = new TwoDataTaker(100);
-		final ExecutorImpl executorA = new ExecutorImpl(componentA, true);
+		final ExecutorImpl executorA = new ExecutorImpl("", componentA, true);
 		TwoDataProvider1 componentB = new TwoDataProvider1();
-		final ExecutorImpl executorB = new ExecutorImpl(componentB, true);
+		final ExecutorImpl executorB = new ExecutorImpl("", componentB, true);
 		TwoDataProvider2 componentC = new TwoDataProvider2();
-		final ExecutorImpl executorC = new ExecutorImpl(componentC, true);
+		final ExecutorImpl executorC = new ExecutorImpl("", componentC, true);
 
 		DataCoordinator engine = new DataCoordinatorImpl(null);
 

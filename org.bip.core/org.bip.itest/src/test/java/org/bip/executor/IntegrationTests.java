@@ -84,11 +84,11 @@ public class IntegrationTests {
 		SwitchableRoute route3 = new SwitchableRoute("3");
 		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
 
-		final ExecutorImpl executor1 = new ExecutorImpl(route1, true);
-		final ExecutorImpl executor2 = new ExecutorImpl(route2, true);
-		final ExecutorImpl executor3 = new ExecutorImpl(route3, true);
+		final ExecutorImpl executor1 = new ExecutorImpl("", route1, true);
+		final ExecutorImpl executor2 = new ExecutorImpl("", route2, true);
+		final ExecutorImpl executor3 = new ExecutorImpl("", route3, true);
 
-		final ExecutorImpl executorM = new ExecutorImpl(routeOnOffMonitor, true);
+		final ExecutorImpl executorM = new ExecutorImpl("", routeOnOffMonitor, true);
 
 		BIPCoordinator engine = new BIPCoordinatorImpl();
 
@@ -307,11 +307,11 @@ public class IntegrationTests {
 				"2");
 		SwitchableRouteExecutableBehavior route3 = new SwitchableRouteExecutableBehavior(
 				"3");
-		final ExecutorImpl executor1 = new ExecutorImpl(route1, false);
-		final ExecutorImpl executor2 = new ExecutorImpl(route2, false);
-		final ExecutorImpl executor3 = new ExecutorImpl(route3, false);
+		final ExecutorImpl executor1 = new ExecutorImpl("", route1, false);
+		final ExecutorImpl executor2 = new ExecutorImpl("", route2, false);
+		final ExecutorImpl executor3 = new ExecutorImpl("", route3, false);
 		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
-		final ExecutorImpl executorM = new ExecutorImpl(routeOnOffMonitor, true);
+		final ExecutorImpl executorM = new ExecutorImpl("", routeOnOffMonitor, true);
 
 		BIPCoordinator engine = new BIPCoordinatorImpl();
 
@@ -530,7 +530,7 @@ public class IntegrationTests {
 		bipGlue.toXML(System.out);
 		TestSpecEnforceableSpontaneous component1 = new TestSpecEnforceableSpontaneous();
 
-		final ExecutorImpl executor1 = new ExecutorImpl(component1, true);
+		final ExecutorImpl executor1 = new ExecutorImpl("", component1, true);
 
 		BIPCoordinator engine = new BIPCoordinatorImpl();
 
@@ -607,7 +607,7 @@ public class IntegrationTests {
 		bipGlue.toXML(System.out);
 		TestSpecEnforceableSpontaneous component1 = new TestSpecEnforceableSpontaneous();
 
-		final ExecutorImpl executor1 = new ExecutorImpl(component1, true);
+		final ExecutorImpl executor1 = new ExecutorImpl("", component1, true);
 
 		BIPCoordinator engine = new BIPCoordinatorImpl();
 
@@ -731,7 +731,7 @@ public class IntegrationTests {
 
 		PComponent pComponent = new PComponent(false);
 
-		final ExecutorImpl pExecutor = new ExecutorImpl(pComponent);
+		final ExecutorImpl pExecutor = new ExecutorImpl("", pComponent);
 
 		Thread t1 = new Thread(pExecutor, "PComponent");
 
@@ -739,7 +739,7 @@ public class IntegrationTests {
 
 		QComponent qComponent = new QComponent();
 
-		final ExecutorImpl qExecutor = new ExecutorImpl(qComponent);
+		final ExecutorImpl qExecutor = new ExecutorImpl("", qComponent);
 
 		Thread t2 = new Thread(qExecutor, "QComponent");
 
@@ -747,7 +747,7 @@ public class IntegrationTests {
 
 		RComponent rComponent = new RComponent();
 
-		final ExecutorImpl rExecutor = new ExecutorImpl(rComponent);
+		final ExecutorImpl rExecutor = new ExecutorImpl("", rComponent);
 
 		Thread t3 = new Thread(rExecutor, "RComponent");
 
@@ -870,7 +870,7 @@ public class IntegrationTests {
 
 		PComponent pComponent = new PComponent(false);
 
-		final ExecutorImpl pExecutor = new ExecutorImpl(pComponent);
+		final ExecutorImpl pExecutor = new ExecutorImpl("", pComponent);
 
 		Thread t1 = new Thread(pExecutor, "PComponent");
 
@@ -878,7 +878,7 @@ public class IntegrationTests {
 
 		// QComponent qComponent = new QComponent();
 		// MISTAKE on purpose, so the above line can be commented out.
-		final ExecutorImpl qExecutor = new ExecutorImpl(pComponent);
+		final ExecutorImpl qExecutor = new ExecutorImpl("", pComponent);
 
 		Thread t2 = new Thread(qExecutor, "QComponent");
 
@@ -886,7 +886,7 @@ public class IntegrationTests {
 
 		RComponent rComponent = new RComponent();
 
-		final ExecutorImpl rExecutor = new ExecutorImpl(rComponent);
+		final ExecutorImpl rExecutor = new ExecutorImpl("", rComponent);
 
 		Thread t3 = new Thread(rExecutor, "RComponent");
 
@@ -992,7 +992,7 @@ public class IntegrationTests {
 
 		PSSComponent pComponent = new PSSComponent(true);
 
-		final ExecutorImpl pExecutor = new ExecutorImpl(pComponent);
+		final ExecutorImpl pExecutor = new ExecutorImpl("", pComponent);
 
 		Thread t1 = new Thread(pExecutor, "PSSComponent");
 
@@ -1000,7 +1000,7 @@ public class IntegrationTests {
 
 		RComponent rComponent = new RComponent();
 
-		final ExecutorImpl rExecutor = new ExecutorImpl(rComponent);
+		final ExecutorImpl rExecutor = new ExecutorImpl("", rComponent);
 
 		Thread t2 = new Thread(rExecutor, "RComponent");
 
@@ -1143,19 +1143,19 @@ public class IntegrationTests {
 		bipGlue4Hanoi.toXML(System.out);
 
 		HanoiMonitor hanoiMonitor = new HanoiMonitor(size);
-		final ExecutorImpl hanoiExecutor = new ExecutorImpl(hanoiMonitor, false);
+		final ExecutorImpl hanoiExecutor = new ExecutorImpl("", hanoiMonitor, false);
 		Thread t1 = new Thread(hanoiExecutor, "hanoiMonitor");
 
 		LeftHanoiPeg leftHanoiPeg = new LeftHanoiPeg(size);
-		final ExecutorImpl lExecutor = new ExecutorImpl(leftHanoiPeg, false);
+		final ExecutorImpl lExecutor = new ExecutorImpl("", leftHanoiPeg, false);
 		Thread t2 = new Thread(lExecutor, "LeftHanoiPeg");
 
 		MiddleHanoiPeg middleHanoiPeg = new MiddleHanoiPeg(size);
-		final ExecutorImpl mExecutor = new ExecutorImpl(middleHanoiPeg, false);
+		final ExecutorImpl mExecutor = new ExecutorImpl("", middleHanoiPeg, false);
 		Thread t3 = new Thread(mExecutor, "MiddleHanoiPeg");
 
 		RightHanoiPeg rightHanoiPeg = new RightHanoiPeg(size);
-		final ExecutorImpl rExecutor = new ExecutorImpl(rightHanoiPeg, false);
+		final ExecutorImpl rExecutor = new ExecutorImpl("", rightHanoiPeg, false);
 		Thread t4 = new Thread(rExecutor, "RightHanoiPeg");
 
 		// BIP engine.
@@ -1249,7 +1249,7 @@ public class IntegrationTests {
 		PResizableBehaviorComponent pComponent = new PResizableBehaviorComponent(
 				true, noIterations);
 
-		final ExecutorImpl pExecutor = new ExecutorImpl(pComponent, false);
+		final ExecutorImpl pExecutor = new ExecutorImpl("", pComponent, false);
 
 		Thread t1 = new Thread(pExecutor, "PComponent");
 
@@ -1257,7 +1257,7 @@ public class IntegrationTests {
 
 		QComponent qComponent = new QComponent();
 
-		final ExecutorImpl qExecutor = new ExecutorImpl(qComponent);
+		final ExecutorImpl qExecutor = new ExecutorImpl("", qComponent);
 
 		Thread t2 = new Thread(qExecutor, "QComponent");
 

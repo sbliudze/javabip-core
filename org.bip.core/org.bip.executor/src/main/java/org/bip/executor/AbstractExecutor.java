@@ -8,188 +8,364 @@
 
 package org.bip.executor;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Semaphore;
 
-import org.bip.annotations.ComponentType;
-import org.bip.annotations.Data;
-import org.bip.annotations.Ports;
-import org.bip.annotations.Transitions;
+import org.bip.api.BIPComponent;
 import org.bip.api.BIPEngine;
 import org.bip.api.ComponentProvider;
-import org.bip.api.DataOut;
-import org.bip.api.ExecutableBehaviour;
 import org.bip.api.Executor;
-import org.bip.api.Guard;
 import org.bip.api.Port;
+import org.bip.api.PortBase;
+import org.bip.api.PortType;
 import org.bip.exceptions.BIPException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- * Creates a Behaviour for the future use of the Executor
- */
-public abstract class AbstractExecutor implements Executor, ComponentProvider {
+public abstract class AbstractExecutor extends SpecificationParser implements Runnable, Executor, ComponentProvider {
 
-	protected Object bipComponent;
-	protected ExecutableBehaviour behaviour;
-	protected Class<?> componentClass;
+	private BIPEngine engine;
+	private ArrayList<String> notifiers;
 
-	// we use it for the ability to persist administration setup within
-	// BIPengine
-	// so where CF restarts the BIP coordination can automatically restart.
-	// TODO find a way to get a unique name that is persistent across different
-	// CF executions
-	private String uniqueName;
+	protected volatile boolean continueLoop = true;
+	// defines whether this component has already been registered
+	protected boolean registered = false;
 
-	public AbstractExecutor(Object bipComponent, boolean useAnnotationSpec) throws BIPException {
-		this.bipComponent = bipComponent;
-		this.componentClass = bipComponent.getClass();
-		
-		if (useAnnotationSpec) {
-			this.behaviour = parseAnnotations( bipComponent.getClass() ).build(this);
-		} else {
-			this.behaviour = getExecutableBehaviour( bipComponent.getClass() ).build(this);
-		}
+	// Used to ensure that we do not go into the next cycle before we finish the
+	// previous
+	private Semaphore semaphore;
 
+	private Logger logger = LoggerFactory.getLogger(AbstractExecutor.class);
+
+	// defines whether the executor is idle waiting for a spontaneous event
+	// if it is, and the spontaneous event is received, the semaphore should be
+	// released
+	private boolean waitingSpontaneous = false;
+
+	private Map<String, Object> dataEvaluation = new Hashtable<String, Object>();
+
+	/**
+	 * By default, the Executor is created for a component with annotations. If
+	 * you want to create the Executor for a component with behaviour, use
+	 * another constructor
+	 * 
+	 * @param bipComponent
+	 * @throws BIPException
+	 */
+	public AbstractExecutor(Object bipComponent) throws BIPException {
+		this(bipComponent, true);
+	}
+
+	public AbstractExecutor(Object bipComponent, boolean useSpec)
+			throws BIPException {
+		super(bipComponent, useSpec);
+		this.notifiers = new ArrayList<String>();
+		semaphore = new Semaphore(1);
+	}
+
+	public AbstractExecutor(Object bipComponent, boolean useSpec, BIPEngine engine)
+			throws BIPException {
+		super(bipComponent, useSpec);
+		this.engine = engine;
+		this.notifiers = new ArrayList<String>();
+		semaphore = new Semaphore(1);
 	}
 
 	public void register(BIPEngine engine) {
 		engine.register(this, behaviour);
+		this.setEngine(engine);
+		synchronized (this) {
+			registered = true;
+			notifyAll();
+		}
 	}
 
-	// TODO: synchronize setId and getId
-	public String getId() {
-		return componentClass.getName();
+	public void deregister() {
+		this.registered = false;
 	}
 
-//	public void setId(String uniqueGlobalId) {
-//		uniqueName = uniqueGlobalId;
-//	}
+	public void setEngine(BIPEngine engine) {
+		this.engine = engine;
+	}
 
-	private BehaviourBuilder getExecutableBehaviour( Class<?> componentClass ) throws BIPException {
-		BehaviourBuilder builder = new BehaviourBuilder();
-		// TODO: executable behaviour must be got not from the annotation but
-		// from the method name? or return type?
-		Method[] componentMethods = componentClass.getMethods();
-		for (Method method : componentMethods) {
-			Annotation[] annotations = method.getAnnotations();
-			for (Annotation annotation : annotations) {
-				if (annotation instanceof org.bip.annotations.ExecutableBehaviour) {
-					Class<?> returnType = method.getReturnType();
-					if (!BehaviourBuilder.class.isAssignableFrom(returnType)) {
-						throw new BIPException("Method " + method.getName() + "annotated with @ExecutableBehaviour should have a return type BehaviourBuilder");
-					}
-					try {
-						if (method.getParameterTypes() != null && method.getParameterTypes().length != 0) {
-							throw new BIPException("The method " + method.getName() + " for getting executable behaviour for component " + bipComponent.getClass().getName()
-									+ "must have no arguments.");
+	public String getCurrentState() {
+		return behaviour.getCurrentState();
+	}
+
+	public void run() {
+		logger.debug("Executor thread started: "
+				+ Thread.currentThread().getName());
+		synchronized (this) {
+			while (!registered) {
+				try {
+					wait();
+				} catch (InterruptedException e) {
+					logger.debug("Executor thread interrupted: "
+							+ Thread.currentThread().getName());
+					return;
+				}
+			}
+		}
+		loop();
+		logger.debug("Executor thread terminated: "
+				+ Thread.currentThread().getName());
+	}
+
+	public void loop() {
+		// TODO: do we need to set continueLoop to false in some cases?
+		// add a stop function?
+		// TODO: add todo to engine: remove while true in run, add a variable,
+		// interrupt -> run-false
+		while (continueLoop) {
+			try {
+				semaphore.acquire();
+				nextStep();
+			} catch (InterruptedException e) {
+				ExceptionHelper.printExceptionTrace(logger, e);
+				return;
+			} catch (BIPException e) {
+				ExceptionHelper.printExceptionTrace(logger, e);
+				return;
+			}
+
+		}
+	}
+
+	public void nextStep() throws BIPException {
+		waitingSpontaneous = false;
+		dataEvaluation.clear();
+		// We need to compute this in order to be able to execute anything
+		// TODO compute only guards needed for this current state
+		// TODO first compute the guards only for internal transition
+
+		Hashtable<String, Boolean> guardToValue = behaviour.computeGuards();
+
+		// we have to compute this in order to be able to raise an exception
+		boolean existInternal = behaviour.existEnabled(PortType.internal,
+				guardToValue);
+		boolean existSpontaneous = behaviour.existEnabled(
+				PortType.spontaneous, guardToValue);
+		Set<Port> globallyDisabledPorts = behaviour
+				.getGloballyDisabledPorts(guardToValue);
+		boolean existEnforceable = behaviour.existEnabled(
+				PortType.enforceable, guardToValue);
+		// globallyDisabledPorts.isEmpty()
+		// && (globallyDisabledPorts.size()!=
+		// ((ArrayList<Port>)behaviour.getStateTransitions(behaviour.getCurrentState())).size());
+
+		// TODO, code injection to make different options possible at different
+		// times
+
+		// if (existEnforceable && existInternal) {
+		// throw new BIPException("In component " + this.getName() +
+		// " Enforceable and Internal transitions at state " +
+		// behaviour.getCurrentState() + " cannot be enabled.");
+		// }
+
+		if (existInternal) {
+			behaviour.executeInternal(guardToValue);
+			semaphore.release();
+			return;
+		} else if (existSpontaneous) {
+			// TODO if disabled transition informs, it will be executed
+			logger.debug("There will be a spontaneous transition.");
+			// TODO get rid of this thread sleep - check test conditions, they
+			// do not work without
+			try {
+				Thread.sleep(1000); // TestEnforceable2 was set to 10.000
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			waitingSpontaneous = true;
+			boolean portFound = false;
+			String portToExecute = null;
+			synchronized (notifiers) {
+				if (!notifiers.isEmpty()) {
+					for (String port : notifiers) {
+						if (behaviour.hasTransitionFromCurrentState(port)) {
+							logger.debug("There is a notifier already.");
+							this.executeSpontaneous(port);
+							portFound = true;
+							portToExecute = port;
+							break;
 						}
-						builder = (BehaviourBuilder) method.invoke(bipComponent);
-					} catch (IllegalAccessException e) {
-						e.printStackTrace();
-					} catch (IllegalArgumentException e) {
-						e.printStackTrace();
-					} catch (InvocationTargetException e) {
-						e.printStackTrace();
 					}
+					if (portFound) {
+						notifiers.remove(portToExecute);
+						return;
+					} // else continue
 				}
 			}
 		}
-		return builder;
+		if (existEnforceable) {
+			engine.inform(this, behaviour.getCurrentState(),
+					globallyDisabledPorts);
+		} else if (!existSpontaneous) {
+			throw new BIPException("No transition of known type from state "
+					+ behaviour.getCurrentState() + " in component "
+					+ this.getId());
+		}
 	}
 
-	// TODO create type for Transitions or make three classes for int, sp, enf
-	private BehaviourBuilder parseAnnotations( Class<?> componentClass ) throws BIPException {
-		BehaviourBuilder builder = new BehaviourBuilder();
-		builder.setComponent(bipComponent);
-		Annotation classAnnotation = componentClass.getAnnotation(ComponentType.class);
-		// get component name and type
-		if (classAnnotation instanceof ComponentType) {
-			ComponentType initialState = (ComponentType) classAnnotation;
-			builder.setComponentType( initialState.name() );
-			builder.setInitialState( initialState.initial() );
-		} else {
-			throw new BIPException("ComponentType annotation is not specified.");
+	private void executeSpontaneous(String portID) throws BIPException {
+		if (portID == null || portID.isEmpty()) {
+			return;
+		}
+		// execute spontaneous
+		logger.info("Executing spontaneous transition {}.", portID);
+		behaviour.execute(portID);
+		semaphore.release();
+
+	}
+
+	public synchronized void inform(String portID) {
+		if (portID == null || portID.isEmpty()) {
+			return;
+		}
+		logger.info("{} was informed of a spontaneous transition {}",
+				this.getId(), portID);
+
+		synchronized (notifiers) {
+			notifiers.add(portID);
+		}
+		if (waitingSpontaneous) {
+			semaphore.release();
+		}
+	}
+
+	public <T> T getData(String name, Class<T> clazz) {
+
+		if (name == null || name.isEmpty()) {
+			throw new IllegalArgumentException(
+					"The name of the required data variable from the component "
+							+ bipComponent.getClass().getName()
+							+ " cannot be null or empty.");
 		}
 
-		// get ports
-		ArrayList<Port> componentPorts = new ArrayList<Port>();
-		classAnnotation = componentClass.getAnnotation(Ports.class);
-		if (classAnnotation instanceof Ports) {
-			Ports ports = (Ports) classAnnotation;
-			org.bip.annotations.Port[] portArray = ports.value();
-			for (org.bip.annotations.Port port : portArray) {
-				Port p = new PortImpl(port.name(), port.type(), componentClass.getCanonicalName(), this);
-				builder.addPort(p);
-				componentPorts.add(p);
+		T result = null;
+
+		try {
+			logger.debug("Component {} getting data {}.",
+					behaviour.getComponentType(), name);
+			Object methodResult = behaviour.getDataOutMapping().get(name)
+					.invoke(bipComponent);
+
+			if (!methodResult.getClass().isAssignableFrom(clazz)) {
+				result = getPrimitiveData(name, methodResult, clazz);
+			} else
+				result = clazz.cast(methodResult);
+
+		} catch (IllegalAccessException e) {
+			ExceptionHelper.printExceptionTrace(logger, e);
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			ExceptionHelper.printExceptionTrace(logger, e);
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			ExceptionHelper.printExceptionTrace(logger, e);
+			ExceptionHelper.printExceptionTrace(logger, e.getTargetException());
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	Set<Class<?>> primitiveTypes = new HashSet<Class<?>>(
+			Arrays.<Class<?>> asList(int.class, float.class, double.class,
+					byte.class, long.class, short.class, boolean.class,
+					char.class));
+
+	<T> T getPrimitiveData(String name, Object methodResult, Class<T> clazz) {
+
+		if (primitiveTypes.contains(clazz)) {
+
+			// For primitive types, as specified in primitiveTypes set,
+			// we use direct casting that will employ autoboxing
+			// feature from Java. Therefore, we suppress unchecked
+			@SuppressWarnings("unchecked")
+			T result = (T) methodResult;
+
+			return result;
+		} else
+			throw new IllegalArgumentException("The type "
+					+ methodResult.getClass()
+					+ " of the required data variable " + name
+					+ " from the component "
+					+ bipComponent.getClass().getName()
+					+ " does not correspond to the specified return type "
+					+ clazz);
+
+	}
+
+	public List<Boolean> checkEnabledness(PortBase port,
+			List<Map<String, Object>> data) {
+		try {
+			return behaviour.checkEnabledness(port.getId(), data);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (BIPException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * Executes a particular transition as told by the Engine
+	 */
+	public void execute(String portID) {
+		// execute the particular transition
+		// TODO: need to check that port is enforceable, do not allow
+		// spontaneous executions here.
+		// TODO: maybe we can then change the interface from String port to Port
+		// port?
+		if (dataEvaluation == null || dataEvaluation.isEmpty()) {
+			try {
+				behaviour.execute(portID);
+			} catch (BIPException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		} else {
-			throw new BIPException("Port information for the BIP component is not specified.");
+			semaphore.release();
+			return;
 		}
 
-		// get transitions & guards & data
-		Method[] componentMethods = componentClass.getMethods();
-		for (Method method : componentMethods) {
-			Annotation[] annotations = method.getAnnotations();
-			for (Annotation annotation : annotations) {
-				if (annotation instanceof org.bip.annotations.Transition) {
-					
-					addTransition(method, (org.bip.annotations.Transition) annotation, builder);
-
-				} else if (annotation instanceof Transitions) {
-					Transitions transitionsAnnotation = (Transitions) annotation;
-					Annotation[] transitionAnnotations = transitionsAnnotation.value();
-					for (Annotation bipTransitionAnnotation : transitionAnnotations) {
-						
-						addTransition(method, (org.bip.annotations.Transition) bipTransitionAnnotation, builder);
-					}
-
-				} else if (annotation instanceof org.bip.annotations.Guard) {
-					Guard guard = extractGuards(method, annotation);
-					builder.addGuard(guard);
-
-				} else if (annotation instanceof Data) { // DATA OUT
-										
-					DataOut<?> data = ReflectionHelper.createData(method, (Data)annotation);
-					
-					builder.addDataOut(data, method);
-
-				} else if (annotation instanceof Ports) {
-					Ports portsAnnotation = (Ports) annotation;
-					Annotation[] portAnnotations = portsAnnotation.value();
-					for (Annotation bipPortAnnotation : portAnnotations) {
-						org.bip.annotations.Port portAnnotation = (org.bip.annotations.Port) bipPortAnnotation;
-						Port port = new PortImpl(portAnnotation.name(), portAnnotation.type(), componentClass.getCanonicalName(), this);
-						builder.addPort(port);
-					}
-
-				} else if (annotation instanceof org.bip.annotations.Port) {
-					org.bip.annotations.Port portAnnotation = (org.bip.annotations.Port) annotation;
-					Port port = new PortImpl(portAnnotation.name(), portAnnotation.type(), componentClass.getCanonicalName(), this);
-					builder.addPort(port);
-				}
-
-			}
-
-		}
-		return builder;
-	}
-	
-	private Guard extractGuards(Method method, Annotation annotation) throws BIPException {
-		Class<?> returnType = method.getReturnType();
-		if (!Boolean.class.isAssignableFrom(returnType) && !boolean.class.isAssignableFrom(returnType)) {
-			throw new BIPException("Guard method " + method.getName() + " should be a boolean function");
-		}
-		org.bip.annotations.Guard guardAnnotation = (org.bip.annotations.Guard) annotation;
-
-		return new GuardImpl(guardAnnotation.name(), method, ReflectionHelper.extractParamAnnotations(method));
-	}
-
-	private void addTransition(Method method, org.bip.annotations.Transition transitionAnnotation, BehaviourBuilder builder) {
-		
-		builder.addTransition(transitionAnnotation.name(), transitionAnnotation.source(), transitionAnnotation.target(), transitionAnnotation.guard(), method);
+		behaviour.execute(portID, dataEvaluation);
+		semaphore.release();
 
 	}
-	
+
+	public BIPComponent component() {
+		return this;
+	}
+
+	public void setData(String dataName, Object data) {
+		this.dataEvaluation.put(dataName, data);
+	}
+
+	public String toString() {
+		StringBuilder result = new StringBuilder();
+
+		result.append("BIPComponent=(");
+		result.append("type = " + behaviour.getComponentType());
+		result.append(", hashCode = " + this.hashCode());
+		result.append(")");
+
+		return result.toString();
+
+	}
+
+	public String getType() {
+		return behaviour.getComponentType();
+	}
+
 }

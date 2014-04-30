@@ -5,14 +5,14 @@ import java.util.Hashtable;
 import org.bip.api.BIPComponent;
 import org.bip.api.Publishable;
 import org.bip.exceptions.BIPException;
-import org.bip.executor.ExecutorImpl;
+import org.bip.executor.AbstractExecutor;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.osgi.context.BundleContextAware;
 
-public class ExecutorOSGiImpl extends ExecutorImpl implements BundleContextAware, Publishable {
+public abstract class ExecutorOSGiImpl extends AbstractExecutor implements BundleContextAware, Publishable {
 
 	private BundleContext bundleContext;
 	protected ServiceRegistration serviceRegistration;
