@@ -144,7 +144,7 @@ public abstract class AbstractExecutor extends SpecificationParser implements Ru
 		// TODO compute only guards needed for this current state
 		// TODO first compute the guards only for internal transition
 
-		Hashtable<String, Boolean> guardToValue = behaviour.computeGuards();
+		Hashtable<String, Boolean> guardToValue = behaviour.computeGuardsWithoutData();
 
 		// we have to compute this in order to be able to raise an exception
 		boolean existInternal = behaviour.existEnabled(PortType.internal,

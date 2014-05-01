@@ -18,6 +18,9 @@ public interface BIPComponent extends Identifiable {
 
 	/**
 	 * It enforces the execution of a given enforceable transition associated to a given port id.
+	 * 
+	 * TODO, currently if portID is null then component is being asked to do nothing (nop). 
+	 * A separate function should be added to specify that no transition is enforced. For example, doNothing().
 	 *
 	 * @param portID the port id of the transition being enforced.
 	 */

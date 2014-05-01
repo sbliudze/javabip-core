@@ -99,5 +99,5 @@ public interface ExecutableBehaviour extends Behaviour {
 	 *
 	 * @return the hashtable
 	 */
-	public Hashtable<String, Boolean> computeGuards();
+	public Hashtable<String, Boolean> computeGuardsWithoutData();
 }

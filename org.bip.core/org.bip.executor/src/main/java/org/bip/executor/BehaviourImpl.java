@@ -505,12 +505,10 @@ class BehaviourImpl implements ExecutableBehaviour {
 		return result;
 	}
 
-	// EXECUTION
-
-	public Hashtable<String, Boolean> computeGuards() {
-		Iterable<Guard> guards = this.guardsWithoutData;
+	public Hashtable<String, Boolean> computeGuardsWithoutData() {
+		
 		Hashtable<String, Boolean> guardToValue = new Hashtable<String, Boolean>();
-		for (Guard guard : guards) {
+		for (Guard guard : this.guardsWithoutData) {
 			try {
 				guardToValue.put(guard.name(), guard.evaluateGuard(bipComponent));
 			} catch (IllegalAccessException e) {
