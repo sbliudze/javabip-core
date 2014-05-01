@@ -83,7 +83,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 	/**
 	 * Creation of Behaviour without providing dataOut. However, there can be some dataIn hidden in guards and transitions
 	 * 
-	 * @param type
+	 * @param componentType
 	 * @param currentState
 	 * @param allTransitions
 	 * @param allPorts
@@ -92,27 +92,29 @@ class BehaviourImpl implements ExecutableBehaviour {
 	 * @param component
 	 * @throws BIPException
 	 */
-	public BehaviourImpl(String type, String currentState, ArrayList<TransitionImpl> allTransitions, ArrayList<Port> allPorts, HashSet<String> states, ArrayList<Guard> guards, Object component)
-			throws BIPException {
-		if (type == null || type.isEmpty()) {
+	public BehaviourImpl(String componentType, String currentState, ArrayList<TransitionImpl> allTransitions, 
+						 ArrayList<Port> allPorts, HashSet<String> states, ArrayList<Guard> guards, 
+						 Object component) throws BIPException {
+		
+		if (componentType == null || componentType.isEmpty()) {
 			throw new NullPointerException("Component type for object " + component + " cannot be null or empty.");
-		}
+		}	
 		if (currentState == null || currentState.isEmpty()) {
-			throw new NullPointerException("The initial state of the component of type " + type + " cannot be null or empty.");
+			throw new NullPointerException("The initial state of the component of type " + componentType + " cannot be null or empty.");
 		}
 		if (allTransitions == null || allTransitions.isEmpty()) {
-			throw new BIPException("List of transitions in component of type " + type + " cannot be null or empty.");
+			throw new BIPException("List of transitions in component of type " + componentType + " cannot be null or empty.");
 		}
 		if (states == null || states.isEmpty()) {
-			throw new BIPException("List of states in component of type " + type + " cannot be null or empty.");
+			throw new BIPException("List of states in component of type " + componentType + " cannot be null or empty.");
 		}
 		if (allPorts == null || allPorts.isEmpty()) {
-			throw new BIPException("List of states in component of type " + type + " cannot be null or empty.");
+			throw new BIPException("List of states in component of type " + componentType + " cannot be null or empty.");
 		}
 		if (component == null) {
-			throw new NullPointerException("The component object of type " + type + " cannot be null.");
+			throw new NullPointerException("The component object of type " + componentType + " cannot be null.");
 		}
-		this.componentType = type;
+		this.componentType = componentType;
 		this.currentState = currentState;
 		// this.allTransitions = allTransitions;
 		this.allPorts = allPorts;
@@ -248,11 +250,15 @@ class BehaviourImpl implements ExecutableBehaviour {
 			ExecutableTransition typedTransition = null;
 
 			// set type for the transitions
+			// TODO, BUG?, is there an assumption that internal transitions can not have name specified?
+			// TODO, Why are not properly typing the transition at the parser level?
 			if (transition.name().equals("")) {
 				typedTransition = new ExecutableTransitionImpl(transition, PortType.internal, guards);
 				this.allTransitions.add(typedTransition);
 				internalTransitions.add(typedTransition);
 			} else {
+				// TODO, why do we not have a Map that allows us to get/check if there is a port that matches
+				// transition name? Complexity goes down from linear to constant.
 				for (Port port : allPorts) {
 					if (transition.name().equals(port.getId())) {
 						typedTransition = new ExecutableTransitionImpl(transition, port.getType(), guards);
@@ -297,26 +303,21 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 	private void InjectDataInfo(Port port, ExecutableTransition transition) {
 		// GUARD
-		ArrayList<Data<?>> guardData = new ArrayList<Data<?>>();
-		// for every Guard function needed for checking if this transition is
-		// enabled
+		
+		// for every Guard function needed for checking if this transition has guard.
 		if (transition.hasGuard()) {
+			Set<Data<?>> portGuardData = portToDataInForGuard.get(port);
 			for (Guard guard : transition.transitionGuards()) {
-				guardData.addAll(guard.dataRequired());
+				portGuardData.addAll( guard.dataRequired() );
 			}
-			HashSet<Data<?>> portGuardData = (HashSet<Data<?>>) portToDataInForGuard.get(port);
-			portGuardData.addAll(guardData);
-			portToDataInForGuard.put(port, portGuardData);
 		}
 
 		// TRANSITION
-		HashSet<Data<?>> portTransitionData = (HashSet<Data<?>>) portToDataInForTransition.get(port);
-
+		Set<Data<?>> portTransitionData = portToDataInForTransition.get(port);
 		for (Data<?> data : transition.dataRequired()) {
 			portTransitionData.add(data);
 		}
 
-		portToDataInForTransition.put(port, portTransitionData);
 	}
 
 	// SET UP FINISHED. GETTERS METHODS
@@ -412,52 +413,61 @@ class BehaviourImpl implements ExecutableBehaviour {
 		return null;
 	}
 
-	// GETTERS FINISHED. INTERFACE METHODS
-
-	// GET ENABLED TRANSITIONS, TYPED TRANSITIONS
-
 	public boolean existEnabled(PortType transitionType, Map<String, Boolean> guardToValue) throws BIPException {
+		
 		switch (transitionType) {
-		case enforceable: {
-			for (ExecutableTransition transition : enforceableTransitions) {
-				if (isEnabled(transition, guardToValue) || transition.hasDataOnGuards()) {
-					return true;
-				}
-			}
-		}
-		case spontaneous: {
-			for (ExecutableTransition transition : spontaneousTransitions) {
-				if (isEnabled(transition, guardToValue)) {
-					return true;
-				}
-			}
-		}
-		case internal: {
-			boolean internalEnabled = false;
-			for (ExecutableTransition transition : internalTransitions) {
-				if (isEnabled(transition, guardToValue)) {
-					if (internalEnabled) {
-						throw new BIPException("Cannot have two internal transitions in the state " + this.currentState + " in component " + this.componentType);
-					} else {
-						internalEnabled = true;
+		
+			case enforceable: {
+				for (ExecutableTransition transition : enforceableTransitions) {
+					if (isEnabled(transition, guardToValue) || transition.hasDataOnGuards()) {
+						return true;
 					}
 				}
+				return false;
 			}
-			return internalEnabled;
+			
+			case spontaneous: {
+				for (ExecutableTransition transition : spontaneousTransitions) {
+					if (isEnabled(transition, guardToValue)) {
+						return true;
+					}
+				}
+				return false;
+			}
+			
+			case internal: {
+				boolean internalEnabled = false;
+				for (ExecutableTransition transition : internalTransitions) {
+					if (isEnabled(transition, guardToValue)) {
+						if (internalEnabled) {
+							throw new BIPException("Cannot have two internal transitions in the state " + this.currentState + " in component " + this.componentType);
+						} else {
+							internalEnabled = true;
+						}
+					}
+				}
+				return internalEnabled;
+			}
+			
+			default: {
+				logger.error("Unsupported transition type {} in component {}.", transitionType, componentType);
+				throw new BIPException( "Unsupported transition type " + transitionType + " in component " + componentType + ".");
+			}
 		}
-		default:
-			logger.error("Unsupported transition type {} in component {}.", transitionType, componentType);
-		}
-		return false;
+		
 	}
 
 	private boolean isEnabled(ExecutableTransition transition, Map<String, Boolean> guardToValue) throws BIPException {
+		// TODO, Why does this has a side effect and is checking also against the current state? 
+		// It should throw an exception if this function is used in such a way.
 		if (!transition.source().equals(currentState)) {
 			return false;
 		}
 		if (transition.guard() == null || transition.guard().isEmpty()) {
 			return true;
 		}
+		// TODO, Why does it return false, when it is actually not known if it is enabled or not?
+		// Again the exception should have been thrown.
 		if (transition.hasDataOnGuards()) {
 			return false;
 		}
