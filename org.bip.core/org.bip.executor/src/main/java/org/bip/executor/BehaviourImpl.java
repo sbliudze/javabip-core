@@ -490,9 +490,8 @@ class BehaviourImpl implements ExecutableBehaviour {
 		for (ExecutableTransition transition : getStateTransitions(currentState)) {
 			if (!transition.getType().equals(PortType.enforceable)) {
 				continue;
-			}
-			String guardExpression = transition.guard();
-			if (guardExpression == null || guardExpression.isEmpty() || transition.hasDataOnGuards()) {
+			}			
+			if (!transition.hasGuard() || transition.hasDataOnGuards()) {
 				continue;
 			}
 			try {
