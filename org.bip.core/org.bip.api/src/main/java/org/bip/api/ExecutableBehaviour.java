@@ -77,7 +77,7 @@ public interface ExecutableBehaviour extends Behaviour {
 	public List<Boolean> checkEnabledness(String port, List<Map<String, Object>> data) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException;
 
 	/**
-	 * Gets the globally disabled ports.
+	 * Gets the globally disabled ports within the current state the behaviour is in.
 	 *
 	 * @param guardToValue the guard to value
 	 * @return the globally disabled ports

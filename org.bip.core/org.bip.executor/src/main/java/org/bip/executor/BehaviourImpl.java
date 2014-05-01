@@ -494,12 +494,8 @@ class BehaviourImpl implements ExecutableBehaviour {
 			if (!transition.hasGuard() || transition.hasDataOnGuards()) {
 				continue;
 			}
-			try {
-				if (!transition.guardIsTrue(guardToValue)) {
-					result.add(transitionToPort.get(transition));
-				}
-			} catch (BIPException e) {
-				e.printStackTrace();
+			if (!transition.guardIsTrue(guardToValue)) {
+				result.add(transitionToPort.get(transition));
 			}
 		}
 		return result;
