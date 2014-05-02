@@ -113,32 +113,32 @@ class PortImpl implements Port {
 		return result.toString();
 	}
 
-	// TODO: In future components should give a unique ID when registered to the engine that can be used with
-	// the portId as a unique key for hashTables
-	// TODO: When the above problems are fixed, uncomment the equals method.
+	public boolean equals(Object o) {
+		
+		if (this == o)
+			return true;
+		
+		if (!(o instanceof Port)) {
+			return false;
+		}
+		
+		Port compareTo = (Port) o;
+		
+		if ( !this.getType().equals(compareTo.getType()))
+			return false;
 
-	// @Override
-	// public boolean equals(Object o) {
-	// if (!(o instanceof Port)) {
-	//
-	// return false;
-	// }
-	// if (this == o){
-	// return true;
-	// }
-	// Port argument = (Port) o;
-	// if (this.id != argument.id){
-	// return false;
-	// }
-	// if (this.specType != argument.specType){
-	// return false;
-	// }
-	// if (this.type != argument.type){
-	// return false;
-	// }
-	// return true;
-	// }
+		if ( !this.getId().equals(compareTo.getId()))
+			return false;
 
+		if ( !this.getSpecType().equals(compareTo.getSpecType()))
+			return false;
+		
+		if ( !this.component().equals(compareTo.component()))
+			return false;
+				
+		return true;
+	}
+	
 	// TODO, check if this is correct and proper implementation of hash function. If this one is incorrect
 	// hash structures will work incorrectly.
 	@Override
