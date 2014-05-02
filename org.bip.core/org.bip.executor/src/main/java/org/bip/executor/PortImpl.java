@@ -28,8 +28,6 @@ class PortImpl implements Port {
 	@XmlAttribute
 	protected String id;
 
-	// TODO, Improvement, move this attribute to new class GlueSpecPort (?) and
-	// put this class within glue?
 	@XmlAttribute
 	protected String specType;
 
@@ -39,20 +37,6 @@ class PortImpl implements Port {
 
 	public String getSpecType() {
 		return specType;
-	}
-
-	private PortImpl(String id, String specificationType) {
-		if (id == null) {
-			throw new IllegalArgumentException(
-					"Port id cannot be null for specification portType "
-							+ specificationType);
-		}
-		if (specificationType == null) {
-				throw new IllegalArgumentException(
-						"Port spec portType cannot be null for port id " + id);
-		}
-		this.id = id;
-		this.specType = specificationType;
 	}
 
 	public PortType getType() {
@@ -68,25 +52,24 @@ class PortImpl implements Port {
 	}
 
 	public PortImpl(String id, PortType type, String specificationType) {
-		this (id, specificationType);
+		if (id == null) {
+			throw new IllegalArgumentException(
+					"Port id cannot be null for specification portType "
+							+ specificationType);
+		}
+		if (specificationType == null) {
+				throw new IllegalArgumentException(
+						"Port spec portType cannot be null for port id " + id);
+		}
+		this.id = id;
 		this.portType = type;
+		this.specType = specificationType;
 	}
 
 	public PortImpl(String id, PortType type, String specificationType, ComponentProvider behaviourProvider) {
 		this(id, type, specificationType);
 		this.componentProvider = behaviourProvider;
 	}
-
-//	private PortType getType(String portType) {
-//		if (portType.equals(PortType.enforceable.toString())) {
-//			return PortType.enforceable;
-//		} else if (portType.equals(PortType.spontaneous.toString())) {
-//			return PortType.spontaneous;
-//		} else if (portType.equals(PortType.internal.toString())) {
-//			return PortType.internal;
-//		}
-//		return PortType.unknown;
-//	}
 
 	public BIPComponent component() {
 		if (componentProvider == null) {

@@ -13,8 +13,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Set;
-
 import org.bip.api.ComponentProvider;
 import org.bip.api.Data;
 import org.bip.api.DataOut;

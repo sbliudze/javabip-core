@@ -355,6 +355,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 		return dataOutName;
 	}
 
+	// TODO, change to PortBase first
 	public Iterable<Data<?>> portToDataInForTransition(Port port) {
 		// TODO with new equals of ports, remove the second part
 		// the method is so complex due to wrong equality of ports
@@ -377,6 +378,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 		return this.portToDataInForGuard;
 	}
 
+	// TODO, change to PortBase first
 	public Set<Data<?>> portToDataInForGuard(Port port) {
 		// TODO with new equals of ports, remove the second part
 		// the method is so complex due to wrong equality of ports

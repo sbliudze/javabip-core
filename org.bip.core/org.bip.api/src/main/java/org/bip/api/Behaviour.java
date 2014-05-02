@@ -66,6 +66,7 @@ public interface Behaviour {
 	 * @param port the port for which its required data is returned.
 	 * @return the sets of data required by the guard to the given transition associated with a given port.
 	 */
+	// TODO, change to PortBase first
 	public Set<Data<?>> portToDataInForGuard(Port port);
 
 	/**
@@ -74,6 +75,7 @@ public interface Behaviour {
 	 * @param port the port
 	 * @return the iterable
 	 */
+	// TODO, change to PortBase first
 	public Iterable<Data<?>> portToDataInForTransition(Port port);
 
 	/**
