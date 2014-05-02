@@ -43,10 +43,16 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 	private String componentType;
 
-	private ArrayList<ExecutableTransition> allTransitions;
 
 	private ArrayList<Port> allPorts;
-	private ArrayList<Port> enforceablePorts;
+	private ArrayList<Port> enforceablePorts;	
+	// for each port provides data it needs for guards
+	private Hashtable<Port, Set<Data<?>>> portToDataInForGuard;
+	// for each port provides data it needs for transitions
+	private Hashtable<Port, Set<Data<?>>> portToDataInForTransition;
+
+	// TODO after changing the interface to Set, change this to HashSet.
+	private ArrayList<String> states;
 	// maps state to its transitions
 	private Hashtable<String, ArrayList<ExecutableTransition>> stateTransitions;
 	// maps state to its enforceable ports
@@ -54,19 +60,21 @@ class BehaviourImpl implements ExecutableBehaviour {
 	// gives a Transition instance from the key of (transition name + transition
 	// source state)
 	private Hashtable<String, ExecutableTransition> nameToTransition;
+	
+	private ArrayList<ExecutableTransition> allTransitions;	
+	private ArrayList<ExecutableTransition> internalTransitions;
+	private ArrayList<ExecutableTransition> spontaneousTransitions;
+	private ArrayList<ExecutableTransition> enforceableTransitions;
 	// for each enforceable transition get its port instance
 	private Hashtable<ExecutableTransition, Port> transitionToPort;
-	// for each port provides data it needs for guards
-	private Hashtable<Port, Set<Data<?>>> portToDataInForGuard;
-	// for each port provides data it needs for transitions
-	private Hashtable<Port, Set<Data<?>>> portToDataInForTransition;
-	// TODO after changing the interface to Set, change this to HashSet.
-	private ArrayList<String> states;
+
+
 	private ArrayList<Guard> guards;
 	// the list of guards whose evaluation does not depend on data
 	private ArrayList<Guard> guardsWithoutData;
 	// the list of guards whose evaluation depends on data
 	private ArrayList<Guard> guardsWithData;
+
 	// the list of dataOut variables for this component
 	private ArrayList<DataImpl<?>> dataOut;
 	// the map between the name of the out variable and the method computing it
@@ -74,9 +82,6 @@ class BehaviourImpl implements ExecutableBehaviour {
 	private Object bipComponent;
 	private Class<?> componentClass;
 
-	private ArrayList<ExecutableTransition> internalTransitions;
-	private ArrayList<ExecutableTransition> spontaneousTransitions;
-	private ArrayList<ExecutableTransition> enforceableTransitions;
 
 	private Logger logger = LoggerFactory.getLogger(BehaviourImpl.class);
 
@@ -225,9 +230,9 @@ class BehaviourImpl implements ExecutableBehaviour {
 	 * @throws BIPException
 	 */
 	private void setUpBehaviourData(ArrayList<TransitionImpl> transitions) throws BIPException {
-		stateTransitions = new Hashtable<String, ArrayList<ExecutableTransition>>();
+		
 		nameToTransition = new Hashtable<String, ExecutableTransition>();
-		stateToPorts = new Hashtable<String, Set<Port>>(states.size());
+
 		transitionToPort = new Hashtable<ExecutableTransition, Port>();
 		portToDataInForGuard = new Hashtable<Port, Set<Data<?>>>();
 		portToDataInForTransition = new Hashtable<Port, Set<Data<?>>>();
@@ -243,9 +248,11 @@ class BehaviourImpl implements ExecutableBehaviour {
 			}
 		}
 
+		stateToPorts = new Hashtable<String, Set<Port>>(states.size());
 		for (String state : states) {
 			stateToPorts.put(state, new HashSet<Port>());
 		}
+		
 		for (TransitionImpl transition : transitions) {
 			ExecutableTransition typedTransition = null;
 
@@ -272,8 +279,10 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 							Set<Port> stateports = stateToPorts.get(typedTransition.source());
 							if (stateports == null) {
-								throw new BIPException("The source state " + typedTransition.source() + " for transition " + typedTransition.name() + " is not in the list of states of component "
-										+ componentType);
+								throw new BIPException("The source state " + typedTransition.source() + 
+													   " for transition " + typedTransition.name() + 
+													   " is not in the list of states of component " +
+													   componentType);
 							}
 							stateports.add(port);
 
@@ -289,14 +298,12 @@ class BehaviourImpl implements ExecutableBehaviour {
 		}
 
 		// create map state to transitions from this state
+		stateTransitions = new Hashtable<String, ArrayList<ExecutableTransition>>();
 		for (String state : states) {
-			ArrayList<ExecutableTransition> result = new ArrayList<ExecutableTransition>();
-			for (ExecutableTransition transition : allTransitions) {
-				if (transition.source().equals(state)) {
-					result.add(transition);
-				}
-			}
-			stateTransitions.put(state, result);
+			stateTransitions.put(state, new ArrayList<ExecutableTransition>());
+		}
+		for (ExecutableTransition transition : allTransitions) {
+			stateTransitions.get(transition.source()).add(transition);
 		}
 
 	}
@@ -322,9 +329,9 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 	// SET UP FINISHED. GETTERS METHODS
 
-	public Port getPort(ExecutableTransition transition) {
-		return transitionToPort.get(transition);
-	}
+//	public Port getPort(ExecutableTransition transition) {
+//		return transitionToPort.get(transition);
+//	}
 
 	public String getCurrentState() {
 		return currentState;
@@ -335,9 +342,9 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 	}
 
-	public Iterable<ExecutableTransition> getAllTransitions() {
-		return allTransitions;
-	}
+//	public Iterable<ExecutableTransition> getAllTransitions() {
+//		return allTransitions;
+//	}
 
 	public List<String> getStates() {
 		return states;
@@ -531,18 +538,19 @@ class BehaviourImpl implements ExecutableBehaviour {
 	}
 
 	public void executeInternal(Map<String, Boolean> guardToValue) throws BIPException {
-		ExecutableTransition transition = null;
-		for (ExecutableTransition tr : getStateTransitions(currentState)) {
-			if (tr.getType().equals(PortType.internal) && tr.guardIsTrue(guardToValue)) {
-				transition = tr;
-				break;
+		
+		for (ExecutableTransition transition : getStateTransitions(currentState)) {
+			if (transition.getType().equals(PortType.internal) && 
+				transition.guardIsTrue(guardToValue)) {
+					invokeMethod(transition);
+					return;
 			}
 		}
-		if (transition == null) {
-			throw new BIPException("There is no enabled internal transition in state " + this.currentState + " for component " + this.componentType
-					+ ". This exception is internal to the implementation.");
-		}
-		invokeMethod(transition);
+		
+		throw new BIPException("There is no enabled internal transition in state " + this.currentState + 
+							   " for component " + this.componentType + 
+							   ". This exception is internal to the implementation.");
+		
 	}
 
 	private void invokeMethod(ExecutableTransition transition) {
@@ -550,8 +558,9 @@ class BehaviourImpl implements ExecutableBehaviour {
 		try {
 			componentMethod = transition.method();
 			if (!componentMethod.getDeclaringClass().isAssignableFrom(componentClass)) {
-				throw new IllegalArgumentException("The method " + componentMethod.getName() + " belongs to the class " + componentMethod.getDeclaringClass().getName()
-						+ " but not  to the class of the component " + componentClass.getName());
+				throw new IllegalArgumentException("The method " + componentMethod.getName() + 
+						" belongs to the class " + componentMethod.getDeclaringClass().getName() +
+						" but not  to the class of the component " + componentClass.getName());
 			}
 			componentMethod.invoke(bipComponent);
 
@@ -571,16 +580,15 @@ class BehaviourImpl implements ExecutableBehaviour {
 		}
 	}
 
-	private boolean performTransition(ExecutableTransition transition) throws BIPException {
+	private void performTransition(ExecutableTransition transition) throws BIPException {
 		if (!currentState.equals(transition.source())) {
-			throw new BIPException("Could not perform transition " + transition.name() + " of component " + componentType + " because the component is in the wrong state " + currentState
-					+ " instead of state " + transition.source());
+			throw new BIPException("Could not perform transition " + transition.name() + 
+								   " of component " + componentType + 
+								   " because the component is in the wrong state " + currentState +
+								   " instead of state " + transition.source());
 		}
 		currentState = transition.target();
-		return true;
 	}
-
-	// DATA FUNCTIONS
 
 	public List<Boolean> checkEnabledness(String port, List<Map<String, Object>> data) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, BIPException {
 
