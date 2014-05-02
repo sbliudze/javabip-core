@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
+
 import org.bip.api.ComponentProvider;
 import org.bip.api.Data;
 import org.bip.api.DataOut;
@@ -59,6 +61,17 @@ public class BehaviourBuilder {
 			componentPorts.add(new PortImpl(port.getId(), port.getType(), port.getSpecType(), provider));
 		}
 
+		Map<String, Port> allEnforceablePorts = new HashMap<String, Port>();
+		for (Port port : componentPorts) {
+			if (port.getType().equals(PortType.enforceable))
+				allEnforceablePorts.put(port.getId(), port);
+		}
+		
+		for (DataOut<?> data : dataOut) {
+			// TODO, Refactor the solution so no casting is required, probably do not use interface
+			((DataImpl<?>) data).computeAllowedPort(allEnforceablePorts);
+		}
+		
 		return new BehaviourImpl(componentType, currentState, transformIntoExecutableTransition(), 
 								 componentPorts, states, guards, dataOut, dataOutName, component);
 	}

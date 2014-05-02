@@ -9,6 +9,7 @@
 package org.bip.executor;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.bip.api.DataOut;
@@ -79,10 +80,6 @@ class DataImpl<T> implements DataOut<T> {
 		return this.allowedPorts;
 	}
 
-	public String[] stringPorts() {
-		return this.stringPorts;
-	}
-
 	public AccessType portSpecificationType() {
 		return this.portSpecificationType;
 	}
@@ -98,4 +95,31 @@ class DataImpl<T> implements DataOut<T> {
 
 		return result.toString();
 	}
+	
+	public void computeAllowedPort(Map<String, Port> allEnforceablePorts) {
+
+		if (portSpecificationType.equals(AccessType.any))
+			allowedPorts.addAll(allEnforceablePorts.values());
+		
+		if (portSpecificationType.equals(AccessType.allowed)) {
+			for (String portName : stringPorts) {
+				if (!allEnforceablePorts.containsKey(portName))
+					throw new BIPException("There is no port instance specified in Ports for the port " + portName + " mentioned in data " + name);
+				allowedPorts.add( allEnforceablePorts.get(portName) );
+			}
+		}
+		
+		if (portSpecificationType.equals(AccessType.unallowed)) {
+
+			allowedPorts.addAll( allEnforceablePorts.values());
+			
+			for (String portName : stringPorts) {
+				if (!allEnforceablePorts.containsKey(portName))
+					throw new BIPException("There is no port instance specified in Ports for the port " + portName + " mentioned in data " + name);
+				allowedPorts.remove( allEnforceablePorts.get(portName) );
+			}
+		}
+		
+	}
+	
 }

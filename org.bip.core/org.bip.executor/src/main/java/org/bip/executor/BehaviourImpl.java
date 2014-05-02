@@ -75,7 +75,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 	private ArrayList<Guard> guardsWithData;
 
 	// the list of dataOut variables for this component
-	private ArrayList<DataImpl<?>> dataOut;
+	private ArrayList<DataOut<?>> dataOut;
 	// the map between the name of the out variable and the method computing it
 	private Hashtable<String, Method> dataOutName;
 	private Object bipComponent;
@@ -163,62 +163,9 @@ class BehaviourImpl implements ExecutableBehaviour {
 		// dataOutName are not used in the method setUpBehaviourData
 		this(type, currentState, allTransitions, allPorts, states, guards, component);
 
-		this.dataOut = new ArrayList<DataImpl<?>>();
+		this.dataOut = dataOut;
 		this.dataOutName = dataOutName;
 
-		if (dataOut == null) {
-			return;
-		}
-		for (DataOut<?> data : dataOut) {
-
-			if (data.portSpecificationType().equals(DataOut.AccessType.any)) {
-				this.dataOut.add(createData(data.name(), data.type(), new HashSet<Port>(this.enforceablePorts)));
-				// data.addPorts(this.enforceablePorts);
-			} else if (data.portSpecificationType().equals(DataOut.AccessType.allowed)) {
-				HashSet<Port> allowedPorts = new HashSet<Port>();
-				boolean portFound = false;
-				for (String port : data.stringPorts()) {
-					portFound = false;
-					for (Port componentPort : this.enforceablePorts) {
-						if (port.equals(componentPort.getId())) {
-							allowedPorts.add(componentPort);
-							portFound = true;
-							break;
-						}
-					}
-					if (!portFound) {
-						throw new BIPException("There is no port instance specified in Ports for the port " + port + " mentioned in data " + data.name());
-					}
-				}
-
-				// type casting from Object
-				// ArrayList<Port> allowedPorts = (ArrayList<Port>) this.enforceablePorts.clone();
-				// allowedPorts.removeAll(data.unallowedPorts());
-				// data.addPorts(allowedPorts);
-				this.dataOut.add(createData(data.name(), data.type(), allowedPorts));
-			} else if (data.portSpecificationType().equals(DataOut.AccessType.unallowed)) {
-				HashSet<Port> allowedPorts = new HashSet<Port>();
-				boolean portFound = false;
-				for (Port componentPort : this.enforceablePorts) {
-					portFound = false;
-					for (String port : data.stringPorts()) {
-						if (port.equals(componentPort.getId())) {
-							portFound = true;
-							break;
-						}
-					}
-					if (!portFound) {
-						allowedPorts.add(componentPort);
-					}
-				}
-
-				// type casting from Object
-				// ArrayList<Port> allowedPorts = (ArrayList<Port>) this.enforceablePorts.clone();
-				// allowedPorts.removeAll(data.unallowedPorts());
-				// data.addPorts(allowedPorts);
-				this.dataOut.add(createData(data.name(), data.type(), allowedPorts));
-			}
-		}
 	}
 
 	// TODO create a test for disallowed ports
@@ -664,7 +611,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 		if (dataName == null || dataName.isEmpty()) {
 			return new HashSet<Port>();
 		}
-		for (DataImpl<?> data : dataOut) {
+		for (DataOut<?> data : dataOut) {
 			if (data.name().equals(dataName)) {
 				return data.allowedPorts();
 			}

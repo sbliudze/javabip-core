@@ -8,6 +8,8 @@
 
 package org.bip.api;
 
+import java.util.Set;
+
 /**
  * It specifies the interface for data being provided by BIP component.
  *
@@ -21,7 +23,7 @@ public interface DataOut<T> extends Data<T> {
 	 *
 	 * @return the ports if type requires a list of ports.
 	 */
-	public String[] stringPorts();
+	public Set<Port> allowedPorts();
 
 	/**
 	 * It specifies the type of data accessibility. 
