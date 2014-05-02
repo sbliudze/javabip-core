@@ -11,6 +11,8 @@ package org.bip.annotations;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import org.bip.api.DataOut.AccessType;
+
 /**
  * It is used to annotated data sent between BIP components.
  */
@@ -35,7 +37,7 @@ public @interface Data {
 	 */
 	// TODO, use Enum instead of String?
 	// TODO, why default is empty string and not for example "any"?
-	String accessTypePort() default ""; // any, witness, list
+	AccessType accessTypePort() default AccessType.any; // any, witness, list
 
 	/**
 	 * It returns the ports (if required) for a specific access type being used.

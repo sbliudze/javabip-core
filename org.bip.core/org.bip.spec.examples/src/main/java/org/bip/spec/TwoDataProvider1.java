@@ -6,6 +6,7 @@ import org.bip.annotations.Port;
 import org.bip.annotations.Ports;
 import org.bip.annotations.Transition;
 import org.bip.api.PortType;
+import org.bip.api.DataOut.AccessType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,12 +28,12 @@ public class TwoDataProvider1 {
 		logger.debug("Transition b of TwoDataProvider1 has been performed");
 	}
 
-	@Data(name = "memoryY", accessTypePort = "any")
+	@Data(name = "memoryY", accessTypePort = AccessType.any)
 	public int memoryY() {
 		return memoryY;
 	}
 	
-	@Data(name = "memoryQ", accessTypePort = "any")
+	@Data(name = "memoryQ", accessTypePort = AccessType.any)
 	public int memoryQ() {
 		return memoryQ;
 	}

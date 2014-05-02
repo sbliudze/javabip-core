@@ -11,6 +11,7 @@ package org.bip.spec.hanoi;
 import org.bip.annotations.Data;
 import org.bip.annotations.ExecutableBehaviour;
 import org.bip.api.PortType;
+import org.bip.api.DataOut.AccessType;
 import org.bip.executor.BehaviourBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -138,7 +139,7 @@ public class HanoiPeg {
 		return false;
 	}
 
-	@Data(name = "disksize", accessTypePort = "allowed", ports = { "pieceAdd", "pieceRemove" })
+	@Data(name = "disksize", accessTypePort = AccessType.allowed, ports = { "pieceAdd", "pieceRemove" })
 	public int diskSizeOnTop() {
 
 		for (int i = 0; i < size; i++) {

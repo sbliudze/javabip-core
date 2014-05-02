@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.bip.api.Data;
 import org.bip.api.DataOut;
+import org.bip.api.DataOut.AccessType;
 import org.bip.exceptions.BIPException;
 
 class ReflectionHelper {
@@ -57,7 +58,7 @@ class ReflectionHelper {
 		return toReturn;
 	}
 	
-	public static <T> DataOut<T> createData(String dataName, Class<T> type, String accessType, String[] ports) {
+	public static <T> DataOut<T> createData(String dataName, Class<T> type, AccessType accessType, String[] ports) {
 		DataOut<T> toReturn = new DataImpl<T>(dataName, type, accessType, ports);
 		return toReturn;
 	}
@@ -80,7 +81,7 @@ class ReflectionHelper {
 	public static DataOut<?> createData(Method method, org.bip.annotations.Data dataAnnotation) {
 
 		String name = dataAnnotation.name();
-		String type = dataAnnotation.accessTypePort();
+		AccessType type = dataAnnotation.accessTypePort();
 		String[] ports = dataAnnotation.ports();
 		return createData(name, method.getReturnType(), type, ports);
 

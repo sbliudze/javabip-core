@@ -2,6 +2,7 @@ package org.bip.spec;
 
 import org.bip.annotations.*;
 import org.bip.api.PortType;
+import org.bip.api.DataOut.AccessType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,12 +37,12 @@ public class Feeder {
 		logger.debug("Transition from oneZ to zero has been performed");
 	}
 
-	@Data(name = "memoryY", accessTypePort = "allowed", ports = { "giveY" })
+	@Data(name = "memoryY", accessTypePort = AccessType.allowed, ports = { "giveY" })
 	public int memoryY() {
 		return memoryY;
 	}
 
-	@Data(name = "memoryZ", accessTypePort = "allowed", ports = { "giveZ" })
+	@Data(name = "memoryZ", accessTypePort = AccessType.allowed, ports = { "giveZ" })
 	public int memoryZ() {
 		return memoryZ;
 	}

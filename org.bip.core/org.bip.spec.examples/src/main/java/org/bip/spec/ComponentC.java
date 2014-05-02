@@ -6,6 +6,7 @@ import org.bip.annotations.Port;
 import org.bip.annotations.Ports;
 import org.bip.annotations.Transition;
 import org.bip.api.PortType;
+import org.bip.api.DataOut.AccessType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +27,7 @@ public class ComponentC {
 		logger.debug("Transition b of ComponentC has been performed");
 	}
 
-	@Data(name = "memoryZ", accessTypePort = "allowed", ports = {"b"})
+	@Data(name = "memoryZ", accessTypePort = AccessType.allowed, ports = {"b"})
 	public int memoryZ() {
 		return memoryZ;
 	}

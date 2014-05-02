@@ -28,12 +28,12 @@ public interface DataOut<T> extends Data<T> {
 	 *
 	 * @return the type
 	 */
-	public Type portSpecificationType();
+	public AccessType portSpecificationType();
 
 	/**
 	 * The Enum PortType.
 	 */
-	public enum Type {
+	public enum AccessType {
 
 		/** The any specifies that data is available if any port is participating in the interaction. */
 		any, 

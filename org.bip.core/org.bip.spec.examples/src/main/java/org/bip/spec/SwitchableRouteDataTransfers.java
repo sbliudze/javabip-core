@@ -26,6 +26,7 @@ import org.bip.annotations.Ports;
 import org.bip.annotations.Transition;
 import org.bip.api.Executor;
 import org.bip.api.PortType;
+import org.bip.api.DataOut.AccessType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -127,7 +128,7 @@ public class SwitchableRouteDataTransfers implements CamelContextAware, Initiali
 
 	// It is inferred that this is Data Out as the annotation is provided within a function that returns smth. The
 	// type of the DataOut is the type of the return.
-	@Data(name = "deltaMemoryOnTransition", accessTypePort = "allowed", ports = { "on", "finished" })
+	@Data(name = "deltaMemoryOnTransition", accessTypePort = AccessType.allowed, ports = { "on", "finished" })
 	public int deltaMemoryOnTransition() {
 		return deltaMemory;
 	}

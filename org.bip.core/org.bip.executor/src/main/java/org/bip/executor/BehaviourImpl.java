@@ -69,8 +69,6 @@ class BehaviourImpl implements ExecutableBehaviour {
 	// for each enforceable transition get its port instance
 	private Hashtable<ExecutableTransition, Port> transitionToPort;
 
-
-	private ArrayList<Guard> guards;
 	// the list of guards whose evaluation does not depend on data
 	private ArrayList<Guard> guardsWithoutData;
 	// the list of guards whose evaluation depends on data
@@ -125,7 +123,6 @@ class BehaviourImpl implements ExecutableBehaviour {
 		this.allTransitions = allTransitions;
 		this.allPorts = allPorts;
 		this.states = new ArrayList<String>(states);
-		this.guards = guards;
 		this.guardsWithoutData = new ArrayList<Guard>();
 		this.guardsWithData = new ArrayList<Guard>();
 		for (Guard guard : guards) {
@@ -174,10 +171,10 @@ class BehaviourImpl implements ExecutableBehaviour {
 		}
 		for (DataOut<?> data : dataOut) {
 
-			if (data.portSpecificationType().equals(DataOut.Type.any)) {
+			if (data.portSpecificationType().equals(DataOut.AccessType.any)) {
 				this.dataOut.add(createData(data.name(), data.type(), new HashSet<Port>(this.enforceablePorts)));
 				// data.addPorts(this.enforceablePorts);
-			} else if (data.portSpecificationType().equals(DataOut.Type.allowed)) {
+			} else if (data.portSpecificationType().equals(DataOut.AccessType.allowed)) {
 				HashSet<Port> allowedPorts = new HashSet<Port>();
 				boolean portFound = false;
 				for (String port : data.stringPorts()) {
@@ -199,7 +196,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 				// allowedPorts.removeAll(data.unallowedPorts());
 				// data.addPorts(allowedPorts);
 				this.dataOut.add(createData(data.name(), data.type(), allowedPorts));
-			} else if (data.portSpecificationType().equals(DataOut.Type.unallowed)) {
+			} else if (data.portSpecificationType().equals(DataOut.AccessType.unallowed)) {
 				HashSet<Port> allowedPorts = new HashSet<Port>();
 				boolean portFound = false;
 				for (Port componentPort : this.enforceablePorts) {
