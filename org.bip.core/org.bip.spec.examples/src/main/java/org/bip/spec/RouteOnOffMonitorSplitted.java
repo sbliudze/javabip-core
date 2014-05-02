@@ -1,9 +1,10 @@
 package org.bip.spec;
 
 import org.bip.annotations.*;
+import org.bip.api.PortType;
 
-@Ports({ @Port(name = "add", type = "enforceable"),
-		    @Port(name = "rm", type = "enforceable") })
+@Ports({ @Port(name = "add", type = PortType.enforceable),
+		    @Port(name = "rm", type = PortType.enforceable) })
 @ComponentType(initial = "0", name = "monitor")
 
 public class RouteOnOffMonitorSplitted {

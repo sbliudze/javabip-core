@@ -1,11 +1,14 @@
 package org.bip.spec;
 
 import org.bip.annotations.*;
+import org.bip.api.PortType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Ports({ @Port(name = "giveY", type = "enforceable"), @Port(name = "giveZ", type = "enforceable"), @Port(name = "returnY", type = "enforceable"),
-		@Port(name = "returnZ", type = "enforceable") })
+@Ports({ @Port(name = "giveY", type = PortType.enforceable), 
+		 @Port(name = "giveZ", type = PortType.enforceable), 
+		 @Port(name = "returnY", type = PortType.enforceable),
+		 @Port(name = "returnZ", type = PortType.enforceable) })
 @ComponentType(initial = "zero", name = "org.bip.spec.Feeder")
 public class Feeder {
 	Logger logger = LoggerFactory.getLogger(Feeder.class);

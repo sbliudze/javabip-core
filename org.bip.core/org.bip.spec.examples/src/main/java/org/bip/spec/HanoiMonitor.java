@@ -113,11 +113,11 @@ public class HanoiMonitor {
         }
 
         // [Port=(id = sr, specType = null, type = spontaneous),
-        behaviourBuilder.addPort("ab", PortType.enforceable.toString(), this.getClass());
+        behaviourBuilder.addPort("ab", PortType.enforceable, this.getClass());
 
-        behaviourBuilder.addPort("ac", PortType.enforceable.toString(), this.getClass());
+        behaviourBuilder.addPort("ac", PortType.enforceable, this.getClass());
 
-        behaviourBuilder.addPort("bc", PortType.enforceable.toString(), this.getClass());
+        behaviourBuilder.addPort("bc", PortType.enforceable, this.getClass());
         
         behaviourBuilder.setComponent(this);
 

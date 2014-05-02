@@ -61,37 +61,32 @@ class PortImpl implements Port {
 
 	private ComponentProvider componentProvider;
 
-	public PortImpl() {
-		// need it for the hashCode function
-		portType = PortType.enforceable;
-	}
-
-	public PortImpl(String id, String type, Class<?> specificationType) {
+	public PortImpl(String id, PortType type, Class<?> specificationType) {
 		this (id, type, specificationType.getCanonicalName());
 		if (specificationType.getCanonicalName() == null)
 			throw new IllegalArgumentException("The provided class " + specificationType + "has no cannonical name");
 	}
 
-	public PortImpl(String id, String type, String specificationType) {
+	public PortImpl(String id, PortType type, String specificationType) {
 		this (id, specificationType);
-		this.portType = getType(type);
+		this.portType = type;
 	}
 
-	public PortImpl(String id, String type, String specificationType, ComponentProvider behaviourProvider) {
+	public PortImpl(String id, PortType type, String specificationType, ComponentProvider behaviourProvider) {
 		this(id, type, specificationType);
 		this.componentProvider = behaviourProvider;
 	}
 
-	private PortType getType(String portType) {
-		if (portType.equals(PortType.enforceable.toString())) {
-			return PortType.enforceable;
-		} else if (portType.equals(PortType.spontaneous.toString())) {
-			return PortType.spontaneous;
-		} else if (portType.equals(PortType.internal.toString())) {
-			return PortType.internal;
-		}
-		return PortType.unknown;
-	}
+//	private PortType getType(String portType) {
+//		if (portType.equals(PortType.enforceable.toString())) {
+//			return PortType.enforceable;
+//		} else if (portType.equals(PortType.spontaneous.toString())) {
+//			return PortType.spontaneous;
+//		} else if (portType.equals(PortType.internal.toString())) {
+//			return PortType.internal;
+//		}
+//		return PortType.unknown;
+//	}
 
 	public BIPComponent component() {
 		if (componentProvider == null) {

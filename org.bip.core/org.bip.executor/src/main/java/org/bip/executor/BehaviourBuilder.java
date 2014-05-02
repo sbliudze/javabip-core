@@ -58,7 +58,7 @@ public class BehaviourBuilder {
 		ArrayList<Port> componentPorts = new ArrayList<Port>();
 		// TODO, Why do we need to recreate ports here? Because there was no provider information within the port.
 		for (Port port : this.allPorts) {
-			componentPorts.add(new PortImpl(port.getId(), port.getType().toString(), port.getSpecType(), provider));
+			componentPorts.add(new PortImpl(port.getId(), port.getType(), port.getSpecType(), provider));
 		}
 
 		return new BehaviourImpl(componentType, currentState, transformIntoExecutableTransition(), 
@@ -103,7 +103,7 @@ public class BehaviourBuilder {
 		states.add(state);
 	}
 
-	public void addPort(String id, String type, Class<?> specificationType) {
+	public void addPort(String id, PortType type, Class<?> specificationType) {
 		allPorts.add(new PortImpl(id, type, specificationType));
 	}
 	

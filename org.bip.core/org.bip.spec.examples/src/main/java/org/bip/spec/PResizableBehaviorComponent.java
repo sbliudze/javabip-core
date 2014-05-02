@@ -17,7 +17,9 @@ import org.bip.executor.BehaviourBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Ports({ @Port(name = "sr", type = "spontaneous"), @Port(name = "se", type = "spontaneous"), @Port(name = "p", type = "enforceable") })
+@Ports({ @Port(name = "sr", type = PortType.spontaneous), 
+		 @Port(name = "se", type = PortType.spontaneous), 
+		 @Port(name = "p", type = PortType.enforceable) })
 @ComponentType(initial = "state0", name = "org.bip.spec.PComponent")
 public class PResizableBehaviorComponent {
 
@@ -88,11 +90,11 @@ public class PResizableBehaviorComponent {
 		}
 
 		// [Port=(id = sr, specType = null, type = spontaneous),
-		behaviourBuilder.addPort("sr", PortType.spontaneous.toString(), this.getClass());
+		behaviourBuilder.addPort("sr", PortType.spontaneous, this.getClass());
 
-		behaviourBuilder.addPort("se", PortType.spontaneous.toString(), this.getClass());
+		behaviourBuilder.addPort("se", PortType.spontaneous, this.getClass());
 
-		behaviourBuilder.addPort("p", PortType.enforceable.toString(), this.getClass());
+		behaviourBuilder.addPort("p", PortType.enforceable, this.getClass());
 
 		// [Guard=(name = isFinished, method = isFinished)]
 		//ArrayList<Guard> guards = new ArrayList<Guard>();

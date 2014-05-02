@@ -11,6 +11,8 @@ package org.bip.annotations;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import org.bip.api.PortType;
+
 /**
  * It specifies the name and the type of the port.
  */
@@ -29,6 +31,6 @@ public @interface Port {
 	 *
 	 * @return the type of the port.
 	 */
-	String type(); 
+	PortType type(); 
 	
 }

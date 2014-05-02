@@ -22,6 +22,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RoutePolicy;
 import org.bip.api.BIPGlue;
 import org.bip.api.PortBase;
+import org.bip.api.PortType;
 import org.bip.engine.BIPCoordinatorImpl;
 import org.bip.engine.api.BIPCoordinator;
 import org.bip.exceptions.BIPException;
@@ -286,10 +287,10 @@ public class IntegrationTests {
 
 	@Test
 	public void testHashCodePort() {
-		PortBase portA = new PortImpl("p", "enforceable", SwitchableRoute.class);
-		PortBase portB = new PortImpl("p", "enforceable", SwitchableRoute.class);
-		PortBase portC = new PortImpl("p", "enforceable", SwitchableRoute.class);
-		PortBase portD = new PortImpl("p", "enforceable", SwitchableRoute.class);
+		PortBase portA = new PortImpl("p", PortType.enforceable, SwitchableRoute.class);
+		PortBase portB = new PortImpl("p", PortType.enforceable, SwitchableRoute.class);
+		PortBase portC = new PortImpl("p", PortType.enforceable, SwitchableRoute.class);
+		PortBase portD = new PortImpl("p", PortType.enforceable, SwitchableRoute.class);
 
 		assertEquals(portA.hashCode(), portB.hashCode());
 		assertEquals(portC.hashCode(), portD.hashCode());

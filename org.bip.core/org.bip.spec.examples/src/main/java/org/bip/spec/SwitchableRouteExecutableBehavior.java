@@ -70,16 +70,16 @@ public class SwitchableRouteExecutableBehavior implements CamelContextAware, Ini
         behaviourBuilder.addTransitionAndStates( "finished","done", "off", "", SwitchableRouteExecutableBehavior.class.getMethod("finishedTransition"));
 
         // [Port=(id = end, specType = null, type = spontaneous),
-        behaviourBuilder.addPort("end", PortType.spontaneous.toString(), this.getClass());
+        behaviourBuilder.addPort("end", PortType.spontaneous, this.getClass());
 
         // Port=(id = on, specType = null, type = enforceable),
-        behaviourBuilder.addPort("on", PortType.enforceable.toString(), this.getClass());
+        behaviourBuilder.addPort("on", PortType.enforceable, this.getClass());
 
         // Port=(id = off, specType = null, type = enforceable),
-        behaviourBuilder.addPort("off", PortType.enforceable.toString(), this.getClass());
+        behaviourBuilder.addPort("off", PortType.enforceable, this.getClass());
 
         // Port=(id = finished, specType = null, type = enforceable)]
-        behaviourBuilder.addPort("finished", PortType.enforceable.toString(), this.getClass());
+        behaviourBuilder.addPort("finished", PortType.enforceable, this.getClass());
 
         // [off, on, wait, done]
         

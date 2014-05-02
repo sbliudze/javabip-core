@@ -7,11 +7,12 @@ import org.bip.annotations.Guard;
 import org.bip.annotations.Port;
 import org.bip.annotations.Ports;
 import org.bip.annotations.Transition;
+import org.bip.api.PortType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-@Ports({ @Port(name = "a", type = "enforceable"), @Port(name = "b", type = "spontaneous") })
+@Ports({ @Port(name = "a", type = PortType.enforceable), @Port(name = "b", type = PortType.spontaneous) })
 @ComponentType(initial = "zero", name = "org.bip.spec.ComponentA")
 public class ComponentA {
 	Logger logger = LoggerFactory.getLogger(ComponentA.class);

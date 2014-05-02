@@ -67,8 +67,8 @@ public class HanoiPeg {
 
 		//PORTS
 		
-		behaviourBuilder.addPort("pieceAdd", PortType.enforceable.toString(), this.getClass());
-		behaviourBuilder.addPort("pieceRemove", PortType.enforceable.toString(), this.getClass());
+		behaviourBuilder.addPort("pieceAdd", PortType.enforceable, this.getClass());
+		behaviourBuilder.addPort("pieceRemove", PortType.enforceable, this.getClass());
 				
 		//GUARDS
 		
