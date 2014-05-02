@@ -9,9 +9,11 @@ package org.bip.executor;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 
 import org.bip.api.ComponentProvider;
 import org.bip.api.Data;
@@ -19,6 +21,7 @@ import org.bip.api.DataOut;
 import org.bip.api.ExecutableBehaviour;
 import org.bip.api.Guard;
 import org.bip.api.Port;
+import org.bip.api.PortType;
 import org.bip.exceptions.BIPException;
 
 // TODO, all classes should have a header and description of its purpose for nice looking JavaDoc document.
@@ -57,7 +60,34 @@ public class BehaviourBuilder {
 		for (Port port : this.allPorts) {
 			componentPorts.add(new PortImpl(port.getId(), port.getType().toString(), port.getSpecType(), provider));
 		}
-		return new BehaviourImpl(componentType, currentState, allTransitions, componentPorts, states, guards, dataOut, dataOutName, component);
+
+		return new BehaviourImpl(componentType, currentState, transformIntoExecutableTransition(), 
+								 componentPorts, states, guards, dataOut, dataOutName, component);
+	}
+	
+	private ArrayList<ExecutableTransition> transformIntoExecutableTransition() {
+
+		HashMap<String, Port> mapIdToPort = new HashMap<String, Port>( );
+		for (Port port : allPorts)
+			mapIdToPort.put(port.getId(), port);
+		
+		// Transform transitions into ExecutableTransitions.
+		ArrayList<ExecutableTransition> transformedAllTransitions = new ArrayList<ExecutableTransition>();
+		for (TransitionImpl transition : allTransitions) {
+			
+			// TODO, what are exactly different ways of specifying that the port is internal. We need to be specific about it in spec.
+			if (transition.name().equals("") ) {
+				transformedAllTransitions.add( new ExecutableTransitionImpl(transition, PortType.internal, guards) );
+				continue;
+			}
+			
+			PortType transitionPortType = mapIdToPort.get(transition.name()).getType();
+			
+			transformedAllTransitions.add( new ExecutableTransitionImpl(transition, transitionPortType, guards) );
+		}
+		
+		return transformedAllTransitions;
+		
 	}
 
 	public void setComponentType(String type) {

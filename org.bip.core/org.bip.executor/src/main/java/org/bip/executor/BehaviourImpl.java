@@ -97,7 +97,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 	 * @param component
 	 * @throws BIPException
 	 */
-	public BehaviourImpl(String componentType, String currentState, ArrayList<TransitionImpl> allTransitions, 
+	public BehaviourImpl(String componentType, String currentState, ArrayList<ExecutableTransition> allTransitions, 
 						 ArrayList<Port> allPorts, HashSet<String> states, ArrayList<Guard> guards, 
 						 Object component) throws BIPException {
 		
@@ -157,7 +157,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 	 * @param component
 	 * @throws BIPException
 	 */
-	public BehaviourImpl(String type, String currentState, ArrayList<TransitionImpl> allTransitions, ArrayList<Port> allPorts, HashSet<String> states, ArrayList<Guard> guards,
+	public BehaviourImpl(String type, String currentState, ArrayList<ExecutableTransition> allTransitions, ArrayList<Port> allPorts, HashSet<String> states, ArrayList<Guard> guards,
 			ArrayList<DataOut<?>> dataOut, Hashtable<String, Method> dataOutName, Object component) throws BIPException {
 		// setUpBehaviourData is called inside. we can do so since dataOut and
 		// dataOutName are not used in the method setUpBehaviourData
@@ -229,7 +229,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 	 * 
 	 * @throws BIPException
 	 */
-	private void setUpBehaviourData(ArrayList<TransitionImpl> transitions) throws BIPException {
+	private void setUpBehaviourData(ArrayList<ExecutableTransition> transitions) throws BIPException {
 		
 		nameToTransition = new Hashtable<String, ExecutableTransition>();
 
@@ -237,7 +237,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 		portToDataInForGuard = new Hashtable<Port, Set<Data<?>>>();
 		portToDataInForTransition = new Hashtable<Port, Set<Data<?>>>();
 		enforceablePorts = new ArrayList<Port>();
-		this.allTransitions = new ArrayList<ExecutableTransition>();
+		this.allTransitions = transitions;
 
 		// create list of enforceable ports
 		for (Port port : allPorts) {
@@ -253,47 +253,43 @@ class BehaviourImpl implements ExecutableBehaviour {
 			stateToPorts.put(state, new HashSet<Port>());
 		}
 		
-		for (TransitionImpl transition : transitions) {
-			ExecutableTransition typedTransition = null;
+		for (ExecutableTransition transition : transitions) {
 
 			// set type for the transitions
 			// TODO, BUG?, is there an assumption that internal transitions can not have name specified?
 			// TODO, Why are not properly typing the transition at the parser level?
 			if (transition.name().equals("")) {
-				typedTransition = new ExecutableTransitionImpl(transition, PortType.internal, guards);
-				this.allTransitions.add(typedTransition);
-				internalTransitions.add(typedTransition);
+				internalTransitions.add(transition);
 			} else {
 				// TODO, why do we not have a Map that allows us to get/check if there is a port that matches
 				// transition name? Complexity goes down from linear to constant.
 				for (Port port : allPorts) {
 					if (transition.name().equals(port.getId())) {
-						typedTransition = new ExecutableTransitionImpl(transition, port.getType(), guards);
-						this.allTransitions.add(typedTransition);
+						
 						// if port is enforceable, add it to the list of state
 						// ports
 						if (port.getType().equals(PortType.enforceable)) {
-							enforceableTransitions.add(typedTransition);
-							transitionToPort.put(typedTransition, port);
-							InjectDataInfo(port, typedTransition);
+							enforceableTransitions.add(transition);
+							transitionToPort.put(transition, port);
+							InjectDataInfo(port, transition);
 
-							Set<Port> stateports = stateToPorts.get(typedTransition.source());
+							Set<Port> stateports = stateToPorts.get(transition.source());
 							if (stateports == null) {
-								throw new BIPException("The source state " + typedTransition.source() + 
-													   " for transition " + typedTransition.name() + 
+								throw new BIPException("The source state " + transition.source() + 
+													   " for transition " + transition.name() + 
 													   " is not in the list of states of component " +
 													   componentType);
 							}
 							stateports.add(port);
 
 						} else if (port.getType().equals(PortType.spontaneous)) {
-							spontaneousTransitions.add(typedTransition);
+							spontaneousTransitions.add(transition);
 						}
 						break;
 					}
 				}
 			}
-			nameToTransition.put(typedTransition.name() + typedTransition.source(), typedTransition);
+			nameToTransition.put(transition.name() + transition.source(), transition);
 
 		}
 
@@ -309,9 +305,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 	}
 
 	private void InjectDataInfo(Port port, ExecutableTransition transition) {
-		// GUARD
-		
-		// for every Guard function needed for checking if this transition has guard.
+
 		if (transition.hasGuard()) {
 			Set<Data<?>> portGuardData = portToDataInForGuard.get(port);
 			for (Guard guard : transition.transitionGuards()) {
@@ -319,19 +313,12 @@ class BehaviourImpl implements ExecutableBehaviour {
 			}
 		}
 
-		// TRANSITION
 		Set<Data<?>> portTransitionData = portToDataInForTransition.get(port);
 		for (Data<?> data : transition.dataRequired()) {
 			portTransitionData.add(data);
 		}
 
 	}
-
-	// SET UP FINISHED. GETTERS METHODS
-
-//	public Port getPort(ExecutableTransition transition) {
-//		return transitionToPort.get(transition);
-//	}
 
 	public String getCurrentState() {
 		return currentState;
@@ -341,10 +328,6 @@ class BehaviourImpl implements ExecutableBehaviour {
 		return nameToTransition.get(transitionName);
 
 	}
-
-//	public Iterable<ExecutableTransition> getAllTransitions() {
-//		return allTransitions;
-//	}
 
 	public List<String> getStates() {
 		return states;

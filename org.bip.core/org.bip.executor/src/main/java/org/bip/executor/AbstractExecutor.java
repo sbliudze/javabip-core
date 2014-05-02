@@ -147,14 +147,12 @@ public abstract class AbstractExecutor extends SpecificationParser implements Ru
 		Hashtable<String, Boolean> guardToValue = behaviour.computeGuardsWithoutData();
 
 		// we have to compute this in order to be able to raise an exception
-		boolean existInternal = behaviour.existEnabled(PortType.internal,
-				guardToValue);
-		boolean existSpontaneous = behaviour.existEnabled(
-				PortType.spontaneous, guardToValue);
-		Set<Port> globallyDisabledPorts = behaviour
-				.getGloballyDisabledPorts(guardToValue);
-		boolean existEnforceable = behaviour.existEnabled(
-				PortType.enforceable, guardToValue);
+		boolean existInternal = behaviour.existEnabled(PortType.internal,guardToValue);
+		boolean existSpontaneous = behaviour.existEnabled(PortType.spontaneous, guardToValue);
+		boolean existEnforceable = behaviour.existEnabled(PortType.enforceable, guardToValue);
+		Set<Port> globallyDisabledPorts = behaviour.getGloballyDisabledPorts(guardToValue);
+		
+		
 		// globallyDisabledPorts.isEmpty()
 		// && (globallyDisabledPorts.size()!=
 		// ((ArrayList<Port>)behaviour.getStateTransitions(behaviour.getCurrentState())).size());
@@ -204,8 +202,7 @@ public abstract class AbstractExecutor extends SpecificationParser implements Ru
 			}
 		}
 		if (existEnforceable) {
-			engine.inform(this, behaviour.getCurrentState(),
-					globallyDisabledPorts);
+			engine.inform(this, behaviour.getCurrentState(), globallyDisabledPorts);
 		} else if (!existSpontaneous) {
 			throw new BIPException("No transition of known type from state "
 					+ behaviour.getCurrentState() + " in component "
