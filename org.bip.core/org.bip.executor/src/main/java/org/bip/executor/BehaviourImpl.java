@@ -585,9 +585,9 @@ class BehaviourImpl implements ExecutableBehaviour {
 			Object[] args = new Object[componentMethod.getParameterTypes().length];
 			int i = 0;
 			for (Data<?> trData : transition.dataRequired()) {
+				// name parameter can not be null as it is enforced by the constructor.
 				Object value = data.get(trData.name());
 				args[i] = value;
-				// TODO what if value is null?
 			}
 			logger.info("Invocation: " + transition.name() + " with args " + data);
 			componentMethod.invoke(bipComponent, args);

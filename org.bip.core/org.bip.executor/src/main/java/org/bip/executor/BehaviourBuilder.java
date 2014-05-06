@@ -54,8 +54,28 @@ public class BehaviourBuilder {
 	}
 
 	public ExecutableBehaviour build(ComponentProvider provider) throws BIPException {
+		
+		if (componentType == null || componentType.isEmpty()) {
+			throw new NullPointerException("Component type for object " + component + " cannot be null or empty.");
+		}	
+		if (currentState == null || currentState.isEmpty()) {
+			throw new NullPointerException("The initial state of the component of type " + componentType + " cannot be null or empty.");
+		}
+		if (allTransitions == null || allTransitions.isEmpty()) {
+			throw new BIPException("List of transitions in component of type " + componentType + " cannot be null or empty.");
+		}
+		if (states == null || states.isEmpty()) {
+			throw new BIPException("List of states in component of type " + componentType + " cannot be null or empty.");
+		}
+		if (allPorts == null || allPorts.isEmpty()) {
+			throw new BIPException("List of states in component of type " + componentType + " cannot be null or empty.");
+		}
+		if (component == null) {
+			throw new NullPointerException("The component object of type " + componentType + " cannot be null.");
+		}
+
 		ArrayList<Port> componentPorts = new ArrayList<Port>();
-		// TODO, Why do we need to recreate ports here? Because there was no provider information within the port.
+		// We need to create new ports here as there was no provider information available when the specification was parsed.
 		for (Port port : this.allPorts) {
 			componentPorts.add(new PortImpl(port.getId(), port.getType(), port.getSpecType(), provider));
 		}
@@ -67,7 +87,6 @@ public class BehaviourBuilder {
 		}
 		
 		for (DataOutImpl<?> data : dataOut) {
-			// TODO, Refactor the solution so no casting is required, probably do not use interface
 			data.computeAllowedPort(allEnforceablePorts);
 		}
 		
