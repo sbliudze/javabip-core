@@ -100,24 +100,6 @@ class BehaviourImpl implements ExecutableBehaviour {
 						 ArrayList<Port> allPorts, HashSet<String> states, ArrayList<Guard> guards, 
 						 Object component) throws BIPException {
 		
-		if (componentType == null || componentType.isEmpty()) {
-			throw new NullPointerException("Component type for object " + component + " cannot be null or empty.");
-		}	
-		if (currentState == null || currentState.isEmpty()) {
-			throw new NullPointerException("The initial state of the component of type " + componentType + " cannot be null or empty.");
-		}
-		if (allTransitions == null || allTransitions.isEmpty()) {
-			throw new BIPException("List of transitions in component of type " + componentType + " cannot be null or empty.");
-		}
-		if (states == null || states.isEmpty()) {
-			throw new BIPException("List of states in component of type " + componentType + " cannot be null or empty.");
-		}
-		if (allPorts == null || allPorts.isEmpty()) {
-			throw new BIPException("List of states in component of type " + componentType + " cannot be null or empty.");
-		}
-		if (component == null) {
-			throw new NullPointerException("The component object of type " + componentType + " cannot be null.");
-		}
 		this.componentType = componentType;
 		this.currentState = currentState;
 		this.allTransitions = allTransitions;
@@ -132,52 +114,9 @@ class BehaviourImpl implements ExecutableBehaviour {
 				this.guardsWithoutData.add(guard);
 			}
 		}
-
-		this.internalTransitions = new ArrayList<ExecutableTransition>();
-		this.spontaneousTransitions = new ArrayList<ExecutableTransition>();
-		this.enforceableTransitions = new ArrayList<ExecutableTransition>();
-
 		this.bipComponent = component;
 		this.componentClass = bipComponent.getClass();
-		setUpBehaviourData(allTransitions);
-	}
-
-	/**
-	 * Creation of Behaviour with dataOut.
-	 * 
-	 * @param type
-	 * @param currentState
-	 * @param allTransitions
-	 * @param allPorts
-	 * @param states
-	 * @param guards
-	 * @param dataOut
-	 * @param component
-	 * @throws BIPException
-	 */
-	public BehaviourImpl(String type, String currentState, ArrayList<ExecutableTransition> allTransitions, 
-						 ArrayList<Port> allPorts, HashSet<String> states, ArrayList<Guard> guards,
-						 ArrayList<DataOutImpl<?>> dataOut, Hashtable<String, Method> dataOutName, Object component) throws BIPException {
-
-		// setUpBehaviourData is called inside. we can do so since dataOut and
-		// dataOutName are not used in the method setUpBehaviourData
-		this(type, currentState, allTransitions, allPorts, states, guards, component);
-
-		this.dataOut = dataOut;
-		this.dataOutName = dataOutName;
-
-	}
-
-	// TODO create a test for disallowed ports
-
-	/**
-	 * Sets up the helper data structures. Specifies the types of transitions, creates the stateToPorts and nameToTransition maps, as well as the list
-	 * of enforceable ports
-	 * 
-	 * @throws BIPException
-	 */
-	private void setUpBehaviourData(ArrayList<ExecutableTransition> transitions) throws BIPException {
-				
+		
 		portToDataInForGuard = new Hashtable<Port, Set<Data<?>>>();
 		portToDataInForTransition = new Hashtable<Port, Set<Data<?>>>();
 		enforceablePorts = new ArrayList<Port>();
@@ -197,9 +136,11 @@ class BehaviourImpl implements ExecutableBehaviour {
 		}
 
 
-		transitionToPort = new Hashtable<ExecutableTransition, Port>();
 		nameToTransition = new Hashtable<String, ExecutableTransition>();		
-		for (ExecutableTransition transition : transitions) {
+		this.internalTransitions = new ArrayList<ExecutableTransition>();
+		this.spontaneousTransitions = new ArrayList<ExecutableTransition>();
+		this.enforceableTransitions = new ArrayList<ExecutableTransition>();
+		for (ExecutableTransition transition : allTransitions) {
 
 			stateTransitions.get(transition.source()).add(transition);
 			nameToTransition.put(transition.name() + transition.source(), transition);
@@ -226,7 +167,8 @@ class BehaviourImpl implements ExecutableBehaviour {
 		HashMap<String, Port> mapIdToPort = new HashMap<String, Port>( );
 		for (Port port : allPorts)
 			mapIdToPort.put(port.getId(), port);
-		
+
+		transitionToPort = new Hashtable<ExecutableTransition, Port>();
 		for (ExecutableTransition transition : enforceableTransitions) {
 
 			Port port = mapIdToPort.get(transition.name());
@@ -257,6 +199,32 @@ class BehaviourImpl implements ExecutableBehaviour {
 		}
 
 	}
+
+	/**
+	 * Creation of Behaviour with dataOut.
+	 * 
+	 * @param type
+	 * @param currentState
+	 * @param allTransitions
+	 * @param allPorts
+	 * @param states
+	 * @param guards
+	 * @param dataOut
+	 * @param component
+	 * @throws BIPException
+	 */
+	public BehaviourImpl(String type, String currentState, ArrayList<ExecutableTransition> allTransitions, 
+						 ArrayList<Port> allPorts, HashSet<String> states, ArrayList<Guard> guards,
+						 ArrayList<DataOutImpl<?>> dataOut, Hashtable<String, Method> dataOutName, Object component) throws BIPException {
+
+		this(type, currentState, allTransitions, allPorts, states, guards, component);
+
+		this.dataOut = dataOut;
+		this.dataOutName = dataOutName;
+
+	}
+
+	// TODO create a test for disallowed ports
 
 	public String getCurrentState() {
 		return currentState;
