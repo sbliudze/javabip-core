@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bip.api.Data;
-import org.bip.api.DataOut;
 import org.bip.api.DataOut.AccessType;
 import org.bip.exceptions.BIPException;
 
@@ -57,18 +56,13 @@ class ReflectionHelper {
 		Data<T> toReturn = new DataImpl<T>(dataName, type);
 		return toReturn;
 	}
-	
-	public static <T> DataOut<T> createData(String dataName, Class<T> type, AccessType accessType, String[] ports) {
-		DataOut<T> toReturn = new DataImpl<T>(dataName, type, accessType, ports);
-		return toReturn;
-	}
-	
-	public static DataOut<?> parseReturnDataAnnotation(Method method) {
+		
+	public static DataImpl<?> parseReturnDataAnnotation(Method method) {
 
 		Annotation[] annotations = method.getAnnotations();
 		for (Annotation annotation : annotations) {
 			if (annotation instanceof org.bip.annotations.Data) { // DATA OUT
-				return createData(method, (org.bip.annotations.Data)annotation);
+				return parseReturnDataAnnotation(method, (org.bip.annotations.Data)annotation);
 			}
 		}
 
@@ -78,7 +72,7 @@ class ReflectionHelper {
 
 	}
 		
-	public static DataOut<?> createData(Method method, org.bip.annotations.Data dataAnnotation) {
+	public static DataImpl<?> parseReturnDataAnnotation(Method method, org.bip.annotations.Data dataAnnotation) {
 
 		String name = dataAnnotation.name();
 		AccessType type = dataAnnotation.accessTypePort();
@@ -87,5 +81,8 @@ class ReflectionHelper {
 
 	}
 	
+	public static <T> DataImpl<T> createData(String dataName, Class<T> type, AccessType accessType, String[] ports) {
+		return new DataImpl<T>(dataName, type, accessType, ports);
+	}	
 	
 }

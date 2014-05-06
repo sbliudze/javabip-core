@@ -17,7 +17,6 @@ import java.util.Map;
 
 import org.bip.api.ComponentProvider;
 import org.bip.api.Data;
-import org.bip.api.DataOut;
 import org.bip.api.ExecutableBehaviour;
 import org.bip.api.Guard;
 import org.bip.api.Port;
@@ -43,7 +42,7 @@ public class BehaviourBuilder {
 	private Object component;
 
 	private Hashtable<String, Method> dataOutName;
-	private ArrayList<DataOut<?>> dataOut;
+	private ArrayList<DataImpl<?>> dataOut;
 
 	public BehaviourBuilder() {
 		allTransitions = new ArrayList<TransitionImpl>();
@@ -51,7 +50,7 @@ public class BehaviourBuilder {
 		states = new HashSet<String>();
 		guards = new ArrayList<Guard>();
 		dataOutName = new Hashtable<String, Method>();
-		dataOut = new ArrayList<DataOut<?>>();
+		dataOut = new ArrayList<DataImpl<?>>();
 	}
 
 	public ExecutableBehaviour build(ComponentProvider provider) throws BIPException {
@@ -67,9 +66,9 @@ public class BehaviourBuilder {
 				allEnforceablePorts.put(port.getId(), port);
 		}
 		
-		for (DataOut<?> data : dataOut) {
+		for (DataImpl<?> data : dataOut) {
 			// TODO, Refactor the solution so no casting is required, probably do not use interface
-			((DataImpl<?>) data).computeAllowedPort(allEnforceablePorts);
+			data.computeAllowedPort(allEnforceablePorts);
 		}
 		
 		return new BehaviourImpl(componentType, currentState, transformIntoExecutableTransition(), 
@@ -185,12 +184,20 @@ public class BehaviourBuilder {
 	}
 
 	public void addDataOut(Method method) {		
-		addDataOut(ReflectionHelper.parseReturnDataAnnotation(method), method);						
+		
+		DataImpl<?> data = ReflectionHelper.parseReturnDataAnnotation(method); 
+		dataOut.add( data );
+		dataOutName.put(data.name(), method);
+								
 	}
 
-	public void addDataOut(DataOut<?> data, Method method) {
-		dataOut.add(data);
-		dataOutName.put(data.name(), method);		
+	public void addDataOut(Method method, org.bip.annotations.Data annotation) {		
+		
+		DataImpl<?> data = ReflectionHelper.parseReturnDataAnnotation(method, annotation); 
+		dataOut.add( data );
+		dataOutName.put(data.name(), method);
+								
 	}
+	
 	
 }

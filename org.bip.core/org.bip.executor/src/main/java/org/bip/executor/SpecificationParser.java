@@ -17,7 +17,6 @@ import org.bip.annotations.Data;
 import org.bip.annotations.Ports;
 import org.bip.annotations.Transitions;
 import org.bip.api.ComponentProvider;
-import org.bip.api.DataOut;
 import org.bip.api.ExecutableBehaviour;
 import org.bip.exceptions.BIPException;
 
@@ -169,10 +168,8 @@ public abstract class SpecificationParser implements ComponentProvider {
 	
 	private void addData(Method method, Data annotation, BehaviourBuilder builder) {
 
-		DataOut<?> data = ReflectionHelper.createData(method, annotation);
+		builder.addDataOut(method, annotation);
 		
-		builder.addDataOut(data, method);
-
 	}
 
 	private void addTransitionAndStates(Method method, org.bip.annotations.Transition transitionAnnotation, BehaviourBuilder builder) {

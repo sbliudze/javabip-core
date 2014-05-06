@@ -28,7 +28,7 @@ class DataImpl<T> implements DataOut<T> {
 	private String name;
 	private Class<T> clazz;
 
-	private AccessType portSpecificationType;
+	private AccessType portAccessType;
 	private Set<Port> allowedPorts = new HashSet<Port>();
 	private String[] stringPorts;
 	
@@ -36,33 +36,48 @@ class DataImpl<T> implements DataOut<T> {
 	// one of the attributes will be empty. 
 	
 	public DataImpl(String name, Class<T> clazz) {
+		if (name == null)
+			throw new BIPException("Data name parameter for Data can not be null.");
+		if (name.equals("")) 
+			throw new BIPException("Data name parameter for Data can not be an empty string.");
+		if (clazz == null)
+			throw new BIPException("Data type parameter for Data can not be null.");
 		this.name = name;
 		this.clazz = clazz;
 	}
 
 	public DataImpl(String name, Class<T> clazz, AccessType type) {
 		this(name, clazz);
-		this.portSpecificationType = type;
+		if (type == null)
+			throw new BIPException("AccessType parameter for Data can not be null.");
+		this.portAccessType = type;
 	}
 
-	public DataImpl(String name, Class<T> clazz, Set<Port> ports) throws BIPException {
+	public DataImpl(String name, Class<T> clazz, Set<Port> allowedPorts) throws BIPException {
 		this(name, clazz);
-		this.portSpecificationType = AccessType.allowed;
-		this.allowedPorts = ports;
+		this.portAccessType = AccessType.allowed;
+		if (allowedPorts == null)
+			throw new BIPException("Allowed ports parameter for Data can not be null.");
+		if (allowedPorts.isEmpty())
+			throw new BIPException("Allowed ports parameter for Data can not be an empty set.");
+		this.allowedPorts = allowedPorts;
 	}
 
 	// TODO, Given the Set of ports constructor given above, maybe there is no need for it after refactoring. 
 	public DataImpl(String name, Class<T> clazz, AccessType type, String[] ports) throws BIPException {
 		this(name, clazz, type);
 
-		if ((this.portSpecificationType.equals(AccessType.any) || this.portSpecificationType.equals(AccessType.witness)) && (ports != null && ports.length != 0 && (ports.length != 1 && ports[0] != ""))) {
+		// TODO rewrite exception using constructor parameters when applicable. Rewrite into simple not nested ifs for each of the 
+		// incorrect spec case.
+		if ((this.portAccessType.equals(AccessType.any) || this.portAccessType.equals(AccessType.witness)) && 
+			(ports != null && ports.length != 0 && (ports.length != 1 && ports[0] != ""))) {
 			System.out.println(ports.length);
-			throw new BIPException("With the type " + this.portSpecificationType + " the list of ports should not be specified.");
-		} else if (this.portSpecificationType.equals(AccessType.allowed)) {
+			throw new BIPException("With the type " + this.portAccessType + " the list of ports should not be specified.");
+		} else if (this.portAccessType.equals(AccessType.allowed)) {
 			this.stringPorts = ports;
-		} else if (this.portSpecificationType.equals(AccessType.unallowed)) {
+		} else if (this.portAccessType.equals(AccessType.unallowed)) {
 			this.stringPorts = ports;
-		} else if (this.portSpecificationType.equals(AccessType.unknown)) {
+		} else if (this.portAccessType.equals(AccessType.unknown)) {
 			throw new BIPException("Unknow type " + type + " of port specification for data out named " + name + "\n The port types supported are: " + AccessType.any.toString() + ", "
 					+ AccessType.witness.toString() + ", " + AccessType.allowed.toString() + ", " + AccessType.unallowed.toString() + ".");
 		}
@@ -81,7 +96,7 @@ class DataImpl<T> implements DataOut<T> {
 	}
 
 	public AccessType portSpecificationType() {
-		return this.portSpecificationType;
+		return this.portAccessType;
 	}
 
 	public String toString() {
@@ -98,10 +113,10 @@ class DataImpl<T> implements DataOut<T> {
 	
 	public void computeAllowedPort(Map<String, Port> allEnforceablePorts) {
 
-		if (portSpecificationType.equals(AccessType.any))
+		if (portAccessType.equals(AccessType.any))
 			allowedPorts.addAll(allEnforceablePorts.values());
 		
-		if (portSpecificationType.equals(AccessType.allowed)) {
+		if (portAccessType.equals(AccessType.allowed)) {
 			for (String portName : stringPorts) {
 				if (!allEnforceablePorts.containsKey(portName))
 					throw new BIPException("There is no port instance specified in Ports for the port " + portName + " mentioned in data " + name);
@@ -109,7 +124,7 @@ class DataImpl<T> implements DataOut<T> {
 			}
 		}
 		
-		if (portSpecificationType.equals(AccessType.unallowed)) {
+		if (portAccessType.equals(AccessType.unallowed)) {
 
 			allowedPorts.addAll( allEnforceablePorts.values());
 			

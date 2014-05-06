@@ -75,7 +75,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 	private ArrayList<Guard> guardsWithData;
 
 	// the list of dataOut variables for this component
-	private ArrayList<DataOut<?>> dataOut;
+	private ArrayList<DataImpl<?>> dataOut;
 	// the map between the name of the out variable and the method computing it
 	private Hashtable<String, Method> dataOutName;
 	private Object bipComponent;
@@ -157,7 +157,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 	 */
 	public BehaviourImpl(String type, String currentState, ArrayList<ExecutableTransition> allTransitions, 
 						 ArrayList<Port> allPorts, HashSet<String> states, ArrayList<Guard> guards,
-						 ArrayList<DataOut<?>> dataOut, Hashtable<String, Method> dataOutName, Object component) throws BIPException {
+						 ArrayList<DataImpl<?>> dataOut, Hashtable<String, Method> dataOutName, Object component) throws BIPException {
 
 		// setUpBehaviourData is called inside. we can do so since dataOut and
 		// dataOutName are not used in the method setUpBehaviourData
