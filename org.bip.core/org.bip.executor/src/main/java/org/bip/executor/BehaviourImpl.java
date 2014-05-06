@@ -619,10 +619,4 @@ class BehaviourImpl implements ExecutableBehaviour {
 		return new HashSet<Port>();
 	}
 	
-	// TODO find a way not to copy this method among classes
-		<T> DataOutImpl<T> createData(String dataName, Class<T> type, Set<Port> ports) {
-			DataOutImpl<T> toReturn = new DataOutImpl<T>(dataName, type, ports);
-			return toReturn;
-		}
-
 }

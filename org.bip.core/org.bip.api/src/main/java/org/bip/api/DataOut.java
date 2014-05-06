@@ -45,9 +45,7 @@ public interface DataOut<T> extends Data<T> {
 		/** The allowed specifies that data is available only for the ports that are specified. */
 		allowed, 
 		/** The unallowed specifies that data is *not* available for the ports that are specified. */
-		unallowed, 
-		/** The unknown, the type has not been specifed yet. */
-		unknown
+		unallowed
 	}
 	
 }

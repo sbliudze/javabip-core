@@ -44,6 +44,6 @@ public @interface Data {
 	 * 
 	 * @return the array of ports.
 	 */
-	String[] ports() default "";
+	String[] ports() default {};
 
 }

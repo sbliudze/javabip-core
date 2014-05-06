@@ -29,44 +29,26 @@ class DataOutImpl<T> extends DataImpl<T> implements DataOut<T> {
 	private Set<Port> allowedPorts = new HashSet<Port>();
 	private String[] stringPorts;
 	
-	// TODO, BUG, DESIGN ISSUE, stringPorts and allowedPorts are not connected. Depending on the constructor
-	// one of the attributes will be empty. 
-	
-	private DataOutImpl(String name, Class<T> clazz, AccessType type) {
-		super(name, clazz);
-		if (type == null)
-			throw new BIPException("AccessType parameter for Data can not be null.");
-		this.portAccessType = type;
-	}
-
-	public DataOutImpl(String name, Class<T> clazz, Set<Port> allowedPorts) throws BIPException {
-		super(name, clazz);
-		this.portAccessType = AccessType.allowed;
-		if (allowedPorts == null)
-			throw new BIPException("Allowed ports parameter for Data can not be null.");
-		if (allowedPorts.isEmpty())
-			throw new BIPException("Allowed ports parameter for Data can not be an empty set.");
-		this.allowedPorts = allowedPorts;
-	}
-
 	// TODO, Given the Set of ports constructor given above, maybe there is no need for it after refactoring. 
-	public DataOutImpl(String name, Class<T> clazz, AccessType type, String[] ports) throws BIPException {
-		this(name, clazz, type);
+	public DataOutImpl(String name, Class<T> clazz, AccessType portAccessType, String[] ports) throws BIPException {
+		
+		super(name, clazz);
+		if (portAccessType == null)
+			throw new BIPException("AccessType parameter for Data can not be null.");
 
-		// TODO rewrite exception using constructor parameters when applicable. Rewrite into simple not nested ifs for each of the 
-		// incorrect spec case.
-		if ((this.portAccessType.equals(AccessType.any) || this.portAccessType.equals(AccessType.witness)) && 
-			(ports != null && ports.length != 0 && (ports.length != 1 && ports[0] != ""))) {
-			System.out.println(ports.length);
-			throw new BIPException("With the type " + this.portAccessType + " the list of ports should not be specified.");
-		} else if (this.portAccessType.equals(AccessType.allowed)) {
+		
+		if (portAccessType.equals(AccessType.any) || portAccessType.equals(AccessType.witness)) {
+			
+			if (ports != null && ports.length != 0)
+				throw new BIPException("With the type " + this.portAccessType + " the list of ports should not be specified.");
+			
+			
+		} else {
 			this.stringPorts = ports;
-		} else if (this.portAccessType.equals(AccessType.unallowed)) {
-			this.stringPorts = ports;
-		} else if (this.portAccessType.equals(AccessType.unknown)) {
-			throw new BIPException("Unknow type " + type + " of port specification for data out named " + name + "\n The port types supported are: " + AccessType.any.toString() + ", "
-					+ AccessType.witness.toString() + ", " + AccessType.allowed.toString() + ", " + AccessType.unallowed.toString() + ".");
 		}
+		
+		this.portAccessType = portAccessType;
+		
 	}
 
 	public Set<Port> allowedPorts() {
