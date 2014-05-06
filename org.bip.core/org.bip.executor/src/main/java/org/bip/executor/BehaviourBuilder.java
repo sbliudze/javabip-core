@@ -42,7 +42,7 @@ public class BehaviourBuilder {
 	private Object component;
 
 	private Hashtable<String, Method> dataOutName;
-	private ArrayList<DataImpl<?>> dataOut;
+	private ArrayList<DataOutImpl<?>> dataOut;
 
 	public BehaviourBuilder() {
 		allTransitions = new ArrayList<TransitionImpl>();
@@ -50,7 +50,7 @@ public class BehaviourBuilder {
 		states = new HashSet<String>();
 		guards = new ArrayList<Guard>();
 		dataOutName = new Hashtable<String, Method>();
-		dataOut = new ArrayList<DataImpl<?>>();
+		dataOut = new ArrayList<DataOutImpl<?>>();
 	}
 
 	public ExecutableBehaviour build(ComponentProvider provider) throws BIPException {
@@ -66,7 +66,7 @@ public class BehaviourBuilder {
 				allEnforceablePorts.put(port.getId(), port);
 		}
 		
-		for (DataImpl<?> data : dataOut) {
+		for (DataOutImpl<?> data : dataOut) {
 			// TODO, Refactor the solution so no casting is required, probably do not use interface
 			data.computeAllowedPort(allEnforceablePorts);
 		}
@@ -185,7 +185,7 @@ public class BehaviourBuilder {
 
 	public void addDataOut(Method method) {		
 		
-		DataImpl<?> data = ReflectionHelper.parseReturnDataAnnotation(method); 
+		DataOutImpl<?> data = ReflectionHelper.parseReturnDataAnnotation(method); 
 		dataOut.add( data );
 		dataOutName.put(data.name(), method);
 								
@@ -193,7 +193,7 @@ public class BehaviourBuilder {
 
 	public void addDataOut(Method method, org.bip.annotations.Data annotation) {		
 		
-		DataImpl<?> data = ReflectionHelper.parseReturnDataAnnotation(method, annotation); 
+		DataOutImpl<?> data = ReflectionHelper.parseReturnDataAnnotation(method, annotation); 
 		dataOut.add( data );
 		dataOutName.put(data.name(), method);
 								

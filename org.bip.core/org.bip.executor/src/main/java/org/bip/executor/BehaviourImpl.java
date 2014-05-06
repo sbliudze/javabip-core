@@ -75,7 +75,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 	private ArrayList<Guard> guardsWithData;
 
 	// the list of dataOut variables for this component
-	private ArrayList<DataImpl<?>> dataOut;
+	private ArrayList<DataOutImpl<?>> dataOut;
 	// the map between the name of the out variable and the method computing it
 	private Hashtable<String, Method> dataOutName;
 	private Object bipComponent;
@@ -157,7 +157,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 	 */
 	public BehaviourImpl(String type, String currentState, ArrayList<ExecutableTransition> allTransitions, 
 						 ArrayList<Port> allPorts, HashSet<String> states, ArrayList<Guard> guards,
-						 ArrayList<DataImpl<?>> dataOut, Hashtable<String, Method> dataOutName, Object component) throws BIPException {
+						 ArrayList<DataOutImpl<?>> dataOut, Hashtable<String, Method> dataOutName, Object component) throws BIPException {
 
 		// setUpBehaviourData is called inside. we can do so since dataOut and
 		// dataOutName are not used in the method setUpBehaviourData
@@ -620,8 +620,8 @@ class BehaviourImpl implements ExecutableBehaviour {
 	}
 	
 	// TODO find a way not to copy this method among classes
-		<T> DataImpl<T> createData(String dataName, Class<T> type, Set<Port> ports) {
-			DataImpl<T> toReturn = new DataImpl<T>(dataName, type, ports);
+		<T> DataOutImpl<T> createData(String dataName, Class<T> type, Set<Port> ports) {
+			DataOutImpl<T> toReturn = new DataOutImpl<T>(dataName, type, ports);
 			return toReturn;
 		}
 

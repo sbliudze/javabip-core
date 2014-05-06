@@ -57,7 +57,7 @@ class ReflectionHelper {
 		return toReturn;
 	}
 		
-	public static DataImpl<?> parseReturnDataAnnotation(Method method) {
+	public static DataOutImpl<?> parseReturnDataAnnotation(Method method) {
 
 		Annotation[] annotations = method.getAnnotations();
 		for (Annotation annotation : annotations) {
@@ -72,7 +72,7 @@ class ReflectionHelper {
 
 	}
 		
-	public static DataImpl<?> parseReturnDataAnnotation(Method method, org.bip.annotations.Data dataAnnotation) {
+	public static DataOutImpl<?> parseReturnDataAnnotation(Method method, org.bip.annotations.Data dataAnnotation) {
 
 		String name = dataAnnotation.name();
 		AccessType type = dataAnnotation.accessTypePort();
@@ -81,8 +81,8 @@ class ReflectionHelper {
 
 	}
 	
-	public static <T> DataImpl<T> createData(String dataName, Class<T> type, AccessType accessType, String[] ports) {
-		return new DataImpl<T>(dataName, type, accessType, ports);
+	public static <T> DataOutImpl<T> createData(String dataName, Class<T> type, AccessType accessType, String[] ports) {
+		return new DataOutImpl<T>(dataName, type, accessType, ports);
 	}	
 	
 }
