@@ -152,20 +152,6 @@ public abstract class AbstractExecutor extends SpecificationParser implements Ru
 		boolean existEnforceable = behaviour.existEnabled(PortType.enforceable, guardToValue);
 		Set<Port> globallyDisabledPorts = behaviour.getGloballyDisabledPorts(guardToValue);
 		
-		
-		// globallyDisabledPorts.isEmpty()
-		// && (globallyDisabledPorts.size()!=
-		// ((ArrayList<Port>)behaviour.getStateTransitions(behaviour.getCurrentState())).size());
-
-		// TODO, code injection to make different options possible at different
-		// times
-
-		// if (existEnforceable && existInternal) {
-		// throw new BIPException("In component " + this.getName() +
-		// " Enforceable and Internal transitions at state " +
-		// behaviour.getCurrentState() + " cannot be enabled.");
-		// }
-
 		if (existInternal) {
 			behaviour.executeInternal(guardToValue);
 			semaphore.release();
@@ -188,6 +174,9 @@ public abstract class AbstractExecutor extends SpecificationParser implements Ru
 					for (String port : notifiers) {
 						if (behaviour.hasTransitionFromCurrentState(port)) {
 							logger.debug("There is a notifier already.");
+							// TODO, BUG, what if the enabled transition was for spontaneous port 1, but here we picked up another 
+							// spontaneous event? existSpontaneous maybe true to any transition, but we may have also some 
+							// spontaneous events that are not supposed to be executed. 
 							this.executeSpontaneous(port);
 							portFound = true;
 							portToExecute = port;
@@ -217,6 +206,32 @@ public abstract class AbstractExecutor extends SpecificationParser implements Ru
 		// execute spontaneous
 		logger.info("Executing spontaneous transition {}.", portID);
 		behaviour.execute(portID);
+		semaphore.release();
+
+	}
+
+	/**
+	 * Executes a particular transition as told by the Engine
+	 */
+	public void execute(String portID) {
+		// execute the particular transition
+		// TODO: need to check that port is enforceable, do not allow
+		// spontaneous executions here.
+		// TODO: maybe we can then change the interface from String port to Port
+		// port?
+		if (dataEvaluation == null || dataEvaluation.isEmpty()) {
+			try {
+				behaviour.execute(portID);
+			} catch (BIPException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			semaphore.release();
+			return;
+		}
+
+		// TODO, We need to check that we have all data required for the execution provided by the engine.
+		behaviour.execute(portID, dataEvaluation);
 		semaphore.release();
 
 	}
@@ -313,31 +328,6 @@ public abstract class AbstractExecutor extends SpecificationParser implements Ru
 			e.printStackTrace();
 		}
 		return null;
-	}
-
-	/**
-	 * Executes a particular transition as told by the Engine
-	 */
-	public void execute(String portID) {
-		// execute the particular transition
-		// TODO: need to check that port is enforceable, do not allow
-		// spontaneous executions here.
-		// TODO: maybe we can then change the interface from String port to Port
-		// port?
-		if (dataEvaluation == null || dataEvaluation.isEmpty()) {
-			try {
-				behaviour.execute(portID);
-			} catch (BIPException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			semaphore.release();
-			return;
-		}
-
-		behaviour.execute(portID, dataEvaluation);
-		semaphore.release();
-
 	}
 
 	public BIPComponent component() {

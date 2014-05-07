@@ -143,6 +143,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 		for (ExecutableTransition transition : allTransitions) {
 
 			stateTransitions.get(transition.source()).add(transition);
+			// BUG, what if we have two spontaneous transitions with an empty name then this key computation scheme is broken.
 			nameToTransition.put(transition.name() + transition.source(), transition);
 
 			switch (transition.getType()) {
@@ -425,6 +426,8 @@ class BehaviourImpl implements ExecutableBehaviour {
 		if (transition == null) { // this shouldn't normally happen
 			throw new BIPException("The spontaneous transition cannot be null after inform");
 		}
+		// TODO, executeInternal is protected against misuse, this execute is not protected.
+		// What if the port to be specified to be executed is actually not enabled?
 		invokeMethod(transition);
 	}
 
@@ -555,6 +558,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 			for (Data<?> trData : transition.dataRequired()) {
 				// name parameter can not be null as it is enforced by the constructor.
 				Object value = data.get(trData.name());
+				// TODO, value can be null if the map is not properly constructed.
 				args[i] = value;
 			}
 			logger.info("Invocation: " + transition.name() + " with args " + data);

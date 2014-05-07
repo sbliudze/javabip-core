@@ -28,7 +28,7 @@ public interface ExecutableBehaviour extends Behaviour {
 	public String getCurrentState();
 
 	/**
-	 * Execute the enforceable transition as specified by the port.
+	 * Execute the enforceable transition or spontaneous event based transition as specified by the port.
 	 *
 	 * @param portId the port id
 	 */
