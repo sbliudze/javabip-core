@@ -30,9 +30,4 @@ public class ExecutorImpl extends AbstractExecutor {
 		return id;
 	}
 
-	@Override
-	public void step() {
-		throw new BIPException("Not implemented in this version.");
-	}
-
 }

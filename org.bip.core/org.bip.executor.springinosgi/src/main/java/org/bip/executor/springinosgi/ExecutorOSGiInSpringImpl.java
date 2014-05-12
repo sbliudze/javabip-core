@@ -63,10 +63,5 @@ public class ExecutorOSGiInSpringImpl extends ExecutorOSGiImpl implements Initia
 	// TODO find a way to get a unique name that is persistent across different
 	// CF executions
 	// private String uniqueName;
-
-	@Override
-	public void step() {
-		throw new BIPException("Not implemented in this version.");
-	}
 	
 }

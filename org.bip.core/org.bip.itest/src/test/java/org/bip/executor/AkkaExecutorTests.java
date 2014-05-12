@@ -24,7 +24,7 @@ public class AkkaExecutorTests {
 		HanoiMonitor hanoiMonitor = new HanoiMonitor(3);
 
 		ActorSystem system = ActorSystem.create("MySystem");
-		ExecutorFactory factory = new ExecutorFactory(system);
+		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 
 		// BIP engine.
 		BIPCoordinator engine = new BIPCoordinatorImpl();
@@ -41,7 +41,7 @@ public class AkkaExecutorTests {
 	public void akkaExecutorHannoiTest() {
 
 		ActorSystem system = ActorSystem.create("MySystem");
-		ExecutorFactory factory = new ExecutorFactory(system);
+		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 
 
 		int size = 3;

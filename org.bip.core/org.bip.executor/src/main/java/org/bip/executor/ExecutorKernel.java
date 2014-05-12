@@ -21,7 +21,7 @@ import org.bip.api.BIPComponent;
 import org.bip.api.BIPEngine;
 import org.bip.api.Behaviour;
 import org.bip.api.ComponentProvider;
-import org.bip.api.Executor;
+import org.bip.api.OrchestratedExecutor;
 import org.bip.api.Port;
 import org.bip.api.PortBase;
 import org.bip.api.PortType;
@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * It is not a multi-thread safe executor kernel therefore it should never be directly used.
  * It needs to proxied to protect it from multi-thread access by for example Akka actor approach. 
  */
-public class ExecutorKernel extends SpecificationParser implements Executor, ComponentProvider {
+public class ExecutorKernel extends SpecificationParser implements OrchestratedExecutor, ComponentProvider {
 
 	String id;
 	
@@ -49,7 +49,7 @@ public class ExecutorKernel extends SpecificationParser implements Executor, Com
 	
 	boolean waitingForSpontaneous = false;
 	
-	Executor proxy;
+	OrchestratedExecutor proxy;
 	
 	/**
 	 * By default, the Executor is created for a component with annotations. If
@@ -69,7 +69,7 @@ public class ExecutorKernel extends SpecificationParser implements Executor, Com
 		this.id = id;
 	}
 	
-	public void setProxy(Executor proxy) {
+	public void setProxy(OrchestratedExecutor proxy) {
 		this.proxy = proxy;
 	}
 

@@ -2,17 +2,18 @@ package org.bip.executor;
 
 import org.bip.api.BIPEngine;
 import org.bip.api.Executor;
+import org.bip.api.OrchestratedExecutor;
 
 import akka.actor.ActorSystem;
 import akka.actor.TypedActor;
 import akka.actor.TypedProps;
 import akka.japi.Creator;
 
-public class ExecutorFactory {
+public class OrchestratedExecutorFactory {
 	
 	ActorSystem actorSystem;
 	
-	public ExecutorFactory(ActorSystem actorSystem) {
+	public OrchestratedExecutorFactory(ActorSystem actorSystem) {
 		this.actorSystem = actorSystem;		
 	}
 	
@@ -20,7 +21,7 @@ public class ExecutorFactory {
 		
 		final ExecutorKernel executor = new ExecutorKernel(bipComponent, id, useSpec);
 		
-		Executor actor = TypedActor.get(actorSystem).typedActorOf( new TypedProps<ExecutorKernel>(ExecutorKernel.class,
+		OrchestratedExecutor actor = TypedActor.get(actorSystem).typedActorOf( new TypedProps<ExecutorKernel>(ExecutorKernel.class,
 					new Creator<ExecutorKernel>() {
 	    	    		public ExecutorKernel create() { return executor; }
 	    	    	}),

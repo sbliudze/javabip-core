@@ -24,10 +24,7 @@ public interface Executor extends BIPComponent {
 	 * It tells the executor that it is no longer collaborating with a previously registered BIP engine.
 	 */
 	void deregister();
-	
-	
-	void step();
-	
+		
 	/**
 	 * It returns the BIP engine that Executor uses.
 	 */
