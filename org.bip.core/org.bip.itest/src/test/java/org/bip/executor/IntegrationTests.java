@@ -65,6 +65,7 @@ public class IntegrationTests {
 		return bipGlue;
 	}
 
+	
 	@Test
 	public void bipGlueTest() {
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueExecutableBehaviour.xml");

@@ -25,4 +25,12 @@ public interface Executor extends BIPComponent {
 	 */
 	void deregister();
 	
+	
+	void step();
+	
+	/**
+	 * It returns the BIP engine that Executor uses.
+	 */
+	BIPEngine engine();
+	
 }

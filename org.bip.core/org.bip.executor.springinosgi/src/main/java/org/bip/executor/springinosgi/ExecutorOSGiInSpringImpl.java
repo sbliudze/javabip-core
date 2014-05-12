@@ -64,4 +64,9 @@ public class ExecutorOSGiInSpringImpl extends ExecutorOSGiImpl implements Initia
 	// CF executions
 	// private String uniqueName;
 
+	@Override
+	public void step() {
+		throw new BIPException("Not implemented in this version.");
+	}
+	
 }

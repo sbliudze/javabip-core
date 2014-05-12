@@ -44,7 +44,6 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 	private String componentType;
 
-
 	private ArrayList<Port> allPorts;
 	private ArrayList<Port> enforceablePorts;	
 	// for each port provides data it needs for guards
