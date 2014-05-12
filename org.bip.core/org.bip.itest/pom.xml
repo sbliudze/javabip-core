@@ -36,6 +36,12 @@
 
 	<dependency>
 		<groupId>org.bip</groupId>
+  		<artifactId>org.bip.executor.impl</artifactId>
+  		<version>${org.bip.executor.impl.version}</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.bip</groupId>
 		<artifactId>org.bip.glue</artifactId>
 		<version>${org.bip.glue.version}</version>
 		<scope>test</scope>

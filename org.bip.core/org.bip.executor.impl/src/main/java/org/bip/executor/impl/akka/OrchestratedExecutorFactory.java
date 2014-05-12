@@ -1,8 +1,9 @@
-package org.bip.executor;
+package org.bip.executor.impl.akka;
 
 import org.bip.api.BIPEngine;
 import org.bip.api.Executor;
 import org.bip.api.OrchestratedExecutor;
+import org.bip.executor.ExecutorKernel;
 
 import akka.actor.ActorSystem;
 import akka.actor.TypedActor;
@@ -25,7 +26,7 @@ public class OrchestratedExecutorFactory {
 					new Creator<ExecutorKernel>() {
 	    	    		public ExecutorKernel create() { return executor; }
 	    	    	}),
-	    	    	id);
+	    	    	executor.getId());
 
 		executor.setProxy(actor);
 		
@@ -38,13 +39,19 @@ public class OrchestratedExecutorFactory {
 		return actor;
 	}
 
-	public void destroy(Executor executor) {
+	public boolean destroy(Executor executor) {
 		
 		// TODO, when it is possible to deregister a component from BIP engine make sure it happens here.
 		// executor.engine().deregister();
 		
-		executor.deregister();
-	    TypedActor.get(actorSystem).poisonPill(executor.getId());
+		if (TypedActor.get(actorSystem).isTypedActor(executor)) {
+			executor.deregister();
+			TypedActor.get(actorSystem).poisonPill(executor);
+			return true;
+		}
+		else {
+			return false;
+		}
 
 	}
 	

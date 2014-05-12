@@ -6,6 +6,7 @@ import org.bip.api.BIPGlue;
 import org.bip.api.Executor;
 import org.bip.engine.BIPCoordinatorImpl;
 import org.bip.engine.api.BIPCoordinator;
+import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
 import org.bip.spec.HanoiGlueBuilder;
 import org.bip.spec.HanoiMonitor;
 import org.bip.spec.LeftHanoiPeg;
@@ -79,11 +80,12 @@ public class AkkaExecutorTests {
 		assertEquals((int) Math.pow(2, size) - 1,
 				hanoiMonitor.getNumberOfMoves());
 
-		factory.destroy(hanoiExecutor);
-		factory.destroy(lExecutor);
-		factory.destroy(mExecutor);
-		factory.destroy(rExecutor);
+		boolean destroyed = factory.destroy(hanoiExecutor);
+		destroyed &= factory.destroy(lExecutor);
+		destroyed &= factory.destroy(mExecutor);
+		destroyed &= factory.destroy(rExecutor);
 
+		assertEquals("Some actors where not destroyed succesfully", true, destroyed);
 		engine.stop();
 
 	}	

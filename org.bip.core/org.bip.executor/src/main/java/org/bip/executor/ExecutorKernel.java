@@ -49,7 +49,7 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 	
 	boolean waitingForSpontaneous = false;
 	
-	OrchestratedExecutor proxy;
+	protected OrchestratedExecutor proxy;
 	
 	/**
 	 * By default, the Executor is created for a component with annotations. If
