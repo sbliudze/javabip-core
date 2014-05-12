@@ -376,12 +376,12 @@ class BehaviourImpl implements ExecutableBehaviour {
 		return transition.guardIsTrue(guardToValue);
 	}
 
-	public boolean hasTransitionFromCurrentState(String portID) {
+	public boolean hasEnabledTransitionFromCurrentState(String portID, Map<String, Boolean> guardToValue) {
 
 		ArrayList<ExecutableTransition> transitions = stateTransitions.get(currentState);
 		for (ExecutableTransition transition : transitions) {
-			if (transition.name().equals(portID)) {
-				return true;
+			if (transition.name().equals(portID)) { 
+				return isEnabled(transition, guardToValue);
 			}
 		}
 		return false;

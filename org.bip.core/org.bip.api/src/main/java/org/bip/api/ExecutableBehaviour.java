@@ -55,7 +55,7 @@ public interface ExecutableBehaviour extends Behaviour {
 	 * @param portID the port id
 	 * @return true, if successful
 	 */
-	public boolean hasTransitionFromCurrentState(String portID);
+	public boolean hasEnabledTransitionFromCurrentState(String portID, Map<String, Boolean> guardToValue);
 
 	/**
 	 * Gets the data out mapping.
@@ -74,6 +74,7 @@ public interface ExecutableBehaviour extends Behaviour {
 	 * @throws IllegalArgumentException the illegal argument exception
 	 * @throws InvocationTargetException the invocation target exception
 	 */
+	// TODO, Disccussion point, what if guard expression (e.g. !f && g ) requires some data, will it work? Add test for this case.
 	public List<Boolean> checkEnabledness(String port, List<Map<String, Object>> data) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException;
 
 	/**

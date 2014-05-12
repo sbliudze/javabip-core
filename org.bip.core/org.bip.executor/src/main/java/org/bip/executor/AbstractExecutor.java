@@ -172,11 +172,8 @@ public abstract class AbstractExecutor extends SpecificationParser implements Ru
 			synchronized (notifiers) {
 				if (!notifiers.isEmpty()) {
 					for (String port : notifiers) {
-						if (behaviour.hasTransitionFromCurrentState(port)) {
+						if (behaviour.hasEnabledTransitionFromCurrentState(port, guardToValue)) {
 							logger.debug("There is a notifier already.");
-							// TODO, BUG, what if the enabled transition was for spontaneous port 1, but here we picked up another 
-							// spontaneous event? existSpontaneous maybe true to any transition, but we may have also some 
-							// spontaneous events that are not supposed to be executed. 
 							this.executeSpontaneous(port);
 							portFound = true;
 							portToExecute = port;
