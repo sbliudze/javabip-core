@@ -40,6 +40,15 @@ public interface Behaviour {
 	 * @return the enforceable ports
 	 */
 	public List<Port> getEnforceablePorts();
+	
+	
+	/**
+	 * Returns true is the port is spontaneous.
+	 * @param port the name of the port, can not be null or empty.
+	 * @return true if the port is spontaneous, otherwise fault.
+	 */
+	public boolean isSpontaneousPort(String port);
+	
 
 	/**
 	 * Gets the states the component described by this behavior can be in.

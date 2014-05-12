@@ -46,6 +46,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 	private ArrayList<Port> allPorts;
 	private ArrayList<Port> enforceablePorts;	
+	private Map<String, Port> spontaneousPorts;
 	// for each port provides data it needs for guards
 	private Hashtable<Port, Set<Data<?>>> portToDataInForGuard;
 	// for each port provides data it needs for transitions
@@ -119,12 +120,15 @@ class BehaviourImpl implements ExecutableBehaviour {
 		portToDataInForGuard = new Hashtable<Port, Set<Data<?>>>();
 		portToDataInForTransition = new Hashtable<Port, Set<Data<?>>>();
 		enforceablePorts = new ArrayList<Port>();
+		spontaneousPorts = new Hashtable<String, Port>();
 		for (Port port : allPorts) {
 			if (port.getType() == PortType.enforceable) {
 				enforceablePorts.add(port);
 				portToDataInForGuard.put(port, new HashSet<Data<?>>());
 				portToDataInForTransition.put(port, new HashSet<Data<?>>());
 			}
+			if (port.getType() == PortType.spontaneous)
+				spontaneousPorts.put(port.getId(), port);
 		}
 
 		stateToPorts = new Hashtable<String, Set<Port>>(states.size());
@@ -588,6 +592,17 @@ class BehaviourImpl implements ExecutableBehaviour {
 			}
 		}
 		return new HashSet<Port>();
+	}
+
+	@Override
+	public boolean isSpontaneousPort(String port) {
+		if (port == null || port.isEmpty()) {
+			throw new IllegalArgumentException(
+					"The name of the required port for the component "
+							+ bipComponent.getClass().getName()
+							+ " cannot be null or empty.");
+		}
+		return spontaneousPorts.containsKey(port);
 	}
 	
 }

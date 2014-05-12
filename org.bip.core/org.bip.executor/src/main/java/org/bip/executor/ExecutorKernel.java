@@ -39,7 +39,7 @@ public class ExecutorKernel extends SpecificationParser implements Executor, Com
 	
 	private BIPEngine engine;
 	
-	private ArrayList<String> notifiers;
+	private ArrayList<String> notifiers  = new ArrayList<String>();
 
 	protected boolean registered = false;
 
@@ -67,13 +67,16 @@ public class ExecutorKernel extends SpecificationParser implements Executor, Com
 			throws BIPException {
 		super(bipComponent, useSpec);
 		this.id = id;
-		this.notifiers = new ArrayList<String>();
 	}
 	
 	public void setProxy(Executor proxy) {
 		this.proxy = proxy;
 	}
 
+	/**
+	 * It registers the engine within given ExecutorKernel. The function setProxy must be 
+	 * called before with properly constructed proxy or an exception will occur.
+	 */
 	public void register(BIPEngine engine) {
 		if (proxy == null) {
 			throw new BIPException("Proxy to provide multi-thread safety was not provided.");
@@ -91,6 +94,7 @@ public class ExecutorKernel extends SpecificationParser implements Executor, Com
 	}
 
 	/**
+	 * If no engine is registered it will exit immediately.
 	 * 
 	 * @return true if the next step can be immediately executed, false if a spontaneous event must happen to have reason to execute next step again.
 	 * @throws BIPException
@@ -109,9 +113,9 @@ public class ExecutorKernel extends SpecificationParser implements Executor, Com
 		Hashtable<String, Boolean> guardToValue = behaviour.computeGuardsWithoutData();
 
 		// we have to compute this in order to be able to raise an exception
-		boolean existInternal = behaviour.existEnabled(PortType.internal,guardToValue);
+		boolean existInternalTransition = behaviour.existEnabled(PortType.internal,guardToValue);
 		
-		if (existInternal) {
+		if (existInternalTransition) {
 			logger.debug("About to execute internal transition for component {}", id);
 			behaviour.executeInternal(guardToValue);
 			logger.debug("Issuing next step message for component {}", id);
@@ -121,9 +125,9 @@ public class ExecutorKernel extends SpecificationParser implements Executor, Com
 			return;
 		};
 
-		boolean existSpontaneous = behaviour.existEnabled(PortType.spontaneous, guardToValue);
+		boolean existSpontaneousTransition = behaviour.existEnabled(PortType.spontaneous, guardToValue);
 
-		if (existSpontaneous && !notifiers.isEmpty()) {
+		if (existSpontaneousTransition && !notifiers.isEmpty()) {
 
 			for (String port : notifiers) {
 				if (behaviour.hasTransitionFromCurrentState(port)) {
@@ -131,8 +135,10 @@ public class ExecutorKernel extends SpecificationParser implements Executor, Com
 					// spontaneous event? existSpontaneous maybe true to any transition, but we may have also some 
 					// spontaneous events that are not supposed to be executed. 
 					logger.debug("About to execute spontaneous transition {} for component {}", port, id);
-					this.executeSpontaneous(port);
+					
 					notifiers.remove(port);
+					behaviour.execute(port);
+					
 					logger.debug("Issuing next step message for component {}", id);
 					// Scheduling the next execution step.					
 					proxy.step();
@@ -143,11 +149,11 @@ public class ExecutorKernel extends SpecificationParser implements Executor, Com
 
 		}
 
-		boolean existEnforceable = behaviour.existEnabled(PortType.enforceable, guardToValue);
+		boolean existEnforceableTransition = behaviour.existEnabled(PortType.enforceable, guardToValue);
 		
 		Set<Port> globallyDisabledPorts = behaviour.getGloballyDisabledPorts(guardToValue);
 
-		if (existEnforceable) {
+		if (existEnforceableTransition) {
 			logger.debug("About to execute engine inform for component {}", id);
 			engine.inform(proxy, behaviour.getCurrentState(), globallyDisabledPorts);
 			// Next step will be invoked upon finishing treatment of the message execute.
@@ -156,7 +162,7 @@ public class ExecutorKernel extends SpecificationParser implements Executor, Com
 		
 		// existSpontaneous transition exists but spontaneous event has not happened yet, thus a follow step should be postponned until
 		// any spontaneous event is received.
-		if (existSpontaneous) {
+		if (existSpontaneousTransition) {
 			logger.debug("Finishing current step for component {} doing nothing due no spontaneous events.", id);
 			waitingForSpontaneous = true;
 			// Next step will be invoked upon receiving a spontaneous event. 
@@ -166,19 +172,6 @@ public class ExecutorKernel extends SpecificationParser implements Executor, Com
 		throw new BIPException("No transition of known type from state "
 					+ behaviour.getCurrentState() + " in component "
 					+ this.getId());
-
-	}
-
-	private void executeSpontaneous(String portID) throws BIPException {
-
-		if (portID == null || portID.isEmpty()) {
-			return;
-		}
-		
-		// execute spontaneous
-		logger.info("Executing spontaneous transition {}.", portID);
-		
-		behaviour.execute(portID);
 
 	}
 
@@ -192,7 +185,7 @@ public class ExecutorKernel extends SpecificationParser implements Executor, Com
 		// spontaneous executions here.
 		// TODO: maybe we can then change the interface from String port to Port
 		// port?
-		if (dataEvaluation == null || dataEvaluation.isEmpty()) {
+		if (dataEvaluation.isEmpty()) {
 			behaviour.execute(portID);
 		}
 		else {
@@ -208,7 +201,7 @@ public class ExecutorKernel extends SpecificationParser implements Executor, Com
 	public void inform(String portID) {
 		
 		// TODO what if the port (spontaneous does not exist?). It should throw an exception or ignore it.
-		if (portID == null || portID.isEmpty()) {
+		if (portID == null || portID.isEmpty() || !behaviour.isSpontaneousPort(portID)) {
 			return;
 		}
 		
