@@ -271,6 +271,15 @@ class BehaviourImpl implements ExecutableBehaviour {
 		return dataOutName;
 	}
 
+	// TODO, Discussion. 
+	// First question to answer who is using it int the capacity of the port and who is using it in 
+	// the capacity of PortBase?
+	// If nobody is using it in the capacity of the Port (e.g. ComponentProvider interface) then changing the 
+	// interface should fix it. 
+	// If different entities use it for different capacity then one of the entities will need to change. 
+	// The hack in the else suggests that this hashmap is provided with PortImpl where we actually mean only PortBase. 
+	// Thus, changing to PortBase maybe sufficient.
+	
 	// TODO, change to PortBase first
 	public Iterable<Data<?>> portToDataInForTransition(Port port) {
 		// TODO with new equals of ports, remove the second part
