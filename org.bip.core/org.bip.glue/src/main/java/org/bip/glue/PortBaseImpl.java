@@ -47,4 +47,26 @@ class PortBaseImpl implements PortBase {
 	public PortBaseImpl() {
 		// TODO Auto-generated constructor stub
 	}
+	
+	public boolean equals(Object o) {
+		
+		if (this == o)
+			return true;
+		
+		if (!(o instanceof PortBase)) {
+			return false;
+		}
+		
+		PortBase compareTo = (PortBase) o;
+		
+		if ( !this.getId().equals(compareTo.getId()))
+			return false;
+
+		if ( !this.getSpecType().equals(compareTo.getSpecType()))
+			return false;
+						
+		return true;
+	}
+
+	
 }
