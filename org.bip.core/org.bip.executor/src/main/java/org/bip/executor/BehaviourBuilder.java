@@ -178,9 +178,6 @@ public class BehaviourBuilder {
 		if (!states.contains(target))
 			throw new BIPException("Transition " + name + " is specifying target state " + target + " that has not been explicitly stated before.");
 
-		addState(source);
-		addState(target);
-
 		allTransitions.add( new TransitionImpl(name, source, target, guard, method, data) );
 
 	}	
