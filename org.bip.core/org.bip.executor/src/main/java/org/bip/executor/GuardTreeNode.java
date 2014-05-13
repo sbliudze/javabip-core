@@ -62,7 +62,7 @@ public class GuardTreeNode {
 			return !this.children.get(0).evaluate(nameToValue);
 		} else {
 			if (!nameToValue.containsKey(this.data)) {
-				throw new BIPException("Cannot find publicly accessible guard function " + this.data);
+				throw new BIPException("Missing evaluation for the guard function " + this.data);
 			}
 		}
 		return (nameToValue.get(this.data));

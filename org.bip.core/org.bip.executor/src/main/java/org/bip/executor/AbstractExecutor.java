@@ -24,7 +24,6 @@ import org.bip.api.ComponentProvider;
 import org.bip.api.Executor;
 import org.bip.api.Port;
 import org.bip.api.PortBase;
-import org.bip.api.PortType;
 import org.bip.exceptions.BIPException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -148,9 +147,11 @@ public abstract class AbstractExecutor extends SpecificationParser implements Ru
 		Hashtable<String, Boolean> guardToValue = behaviour.computeGuardsWithoutData();
 
 		// we have to compute this in order to be able to raise an exception
-		boolean existInternal = behaviour.existEnabled(PortType.internal,guardToValue);
-		boolean existSpontaneous = behaviour.existEnabled(PortType.spontaneous, guardToValue);
-		boolean existEnforceable = behaviour.existEnabled(PortType.enforceable, guardToValue);
+		boolean existInternal = behaviour.existEnabledInternal(guardToValue);
+		boolean existSpontaneous = behaviour.existInCurrentStateAndEnabledSpontaneous(guardToValue);
+		boolean existEnforceable = behaviour.existInCurrentStateAndEnabledEnforceableWithoutData(guardToValue) || 
+								   behaviour.existInCurrentStateAndEnforceableWithData();
+
 		Set<Port> globallyDisabledPorts = behaviour.getGloballyDisabledEnforceablePortsWithoutDataTransfer(guardToValue);
 		
 		if (existInternal) {

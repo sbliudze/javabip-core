@@ -315,64 +315,67 @@ class BehaviourImpl implements ExecutableBehaviour {
 		return null;
 	}
 
-	public boolean existEnabled(PortType transitionType, Map<String, Boolean> guardToValue) throws BIPException {
+	@Override
+	public boolean existInCurrentStateAndEnforceableWithData() {
 		
-		switch (transitionType) {
-		
-			case enforceable: {
-				for (ExecutableTransition transition : enforceableTransitions) {
-					if (isEnabled(transition, guardToValue) || transition.hasDataOnGuards()) {
-						return true;
-					}
-				}
-				return false;
-			}
-			
-			case spontaneous: {
-				for (ExecutableTransition transition : spontaneousTransitions) {
-					if (isEnabled(transition, guardToValue)) {
-						return true;
-					}
-				}
-				return false;
-			}
-			
-			case internal: {
-				boolean internalEnabled = false;
-				for (ExecutableTransition transition : internalTransitions) {
-					if (isEnabled(transition, guardToValue)) {
-						if (internalEnabled) {
-							throw new BIPException("Cannot have two internal transitions in the state " + this.currentState + " in component " + this.componentType);
-						} else {
-							internalEnabled = true;
-						}
-					}
-				}
-				return internalEnabled;
-			}
-			
-			default: {
-				logger.error("Unsupported transition type {} in component {}.", transitionType, componentType);
-				throw new BIPException( "Unsupported transition type " + transitionType + " in component " + componentType + ".");
+		for (ExecutableTransition transition : stateTransitions.get(currentState)) {
+			if (transition.getType().equals(PortType.enforceable) && transition.hasDataOnGuards()) {
+				return true;
 			}
 		}
+		return false;
+	}
+	
+	@Override
+	public boolean existInCurrentStateAndEnabledEnforceableWithoutData(Map<String, Boolean> guardToValue) throws BIPException {
+
+		for (ExecutableTransition transition : enforceableTransitions) {
+			if (!transition.hasDataOnGuards() && isInCurrentStateAndEnabled(transition, guardToValue)) {
+				return true;
+			}
+		}
+		return false;
+
+	}
+	
+	@Override
+	public boolean existInCurrentStateAndEnabledSpontaneous(Map<String, Boolean> guardToValue) throws BIPException {
+	
+		for (ExecutableTransition transition : spontaneousTransitions) {
+			if (isInCurrentStateAndEnabled(transition, guardToValue)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean existEnabledInternal(Map<String, Boolean> guardToValue) throws BIPException {
+
+		boolean internalEnabled = false;
+		for (ExecutableTransition transition : internalTransitions) {
+			if (isInCurrentStateAndEnabled(transition, guardToValue)) {
+				if (internalEnabled) {
+					throw new BIPException("Cannot have two enabled internal transitions in the state " + this.currentState + " in component " + this.componentType);
+				} else {
+					internalEnabled = true;
+				}
+			}
+		}
+		return internalEnabled;
 		
 	}
 
-	private boolean isEnabled(ExecutableTransition transition, Map<String, Boolean> guardToValue) throws BIPException {
-		// TODO, Why does this has a side effect and is checking also against the current state? 
-		// It should throw an exception if this function is used in such a way.
+	private boolean isInCurrentStateAndEnabled(ExecutableTransition transition, Map<String, Boolean> guardToValue) throws BIPException {
+
 		if (!transition.source().equals(currentState)) {
 			return false;
 		}
+		
 		if (!transition.hasGuard()) {
 			return true;
 		}
-		// TODO, Why does it return false, when it is actually not known if it is enabled or not?
-		// Again the exception should have been thrown.
-		if (transition.hasDataOnGuards()) {
-			return false;
-		}
+		
 		return transition.guardIsTrue(guardToValue);
 	}
 
@@ -381,7 +384,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 		ArrayList<ExecutableTransition> transitions = stateTransitions.get(currentState);
 		for (ExecutableTransition transition : transitions) {
 			if (transition.name().equals(portID)) { 
-				return isEnabled(transition, guardToValue);
+				return isInCurrentStateAndEnabled(transition, guardToValue);
 			}
 		}
 		return false;
@@ -498,8 +501,8 @@ class BehaviourImpl implements ExecutableBehaviour {
 		if (!transition.hasGuard()) {
 			for (int i = data.size(); i > 0; i--) {
 				result.add(true);
-				// TODO, BUG, missing return? as the for loop below will also add data.size() number of booleans.
 			}
+			return result;
 		}
 		// for each different row of the data evaluation table
 		for (Map<String, Object> dataRow : data) {
@@ -606,5 +609,5 @@ class BehaviourImpl implements ExecutableBehaviour {
 		}
 		return spontaneousPorts.containsKey(port);
 	}
-	
+
 }

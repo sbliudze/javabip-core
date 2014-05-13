@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.bip.exceptions.BIPException;
+
 /**
  * It provides an executable behavior that makes it possible to execute transitions within the behavior.
  */
@@ -51,6 +53,8 @@ public interface ExecutableBehaviour extends Behaviour {
 
 	/**
 	 * Checks for transition from current state.
+	 * Enforceable transition with guards with data is treated as enabled, as the guards value is not known and 
+	 * depends on the value provided.
 	 *
 	 * @param portID the port id
 	 * @return true, if successful
@@ -86,14 +90,31 @@ public interface ExecutableBehaviour extends Behaviour {
 	public Set<Port> getGloballyDisabledEnforceablePortsWithoutDataTransfer(Map<String, Boolean> guardToValue);
 
 	/**
-	 * Exist enabled.
-	 *
-	 * @param transitionType the transition type
-	 * @param guardToValue the guard to value
-	 * @return true, if successful
+	 * It returns true if there is an enforceable transition that does not need data.
+	 * @param guardToValue values of guards (without data)
+	 * @return
+	 * @throws BIPException
 	 */
-	public boolean existEnabled(PortType transitionType, Map<String, Boolean> guardToValue);
-
+	public boolean existInCurrentStateAndEnabledEnforceableWithoutData(Map<String, Boolean> guardToValue) throws BIPException;
+	
+	/**
+	 * It returns true if there is an enabled spontaneous transition.
+	 * @param guardToValue
+	 * @return
+	 * @throws BIPException
+	 */
+	public boolean existInCurrentStateAndEnabledSpontaneous(Map<String, Boolean> guardToValue) throws BIPException;
+	
+	/**
+	 * It returns true if there is an enabled internal transition.
+	 * @param guardToValue
+	 * @return
+	 * @throws BIPException
+	 */
+	public boolean existEnabledInternal(Map<String, Boolean> guardToValue) throws BIPException;
+	
+	public boolean existInCurrentStateAndEnforceableWithData();
+	
 	// TODO, Change Hashtable into an interface, map.
 	/**
 	 * Compute guards.

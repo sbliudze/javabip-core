@@ -24,7 +24,6 @@ import org.bip.api.ComponentProvider;
 import org.bip.api.OrchestratedExecutor;
 import org.bip.api.Port;
 import org.bip.api.PortBase;
-import org.bip.api.PortType;
 import org.bip.exceptions.BIPException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,7 +112,7 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 		Hashtable<String, Boolean> guardToValue = behaviour.computeGuardsWithoutData();
 
 		// we have to compute this in order to be able to raise an exception
-		boolean existInternalTransition = behaviour.existEnabled(PortType.internal,guardToValue);
+		boolean existInternalTransition = behaviour.existEnabledInternal(guardToValue);
 		
 		if (existInternalTransition) {
 			logger.debug("About to execute internal transition for component {}", id);
@@ -125,7 +124,7 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 			return;
 		};
 
-		boolean existSpontaneousTransition = behaviour.existEnabled(PortType.spontaneous, guardToValue);
+		boolean existSpontaneousTransition = behaviour.existInCurrentStateAndEnabledSpontaneous(guardToValue);
 
 		if (existSpontaneousTransition && !notifiers.isEmpty()) {
 
@@ -146,7 +145,8 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 
 		}
 
-		boolean existEnforceableTransition = behaviour.existEnabled(PortType.enforceable, guardToValue);
+		boolean existEnforceableTransition = behaviour.existInCurrentStateAndEnabledEnforceableWithoutData(guardToValue) ||
+											 behaviour.existInCurrentStateAndEnforceableWithData();
 		
 		Set<Port> globallyDisabledPorts = behaviour.getGloballyDisabledEnforceablePortsWithoutDataTransfer(guardToValue);
 
