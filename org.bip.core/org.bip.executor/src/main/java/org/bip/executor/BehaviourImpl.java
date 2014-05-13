@@ -243,9 +243,9 @@ class BehaviourImpl implements ExecutableBehaviour {
 		return states;
 	}
 
-	public Iterable<ExecutableTransition> getStateTransitions(String state) {
-		return stateTransitions.get(state);
-	}
+//	public Iterable<ExecutableTransition> getStateTransitions(String state) {
+//		return stateTransitions.get(state);
+//	}
 
 	public Map<String, Set<Port>> getStateToPorts() {
 		return stateToPorts;
@@ -389,7 +389,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 	public Set<Port> getGloballyDisabledPorts(Map<String, Boolean> guardToValue) {
 		HashSet<Port> result = new HashSet<Port>();
-		for (ExecutableTransition transition : getStateTransitions(currentState)) {
+		for (ExecutableTransition transition : stateTransitions.get(currentState)) {
 			if (!transition.getType().equals(PortType.enforceable)) {
 				continue;
 			}			
@@ -436,7 +436,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 	public void executeInternal(Map<String, Boolean> guardToValue) throws BIPException {
 		
-		for (ExecutableTransition transition : getStateTransitions(currentState)) {
+		for (ExecutableTransition transition : stateTransitions.get(currentState)) {
 			if (transition.getType().equals(PortType.internal) && 
 				transition.guardIsTrue(guardToValue)) {
 					invokeMethod(transition);
