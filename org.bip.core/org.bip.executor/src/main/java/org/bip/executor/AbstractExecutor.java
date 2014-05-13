@@ -29,6 +29,7 @@ import org.bip.exceptions.BIPException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// TODO BUG, Fix it or deprecate and remove later on. 
 public abstract class AbstractExecutor extends SpecificationParser implements Runnable, Executor, ComponentProvider {
 
 	private BIPEngine engine;

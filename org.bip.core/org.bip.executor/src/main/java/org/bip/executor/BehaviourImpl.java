@@ -365,7 +365,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 		if (!transition.source().equals(currentState)) {
 			return false;
 		}
-		if (transition.guard() == null || transition.guard().isEmpty()) {
+		if (!transition.hasGuard()) {
 			return true;
 		}
 		// TODO, Why does it return false, when it is actually not known if it is enabled or not?
