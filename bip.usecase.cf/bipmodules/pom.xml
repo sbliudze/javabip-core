@@ -42,8 +42,8 @@
           
           <dependency>
             <groupId>org.bip</groupId>
-  		    <artifactId>org.bip.executor.springinosgi</artifactId>
-  			<version>${org.bip.executor.springinosgi.version}</version>          
+  		    <artifactId>org.bip.executor.impl</artifactId>
+  			<version>${org.bip.executor.impl.version}</version>          
           </dependency>
 
           <dependency>
