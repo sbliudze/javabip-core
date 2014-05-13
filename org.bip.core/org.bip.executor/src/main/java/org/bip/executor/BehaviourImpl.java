@@ -387,17 +387,19 @@ class BehaviourImpl implements ExecutableBehaviour {
 		return false;
 	}
 
-	public Set<Port> getGloballyDisabledPorts(Map<String, Boolean> guardToValue) {
+	public Set<Port> getGloballyDisabledEnforceablePortsWithoutDataTransfer(Map<String, Boolean> guardToValue) {
 		HashSet<Port> result = new HashSet<Port>();
 		for (ExecutableTransition transition : stateTransitions.get(currentState)) {
-			if (!transition.getType().equals(PortType.enforceable)) {
-				continue;
-			}			
-			if (!transition.hasGuard() || transition.hasDataOnGuards()) {
-				continue;
-			}
-			if (!transition.guardIsTrue(guardToValue)) {
-				result.add(transitionToPort.get(transition));
+			// Check only enforceable transitions
+			if (transition.getType().equals(PortType.enforceable)) {
+				
+				// Enforceable transition must have a guard without data and this guard has to evaluate to false.
+				if (transition.hasGuard() &&
+					!transition.hasDataOnGuards() &&
+					!transition.guardIsTrue(guardToValue)) {
+					result.add(transitionToPort.get(transition));
+				}						
+				
 			}
 		}
 		return result;

@@ -151,7 +151,7 @@ public abstract class AbstractExecutor extends SpecificationParser implements Ru
 		boolean existInternal = behaviour.existEnabled(PortType.internal,guardToValue);
 		boolean existSpontaneous = behaviour.existEnabled(PortType.spontaneous, guardToValue);
 		boolean existEnforceable = behaviour.existEnabled(PortType.enforceable, guardToValue);
-		Set<Port> globallyDisabledPorts = behaviour.getGloballyDisabledPorts(guardToValue);
+		Set<Port> globallyDisabledPorts = behaviour.getGloballyDisabledEnforceablePortsWithoutDataTransfer(guardToValue);
 		
 		if (existInternal) {
 			behaviour.executeInternal(guardToValue);

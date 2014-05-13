@@ -83,7 +83,7 @@ public interface ExecutableBehaviour extends Behaviour {
 	 * @param guardToValue the guard to value
 	 * @return the globally disabled ports
 	 */
-	public Set<Port> getGloballyDisabledPorts(Map<String, Boolean> guardToValue);
+	public Set<Port> getGloballyDisabledEnforceablePortsWithoutDataTransfer(Map<String, Boolean> guardToValue);
 
 	/**
 	 * Exist enabled.

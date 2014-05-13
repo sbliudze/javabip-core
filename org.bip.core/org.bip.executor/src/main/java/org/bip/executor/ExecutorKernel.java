@@ -148,7 +148,7 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 
 		boolean existEnforceableTransition = behaviour.existEnabled(PortType.enforceable, guardToValue);
 		
-		Set<Port> globallyDisabledPorts = behaviour.getGloballyDisabledPorts(guardToValue);
+		Set<Port> globallyDisabledPorts = behaviour.getGloballyDisabledEnforceablePortsWithoutDataTransfer(guardToValue);
 
 		if (existEnforceableTransition) {
 			logger.debug("About to execute engine inform for component {}", id);
