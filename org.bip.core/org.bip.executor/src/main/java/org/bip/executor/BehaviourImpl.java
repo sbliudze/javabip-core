@@ -60,7 +60,9 @@ class BehaviourImpl implements ExecutableBehaviour {
 	private Hashtable<String, Set<Port>> stateToPorts;
 	// gives a Transition instance from the key of (transition name + transition
 	// source state)
-	private Hashtable<String, ExecutableTransition> nameToTransition;
+//	private Hashtable<String, ExecutableTransition> nameToTransition;
+	// gives a Transition instance from two keys - first key is currentState, second key is transition name.
+	private Hashtable<String, Hashtable<String, ExecutableTransition>> nameToTransition;
 	
 	private ArrayList<ExecutableTransition> allTransitions;	
 	private ArrayList<ExecutableTransition> internalTransitions;
@@ -133,21 +135,25 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 		stateToPorts = new Hashtable<String, Set<Port>>(states.size());
 		stateTransitions = new Hashtable<String, ArrayList<ExecutableTransition>>();
+		nameToTransition = new Hashtable<String, Hashtable<String, ExecutableTransition>>();
 		for (String state : states) {
 			stateToPorts.put(state, new HashSet<Port>());
 			stateTransitions.put(state, new ArrayList<ExecutableTransition>());
+			nameToTransition.put(state, new Hashtable<String, ExecutableTransition>());
 		}
 
 
-		nameToTransition = new Hashtable<String, ExecutableTransition>();		
+		
 		this.internalTransitions = new ArrayList<ExecutableTransition>();
 		this.spontaneousTransitions = new ArrayList<ExecutableTransition>();
 		this.enforceableTransitions = new ArrayList<ExecutableTransition>();
 		for (ExecutableTransition transition : allTransitions) {
 
 			stateTransitions.get(transition.source()).add(transition);
-			// BUG, what if we have two spontaneous transitions with an empty name then this key computation scheme is broken.
-			nameToTransition.put(transition.name() + transition.source(), transition);
+			// TODO, Make sure that BehaviourBuilder checks that transition.source is always within states set 
+			// and transition.name is always within portname set.
+			nameToTransition.get(transition.source()).put(transition.name(), transition);
+
 
 			switch (transition.getType()) {
 			case enforceable:
@@ -234,18 +240,13 @@ class BehaviourImpl implements ExecutableBehaviour {
 		return currentState;
 	}
 
-	public ExecutableTransition getTransition(String transitionName) {
-		return nameToTransition.get(transitionName);
-
+	private ExecutableTransition getTransition(String state, String transitionName) {
+		return nameToTransition.get(state).get(transitionName);
 	}
 
 	public List<String> getStates() {
 		return states;
 	}
-
-//	public Iterable<ExecutableTransition> getStateTransitions(String state) {
-//		return stateTransitions.get(state);
-//	}
 
 	public Map<String, Set<Port>> getStateToPorts() {
 		return stateToPorts;
@@ -398,7 +399,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 		if (portID == null) {
 			return;
 		}
-		ExecutableTransition transition = getTransition(portID + currentState);
+		ExecutableTransition transition = getTransition(currentState, portID);
 		if (transition == null) { // this shouldn't normally happen
 			throw new BIPException("The spontaneous transition cannot be null after inform");
 		}
@@ -463,7 +464,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 	public List<Boolean> checkEnabledness(String port, List<Map<String, Object>> data) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, BIPException {
 
 		ArrayList<Boolean> result = new ArrayList<Boolean>();
-		ExecutableTransition transition = getTransition(port + this.currentState);
+		ExecutableTransition transition = getTransition(currentState, port);
 		// TODO find out why this can happen
 		// if the guard is not there, it does not need data, any data is good, no need to do check Enabledness?
 		if (!transition.hasGuard()) {
@@ -516,7 +517,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 		if (portID == null) {
 			return;
 		}
-		ExecutableTransition transition = getTransition(portID + currentState);
+		ExecutableTransition transition = getTransition(currentState, portID);
 		invokeMethod(transition, data);
 	}
 
