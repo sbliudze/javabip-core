@@ -9,8 +9,6 @@
 package org.bip.executor;
 
 import java.lang.reflect.Method;
-import java.util.List;
-
 import org.bip.api.Data;
 
 class TransitionImpl {
@@ -18,8 +16,7 @@ class TransitionImpl {
 	protected String name;
 	protected String source;
 	protected String target;
-	// TODO, choose one method of specifying that there is no guard and enforce it in the constructor.
-	// Preferred manner is to use empty string.
+	// Empty string represents that there is no guard associated to this transition.
 	protected String guard;
 	protected Method method;
 	protected Iterable<Data<?>> dataRequired;
@@ -37,7 +34,8 @@ class TransitionImpl {
 	 * @param dataRequired a list of data items that are required by the transition, parameters in the method signature.
 	 */
 	public TransitionImpl(String name, String source, String target, String guard, 
-						  Method method, List<Data<?>> dataRequired) {
+						  Method method, Iterable<Data<?>> dataRequired) {
+		if (guard == null) guard = "";
 		this.name = name;
 		this.source = source;
 		this.target = target;
@@ -48,12 +46,8 @@ class TransitionImpl {
 	
 	
 	public TransitionImpl(TransitionImpl transition) {
-		this.name = transition.name;
-		this.source = transition.source;
-		this.target = transition.target;
-		this.guard = transition.guard;
-		this.method = transition.method;
-		this.dataRequired = transition.dataRequired;
+		this(transition.name, transition.source, transition.target, 
+			 transition.guard, transition.method, transition.dataRequired);
 	}
 
 	public String name() {

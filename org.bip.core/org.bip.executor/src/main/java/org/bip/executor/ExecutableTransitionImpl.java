@@ -3,7 +3,6 @@ package org.bip.executor;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -88,7 +87,7 @@ class ExecutableTransitionImpl extends TransitionImpl implements ExecutableTrans
 	}
 
 	public boolean hasGuard() {
-		return guard != null && !guard.isEmpty();
+		return !guard.isEmpty();
 	}
 
 	public String toString() {
