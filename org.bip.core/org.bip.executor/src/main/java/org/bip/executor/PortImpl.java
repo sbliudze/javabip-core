@@ -53,13 +53,19 @@ class PortImpl implements Port {
 
 	public PortImpl(String id, PortType type, String specificationType) {
 		if (id == null) {
-			throw new IllegalArgumentException(
-					"Port id cannot be null for specification portType "
-							+ specificationType);
+			if (specificationType != null)
+				throw new IllegalArgumentException(
+						"Port id cannot be null for specification "
+						+ specificationType);
+			else
+				throw new IllegalArgumentException("Port id cannot be null for specification ");
 		}
 		if (specificationType == null) {
 				throw new IllegalArgumentException(
 						"Port spec portType cannot be null for port id " + id);
+		}
+		if (type == null) {
+			throw new IllegalArgumentException("Port portType cannot be null for port id " + id);
 		}
 		this.id = id;
 		this.portType = type;
@@ -117,13 +123,10 @@ class PortImpl implements Port {
 		return true;
 	}
 	
-	// TODO, check if this is correct and proper implementation of hash function. If this one is incorrect
-	// hash structures will work incorrectly.
 	@Override
 	public int hashCode() {
 		int result = id.hashCode();
-		if (specType != null)
-			result = 31 * result + specType.hashCode();
+		result = 31 * result + specType.hashCode();
 		result = 31 * result + portType.hashCode();
 		return result;
 	}

@@ -23,7 +23,7 @@ import org.bip.api.Port;
 import org.bip.api.PortType;
 import org.bip.exceptions.BIPException;
 
-// TODO, all classes should have a header and description of its purpose for nice looking JavaDoc document.
+// TODO DESCRIPTION all classes should have a header and description of its purpose for nice looking JavaDoc document.
 // For example check BIPSpecification for an example.
 
 /**

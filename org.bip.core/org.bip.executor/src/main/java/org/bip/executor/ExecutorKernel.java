@@ -194,7 +194,7 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 
 	public void inform(String portID) {
 		
-		// TODO what if the port (spontaneous does not exist?). It should throw an exception or ignore it.
+		// TODO DESIGN DISCUSSION what if the port (spontaneous does not exist?). It should throw an exception or ignore it.
 		if (portID == null || portID.isEmpty() || !behaviour.isSpontaneousPort(portID)) {
 			return;
 		}

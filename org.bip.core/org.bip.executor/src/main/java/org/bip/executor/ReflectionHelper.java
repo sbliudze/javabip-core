@@ -73,8 +73,6 @@ class ReflectionHelper {
 			}
 		}
 
-		// TODO refactor DataOut interface to check for availability, so no need to store all the ports 
-		// within the data, no need to give ports here.
 		throw new BIPException("Method " + method + " does not have BIPData annotation for Data Out");
 
 	}
