@@ -128,7 +128,7 @@ public abstract class SpecificationParser implements ComponentProvider {
 	
 					addData(method, (Data)annotation, builder);
 					
-				// TODO, Do we really make it possible to specify Port(s) directly within the function?
+				// TODO DESIGN Do we really make it possible to specify Port(s) directly within the function?
 				} else if (annotation instanceof Ports) {
 					Ports portsAnnotation = (Ports) annotation;
 					Annotation[] portAnnotations = portsAnnotation.value();

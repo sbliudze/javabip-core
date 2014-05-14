@@ -34,6 +34,7 @@ public interface ExecutableBehaviour extends Behaviour {
 	 *
 	 * @param portId the port id
 	 */
+	// TODO API CHANGE, change the name to executePort to help understand that this can also execute spontaneous ports.
 	public void execute(String portId);
 
 	/**

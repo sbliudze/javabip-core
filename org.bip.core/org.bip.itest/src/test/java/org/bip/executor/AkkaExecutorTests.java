@@ -38,7 +38,6 @@ public class AkkaExecutorTests {
 
 
 	@Test
-	@Ignore
 	public void akkaExecutorHannoiTest() {
 
 		ActorSystem system = ActorSystem.create("MySystem");

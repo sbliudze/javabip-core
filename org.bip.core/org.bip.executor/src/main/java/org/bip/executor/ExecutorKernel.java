@@ -92,6 +92,8 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 		this.engine = null;
 	}
 
+	// Computed in guardToValue, used for checks in execute.
+	Hashtable<String, Boolean> guardToValue;
 	/**
 	 * If no engine is registered it will exit immediately.
 	 * 
@@ -106,7 +108,7 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 		
 		dataEvaluation.clear();
 
-		Hashtable<String, Boolean> guardToValue = behaviour.computeGuardsWithoutData();
+		guardToValue = behaviour.computeGuardsWithoutData();
 
 		// we have to compute this in order to be able to raise an exception
 		boolean existInternalTransition = behaviour.existEnabledInternal(guardToValue);
@@ -174,17 +176,31 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 	 */
 	public void execute(String portID) {
 
-		// execute the particular transition
-		// TODO: need to check that port is enforceable, do not allow
-		// spontaneous executions here.
-		// TODO: maybe we can then change the interface from String port to Port
-		// port?
-		if (dataEvaluation.isEmpty()) {
-			behaviour.execute(portID);
-		}
-		else {
-		// TODO, We need to check that we have all data required for the execution provided by the engine.
-			behaviour.execute(portID, dataEvaluation);
+		if (portID != null) {
+
+			if (dataEvaluation.isEmpty()) {
+
+				if (!behaviour.existInCurrentStateAndEnabledEnforceableWithoutData(guardToValue))
+					throw new BIPException("Port with " + portID + "is not enabled in the current state");
+
+				behaviour.execute(portID);
+			}
+			else {
+
+				// Performing a check that all data provided make the transition enabled.
+				List<Map<String, Object>> parameter = new ArrayList<Map<String, Object>>();
+				parameter.add(dataEvaluation);
+
+				try {
+					if ( behaviour.checkEnabledness(portID, parameter ).contains(false) ) {
+						throw new BIPException("Port with " + portID + " that requires data is not enabled");
+					}
+				} catch (Exception e) {
+					throw new BIPException(e);
+				}
+
+				behaviour.execute(portID, dataEvaluation);
+			}
 		}
 
 		logger.debug("Issuing next step message for component {}", id);
