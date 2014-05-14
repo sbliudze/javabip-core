@@ -270,58 +270,17 @@ class BehaviourImpl implements ExecutableBehaviour {
 	public Map<String, Method> getDataOutMapping() {
 		return dataOutName;
 	}
-
-	// TODO, Discussion. 
-	// First question to answer who is using it int the capacity of the port and who is using it in 
-	// the capacity of PortBase?
-	// If nobody is using it in the capacity of the Port (e.g. ComponentProvider interface) then changing the 
-	// interface should fix it. 
-	// If different entities use it for different capacity then one of the entities will need to change. 
-	// The hack in the else suggests that this hashmap is provided with PortImpl where we actually mean only PortBase. 
-	// Thus, changing to PortBase maybe sufficient.
 	
-	// TODO, change to PortBase first
 	public Iterable<Data<?>> portToDataInForTransition(Port port) {
-		// TODO with new equals of ports, remove the second part
-		// the method is so complex due to wrong equality of ports
-		// if we have the same instance of port in the map, return the result
-		if (portToDataInForTransition.contains(port)) {
 			return this.portToDataInForTransition.get(port);
-		}
-		// else check if there is a port with the same id and spec type
-		else {
-			for (Port keyPort : portToDataInForTransition.keySet()) {
-				if (keyPort.getId().equals(port.getId()) && keyPort.getSpecType().equals(port.getSpecType())) {
-					return this.portToDataInForTransition.get(keyPort);
-				}
-			}
-		}
-		return null;
 	}
 
 	public Map<Port, Set<Data<?>>> portToDataInForGuard() {
 		return this.portToDataInForGuard;
 	}
 
-	// TODO, change to PortBase first
 	public Set<Data<?>> portToDataInForGuard(Port port) {
-		// TODO with new equals of ports, remove the second part
-		// the method is so complex due to wrong equality of ports
-		// if we have the same instance of port in the map, return the result
-		if (portToDataInForGuard.contains(port)) {
 			return this.portToDataInForGuard.get(port);
-		}
-		// TODO do we really need to check spectype?
-		// Anyway, do it differently: check once against this behaviour but not against every port
-		// else check if there is a port with the same id and spec type
-		else {
-			for (Port keyPort : portToDataInForGuard.keySet()) {
-				if (keyPort.getId().equals(port.getId()) && keyPort.getSpecType().equals(port.getSpecType())) {
-					return this.portToDataInForGuard.get(keyPort);
-				}
-			}
-		}
-		return null;
 	}
 
 	@Override
