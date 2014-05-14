@@ -16,7 +16,7 @@ import java.util.ArrayList;
  */
 public interface BIPGlue {
 
-	// TODO Change ArrayList into List interface.
+	// TODO API CHANGE ArrayList into List interface.
 	/**
 	 * Gets the accept constraints.
 	 * 

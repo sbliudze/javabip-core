@@ -13,7 +13,7 @@ import java.util.Collection;
 /**
  * It specifies the functionality of the accept.
  */
-// TODO, Change to Accept?
+// TODO API CHANGE Change to Accept?
 public interface Accepts {
 
 	/**

@@ -22,7 +22,6 @@ public class ExecutorOSGiInSpringImpl extends ExecutorOSGiImpl implements Initia
 	}
 
 	Thread executorThread;
-	//TODO fix identification to be in unique way
 	private String id = "";
 
 	public void destroy() throws Exception {
@@ -33,7 +32,6 @@ public class ExecutorOSGiInSpringImpl extends ExecutorOSGiImpl implements Initia
 				while (!executorThread.getState().equals(Thread.State.TERMINATED))
 					;
 				unpublish();
-				// TODO: set continueLoop to false here?
 				executorThread.interrupt();
 			}
 		});
@@ -50,18 +48,8 @@ public class ExecutorOSGiInSpringImpl extends ExecutorOSGiImpl implements Initia
 		executorThread.start();
 	}
 
-	// TODO not to create thread, ask for an entity that can do work
-	// java API TASK Executor
-
 	public String getId() {
 		return this.id;
 	}
-	
-	// we use it for the ability to persist administration setup within
-	// BIPengine
-	// so where CF restarts the BIP coordination can automatically restart.
-	// TODO find a way to get a unique name that is persistent across different
-	// CF executions
-	// private String uniqueName;
-	
+		
 }

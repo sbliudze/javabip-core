@@ -22,6 +22,15 @@ class ReflectionHelper {
 	// Separator between method name and parameter number to generate default data in name.
 	private static final String SEPARATOR = ".";
 		
+	/**
+	 * It reads data annotations for the method parameters. If one exists then it will use 
+	 * it to define the parameter. If no data annotation is provided then a default name 
+	 * constructed by name of the method + SEPARATOR + ${parameter.no} where ${parameter.no}
+	 * denotes the number of the method parameter.
+	 * 
+	 * @param method
+	 * @return
+	 */
 	public static List<Data<?>> parseDataAnnotations(Method method) {
 		// deal with method parameters: there might be a dataIn
 		ArrayList<Data<?>> dataIn = new ArrayList<Data<?>>();
@@ -40,18 +49,16 @@ class ReflectionHelper {
 					break;
 				}
 			}
-			// TODO, write a test that will deal with the case when an annotation is missing. 
+			// TODO, TEST, write a test that will deal with the case when an annotation is missing. 
 			// Maybe create a default name as specified in Data todo.
 			if (dataIn.size() < i + 1) {
-				// BipData annotation is missing for i-th parameter, thus a default name is taken. 
+				// Data annotation is missing for i-th parameter, thus a default name is taken. 
 				dataIn.add(createData(method.getName() + SEPARATOR + i, paramTypes[i]));
 			}
 		}
 		return dataIn;
 	}
 
-	
-	// TODO find a way not to copy this method among classes
 	public static <T> Data<T> createData(String dataName, Class<T> type) {
 		Data<T> toReturn = new DataImpl<T>(dataName, type);
 		return toReturn;

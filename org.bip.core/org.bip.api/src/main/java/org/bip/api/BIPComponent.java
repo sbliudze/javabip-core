@@ -19,7 +19,7 @@ public interface BIPComponent extends Identifiable {
 	/**
 	 * It enforces the execution of a given enforceable transition associated to a given port id.
 	 * 
-	 * TODO, currently if portID is null then component is being asked to do nothing (nop). 
+	 * TODO DESIGN BUG currently if portID is null then component is being asked to do nothing (nop). 
 	 * A separate function should be added to specify that no transition is enforced. For example, doNothing().
 	 *
 	 * @param portID the port id of the transition being enforced.
@@ -33,7 +33,7 @@ public interface BIPComponent extends Identifiable {
 	 */
 	void inform(String portID);
 
-	// TODO, make it possible to specify data for execution of spontaneous transitions that requires data.
+	// TODO EXTENSION make it possible to specify data for execution of spontaneous transitions that requires data.
 	// void inform(String portID, Map<String, ?> data);
 	
 	/**

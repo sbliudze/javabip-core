@@ -28,7 +28,7 @@ class ExecutableTransitionImpl extends TransitionImpl implements ExecutableTrans
 
 	private Logger logger = LoggerFactory.getLogger(ExecutableTransitionImpl.class);
 
-	public ExecutableTransitionImpl(TransitionImpl transition, PortType portType, List<Guard> guards) {
+	public ExecutableTransitionImpl(TransitionImpl transition, PortType portType, Map<String, Guard> guards) {
 		super(transition);
 		this.portType = portType;
 		if (hasGuard()) {

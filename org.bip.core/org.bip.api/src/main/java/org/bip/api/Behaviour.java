@@ -13,11 +13,9 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * It specifies the behaviour of any BIP component.
+ * It specifies the behaviour of any BIP component. Instances of those class are meant to be immutable
+ * even if using data structures that provide a possibility for mutation. Do not mutate. 
  */
-// TODO, List and Set interface allows for mutation, use Iterable interface instead. Iterator returned by interface
-// also allows for modifications therefore it is not really good reason to change. Except if we create our own iterator
-// implementations that throw exception if remove method is called on the iterator.
 public interface Behaviour {
 
 	/**
@@ -39,6 +37,7 @@ public interface Behaviour {
 	 *
 	 * @return the enforceable ports
 	 */
+	// TODO API CHANGE Discuss if changing to PortBase is appropriate.	
 	public List<Port> getEnforceablePorts();
 	
 	
@@ -47,8 +46,8 @@ public interface Behaviour {
 	 * @param port the name of the port, can not be null or empty.
 	 * @return true if the port is spontaneous, otherwise fault.
 	 */
+	// TODO API CHANGE Discuss if changing to PortBase is appropriate.	
 	public boolean isSpontaneousPort(String port);
-	
 
 	/**
 	 * Gets the states the component described by this behavior can be in.
@@ -62,12 +61,10 @@ public interface Behaviour {
 	 *
 	 * @return the map
 	 */
-	// TODO, do we really need to return the whole Map structure? Maybe simple function to query for Iterable
-	// of Data for a given port is sufficient? We avoid mutability and avoid brining the whole part of behavior outside of it.
-	// The function below just exactly that so maybe build on 
+	// TODO API CHANGE Discuss if changing to PortBase is appropriate.	
 	public Map<Port, Set<Data<?>>> portToDataInForGuard();
 
-	// TODO, BUG, what if a given port is associated with different transitions within behavior and these transitions 
+	// TODO DESIGN BUG what if a given port is associated with different transitions within behavior and these transitions 
 	// have different guards associated to them? This comment applies to both functions of portToDataInForGuard.
 	/**
 	 * Port to data in for guard.
@@ -75,7 +72,7 @@ public interface Behaviour {
 	 * @param port the port for which its required data is returned.
 	 * @return the sets of data required by the guard to the given transition associated with a given port.
 	 */
-	// TODO, change to PortBase first
+	// TODO API CHANGE Discuss if changing to PortBase is appropriate.
 	public Set<Data<?>> portToDataInForGuard(Port port);
 
 	/**
@@ -84,7 +81,7 @@ public interface Behaviour {
 	 * @param port the port
 	 * @return the iterable
 	 */
-	// TODO, change to PortBase first
+	// TODO API CHANGE Discuss if changing to PortBase is appropriate.
 	public Iterable<Data<?>> portToDataInForTransition(Port port);
 
 	/**
@@ -93,6 +90,7 @@ public interface Behaviour {
 	 * @param dataName the data name
 	 * @return the list
 	 */
+	// TODO API CHANGE Discuss if changing to PortBase is appropriate.	
 	public List<Port> portsNeedingData(String dataName);
 
 	/**
@@ -101,6 +99,7 @@ public interface Behaviour {
 	 * @param dataName name of the data out variable.
 	 * @return set of ports for which the data out is provided.
 	 */
+	// TODO API CHANGE Discuss if changing to PortBase is appropriate.	
 	public Set<Port> getDataProvidingPorts(String dataName);
 
 }

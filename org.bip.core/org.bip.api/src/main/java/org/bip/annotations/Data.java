@@ -14,12 +14,13 @@ import java.lang.annotation.RetentionPolicy;
 import org.bip.api.DataOut.AccessType;
 
 /**
- * It is used to annotated data sent between BIP components.
+ * It is used to annotated data sent between BIP components. It can be used as annotation on the code 
+ * directly or created programmatically and passed to BehaviourBuilder API.  
+ * 
+ * Data can be specified as annotations within BIP Specification class. Even if behavior spec is 
+ * specified pragrammatically it is still possible to use data annotation parser. If no data 
+ * information is provided then the name is assumed to be equal to Method.name() + SEPARATOR + parameter.no
  */
-// TODO, How do we specify data? Maybe always as annotation and no need to specify it programmatically? 
-// If annotation is not specified then what is the default name? maybe name of the method.1 for 
-// input parameters and method.out for the return parameter? Moreover, what is the default value for accessType
-// port?
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Data {
 
@@ -31,13 +32,13 @@ public @interface Data {
 	String name();
 
 	/**
-	 * It returns the access type of the data.
+	 * It returns the access type of the data. The default value is any that means that data can be
+	 * obtained within any transition. 
 	 * 
 	 * @return the string
 	 */
-	// TODO, use Enum instead of String?
-	// TODO, why default is empty string and not for example "any"?
-	AccessType accessTypePort() default AccessType.any; // any, witness, list
+	// TODO TEST create a test for Specifications with unallowed ports
+	AccessType accessTypePort() default AccessType.any; // any, witness, allowed, unallowed
 
 	/**
 	 * It returns the ports (if required) for a specific access type being used.

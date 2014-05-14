@@ -78,7 +78,7 @@ public interface ExecutableBehaviour extends Behaviour {
 	 * @throws IllegalArgumentException the illegal argument exception
 	 * @throws InvocationTargetException the invocation target exception
 	 */
-	// TODO, Disccussion point, what if guard expression (e.g. !f && g ) requires some data, will it work? Add test for this case.
+	// TODO TEST Discussion point, what if guard expression (e.g. !f && g ) requires some data, will it work? Add test for this case.
 	public List<Boolean> checkEnabledness(String port, List<Map<String, Object>> data) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException;
 
 	/**
@@ -115,7 +115,7 @@ public interface ExecutableBehaviour extends Behaviour {
 	
 	public boolean existInCurrentStateAndEnforceableWithData();
 	
-	// TODO, Change Hashtable into an interface, map.
+	// TODO API CHANGE Change Hashtable into an interface, map.
 	/**
 	 * Compute guards.
 	 *

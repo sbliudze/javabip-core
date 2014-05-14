@@ -105,9 +105,6 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 			return;
 		
 		dataEvaluation.clear();
-		// We need to compute this in order to be able to execute anything
-		// TODO compute only guards needed for this current state
-		// TODO first compute the guards only for internal transition
 
 		Hashtable<String, Boolean> guardToValue = behaviour.computeGuardsWithoutData();
 

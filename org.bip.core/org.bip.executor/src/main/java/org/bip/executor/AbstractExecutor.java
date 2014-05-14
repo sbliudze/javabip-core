@@ -29,6 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 // TODO BUG, Fix it or deprecate and remove later on. 
+// Possibly rewrite in a similar manner (POJO and proxy) and provide orchestration with the help
+// of ExecutorService.
 public abstract class AbstractExecutor extends SpecificationParser implements Runnable, Executor, ComponentProvider {
 
 	private BIPEngine engine;
@@ -140,9 +142,6 @@ public abstract class AbstractExecutor extends SpecificationParser implements Ru
 	public void nextStep() throws BIPException {
 		waitingSpontaneous = false;
 		dataEvaluation.clear();
-		// We need to compute this in order to be able to execute anything
-		// TODO compute only guards needed for this current state
-		// TODO first compute the guards only for internal transition
 
 		Hashtable<String, Boolean> guardToValue = behaviour.computeGuardsWithoutData();
 
@@ -159,9 +158,9 @@ public abstract class AbstractExecutor extends SpecificationParser implements Ru
 			semaphore.release();
 			return;
 		} else if (existSpontaneous) {
-			// TODO if disabled transition informs, it will be executed
+			// TODO OR DEPRECATED if disabled transition informs, it will be executed
 			logger.debug("There will be a spontaneous transition.");
-			// TODO get rid of this thread sleep - check test conditions, they
+			// TODO OR DEPRECATED get rid of this thread sleep - check test conditions, they
 			// do not work without
 			try {
 				Thread.sleep(1000); // TestEnforceable2 was set to 10.000
@@ -214,15 +213,15 @@ public abstract class AbstractExecutor extends SpecificationParser implements Ru
 	 */
 	public void execute(String portID) {
 		// execute the particular transition
-		// TODO: need to check that port is enforceable, do not allow
+		// TODO OR DEPRECATED : need to check that port is enforceable, do not allow
 		// spontaneous executions here.
-		// TODO: maybe we can then change the interface from String port to Port
+		// TODO OR DEPRECATED : maybe we can then change the interface from String port to Port
 		// port?
 		if (dataEvaluation == null || dataEvaluation.isEmpty()) {
 			try {
 				behaviour.execute(portID);
 			} catch (BIPException e) {
-				// TODO Auto-generated catch block
+				// TODO OR DEPRECATED Discuss how to handle exceptions and apply it in the code.
 				e.printStackTrace();
 			}
 			semaphore.release();

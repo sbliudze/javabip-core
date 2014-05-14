@@ -37,21 +37,17 @@ public interface Guard {
 	 */
 	public Boolean hasData();
 
-	// TODO, maybe any exception that can be thrown by a given implementation of the guard should be simply wrapped in BIP Exception?
+	// TODO DISCUSSION maybe any exception that can be thrown by a given implementation 
+	// of the guard should be simply wrapped in BIP Exception?
 	/**
 	 * Evaluate guard.
 	 * 
-	 * @param component
-	 *            the component
-	 * @param args
-	 *            the args
+	 * @param component		the component
+	 * @param args          the args
 	 * @return true, if successful
-	 * @throws IllegalAccessException
-	 *             the illegal access exception
-	 * @throws IllegalArgumentException
-	 *             the illegal argument exception
-	 * @throws InvocationTargetException
-	 *             the invocation target exception
+	 * @throws IllegalAccessException		the illegal access exception
+	 * @throws IllegalArgumentException     the illegal argument exception
+	 * @throws InvocationTargetException    the invocation target exception
 	 */
 	public boolean evaluateGuard(Object component, Object... args) throws IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException;

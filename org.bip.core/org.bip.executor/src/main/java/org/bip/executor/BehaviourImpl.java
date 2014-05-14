@@ -11,6 +11,7 @@ package org.bip.executor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -34,12 +35,6 @@ import org.slf4j.LoggerFactory;
  */
 class BehaviourImpl implements ExecutableBehaviour {
 
-	// ASSUMPTIONS:
-	// No two transitions of the same name from the same state
-	// For each enforceable and spontaneous transition there is a port that has
-	// the same name
-	// There cannot be transitions of the same name but different types
-
 	private String currentState;
 
 	private String componentType;
@@ -52,7 +47,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 	// for each port provides data it needs for transitions
 	private Hashtable<Port, Set<Data<?>>> portToDataInForTransition;
 
-	// TODO after changing the interface to Set, change this to HashSet.
+	// TODO API CHANGE after changing the interface to Set, change this to HashSet.
 	private ArrayList<String> states;
 	// maps state to its transitions
 	private Hashtable<String, ArrayList<ExecutableTransition>> stateTransitions;
@@ -99,7 +94,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 	 * @throws BIPException
 	 */
 	public BehaviourImpl(String componentType, String currentState, ArrayList<ExecutableTransition> allTransitions, 
-						 ArrayList<Port> allPorts, HashSet<String> states, ArrayList<Guard> guards, 
+						 ArrayList<Port> allPorts, HashSet<String> states, Collection<Guard> guards, 
 						 Object component) throws BIPException {
 		
 		this.componentType = componentType;
@@ -224,7 +219,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 	 * @throws BIPException
 	 */
 	public BehaviourImpl(String type, String currentState, ArrayList<ExecutableTransition> allTransitions, 
-						 ArrayList<Port> allPorts, HashSet<String> states, ArrayList<Guard> guards,
+						 ArrayList<Port> allPorts, HashSet<String> states, Collection<Guard> guards,
 						 ArrayList<DataOutImpl<?>> dataOut, Hashtable<String, Method> dataOutName, Object component) throws BIPException {
 
 		this(type, currentState, allTransitions, allPorts, states, guards, component);
@@ -233,8 +228,6 @@ class BehaviourImpl implements ExecutableBehaviour {
 		this.dataOutName = dataOutName;
 
 	}
-
-	// TODO create a test for disallowed ports
 
 	public String getCurrentState() {
 		return currentState;
@@ -379,6 +372,9 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 	public Hashtable<String, Boolean> computeGuardsWithoutData() {
 		
+		// TODO BUG DESIGN compute only guards needed for this current state, as other 
+		// guards not guaranteed to compute properly if executed in the wrong state.
+
 		Hashtable<String, Boolean> guardToValue = new Hashtable<String, Boolean>();
 		for (Guard guard : this.guardsWithoutData) {
 			try {
@@ -465,8 +461,8 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 		ArrayList<Boolean> result = new ArrayList<Boolean>();
 		ExecutableTransition transition = getTransition(currentState, port);
-		// TODO find out why this can happen
-		// if the guard is not there, it does not need data, any data is good, no need to do check Enabledness?
+		// TODO DESIGN, find out why this can happen if the guard is not there, 
+		// it does not need data, any data is good, no need to do check Enabledness?
 		if (!transition.hasGuard()) {
 			for (int i = data.size(); i > 0; i--) {
 				result.add(true);

@@ -29,7 +29,7 @@ public interface DataOut<T> extends Data<T> {
 	 *
 	 * @return the type
 	 */
-	// TODO, change the name to portAccessType.
+	// TODO API CHANGE change the name to portAccessType.
 	public AccessType portSpecificationType();
 
 	/**

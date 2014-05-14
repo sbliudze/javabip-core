@@ -18,7 +18,7 @@ public class AkkaExecutorKernel extends ExecutorKernel implements TypedActor.Pos
 		super(bipComponent, id);
 	}
 
-	// TODO, there is also PostRestart lifecycle, can typedActor be restarted on its own? Investigate a bit to make sure 
+	// TODO DISCUSSION there is also PostRestart lifecycle, can typedActor be restarted on its own? Investigate a bit to make sure 
 	// no changes to the design are needed.
 	@Override
 	public void postStop() {

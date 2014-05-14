@@ -7,7 +7,8 @@ import java.util.Map;
 import org.bip.api.Guard;
 import org.bip.exceptions.BIPException;
 
-// TODO do we have to keep this class public?, make it private refactor guardparser into this package.
+// TODO DESIGN do we have to keep this class public?, make it private refactor guardparser into this package.
+// TODO DESCRIPTION missing, explain this class purpose and document functions.
 public class GuardTreeNode {
 
 	public ArrayList<GuardTreeNode> children = new ArrayList<GuardTreeNode>();
@@ -75,27 +76,22 @@ public class GuardTreeNode {
 	 * @return
 	 * @throws BIPException
 	 */
-	public Collection<Guard> createGuardList(Iterable<Guard> guardList) throws BIPException {
+	public Collection<Guard> createGuardList(Map<String, Guard> guardList) throws BIPException {
 		this.guardList = createGuardTree(guardList);
 		return this.guardList;
 	}
 
-	// TODO instead of guardlist, give a hashmap <Guard, name>
-	// TODO think maybe arraylist of children can be transfered into left and right only
-	private Collection<Guard> createGuardTree(Iterable<Guard> guardList) throws BIPException {
+	private Collection<Guard> createGuardTree(Map<String, Guard> guardList) throws BIPException {
 		ArrayList<Guard> usedGuards = new ArrayList<Guard>();
 		// if this is not a symbol (i.e. this is a guard), add it to the list of guards
 		if (!(this.data.equals("&") || this.data.equals("|") || this.data.equals("!"))) {
 
-			boolean guardFound = false;
-			for (Guard guard : guardList) {
-				if (guard.name().equals(this.data)) {
-					guardFound = true;
-					this.guard = guard;
-					usedGuards.add(guard);
-				}
+			this.guard = guardList.get(this.data);
+			
+			if (this.guard != null) {				
+				usedGuards.add(guard);
 			}
-			if (!guardFound) {
+			else {
 				throw new BIPException("Cannot find publicly accessible guard function " + this.data);
 			}
 		}
@@ -105,10 +101,4 @@ public class GuardTreeNode {
 		return usedGuards;
 	}
 
-	/*
-	 * public String printTree() { if (this == null) return ""; if (this.children.size() == 0) return this.data; if (this.children.size() == 1) return
-	 * this.data + "(" + this.children.get(0).printTree() + ")"; if (this.children.size() >= 2) { StringBuilder s = new StringBuilder("(" +
-	 * this.children.get(0).printTree()); for (int i = 1; i < this.children.size(); i++) s.append(this.data.toString() +
-	 * this.children.get(i).printTree()); return s.append(")").toString(); } return this.data; }
-	 */
 }

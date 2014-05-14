@@ -13,7 +13,6 @@ package org.bip.api;
  * ExecutableBehaviour it is not possible to provide the component information right away because the ports are created without the
  * knowledge of the BIP component.
  */
-// TODO, maybe we rename ComponentProvider interface into something else, like ComponentPart (?)
 public interface ComponentProvider {
 
 	/**

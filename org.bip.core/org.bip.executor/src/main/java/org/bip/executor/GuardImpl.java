@@ -75,7 +75,7 @@ class GuardImpl implements Guard {
 		logger.debug("For component {}:", component.getClass());
 		logger.debug("Evaluation of guard {} with args {}.", this.name, args);
 		Object guardValue = method.invoke(component, args);
-		// TODO, create a test that will fail if somebody annotates not boolean function with bipguard annotation.
+		// TODO TEST, create a test that will fail if somebody annotates not boolean function with bipguard annotation.
 		boolean res = (Boolean) guardValue;
 		return res;
 	}

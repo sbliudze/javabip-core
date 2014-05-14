@@ -73,7 +73,6 @@ public abstract class SpecificationParser implements ComponentProvider {
 		return builder;
 	}
 
-	// TODO create type for Transitions or make three classes for int, sp, enf
 	private BehaviourBuilder parseAnnotations( Class<?> componentClass ) throws BIPException {
 		BehaviourBuilder builder = new BehaviourBuilder();
 		

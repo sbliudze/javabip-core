@@ -38,7 +38,7 @@ public class BehaviourBuilder {
 	private ArrayList<TransitionImpl> allTransitions;
 	private ArrayList<Port> allPorts;
 	private HashSet<String> states;
-	private ArrayList<Guard> guards;
+	private Hashtable<String, Guard> guards;
 	private Object component;
 
 	private Hashtable<String, Method> dataOutName;
@@ -48,7 +48,7 @@ public class BehaviourBuilder {
 		allTransitions = new ArrayList<TransitionImpl>();
 		allPorts = new ArrayList<Port>();
 		states = new HashSet<String>();
-		guards = new ArrayList<Guard>();
+		guards = new Hashtable<String, Guard>();
 		dataOutName = new Hashtable<String, Method>();
 		dataOut = new ArrayList<DataOutImpl<?>>();
 	}
@@ -91,7 +91,7 @@ public class BehaviourBuilder {
 		}
 		
 		return new BehaviourImpl(componentType, currentState, transformIntoExecutableTransition(), 
-								 componentPorts, states, guards, dataOut, dataOutName, component);
+								 componentPorts, states, guards.values(), dataOut, dataOutName, component);
 	}
 	
 	private ArrayList<ExecutableTransition> transformIntoExecutableTransition() {
@@ -104,7 +104,7 @@ public class BehaviourBuilder {
 		ArrayList<ExecutableTransition> transformedAllTransitions = new ArrayList<ExecutableTransition>();
 		for (TransitionImpl transition : allTransitions) {
 			
-			// TODO, what are exactly different ways of specifying that the port is internal. We need to be specific about it in spec.
+			// TODO DESIGN, what are exactly different ways of specifying that the port is internal. We need to be specific about it in spec.
 			if (transition.name().equals("") ) {
 				transformedAllTransitions.add( new ExecutableTransitionImpl(transition, PortType.internal, guards) );
 				continue;
@@ -196,7 +196,7 @@ public class BehaviourBuilder {
 	}
 	
 	public void addGuard(String name, Method method, List<Data<?>> data) {		
-		guards.add(new GuardImpl(name, method, data));		
+		guards.put(name, new GuardImpl(name, method, data));		
 	}
 
 	public void addDataOut(Method method) {		

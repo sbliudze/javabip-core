@@ -41,7 +41,7 @@ public class OrchestratedExecutorFactory {
 
 	public boolean destroy(Executor executor) {
 		
-		// TODO, when it is possible to deregister a component from BIP engine make sure it happens here.
+		// TODO EXTENSION when it is possible to deregister a component from BIP engine make sure it happens here.
 		// executor.engine().deregister();
 		
 		if (TypedActor.get(actorSystem).isTypedActor(executor)) {

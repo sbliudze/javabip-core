@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * It specifies the requires within BIP Glue.
  */
-// TODO change to Require
+// TODO API CHANGE change name to Require
 public interface Requires {
 
 	/**
