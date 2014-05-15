@@ -40,7 +40,7 @@ import org.springframework.beans.factory.InitializingBean;
  * 
  */
 
-// TODO all the usecases should implement MutableIdentification
+// TODO DESIGN, DISCUSS, should all the BIP specs implement MutableIdentification
 
 @Ports({ @Port(name = "end", type = PortType.spontaneous), @Port(name = "on", type = PortType.enforceable), 
 		 @Port(name = "off", type = PortType.enforceable), @Port(name = "finished", type = PortType.enforceable) })
@@ -60,7 +60,6 @@ public class SwitchableRouteDataTransfers implements CamelContextAware, Initiali
 	private int deltaMemory = 100;
 
 	public void setCamelContext(CamelContext camelContext) {
-		// TODO, find a better way to obtain ModelCamelContext, instead of relaying that DefaultCamelContext is provided.
 		this.camelContext = (ModelCamelContext) camelContext;
 	}
 

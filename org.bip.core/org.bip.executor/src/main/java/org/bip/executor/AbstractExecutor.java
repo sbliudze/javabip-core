@@ -120,9 +120,9 @@ public abstract class AbstractExecutor extends SpecificationParser implements Ru
 	}
 
 	public void loop() {
-		// TODO: do we need to set continueLoop to false in some cases?
+		// TODO OR DEPRECATED do we need to set continueLoop to false in some cases?
 		// add a stop function?
-		// TODO: add todo to engine: remove while true in run, add a variable,
+		// TODO OR DEPRECATED add todo to engine: remove while true in run, add a variable,
 		// interrupt -> run-false
 		while (continueLoop) {
 			try {
@@ -228,7 +228,6 @@ public abstract class AbstractExecutor extends SpecificationParser implements Ru
 			return;
 		}
 
-		// TODO, We need to check that we have all data required for the execution provided by the engine.
 		behaviour.execute(portID, dataEvaluation);
 		semaphore.release();
 

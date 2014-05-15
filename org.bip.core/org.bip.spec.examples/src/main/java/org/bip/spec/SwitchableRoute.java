@@ -46,7 +46,6 @@ import org.springframework.beans.factory.InitializingBean;
 		 @Port(name = "off", type = PortType.enforceable), 
 		 @Port(name = "finished", type = PortType.enforceable) })
 @ComponentType(initial = "off", name = "org.bip.spec.SwitchableRoute")
-//TODO get rid of component name
 public class SwitchableRoute implements CamelContextAware, InitializingBean, DisposableBean {
 
 	public ModelCamelContext camelContext;
@@ -60,7 +59,6 @@ public class SwitchableRoute implements CamelContextAware, InitializingBean, Dis
 	private RoutePolicy notifier;
 
 	public void setCamelContext(CamelContext camelContext) {
-		// TODO, find a better method to inject ModelCamelContext, instead of relaying on DefaultCamelContext being injected.
 		this.camelContext = (ModelCamelContext)camelContext;
 	}
 

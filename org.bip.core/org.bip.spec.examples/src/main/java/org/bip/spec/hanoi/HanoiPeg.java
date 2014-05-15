@@ -72,18 +72,12 @@ public class HanoiPeg {
 						
 		//GUARDS
 		
-		// TODO, It looks like guard does not have to specify the names of BIP data? It should also required Array.asList( "addedDisk" ); in its definition.
 		// TODO, add addGuard function that has no guardName parameter since it is inferred from the name of the method.
-		behaviourBuilder.addGuard("isPieceAddable", this.getClass().getMethod("isPieceAddable", int.class) );
-		behaviourBuilder.addGuard("isPieceRemovable", this.getClass().getMethod("isPieceRemovable"));
+		behaviourBuilder.addGuard(this.getClass().getMethod("isPieceAddable", int.class) );
+		behaviourBuilder.addGuard(this.getClass().getMethod("isPieceRemovable"));
 		
 		//DATA OUT
-		
-		// TODO, There is mismatch between what is defined here and in BIP annotation.
-		// TODO, check todo in Data annotation, maybe addDataOut should only accept Method parameter and 
-		// read other things from the method?
-		//behaviourBuilder.addDataOut("disksize", this.getClass().getMethod("diskSizeOnTop"), "any" );
-		
+				
 		behaviourBuilder.addDataOut(this.getClass().getMethod("diskSizeOnTop") );
 		//BUILD
 		

@@ -527,7 +527,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 			for (Data<?> trData : transition.dataRequired()) {
 				// name parameter can not be null as it is enforced by the constructor.
 				Object value = data.get(trData.name());
-				// TODO, value can be null if the map is not properly constructed.
+				// TODO, CHECK, value can be null if the map is not properly constructed. Throw more informative exception.
 				args[i] = value;
 			}
 			logger.info("Invocation: " + transition.name() + " with args " + data);

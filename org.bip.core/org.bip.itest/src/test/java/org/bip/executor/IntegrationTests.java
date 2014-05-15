@@ -708,21 +708,15 @@ public class IntegrationTests {
 				port(RComponent.class, "r").accepts(PComponent.class, "p",
 						QComponent.class, "q");
 
-				// TODO, do we need the requiresNothing ? Should we need it?
 				port(RComponent.class, "r").requiresNothing();
 
 			}
 
 		}.build();
 
-		// TODO: The testXml file should be dumped in a more
-		// adequate folder than at the root of the project.
-
 		ByteArrayOutputStream bipGlueOutputStream = new ByteArrayOutputStream();
 
 		bipGlue.toXML(bipGlueOutputStream);
-
-		bipGlue.toXML(System.out);
 
 		ByteArrayInputStream bipGlueInputStream = new ByteArrayInputStream(
 				bipGlueOutputStream.toByteArray());
@@ -859,7 +853,6 @@ public class IntegrationTests {
 				port(RComponent.class, "r").accepts(PComponent.class, "p",
 						QComponent.class, "q");
 
-				// TODO, do we need the requiresNothing ? Should we need it?
 				port(RComponent.class, "r").requiresNothing();
 
 			}
@@ -944,7 +937,7 @@ public class IntegrationTests {
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
-		// TODO can we write the test-condition properly?
+		// TODO DESIGN can we write the test-condition properly?
 	}
 
 	@Test
@@ -1323,7 +1316,6 @@ public class IntegrationTests {
 
 		engine.start();
 
-		// TODO check in all tests that created threads are started.
 		testDriver.start();
 		testDriver2.start();
 

@@ -17,8 +17,6 @@ class PortBaseImpl implements PortBase {
 	@XmlAttribute
 	protected String id;
 
-	// TODO, Improvement, move this attribute to new class GlueSpecPort (?) and
-	// put this class within glue?
 	@XmlAttribute
 	protected String specType;
 
@@ -45,7 +43,6 @@ class PortBaseImpl implements PortBase {
 	}
 
 	public PortBaseImpl() {
-		// TODO Auto-generated constructor stub
 	}
 	
 	public boolean equals(Object o) {

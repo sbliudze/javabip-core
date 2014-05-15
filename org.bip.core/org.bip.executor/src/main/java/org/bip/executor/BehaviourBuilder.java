@@ -201,6 +201,14 @@ public class BehaviourBuilder {
 	}	
 
 	/**
+	 * It add a guard based on the provided method with the guard name equal to method name.
+	 * @param method
+	 */
+	public void addGuard(Method method) {
+		addGuard(method.getName(), method);
+	}
+	
+	/**
 	 * It adds the guard by providing directly the method parameter. The method 
 	 * parameter needs to be annotated to convey information about the data required by the method.
 	 * 

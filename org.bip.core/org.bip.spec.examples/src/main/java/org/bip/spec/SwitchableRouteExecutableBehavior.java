@@ -45,39 +45,20 @@ public class SwitchableRouteExecutableBehavior implements CamelContextAware, Ini
 		BehaviourBuilder behaviourBuilder = new BehaviourBuilder();
 				
 		behaviourBuilder.setComponentType(this.getClass().getCanonicalName());
-        //String componentType = this.getClass().getCanonicalName();
 
         String currentState = "off";
 
         behaviourBuilder.setInitialState(currentState);
 
-        // [Port=(id = end, specType = null, type = spontaneous),
         behaviourBuilder.addPort("end", PortType.spontaneous, this.getClass());
-
-        // Port=(id = on, specType = null, type = enforceable),
         behaviourBuilder.addPort("on", PortType.enforceable, this.getClass());
-
-        // Port=(id = off, specType = null, type = enforceable),
         behaviourBuilder.addPort("off", PortType.enforceable, this.getClass());
-
-        // Port=(id = finished, specType = null, type = enforceable)]
         behaviourBuilder.addPort("finished", PortType.enforceable, this.getClass());
         
-        //ArrayList<TransitionImpl> allTransitions = new ArrayList<TransitionImpl>();
-
-        // ExecutorTransition=(name = on, source = off -> target = on, guard = , method = public void org.bip.spec.SwitchableRoute.startRoute() throws java.lang.Exception),
         behaviourBuilder.addTransitionAndStates("on","off", "on",  "", SwitchableRouteExecutableBehavior.class.getMethod("startRoute"));
-
-        // ExecutorTransition=(name = off, source = on -> target = wait, guard = , method = public void org.bip.spec.SwitchableRoute.stopRoute() throws java.lang.Exception),
         behaviourBuilder.addTransitionAndStates("off","on", "wait",  "", SwitchableRouteExecutableBehavior.class.getMethod("stopRoute"));
-
-        // ExecutorTransition=(name = end, source = wait -> target = done, guard = !isFinished, method = public void org.bip.spec.SwitchableRoute.spontaneousEnd() throws java.lang.Exception),
         behaviourBuilder.addTransitionAndStates("end","wait", "done",  "!isFinished", SwitchableRouteExecutableBehavior.class.getMethod("spontaneousEnd"));
-
-        // ExecutorTransition=(name = , source = wait -> target = done, guard = isFinished, method = public void org.bip.spec.SwitchableRoute.internalEnd() throws java.lang.Exception),
         behaviourBuilder.addTransitionAndStates("","wait", "done",  "isFinished", SwitchableRouteExecutableBehavior.class.getMethod("internalEnd"));
-
-        // ExecutorTransition=(name = finished, source = done -> target = off, guard = , method = public void org.bip.spec.SwitchableRoute.finishedTransition() throws java.lang.Exception)]
         behaviourBuilder.addTransitionAndStates( "finished","done", "off", "", SwitchableRouteExecutableBehavior.class.getMethod("finishedTransition"));
 
         // [off, on, wait, done]
@@ -87,17 +68,8 @@ public class SwitchableRouteExecutableBehavior implements CamelContextAware, Ini
         behaviourBuilder.addState("wait");
         behaviourBuilder.addState("done");
 
-        // [Guard=(name = isFinished, method = isFinished)]
-    //    ArrayList<Guard> guards = new ArrayList<Guard>();
-	//	guards.add(new GuardImpl("isFinished", this.getClass().getMethod("isFinished")));
-
 		behaviourBuilder.addGuard("isFinished", this.getClass().getMethod("isFinished"));
-		
-/*        BehaviourBuilder behaviourBuilder = new BehaviourBuilder(componentType,
-                currentState,
-                allTransitions, allPorts, states, guards, this);
-*/
-		
+				
 		behaviourBuilder.setComponent(this);
         return behaviourBuilder;
     }
@@ -114,7 +86,6 @@ public class SwitchableRouteExecutableBehavior implements CamelContextAware, Ini
     private RoutePolicy notifier;
 
     public void setCamelContext(CamelContext camelContext) {
-    	// TODO, find a better was to obtain ModelCamelContext, do not relay on DefaultCamelContext being injected.
         this.camelContext = (ModelCamelContext)camelContext;
     }
 

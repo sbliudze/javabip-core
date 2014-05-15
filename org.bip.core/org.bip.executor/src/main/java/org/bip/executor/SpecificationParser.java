@@ -43,8 +43,6 @@ public abstract class SpecificationParser implements ComponentProvider {
 
 	private BehaviourBuilder getExecutableBehaviour( Class<?> componentClass ) throws BIPException {
 		BehaviourBuilder builder = new BehaviourBuilder();
-		// TODO: executable behaviour must be got not from the annotation but
-		// from the method name? or return type?
 		Method[] componentMethods = componentClass.getMethods();
 		for (Method method : componentMethods) {
 			Annotation[] annotations = method.getAnnotations();

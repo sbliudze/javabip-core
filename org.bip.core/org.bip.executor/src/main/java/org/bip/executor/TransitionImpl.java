@@ -21,8 +21,6 @@ class TransitionImpl {
 	protected Method method;
 	protected Iterable<Data<?>> dataRequired;
 
-	// TODO, what if name and source state are switched in spec make a precomputation check
-
 	/**
 	 * Constructor to be used within a BIP Spec
 	 * 
