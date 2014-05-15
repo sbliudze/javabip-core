@@ -12,7 +12,6 @@ import org.bip.spec.HanoiMonitor;
 import org.bip.spec.LeftHanoiPeg;
 import org.bip.spec.MiddleHanoiPeg;
 import org.bip.spec.RightHanoiPeg;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import akka.actor.ActorSystem;

@@ -72,7 +72,6 @@ public class HanoiPeg {
 						
 		//GUARDS
 		
-		// TODO, add addGuard function that has no guardName parameter since it is inferred from the name of the method.
 		behaviourBuilder.addGuard(this.getClass().getMethod("isPieceAddable", int.class) );
 		behaviourBuilder.addGuard(this.getClass().getMethod("isPieceRemovable"));
 		
@@ -104,7 +103,7 @@ public class HanoiPeg {
 
 	}
 
-	// TODO, autoboxing between for example int and Integer may be a good feature to help wire data from multiple components.
+
 	public boolean isPieceAddable(@Data(name = "addedDisk") int no) {
 
 		if (no == -1)

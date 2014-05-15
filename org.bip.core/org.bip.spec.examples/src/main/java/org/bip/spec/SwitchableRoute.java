@@ -52,7 +52,6 @@ public class SwitchableRoute implements CamelContextAware, InitializingBean, Dis
 
 	public String routeId;
 
-	private boolean workDone = false;
 	Logger logger = LoggerFactory.getLogger(SwitchableRoute.class);
 
 	private Executor executor;
@@ -80,7 +79,6 @@ public class SwitchableRoute implements CamelContextAware, InitializingBean, Dis
 	// @Port(name="end", type="spontaneous")
 	public void workDone() {
 		logger.debug("Port handler for end port is executing.");
-		workDone = true;
 	}
 
 	/*

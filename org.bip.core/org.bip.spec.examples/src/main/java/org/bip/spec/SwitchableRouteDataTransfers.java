@@ -51,7 +51,6 @@ public class SwitchableRouteDataTransfers implements CamelContextAware, Initiali
 
 	public String routeId;
 
-	private boolean workDone = false;
 	Logger logger = LoggerFactory.getLogger(SwitchableRouteDataTransfers.class);
 
 	private Executor executor;
@@ -81,7 +80,6 @@ public class SwitchableRouteDataTransfers implements CamelContextAware, Initiali
 	// @Port(name="end", type="spontaneous")
 	public void workDone() {
 		logger.debug("Port handler for end port is executing.");
-		workDone = true;
 	}
 
 	/*

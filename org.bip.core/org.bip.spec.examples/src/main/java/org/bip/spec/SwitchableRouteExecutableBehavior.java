@@ -79,7 +79,6 @@ public class SwitchableRouteExecutableBehavior implements CamelContextAware, Ini
 
     public String routeId;
 
-    private boolean workDone = false;
     Logger logger = LoggerFactory.getLogger(SwitchableRouteExecutableBehavior.class);
 
     private Executor executor;
@@ -106,7 +105,6 @@ public class SwitchableRouteExecutableBehavior implements CamelContextAware, Ini
      */
     public void workDone() {
         logger.debug("Port handler for end port is executing.");
-        workDone = true;
     }
 
     /*

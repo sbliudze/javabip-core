@@ -26,6 +26,7 @@ import org.bip.exceptions.BIPException;
 // TODO DESCRIPTION all classes should have a header and description of its purpose for nice looking JavaDoc document.
 // For example check BIPSpecification for an example.
 
+// TODO, EXTENSION autoboxing between for example int and Integer may be a good feature to help wire data from multiple components.
 /**
  * Gathers all the information to build a behaviour of a component. There are two ways to build it: with data and without data.
  */
