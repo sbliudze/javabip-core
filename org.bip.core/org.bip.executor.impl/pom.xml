@@ -20,11 +20,13 @@
 <packaging>bundle</packaging>
 
 	<properties>
+		<activator>org.bip.executor.impl.akka.ExecutorActorSystemActivator</activator>
 		<osgi.private></osgi.private>
-		<osgi.import>org.springframework.beans.factory;version="[2.5,4)", *</osgi.import>
+		<osgi.import>!sun.misc, org.springframework.beans.factory;version="[2.5,4)", *</osgi.import>
  		<osgi.export>org.bip.executor.springinosgi, org.bip.executor.impl.akka</osgi.export>
 		<osgi.dynamic.import></osgi.dynamic.import>
 		<osgi.bundles></osgi.bundles> 		
+<!-- 		<osgi.embed.depdendencies>akka-actor_2.10, akka-osgi_2.10, config, scala-library</osgi.embed.depdendencies> -->
  	</properties>
 	
 	<dependencies>
@@ -87,8 +89,16 @@
     	<dependency>
     		<groupId>com.typesafe.akka</groupId>
     		<artifactId>akka-actor_2.10</artifactId>
-    		<version>2.3.2</version>
+    		<version>2.1.1</version>
     	</dependency>
+    	
+    	<dependency>
+    		<groupId>com.typesafe.akka</groupId>
+    		<artifactId>akka-osgi_2.10</artifactId>
+    		<version>2.1.1</version>
+    	</dependency>
+
+    	
 
 	</dependencies>
 
@@ -112,6 +122,7 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
+						<Bundle-Activator>${activator}</Bundle-Activator>
 						<Embed-Transitive>true</Embed-Transitive>
 						<Bundle-Name>${project.name}</Bundle-Name>
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
@@ -121,6 +132,7 @@
 						<Private-Package>${osgi.private}</Private-Package>
 						<Require-Bundle>${osgi.bundles}</Require-Bundle>
 						<Spring-Context>*;publish-context:=false;create-asynchronously:=true</Spring-Context>
+						<Embed-Dependency>${osgi.embed.depdendencies}</Embed-Dependency>
 						<!-- <Include-Resource>src/main/resources</Include-Resource> -->
 					</instructions>
 				</configuration>

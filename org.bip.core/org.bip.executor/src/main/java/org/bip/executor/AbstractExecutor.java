@@ -103,6 +103,7 @@ public abstract class AbstractExecutor extends SpecificationParser implements Ru
 
 	public void run() {
 		
+		try {
 		logger.debug("Executor thread started: " + Thread.currentThread().getName());
 		
 		synchronized (this) {
@@ -117,6 +118,11 @@ public abstract class AbstractExecutor extends SpecificationParser implements Ru
 		}
 		loop();
 		logger.debug("Executor thread terminated: "	+ Thread.currentThread().getName());
+		}
+		catch(Error error) {
+			ExceptionHelper.printExceptionTrace(logger, error);
+			throw error;
+		}
 	}
 
 	public void loop() {

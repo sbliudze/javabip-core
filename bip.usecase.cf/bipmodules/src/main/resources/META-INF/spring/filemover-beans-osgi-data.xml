@@ -37,11 +37,8 @@
 		<property name="executor" ref="osgi-executor-1" />
 	</bean>
 
-	<osgi:reference id="bipEngine" interface="org.bip.api.BIPEngine" />
-
 	<bean id="osgi-executor-1" class="org.bip.executor.springinosgi.ExecutorOSGiInSpringImpl">
 		<constructor-arg index="0" ref="spec-1" />
-		<property name="engine" ref="bipEngine" />
 	</bean>
 
 	<bean id="filemoverRouteBuilder-1" class="com.xtech.cfa.filemover.FilePollerRouteBuilder">
@@ -59,7 +56,6 @@
 
 	<bean id="osgi-executor-2" class="org.bip.executor.springinosgi.ExecutorOSGiInSpringImpl">
 		<constructor-arg index="0" ref="spec-2" />
-		<property name="engine" ref="bipEngine" />
 	</bean>
 
 	<bean id="filemoverRouteBuilder-2" class="com.xtech.cfa.filemover.FilePollerRouteBuilder">
@@ -77,7 +73,6 @@
 
 	<bean id="osgi-executor-3" class="org.bip.executor.springinosgi.ExecutorOSGiInSpringImpl">
 		<constructor-arg index="0" ref="spec-3" />
-		<property name="engine" ref="bipEngine" />
 	</bean>
 
 	<bean id="filemoverRouteBuilder-3" class="com.xtech.cfa.filemover.FilePollerRouteBuilder">
@@ -94,7 +89,6 @@
 
 	<bean id="osgi-executor-4" class="org.bip.executor.springinosgi.ExecutorOSGiInSpringImpl">
 		<constructor-arg index="0" ref="spec-4" />
-		<property name="engine" ref="bipEngine" />
 	</bean>
 
 </beans>
