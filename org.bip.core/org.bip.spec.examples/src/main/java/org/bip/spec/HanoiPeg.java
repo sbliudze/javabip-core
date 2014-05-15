@@ -58,10 +58,10 @@ public class HanoiPeg {
 
         for (int i = 0; i < size; i++) {
 
-            behaviourBuilder.addTransitionAndStates("piece" + (i+1) + "Add",    "start", "start", "isPiece"+ (i+1) + "Addable",   this.getClass().getMethod("movePiece" + (i+1)));
-            behaviourBuilder.addTransitionAndStates("piece" + (i+1) + "Remove", "start", "start", "isPiece"+ (i+1) + "Removable", this.getClass().getMethod("movePiece" + (i+1)));
             behaviourBuilder.addPort("piece" + (i+1) + "Add", PortType.enforceable, this.getClass());
             behaviourBuilder.addPort("piece" + (i+1) + "Remove", PortType.enforceable, this.getClass());
+            behaviourBuilder.addTransitionAndStates("piece" + (i+1) + "Add",    "start", "start", "isPiece"+ (i+1) + "Addable",   this.getClass().getMethod("movePiece" + (i+1)));
+            behaviourBuilder.addTransitionAndStates("piece" + (i+1) + "Remove", "start", "start", "isPiece"+ (i+1) + "Removable", this.getClass().getMethod("movePiece" + (i+1)));
 			behaviourBuilder.addGuard("isPiece" + (i + 1) + "Addable", this.getClass().getMethod("isPiece" + (i + 1) + "Addable"));
 			behaviourBuilder.addGuard("isPiece" + (i + 1) + "Removable", this.getClass().getMethod("isPiece" + (i + 1) + "Removable"));
         }

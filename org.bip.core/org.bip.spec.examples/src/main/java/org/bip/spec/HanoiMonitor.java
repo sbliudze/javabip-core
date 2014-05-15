@@ -64,6 +64,12 @@ public class HanoiMonitor {
         behaviourBuilder.addState("state-AC");
         behaviourBuilder.addState("state-BC");
 
+        behaviourBuilder.addPort("ab", PortType.enforceable, this.getClass());
+
+        behaviourBuilder.addPort("ac", PortType.enforceable, this.getClass());
+
+        behaviourBuilder.addPort("bc", PortType.enforceable, this.getClass());
+
         if (size % 2 == 0) {
             /*
             For an even number of disks:
@@ -111,13 +117,6 @@ public class HanoiMonitor {
 
 
         }
-
-        // [Port=(id = sr, specType = null, type = spontaneous),
-        behaviourBuilder.addPort("ab", PortType.enforceable, this.getClass());
-
-        behaviourBuilder.addPort("ac", PortType.enforceable, this.getClass());
-
-        behaviourBuilder.addPort("bc", PortType.enforceable, this.getClass());
         
         behaviourBuilder.setComponent(this);
 

@@ -56,7 +56,12 @@ public class HanoiPeg {
 		behaviourBuilder.setInitialState(initialState);
 		
 		behaviourBuilder.addState(initialState);
-				
+		
+		//PORTS
+		
+		behaviourBuilder.addPort("pieceAdd", PortType.enforceable, this.getClass());
+		behaviourBuilder.addPort("pieceRemove", PortType.enforceable, this.getClass());
+
 		//TRANSITIONS
 
 		behaviourBuilder.addTransitionAndStates("pieceAdd", initialState, initialState, "isPieceAddable", 
@@ -64,13 +69,7 @@ public class HanoiPeg {
 		
 		behaviourBuilder.addTransitionAndStates("pieceRemove", initialState, initialState, "isPieceRemovable", 
 				   					   this.getClass().getMethod("removePiece"));
-		
-
-		//PORTS
-		
-		behaviourBuilder.addPort("pieceAdd", PortType.enforceable, this.getClass());
-		behaviourBuilder.addPort("pieceRemove", PortType.enforceable, this.getClass());
-				
+						
 		//GUARDS
 		
 		// TODO, It looks like guard does not have to specify the names of BIP data? It should also required Array.asList( "addedDisk" ); in its definition.

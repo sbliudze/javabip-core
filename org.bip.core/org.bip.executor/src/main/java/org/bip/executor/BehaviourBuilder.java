@@ -36,7 +36,7 @@ public class BehaviourBuilder {
 	public String componentType;
 	public String currentState;
 	private ArrayList<TransitionImpl> allTransitions;
-	private ArrayList<Port> allPorts;
+	private Hashtable<String, Port> allPorts;
 	private HashSet<String> states;
 	private Hashtable<String, Guard> guards;
 	private Object component;
@@ -46,7 +46,7 @@ public class BehaviourBuilder {
 
 	public BehaviourBuilder() {
 		allTransitions = new ArrayList<TransitionImpl>();
-		allPorts = new ArrayList<Port>();
+		allPorts = new Hashtable<String, Port>();
 		states = new HashSet<String>();
 		guards = new Hashtable<String, Guard>();
 		dataOutName = new Hashtable<String, Method>();
@@ -76,7 +76,7 @@ public class BehaviourBuilder {
 
 		ArrayList<Port> componentPorts = new ArrayList<Port>();
 		// We need to create new ports here as there was no provider information available when the specification was parsed.
-		for (Port port : this.allPorts) {
+		for (Port port : this.allPorts.values()) {
 			componentPorts.add(new PortImpl(port.getId(), port.getType(), port.getSpecType(), provider));
 		}
 
@@ -97,7 +97,7 @@ public class BehaviourBuilder {
 	private ArrayList<ExecutableTransition> transformIntoExecutableTransition() {
 
 		HashMap<String, Port> mapIdToPort = new HashMap<String, Port>( );
-		for (Port port : allPorts)
+		for (Port port : allPorts.values())
 			mapIdToPort.put(port.getId(), port);
 		
 		// Transform transitions into ExecutableTransitions.
@@ -133,7 +133,11 @@ public class BehaviourBuilder {
 	}
 
 	public void addPort(String id, PortType type, Class<?> specificationType) {
-		allPorts.add(new PortImpl(id, type, specificationType));
+		Port port = new PortImpl(id, type, specificationType);
+		// PortImpl constructor already protects against null id.
+		if (allPorts.containsKey(id))
+			throw new BIPException("Port with id " + id + " has been already defined.");
+		allPorts.put(id, port);
 	}
 	
 	public void addState(String state) {		
@@ -151,6 +155,13 @@ public class BehaviourBuilder {
 	public void addTransitionAndStates(String name, String source, 
 									   String target, String guard, 
 									   Method method, List<Data<?>> data) {			
+
+		if (!allPorts.containsKey(name)) {
+			if (name == null)
+				throw new BIPException("Transition name can not be null, use empty empty string for internal transitions");
+			if (!name.isEmpty())
+				throw new BIPException("Transition " + name + " does not correspond to any port. Specify ports first and/or make sure the names match. ");
+		}
 
 		addState(source);
 		addState(target);
@@ -172,6 +183,13 @@ public class BehaviourBuilder {
 			   				  String target, String guard, 
 			   				  Method method, List<Data<?>> data) {			
 
+		if (!allPorts.containsKey(name)) {
+			if (name == null)
+				throw new BIPException("Transition name can not be null, use empty empty string for internal transitions");
+			if (!name.isEmpty())
+				throw new BIPException("Transition " + name + " does not correspond to any port. Specify ports first and/or make sure the names match. ");
+		}
+		
 		if (!states.contains(source))
 			throw new BIPException("Transition " + name + " is specifying source state " + source + " that has not been explicitly stated before.");
 

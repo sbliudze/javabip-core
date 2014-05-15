@@ -28,8 +28,7 @@ class DataOutImpl<T> extends DataImpl<T> implements DataOut<T> {
 	private AccessType portAccessType;
 	private Set<Port> allowedPorts = new HashSet<Port>();
 	private String[] stringPorts;
-	
-	// TODO, Given the Set of ports constructor given above, maybe there is no need for it after refactoring. 
+	 
 	public DataOutImpl(String name, Class<T> clazz, AccessType portAccessType, String[] ports) throws BIPException {
 		
 		super(name, clazz);

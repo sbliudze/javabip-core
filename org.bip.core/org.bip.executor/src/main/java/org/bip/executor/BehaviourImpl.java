@@ -145,10 +145,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 		for (ExecutableTransition transition : allTransitions) {
 
 			stateTransitions.get(transition.source()).add(transition);
-			// TODO, Make sure that BehaviourBuilder checks that transition.source is always within states set 
-			// and transition.name is always within portname set.
 			nameToTransition.get(transition.source()).put(transition.name(), transition);
-
 
 			switch (transition.getType()) {
 			case enforceable:
@@ -390,6 +387,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 		return guardToValue;
 	}
 
+	// ExecutorKernel, the owner of BehaviourImpl is checking the correctness of the execution.
 	public void execute(String portID) throws BIPException {
 		// this component does not take part in the interaction
 		if (portID == null) {
@@ -399,8 +397,6 @@ class BehaviourImpl implements ExecutableBehaviour {
 		if (transition == null) { // this shouldn't normally happen
 			throw new BIPException("The spontaneous transition cannot be null after inform");
 		}
-		// TODO, executeInternal is protected against misuse, this execute is not protected.
-		// What if the port to be specified to be executed is actually not enabled?
 		invokeMethod(transition);
 	}
 
