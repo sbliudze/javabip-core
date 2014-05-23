@@ -158,6 +158,8 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 		
 		// existSpontaneous transition exists but spontaneous event has not happened yet, thus a follow step should be postponned until
 		// any spontaneous event is received.
+		// TODO: Tell the engine that I am waiting (send all disabled ports in
+		// the inform)
 		if (existSpontaneousTransition) {
 			logger.debug("Finishing current step for component {} doing nothing due no spontaneous events.", id);
 			waitingForSpontaneous = true;
