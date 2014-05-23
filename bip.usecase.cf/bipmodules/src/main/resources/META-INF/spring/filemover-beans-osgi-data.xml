@@ -83,12 +83,33 @@
 
 	<!-- // BIP module RouteOnOffMonitor -->
 
-	<bean id="spec-4" class="org.bip.spec.MemoryMonitor">
+<!-- 	<bean id="spec-4" class="org.bip.spec.MemoryMonitor">
 		<constructor-arg index="0" value="203" />
 	</bean>
 
 	<bean id="osgi-executor-4" class="org.bip.executor.springinosgi.ExecutorOSGiInSpringImpl">
 		<constructor-arg index="0" ref="spec-4" />
 	</bean>
+ -->	
+
+	<osgi:reference cardinality="1..1" id="bipEngine" interface="org.bip.api.BIPEngine"/>
+	
+	<osgi:reference cardinality="1..1" id="actorSystem" interface="akka.actor.ActorSystem"/>
+
+	<bean id="executorFactory" class="org.bip.executor.impl.akka.OrchestratedExecutorFactory">
+		<constructor-arg index="0" ref="actorSystem"/>
+	</bean>
+	
+	<bean id="spec-4" class="org.bip.spec.MemoryMonitor">
+		<constructor-arg index="0" value="203" />
+	</bean>
+	
+	<bean id="osgi-executor-4" factory-bean="executorFactory" factory-method="create">
+        <constructor-arg index="0" ref="bipEngine"/>
+        <constructor-arg index="1" ref="spec-4"/>
+        <constructor-arg index="2" value="osgi-executor-4"/>
+        <constructor-arg index="3" value="true"/>
+    </bean>
+	
 
 </beans>
