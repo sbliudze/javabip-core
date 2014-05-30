@@ -18,7 +18,7 @@
 	</bean>
 	
 	<bean id="bipCoordinator" class="org.bip.engine.BIPCoordinatorImpl"/>
-	<bean id="dataCoordinator" class="org.bip.engine.DataCoordinatorImpl">
+	<bean id="dataCoordinator" class="org.bip.engine.DataCoordinatorKernel">
 		<constructor-arg index="0" ref="bipCoordinator"/>
 	</bean>
 		
