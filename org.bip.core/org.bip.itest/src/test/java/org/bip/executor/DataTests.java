@@ -313,12 +313,14 @@ public class DataTests {
 
 		}.build();
 
+		CamelContext camelContext = new DefaultCamelContext();
+		
 		SwitchableRouteDataTransfers route1 = new SwitchableRouteDataTransfers(
-				"1");
+				"1", camelContext);
 		SwitchableRouteDataTransfers route2 = new SwitchableRouteDataTransfers(
-				"2");
+				"2", camelContext);
 		SwitchableRouteDataTransfers route3 = new SwitchableRouteDataTransfers(
-				"3");
+				"3", camelContext);
 		final ExecutorImpl executor1 = new ExecutorImpl("", route1, true);
 		final ExecutorImpl executor2 = new ExecutorImpl("", route2, true);
 		final ExecutorImpl executor3 = new ExecutorImpl("", route3, true);
@@ -327,7 +329,7 @@ public class DataTests {
 
 		DataCoordinator engine = new DataCoordinatorImpl(null);
 
-		CamelContext camelContext = new DefaultCamelContext();
+
 
 		final RoutePolicy routePolicy1 = new RoutePolicy() {
 
@@ -546,12 +548,16 @@ public class DataTests {
 		//
 		// }.build();
 
+		CamelContext camelContext = new DefaultCamelContext();
+		camelContext.setAutoStartup(false);
+		
 		SwitchableRouteDataTransfers route1 = new SwitchableRouteDataTransfers(
-				"1");
+				"1", camelContext);
 		SwitchableRouteDataTransfers route2 = new SwitchableRouteDataTransfers(
-				"2");
+				"2", camelContext);
 		SwitchableRouteDataTransfers route3 = new SwitchableRouteDataTransfers(
-				"3");
+				"3", camelContext);
+		
 		final ExecutorImpl executor1 = new ExecutorImpl("", route1, true);
 		final ExecutorImpl executor2 = new ExecutorImpl("", route2, true);
 		final ExecutorImpl executor3 = new ExecutorImpl("", route3, true);
@@ -560,7 +566,7 @@ public class DataTests {
 
 		DataCoordinator engine = new DataCoordinatorImpl(null);
 
-		CamelContext camelContext = new DefaultCamelContext();
+
 
 		final RoutePolicy routePolicy1 = new RoutePolicy() {
 
@@ -689,7 +695,7 @@ public class DataTests {
 						.routePolicy(routePolicy3).to("file:outputfolder3");
 			}
 		};
-		camelContext.setAutoStartup(false);
+		
 		try {
 			camelContext.addRoutes(builder1);
 			camelContext.start();

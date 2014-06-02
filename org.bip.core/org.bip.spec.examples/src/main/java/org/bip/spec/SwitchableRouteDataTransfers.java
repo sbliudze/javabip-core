@@ -70,8 +70,9 @@ public class SwitchableRouteDataTransfers implements CamelContextAware, Initiali
 		return camelContext;
 	}
 
-	public SwitchableRouteDataTransfers(String routeId) {
+	public SwitchableRouteDataTransfers(String routeId, CamelContext camelContext) {
 		this.routeId = routeId;
+		this.camelContext = (ModelCamelContext) camelContext;
 	}
 
 	/**
@@ -120,6 +121,8 @@ public class SwitchableRouteDataTransfers implements CamelContextAware, Initiali
 
 	@Guard(name = "isFinished")
 	public boolean isFinished() {
+		if (camelContext == null)
+			throw new IllegalStateException( "Camel Context has not been properly setup for route " + routeId);
 		return camelContext.getInflightRepository().size(routeId) == 0;
 	}
 

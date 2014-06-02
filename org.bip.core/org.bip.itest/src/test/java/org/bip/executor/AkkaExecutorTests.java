@@ -82,19 +82,17 @@ public class AkkaExecutorTests {
 
 		}.build();
 
-
-		SwitchableRouteDataTransfers route1 = new SwitchableRouteDataTransfers(
-				"1");
-		SwitchableRouteDataTransfers route2 = new SwitchableRouteDataTransfers(
-				"2");
-		SwitchableRouteDataTransfers route3 = new SwitchableRouteDataTransfers(
-				"3");
-
 		CamelContext camelContext = new DefaultCamelContext();
 		camelContext.setAutoStartup(false);
-		route1.setCamelContext(camelContext);
-		route2.setCamelContext(camelContext);
-		route3.setCamelContext(camelContext);
+
+		SwitchableRouteDataTransfers route1 = new SwitchableRouteDataTransfers(
+				"1", camelContext);
+		SwitchableRouteDataTransfers route2 = new SwitchableRouteDataTransfers(
+				"2", camelContext);
+		SwitchableRouteDataTransfers route3 = new SwitchableRouteDataTransfers(
+				"3", camelContext);
+
+
 
 		final Executor executor1 = factory.create(engine, route1, "1", true);
 

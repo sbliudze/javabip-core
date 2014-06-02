@@ -24,23 +24,38 @@
 	</osgix:cm-properties>
 
 	<camel-osgi:camelContext xmlns="http://camel.apache.org/schema/spring"
-		id="filemover-camelContext">
+		id="filemover-camelContext" autoStartup="false">
 		<contextScan />
 	</camel-osgi:camelContext>
 
 	<ctx:property-placeholder properties-ref="bundleConfig" />
 
+	<!-- Beans needed by all BIP components -->
+
+	<osgi:reference cardinality="1..1" id="bipEngine" interface="org.bip.api.BIPEngine"/>
+	
+	<osgi:reference cardinality="1..1" id="actorSystem" interface="akka.actor.ActorSystem"/>
+
+	<bean id="executorFactory" class="org.bip.executor.impl.akka.OrchestratedExecutorFactory">
+		<constructor-arg index="0" ref="actorSystem"/>
+	</bean>
+
 	<!-- // BIP module for the first route. -->
+
 
 	<bean id="spec-1" class="org.bip.spec.SwitchableRouteDataTransfers">
 		<constructor-arg index="0" value="filemoverRoute-1" />
+		<constructor-arg index="1" ref="filemover-camelContext"/>
 		<property name="executor" ref="osgi-executor-1" />
 	</bean>
 
-	<bean id="osgi-executor-1" class="org.bip.executor.springinosgi.ExecutorOSGiInSpringImpl">
-		<constructor-arg index="0" ref="spec-1" />
-	</bean>
-
+	<bean id="osgi-executor-1" factory-bean="executorFactory" factory-method="create">
+        <constructor-arg index="0" ref="bipEngine"/>
+        <constructor-arg index="1" ref="spec-1"/>
+        <constructor-arg index="2" value="osgi-executor-1"/>
+        <constructor-arg index="3" value="true"/>
+    </bean>
+	
 	<bean id="filemoverRouteBuilder-1" class="com.xtech.cfa.filemover.FilePollerRouteBuilder">
 		<property name="inFolder" value="${cfa.filemover.infolder1}" />
 		<property name="outFolder" value="${cfa.filemover.outfolder1}" />
@@ -51,12 +66,16 @@
 
 	<bean id="spec-2" class="org.bip.spec.SwitchableRouteDataTransfers">
 		<constructor-arg index="0" value="filemoverRoute-2" />
+		<constructor-arg index="1" ref="filemover-camelContext"/>
 		<property name="executor" ref="osgi-executor-2" />
 	</bean>
 
-	<bean id="osgi-executor-2" class="org.bip.executor.springinosgi.ExecutorOSGiInSpringImpl">
-		<constructor-arg index="0" ref="spec-2" />
-	</bean>
+	<bean id="osgi-executor-2" factory-bean="executorFactory" factory-method="create">
+        <constructor-arg index="0" ref="bipEngine"/>
+        <constructor-arg index="1" ref="spec-2"/>
+        <constructor-arg index="2" value="osgi-executor-2"/>
+        <constructor-arg index="3" value="true"/>
+    </bean>
 
 	<bean id="filemoverRouteBuilder-2" class="com.xtech.cfa.filemover.FilePollerRouteBuilder">
 		<property name="inFolder" value="${cfa.filemover.infolder2}" />
@@ -68,12 +87,16 @@
 
 	<bean id="spec-3" class="org.bip.spec.SwitchableRouteDataTransfers">
 		<constructor-arg index="0" value="filemoverRoute-3" />
+		<constructor-arg index="1" ref="filemover-camelContext"/>
 		<property name="executor" ref="osgi-executor-3" />
 	</bean>
 
-	<bean id="osgi-executor-3" class="org.bip.executor.springinosgi.ExecutorOSGiInSpringImpl">
-		<constructor-arg index="0" ref="spec-3" />
-	</bean>
+	<bean id="osgi-executor-3" factory-bean="executorFactory" factory-method="create">
+        <constructor-arg index="0" ref="bipEngine"/>
+        <constructor-arg index="1" ref="spec-3"/>
+        <constructor-arg index="2" value="osgi-executor-3"/>
+        <constructor-arg index="3" value="true"/>
+    </bean>
 
 	<bean id="filemoverRouteBuilder-3" class="com.xtech.cfa.filemover.FilePollerRouteBuilder">
 		<property name="inFolder" value="${cfa.filemover.infolder3}" />
@@ -82,23 +105,6 @@
 	</bean>
 
 	<!-- // BIP module RouteOnOffMonitor -->
-
-<!-- 	<bean id="spec-4" class="org.bip.spec.MemoryMonitor">
-		<constructor-arg index="0" value="203" />
-	</bean>
-
-	<bean id="osgi-executor-4" class="org.bip.executor.springinosgi.ExecutorOSGiInSpringImpl">
-		<constructor-arg index="0" ref="spec-4" />
-	</bean>
- -->	
-
-	<osgi:reference cardinality="1..1" id="bipEngine" interface="org.bip.api.BIPEngine"/>
-	
-	<osgi:reference cardinality="1..1" id="actorSystem" interface="akka.actor.ActorSystem"/>
-
-	<bean id="executorFactory" class="org.bip.executor.impl.akka.OrchestratedExecutorFactory">
-		<constructor-arg index="0" ref="actorSystem"/>
-	</bean>
 	
 	<bean id="spec-4" class="org.bip.spec.MemoryMonitor">
 		<constructor-arg index="0" value="203" />
