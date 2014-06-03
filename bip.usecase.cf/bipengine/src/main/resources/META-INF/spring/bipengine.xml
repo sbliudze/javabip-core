@@ -12,19 +12,16 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 	
 	<osgi:reference cardinality="1..1" id="actorSystem" interface="akka.actor.ActorSystem"/>
-
-	<bean id="engineFactory" class="org.bip.engine.api.EngineFactory">
-		<constructor-arg index="0" ref="actorSystem"/>
-	</bean>
 	
 	<bean id="bipCoordinator" class="org.bip.engine.BIPCoordinatorImpl"/>
 	<bean id="dataCoordinator" class="org.bip.engine.DataCoordinatorKernel">
 		<constructor-arg index="0" ref="bipCoordinator"/>
 	</bean>
 		
-	<bean id="bipEngine" factory-bean="engineFactory" factory-method="create" init-method="start" destroy-method="stop">
-        <constructor-arg index="0" value="myEngineId"/>
-        <constructor-arg index="1" ref="dataCoordinator"/>        
+	<bean id="bipEngine" class="io.xtech.bip.BIPEngineActor" init-method="init" destroy-method="destroy">
+        <constructor-arg index="0" ref="dataCoordinator"/>
+        <constructor-arg index="1" ref="actorSystem"/>        
+        <constructor-arg index="2" value="myEngineId"/>
     </bean>
 
 	<osgi:service ref="bipEngine" interface="org.bip.api.BIPEngine"/>

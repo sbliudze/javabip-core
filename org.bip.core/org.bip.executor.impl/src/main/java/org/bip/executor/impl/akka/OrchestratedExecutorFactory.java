@@ -36,7 +36,9 @@ public class OrchestratedExecutorFactory {
 		// to itself and do its work with the help of the BIP engine. 
 		actor.register(engine);
 		
-		return actor;
+		final AkkaOrchestratedExecutorImpl actorWithLifeCycle = new AkkaOrchestratedExecutorImpl(actorSystem, actor);
+		
+		return actorWithLifeCycle;
 	}
 
 	public boolean destroy(Executor executor) {
@@ -44,15 +46,13 @@ public class OrchestratedExecutorFactory {
 		// TODO EXTENSION when it is possible to deregister a component from BIP engine make sure it happens here.
 		// executor.engine().deregister();
 		
-		if (TypedActor.get(actorSystem).isTypedActor(executor)) {
-			executor.deregister();
-			TypedActor.get(actorSystem).poisonPill(executor);
+		if (executor instanceof AkkaOrchestratedExecutorImpl) {
+			((AkkaOrchestratedExecutorImpl)executor).destroy();
 			return true;
 		}
-		else {
-			return false;
-		}
-
+		
+		return false;
+		
 	}
 
 }

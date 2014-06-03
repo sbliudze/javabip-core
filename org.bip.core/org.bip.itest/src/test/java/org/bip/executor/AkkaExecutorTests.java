@@ -272,6 +272,8 @@ public class AkkaExecutorTests {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		
+		assertEquals("Monitor does not have a proper id ", executorM.getId(), "monitor");
 	}
 	
 	@Test
@@ -329,6 +331,8 @@ public class AkkaExecutorTests {
 
 		assertEquals((int) Math.pow(2, size) - 1,
 				hanoiMonitor.getNumberOfMoves());
+		
+		assertEquals("Not all BIP actors were terminated.", destroyed, true);
 		engine.stop();
 	}
 	

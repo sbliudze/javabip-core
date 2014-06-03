@@ -49,7 +49,8 @@
 		<property name="executor" ref="osgi-executor-1" />
 	</bean>
 
-	<bean id="osgi-executor-1" factory-bean="executorFactory" factory-method="create">
+	<bean id="osgi-executor-1" factory-bean="executorFactory"
+	factory-method="create" init-method="init" destroy-method="destroy">
         <constructor-arg index="0" ref="bipEngine"/>
         <constructor-arg index="1" ref="spec-1"/>
         <constructor-arg index="2" value="osgi-executor-1"/>
@@ -70,7 +71,8 @@
 		<property name="executor" ref="osgi-executor-2" />
 	</bean>
 
-	<bean id="osgi-executor-2" factory-bean="executorFactory" factory-method="create">
+	<bean id="osgi-executor-2" factory-bean="executorFactory" factory-method="create"
+	init-method="init" destroy-method="destroy">
         <constructor-arg index="0" ref="bipEngine"/>
         <constructor-arg index="1" ref="spec-2"/>
         <constructor-arg index="2" value="osgi-executor-2"/>
@@ -91,7 +93,8 @@
 		<property name="executor" ref="osgi-executor-3" />
 	</bean>
 
-	<bean id="osgi-executor-3" factory-bean="executorFactory" factory-method="create">
+	<bean id="osgi-executor-3" factory-bean="executorFactory" factory-method="create"
+	init-method="init" destroy-method="destroy">
         <constructor-arg index="0" ref="bipEngine"/>
         <constructor-arg index="1" ref="spec-3"/>
         <constructor-arg index="2" value="osgi-executor-3"/>
@@ -110,7 +113,8 @@
 		<constructor-arg index="0" value="203" />
 	</bean>
 	
-	<bean id="osgi-executor-4" factory-bean="executorFactory" factory-method="create">
+	<bean id="osgi-executor-4" factory-bean="executorFactory" factory-method="create"
+	init-method="init" destroy-method="destroy">
         <constructor-arg index="0" ref="bipEngine"/>
         <constructor-arg index="1" ref="spec-4"/>
         <constructor-arg index="2" value="osgi-executor-4"/>

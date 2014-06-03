@@ -25,8 +25,8 @@
     <packaging>bundle</packaging>
 
     <properties>
-        <activator>io.xtech.bip.activator.BIPEngineActivator</activator>
-        <osgi.private>io.xtech.bip.activator.*, org.bip.engine, org.bip.engine.api, net.sf.javabdd</osgi.private>
+        <activator></activator>
+        <osgi.private>io.xtech.bip.*, org.bip.engine, org.bip.engine.api, net.sf.javabdd</osgi.private>
         <osgi.import>!sun.misc, org.bip.api, jdd.bdd; resolution:=optional, jdd.util; resolution:=optional, *</osgi.import>
 <!--         <osgi.export>org.bip.engine, org.bip.engine.api</osgi.export> -->
     </properties>
@@ -88,6 +88,7 @@
                         <DynamicImport-Package>${osgi.dynamic.import}</DynamicImport-Package>
                         <Private-Package>${osgi.private}</Private-Package>
                         <Require-Bundle>${osgi.bundles}</Require-Bundle>
+                        <Include-Resource>src/main/resources</Include-Resource>
 <!--                    <Spring-Context>*;publish-context:=false;create-asynchronously:=true</Spring-Context>&gt;-->                        <Include-Resource>src/main/resources</Include-Resource>
                     </instructions>
                 </configuration>
