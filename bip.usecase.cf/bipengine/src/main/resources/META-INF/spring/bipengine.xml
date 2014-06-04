@@ -24,6 +24,10 @@
         <constructor-arg index="2" value="myEngineId"/>
     </bean>
 
-	<osgi:service ref="bipEngine" interface="org.bip.api.BIPEngine"/>
+	<osgi:service ref="bipEngine" interface="org.bip.api.BIPEngine">
+		<osgi:service-properties>
+    		<entry key="domain" value="switchableroutes"/>
+  		</osgi:service-properties>
+	</osgi:service>
 		
 </beans>

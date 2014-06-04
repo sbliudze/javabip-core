@@ -20,12 +20,12 @@
 
     <packaging>bundle</packaging>
     
-    <name>XTech :: BIP :: BIPAdmin </name>
+    <name>BIP :: CF :: BIPAdmin commands </name>
     <version>1.0.0-SNAPSHOT</version>
     
     <properties>
-        <activator>io.xtech.bip.activator.ServiceActivator</activator>
-        <osgi.private>io.xtech.bip.admin.commands, io.xtech.bip.activator</osgi.private>
+        <activator></activator>
+        <osgi.private>io.xtech.bip.admin.commands</osgi.private>
         <osgi.import>org.osgi.service.command;resolution:=optional, *</osgi.import>
         <osgi.export></osgi.export>
         <osgi.dynamic.import></osgi.dynamic.import>

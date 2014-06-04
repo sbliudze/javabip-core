@@ -8,10 +8,6 @@
 
     <command-bundle xmlns="http://karaf.apache.org/xmlns/shell/v1.0.0">
 
-<!--         <command name="bip/register">
-            <action class="io.xtech.bip.admin.commands.RegisterBIPComponentCommand"/>
-        </command>
- -->
         <command name="bip/execute">
             <action class="io.xtech.bip.admin.commands.ExecuteCommand"/>
         </command>

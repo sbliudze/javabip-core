@@ -13,7 +13,7 @@
   
   <version>0.1.xtech-bipengine-00001</version>
   
-  <name>BIP :: Core :: Engine</name>
+  <name>BIP :: CF :: BIP Engine switchableroutes domain</name>
 
 <!-- 
 	It takes BIP engine jar file provided as jar dependency and packages it as OSGi bundle. 

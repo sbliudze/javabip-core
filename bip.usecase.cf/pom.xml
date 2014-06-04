@@ -25,6 +25,7 @@
 		<module>bipengine</module>
 		<module>bipadmin</module>
 		<module>bipmodules</module>
+		<module>bipglue</module>
 	</modules>
 
 	<properties>

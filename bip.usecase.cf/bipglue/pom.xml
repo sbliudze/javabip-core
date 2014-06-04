@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+      <groupId>io.xtech.bip</groupId>
+      <artifactId>bip.usecase.switchableroute</artifactId>
+      <version>0.1.0-SNAPSHOT</version>
+    </parent>    
+
+    <description>
+      It is a simple bundle containing admin commands to run BIP use case.
+    </description>
+
+	<name>BIP :: CF :: BIPGlue :: switchableroute </name>
+
+    <groupId>io.xtech.bip</groupId>   
+    <artifactId>bip.usecase.switchableroute.bipglue</artifactId>
+
+
+    <packaging>bundle</packaging>
+
+
+    <properties>
+        <activator></activator>
+        <private></private>
+        <import></import>
+        <export></export>
+        <dynamic.import></dynamic.import>
+        <require.bundles></require.bundles>
+        <fragment-host>bip.usecase.switchableroute.admin</fragment-host>
+    </properties>
+
+    <build>
+
+
+        <plugins>
+        <plugin>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>maven-bundle-plugin</artifactId>
+            <version>2.3.7</version>
+            <extensions>true</extensions>
+            <configuration>
+                <instructions>
+                    <Embed-Transitive>true</Embed-Transitive>
+                    <Bundle-Name>${project.name}</Bundle-Name>
+                    <Bundle-Activator>${activator}</Bundle-Activator>
+                    <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                    <Export-Package>${export}</Export-Package>
+                    <Import-Package>${import}</Import-Package>
+                    <DynamicImport-Package>${dynamic.import}</DynamicImport-Package>
+                    <Private-Package>${private}</Private-Package>
+                    <Require-Bundle>${require.bundles}</Require-Bundle>
+                    <Spring-Context>*;publish-context:=false;create-asynchronously:=true</Spring-Context>&gt;
+                    <Include-Resource>src/main/resources</Include-Resource>
+                    <Fragment-Host>${fragment-host}</Fragment-Host>
+                </instructions>
+            </configuration>
+        </plugin>
+
+        </plugins>
+
+    </build>
+
+</project>

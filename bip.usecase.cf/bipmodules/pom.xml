@@ -20,7 +20,7 @@
   
   <packaging>bundle</packaging>
 
-  <name>XTech :: BIP :: BIPModules </name>
+  <name>BIP :: CF :: BIPModules for switchableroutes domain</name>
 
     <properties>
         <activator>io.xtech.bip.activator.ServiceActivator</activator>
