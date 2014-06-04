@@ -32,7 +32,8 @@
 
 	<!-- Beans needed by all BIP components -->
 
-	<osgi:reference cardinality="1..1" id="bipEngine" interface="org.bip.api.BIPEngine"/>
+	<osgi:reference cardinality="1..1" id="bipEngine" interface="org.bip.api.BIPEngine" 
+	filter="(domain=switchableroutes)"/>
 	
 	<osgi:reference cardinality="1..1" id="actorSystem" interface="akka.actor.ActorSystem"/>
 
