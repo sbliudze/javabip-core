@@ -8,7 +8,6 @@ package io.xtech.bip.admin.commands;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Enumeration;
 
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
