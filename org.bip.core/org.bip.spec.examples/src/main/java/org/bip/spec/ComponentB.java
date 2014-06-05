@@ -17,15 +17,20 @@ public class ComponentB {
 	Logger logger = LoggerFactory.getLogger(ComponentB.class);
 
 	private int memoryY = 200;
+	
+	public int counterA = 0;
+	public int counterB = 0;
 
 	@Transition(name = "a", source = "zero", target = "zero")
 	public void componentBTransitionA() {
 		logger.debug("Transition a of ComponentB has been performed");
+		counterA++;
 	}
 
 	@Transition(name = "b", source = "zero", target = "zero")
 	public void componentBTransitionB() {
 		logger.debug("Transition b of ComponentB has been performed");
+		counterB++;
 	}
 
 	@Data(name = "memoryY", accessTypePort = AccessType.allowed, ports = {"a"})

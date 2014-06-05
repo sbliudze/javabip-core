@@ -20,15 +20,20 @@ import org.bip.engine.api.BIPCoordinator;
 import org.bip.engine.api.EngineFactory;
 import org.bip.exceptions.BIPException;
 import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
+import org.bip.glue.GlueBuilder;
 import org.bip.glue.TwoSynchronGlueBuilder;
+import org.bip.spec.ComponentB;
+import org.bip.spec.Consumer;
 import org.bip.spec.HanoiGlueBuilder;
 import org.bip.spec.HanoiMonitor;
 import org.bip.spec.LeftHanoiPeg;
 import org.bip.spec.MemoryMonitor;
 import org.bip.spec.MiddleHanoiPeg;
+import org.bip.spec.PSSComponent;
 import org.bip.spec.RightHanoiPeg;
 import org.bip.spec.SwitchableRouteDataTransfers;
 import org.bip.spec.hanoi.HanoiOptimalMonitor;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import akka.actor.ActorSystem;
@@ -445,6 +450,69 @@ public class AkkaExecutorTests {
 	}	
 
 	
+	// TODO, IMPROVEMENT When BIP protocol is optimized and wait no longer is used then enable this test.
+	@Test
+	@Ignore
+	public void testNoSpontaneousWaitBlockEverything() throws BIPException {
+
+		BIPGlue bipGlue = new GlueBuilder() {
+			@Override
+			public void configure() {
+
+				port(PSSComponent.class, "p").requires(ComponentB.class, "b");
+
+				port(PSSComponent.class, "p").accepts(ComponentB.class, "b");
+
+				port(ComponentB.class, "a").requiresNothing();
+				port(ComponentB.class, "b").requires(PSSComponent.class, "p");
+				
+				// Just to keep the DataCoordinator happy to have something even if this BIP component is not instantiated.
+				data(ComponentB.class, "memoryY").to(Consumer.class, "memoryUsage");
+
+			}
+
+		}.build();
+
+		ActorSystem system = ActorSystem.create("MySystem");
+		OrchestratedExecutorFactory executorFactory = new OrchestratedExecutorFactory(system);
+		EngineFactory engineFactory = new EngineFactory(system);
+		BIPEngine engine = engineFactory.create("myEngine",
+				new DataCoordinatorKernel(new BIPCoordinatorImpl()));
+
+		PSSComponent pssComponent = new PSSComponent(true);
+
+		Executor pssExecutor = executorFactory.create(engine, pssComponent, "pssCompE", true);
+		
+		ComponentB bComponent = new ComponentB();
+		
+		Executor bExecutor = executorFactory.create(engine, bComponent, "bCompE", true);
+		
+		Consumer cComponent = new Consumer(100);
+		Executor cExecutor = executorFactory.create(engine, cComponent, "cCompE", true);
+		
+		engine.specifyGlue(bipGlue);
+		engine.start();
+
+		engine.execute();
+
+		try {
+			Thread.sleep(4000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		assertEquals("Spontaneous wait on one component has blocked all the components", bComponent.counterA > 0, true);
+
+		boolean destroyed = executorFactory.destroy(pssExecutor);
+		destroyed &= executorFactory.destroy(bExecutor);
+		destroyed &= executorFactory.destroy(cExecutor);
+
+		engine.stop();
+
+		assertEquals("Some actors where not destroyed succesfully", true, destroyed);
+
+	}
+
 	
 
 
