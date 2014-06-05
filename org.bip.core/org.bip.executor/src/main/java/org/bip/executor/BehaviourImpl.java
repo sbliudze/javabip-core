@@ -419,6 +419,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 	private void invokeMethod(ExecutableTransition transition) {
 		Method componentMethod;
 		try {
+			logger.info("Invocation: " + transition.name() );
 			componentMethod = transition.method();
 			if (!componentMethod.getDeclaringClass().isAssignableFrom(componentClass)) {
 				throw new IllegalArgumentException("The method " + componentMethod.getName() + 

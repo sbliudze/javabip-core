@@ -23,7 +23,7 @@
 	<properties>
 		<osgi.private></osgi.private>
 		<osgi.import>*</osgi.import>
-		<osgi.export>org.bip.spec, org.bip.spec.hanoi</osgi.export>
+		<osgi.export>org.bip.spec, org.bip.spec.hanoi, org.bip.spec.diningphilosophers</osgi.export>
 		<osgi.dynamic.import></osgi.dynamic.import>
 	</properties>
 

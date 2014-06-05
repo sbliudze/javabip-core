@@ -15,7 +15,7 @@ public class DiningPhilosophersGlueBuilder extends TwoSynchronGlueBuilder {
 		synchron(Philosophers.class, "pickupFork").to(Fork.class, "hold");
 		synchron(Philosophers.class, "putdownFork").to(Fork.class, "free");
 		
-		data(Philosophers.class, "forkId").to(Fork.class, "forkId");
+		data(Fork.class, "forkId").to(Philosophers.class, "forkId");
 
 	}
 

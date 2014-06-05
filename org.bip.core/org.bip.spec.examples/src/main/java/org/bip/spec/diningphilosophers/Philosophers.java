@@ -18,7 +18,7 @@ import org.bip.api.PortType;
 @Ports({ @Port(name = "eat", type = PortType.enforceable),
 		 @Port(name = "pickupFork", type = PortType.enforceable),
 		 @Port(name = "putdownFork", type = PortType.enforceable) })
-@ComponentType(initial = "thinking", name = "org.bip.spec.diningphilosophers.Philosopher")
+@ComponentType(initial = "thinking", name = "org.bip.spec.diningphilosophers.Philosophers")
 public class Philosophers {
 
 	protected int leftFork;
@@ -51,10 +51,12 @@ public class Philosophers {
 		if (forkId == leftFork) {
 			System.out.println("Picked up left fork.");
 			holdsLeftFork = true;
+			return;
 		}
 		if (forkId == rightFork) {
 			System.out.println("Picked up right fork.");
 			holdsRightFork = true;
+			return;
 		}
 		throw new IllegalArgumentException("Fork to be picked up is neither left or right.");
 	}
@@ -93,10 +95,12 @@ public class Philosophers {
 		if (forkId == leftFork) {
 			System.out.println("Putdown left fork.");
 			holdsLeftFork = false;
+			return;
 		}
 		if (forkId == rightFork) {
 			System.out.println("Putdown right fork.");
 			holdsRightFork = false;
+			return;
 		}
 		throw new IllegalArgumentException("Fork to be putdown is neither left or right.");		
 	}
