@@ -8,6 +8,8 @@ import org.bip.annotations.Ports;
 import org.bip.annotations.Transition;
 import org.bip.annotations.Transitions;
 import org.bip.api.PortType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Philosopher that may use partial order to decide which fork first to pick up. Partial order alone may 
@@ -21,6 +23,8 @@ import org.bip.api.PortType;
 @ComponentType(initial = "thinking", name = "org.bip.spec.diningphilosophers.Philosophers")
 public class Philosophers {
 
+    Logger logger = LoggerFactory.getLogger(Philosophers.class);
+    
 	protected int leftFork;
 	protected int rightFork;
 
@@ -49,12 +53,12 @@ public class Philosophers {
 				  @Transition(name="pickupFork", source = "holdingOneFork", target = "holdingBothForks", guard="canPickupFork")})
 	public void pickupFork(@Data(name="forkId") int forkId) {
 		if (forkId == leftFork) {
-			System.out.println("Picked up left fork.");
+			logger.debug("Picked up left fork.");
 			holdsLeftFork = true;
 			return;
 		}
 		if (forkId == rightFork) {
-			System.out.println("Picked up right fork.");
+			logger.debug("Picked up right fork.");
 			holdsRightFork = true;
 			return;
 		}
@@ -81,7 +85,7 @@ public class Philosophers {
 
 	@Transition(name="eat", source="holdingBothForks", target="hasEaten", guard="holdsBothForks")
 	public void eat() {
-		System.out.println("Eating... Delicious. Thank you.");
+		logger.debug("Eating... Delicious. Thank you.");
 	}
 	
 	@Guard(name="holdsBothForks")
@@ -93,12 +97,12 @@ public class Philosophers {
 		  @Transition(name="putdownFork", source = "holdingOneFork", target = "thinking", guard="canPutdownFork")})	
 	public void putDownFork(@Data(name="forkId") int forkId) {
 		if (forkId == leftFork) {
-			System.out.println("Putdown left fork.");
+			logger.debug("Putdown left fork.");
 			holdsLeftFork = false;
 			return;
 		}
 		if (forkId == rightFork) {
-			System.out.println("Putdown right fork.");
+			logger.debug("Putdown right fork.");
 			holdsRightFork = false;
 			return;
 		}
