@@ -11,7 +11,7 @@
     </parent>    
 
     <description>
-      It is a simple bundle containing admin commands to run BIP use case.
+      It is a fragment bundle containing bip glue for switchable route domain.
     </description>
 
 	<name>BIP :: CF :: BIPGlue :: switchableroute </name>
