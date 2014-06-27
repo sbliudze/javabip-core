@@ -18,10 +18,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.bip.api.Accepts;
+import org.bip.api.Accept;
 import org.bip.api.BIPGlue;
 import org.bip.api.DataWire;
-import org.bip.api.Requires;
+import org.bip.api.Require;
 
 @XmlRootElement(name = "glue")
 class BIPGlueImpl implements BIPGlue {
@@ -44,15 +44,15 @@ class BIPGlueImpl implements BIPGlue {
 		this.dataWires = new ArrayList<DataWireImpl>();
 	}
 
-	public BIPGlueImpl(ArrayList<Accepts> acceptConstraints, ArrayList<Requires> requiresConstraints,
+	public BIPGlueImpl(ArrayList<Accept> acceptConstraints, ArrayList<Require> requiresConstraints,
 			ArrayList<DataWire> dataWires) {
 		this.acceptConstraints = new ArrayList<AcceptImpl>();
-		for (Accepts acc : acceptConstraints) {
+		for (Accept acc : acceptConstraints) {
 			this.acceptConstraints.add(new AcceptImpl(acc.getEffect(), acc.getCauses()));
 		}
 
 		this.requiresConstraints = new ArrayList<RequireImpl>();
-		for (Requires req : requiresConstraints) {
+		for (Require req : requiresConstraints) {
 			this.requiresConstraints.add(new RequireImpl(req.getEffect(), req.getCauses()));
 		}
 
@@ -63,14 +63,14 @@ class BIPGlueImpl implements BIPGlue {
 
 	}
 
-	public ArrayList<Accepts> getAcceptConstraints() {
-		ArrayList<Accepts> acceptConstraintsInterface = new ArrayList<Accepts>();
+	public ArrayList<Accept> getAcceptConstraints() {
+		ArrayList<Accept> acceptConstraintsInterface = new ArrayList<Accept>();
 		acceptConstraintsInterface.addAll(acceptConstraints);
 		return acceptConstraintsInterface;
 	}
 
-	public ArrayList<Requires> getRequiresConstraints() {
-		ArrayList<Requires> requiresConstraintsInterface = new ArrayList<Requires>();
+	public ArrayList<Require> getRequiresConstraints() {
+		ArrayList<Require> requiresConstraintsInterface = new ArrayList<Require>();
 		requiresConstraintsInterface.addAll(requiresConstraints);
 		return requiresConstraintsInterface;
 	}

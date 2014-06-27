@@ -9,34 +9,33 @@
 package org.bip.api;
 
 import java.io.OutputStream;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * It specifies functionality required from BIP Glue based on accepts/requires formalism.
  */
 public interface BIPGlue {
 
-	// TODO API CHANGE ArrayList into List interface.
 	/**
 	 * Gets the accept constraints.
 	 * 
 	 * @return the accept constraints
 	 */
-	public ArrayList<Accepts> getAcceptConstraints();
+	public List<Accept> getAcceptConstraints();
 
 	/**
 	 * Gets the requires constraints.
 	 * 
 	 * @return the requires constraints
 	 */
-	public ArrayList<Requires> getRequiresConstraints();
+	public List<Require> getRequiresConstraints();
 
 	/**
 	 * Gets the data wires.
 	 * 
 	 * @return the data wires
 	 */
-	public ArrayList<DataWire> getDataWires();
+	public List<DataWire> getDataWires();
 
 	/**
 	 * It writes xml representation of BIP glue to provided output stream.

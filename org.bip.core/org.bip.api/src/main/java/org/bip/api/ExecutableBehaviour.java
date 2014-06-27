@@ -10,7 +10,6 @@ package org.bip.api;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -116,11 +115,10 @@ public interface ExecutableBehaviour extends Behaviour {
 	
 	public boolean existInCurrentStateAndEnforceableWithData();
 	
-	// TODO API CHANGE Change Hashtable into an interface, map.
 	/**
 	 * Compute guards.
 	 *
 	 * @return the hashtable
 	 */
-	public Hashtable<String, Boolean> computeGuardsWithoutData();
+	public Map<String, Boolean> computeGuardsWithoutData();
 }

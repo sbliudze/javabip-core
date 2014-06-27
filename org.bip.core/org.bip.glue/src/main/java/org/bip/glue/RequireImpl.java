@@ -15,9 +15,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.bip.api.PortBase;
-import org.bip.api.Requires;
+import org.bip.api.Require;
 
-class RequireImpl implements Requires {
+class RequireImpl implements Require {
 
 	@XmlElement(name = "effect")
 	private PortBaseImpl effect;

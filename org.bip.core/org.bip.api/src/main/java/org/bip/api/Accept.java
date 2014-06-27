@@ -8,26 +8,25 @@
 
 package org.bip.api;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
- * It specifies the requires within BIP Glue.
+ * It specifies the functionality of the accept.
  */
-// TODO API CHANGE change name to Require
-public interface Requires {
+public interface Accept {
 
 	/**
-	 * Gets the effect.
+	 * It returns the effect of the accept.
 	 * 
 	 * @return the effect
 	 */
 	public PortBase getEffect();
 
 	/**
-	 * Gets the causes.
+	 * It returns causes for a given effect of accept.
 	 * 
-	 * @return the causes
+	 * @return the causes of the given accept.
 	 */
-	public List<List<PortBase>> getCauses();
+	public Collection<PortBase> getCauses();
 
 }

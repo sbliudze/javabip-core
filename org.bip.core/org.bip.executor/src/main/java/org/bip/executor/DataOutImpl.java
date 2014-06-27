@@ -56,7 +56,7 @@ class DataOutImpl<T> extends DataImpl<T> implements DataOut<T> {
 		return this.allowedPorts;
 	}
 
-	public AccessType portSpecificationType() {
+	public AccessType portAccessType() {
 		return this.portAccessType;
 	}
 	

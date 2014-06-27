@@ -54,7 +54,7 @@ public interface Behaviour {
 	 *
 	 * @return the states
 	 */
-	public List<String> getStates();
+	public Set<String> getStates();
 
 	/**
 	 * Port to data in for guard.

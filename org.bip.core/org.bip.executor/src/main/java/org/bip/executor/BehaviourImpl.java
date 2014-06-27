@@ -47,8 +47,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 	// for each port provides data it needs for transitions
 	private Hashtable<Port, Set<Data<?>>> portToDataInForTransition;
 
-	// TODO API CHANGE after changing the interface to Set, change this to HashSet.
-	private ArrayList<String> states;
+	private Set<String> states;
 	// maps state to its transitions
 	private Hashtable<String, ArrayList<ExecutableTransition>> stateTransitions;
 	// maps state to its enforceable ports
@@ -101,7 +100,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 		this.currentState = currentState;
 		this.allTransitions = allTransitions;
 		this.allPorts = allPorts;
-		this.states = new ArrayList<String>(states);
+		this.states = new HashSet<String>(states);
 		this.guardsWithoutData = new ArrayList<Guard>();
 		this.guardsWithData = new ArrayList<Guard>();
 		for (Guard guard : guards) {
@@ -234,7 +233,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 		return nameToTransition.get(state).get(transitionName);
 	}
 
-	public List<String> getStates() {
+	public Set<String> getStates() {
 		return states;
 	}
 
@@ -367,7 +366,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 		return result;
 	}
 
-	public Hashtable<String, Boolean> computeGuardsWithoutData() {
+	public Map<String, Boolean> computeGuardsWithoutData() {
 		
 		// TODO BUG DESIGN compute only guards needed for this current state, as other 
 		// guards not guaranteed to compute properly if executed in the wrong state.

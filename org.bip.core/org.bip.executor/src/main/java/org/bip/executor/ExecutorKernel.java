@@ -93,7 +93,7 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 	}
 
 	// Computed in guardToValue, used for checks in execute.
-	Hashtable<String, Boolean> guardToValue;
+	Map<String, Boolean> guardToValue;
 	/**
 	 * If no engine is registered it will exit immediately.
 	 * 

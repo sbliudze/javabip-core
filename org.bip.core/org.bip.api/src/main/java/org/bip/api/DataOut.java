@@ -30,7 +30,7 @@ public interface DataOut<T> extends Data<T> {
 	 * @return the type
 	 */
 	// TODO API CHANGE change the name to portAccessType.
-	public AccessType portSpecificationType();
+	public AccessType portAccessType();
 
 	/**
 	 * The Enum PortType.

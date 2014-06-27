@@ -149,7 +149,7 @@ public abstract class AbstractExecutor extends SpecificationParser implements Ru
 		waitingSpontaneous = false;
 		dataEvaluation.clear();
 
-		Hashtable<String, Boolean> guardToValue = behaviour.computeGuardsWithoutData();
+		Map<String, Boolean> guardToValue = behaviour.computeGuardsWithoutData();
 
 		// we have to compute this in order to be able to raise an exception
 		boolean existInternal = behaviour.existEnabledInternal(guardToValue);

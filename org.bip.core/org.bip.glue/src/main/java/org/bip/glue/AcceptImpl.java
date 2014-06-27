@@ -14,10 +14,10 @@ import java.util.Collection;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
-import org.bip.api.Accepts;
+import org.bip.api.Accept;
 import org.bip.api.PortBase;
 
-class AcceptImpl implements Accepts {
+class AcceptImpl implements Accept {
 
 	@XmlElement(name = "effect")
 	private PortBaseImpl effect;
