@@ -37,7 +37,6 @@ public interface Behaviour {
 	 *
 	 * @return the enforceable ports
 	 */
-	// TODO API CHANGE Discuss if changing to PortBase is appropriate.	
 	public List<Port> getEnforceablePorts();
 	
 	
@@ -46,7 +45,6 @@ public interface Behaviour {
 	 * @param port the name of the port, can not be null or empty.
 	 * @return true if the port is spontaneous, otherwise fault.
 	 */
-	// TODO API CHANGE Discuss if changing to PortBase is appropriate.	
 	public boolean isSpontaneousPort(String port);
 
 	/**
@@ -61,7 +59,6 @@ public interface Behaviour {
 	 *
 	 * @return the map
 	 */
-	// TODO API CHANGE Discuss if changing to PortBase is appropriate.	
 	public Map<Port, Set<Data<?>>> portToDataInForGuard();
 
 	// TODO DESIGN BUG what if a given port is associated with different transitions within behavior and these transitions 
@@ -72,7 +69,6 @@ public interface Behaviour {
 	 * @param port the port for which its required data is returned.
 	 * @return the sets of data required by the guard to the given transition associated with a given port.
 	 */
-	// TODO API CHANGE Discuss if changing to PortBase is appropriate.
 	public Set<Data<?>> portToDataInForGuard(Port port);
 
 	/**
@@ -81,7 +77,6 @@ public interface Behaviour {
 	 * @param port the port
 	 * @return the iterable
 	 */
-	// TODO API CHANGE Discuss if changing to PortBase is appropriate.
 	public Iterable<Data<?>> portToDataInForTransition(Port port);
 
 	/**
@@ -90,7 +85,6 @@ public interface Behaviour {
 	 * @param dataName the data name
 	 * @return the list
 	 */
-	// TODO API CHANGE Discuss if changing to PortBase is appropriate.	
 	public List<Port> portsNeedingData(String dataName);
 
 	/**
@@ -99,7 +93,6 @@ public interface Behaviour {
 	 * @param dataName name of the data out variable.
 	 * @return set of ports for which the data out is provided.
 	 */
-	// TODO API CHANGE Discuss if changing to PortBase is appropriate.	
 	public Set<Port> getDataProvidingPorts(String dataName);
 
 }

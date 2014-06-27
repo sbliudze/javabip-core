@@ -132,7 +132,7 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 					logger.debug("About to execute spontaneous transition {} for component {}", port, id);
 					
 					notifiers.remove(port);
-					behaviour.execute(port);
+					behaviour.executePort(port);
 					
 					logger.debug("Issuing next step message for component {}", id);
 					// Scheduling the next execution step.					
@@ -185,7 +185,7 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 				if (!behaviour.existInCurrentStateAndEnabledEnforceableWithoutData(guardToValue))
 					throw new BIPException("Port with " + portID + "is not enabled in the current state");
 
-				behaviour.execute(portID);
+				behaviour.executePort(portID);
 			}
 			else {
 

@@ -209,7 +209,7 @@ public abstract class AbstractExecutor extends SpecificationParser implements Ru
 		}
 		// execute spontaneous
 		logger.info("Executing spontaneous transition {}.", portID);
-		behaviour.execute(portID);
+		behaviour.executePort(portID);
 		semaphore.release();
 
 	}
@@ -225,7 +225,7 @@ public abstract class AbstractExecutor extends SpecificationParser implements Ru
 		// port?
 		if (dataEvaluation == null || dataEvaluation.isEmpty()) {
 			try {
-				behaviour.execute(portID);
+				behaviour.executePort(portID);
 			} catch (BIPException e) {
 				// TODO OR DEPRECATED Discuss how to handle exceptions and apply it in the code.
 				e.printStackTrace();

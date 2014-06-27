@@ -387,7 +387,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 	}
 
 	// ExecutorKernel, the owner of BehaviourImpl is checking the correctness of the execution.
-	public void execute(String portID) throws BIPException {
+	public void executePort(String portID) throws BIPException {
 		// this component does not take part in the interaction
 		if (portID == null) {
 			return;
