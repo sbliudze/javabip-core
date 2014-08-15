@@ -117,4 +117,9 @@ class ExecutableTransitionImpl extends TransitionImpl implements ExecutableTrans
 			return false;
 		}
 	}
+
+	@Override
+	public boolean hasData() {
+		return dataRequired.iterator()==null;
+	}
 }

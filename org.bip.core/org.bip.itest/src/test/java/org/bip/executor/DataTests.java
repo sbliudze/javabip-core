@@ -4,7 +4,11 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
 
 import javax.xml.bind.JAXBException;
 
@@ -330,7 +334,6 @@ public class DataTests {
 		DataCoordinator engine = new DataCoordinatorImpl(null);
 
 
-
 		final RoutePolicy routePolicy1 = new RoutePolicy() {
 
 			public void onInit(Route route) {
@@ -432,7 +435,7 @@ public class DataTests {
 			}
 		};
 
-		RouteBuilder builder1 = new RouteBuilder() {
+		RouteBuilder builder = new RouteBuilder() {
 
 			@Override
 			public void configure() throws Exception {
@@ -460,7 +463,7 @@ public class DataTests {
 		};
 		camelContext.setAutoStartup(false);
 		try {
-			camelContext.addRoutes(builder1);
+			camelContext.addRoutes(builder);
 			camelContext.start();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -904,4 +907,86 @@ public class DataTests {
 		}
 
 	}
+	
+	@Test
+	public void bipMultipleSwRTransferTest() throws BIPException, IOException {
+		int size = 10;
+		
+		FileInputStream inStream = new FileInputStream(
+				"src/test/resources/header.txt");
+
+		FileOutputStream outStream = new FileOutputStream(
+				"src/test/java/org/bip/executor/swRouteMultTest.java");
+		long k = copyLarge(inStream, outStream);
+		inStream.close();
+		
+		String replaceString = "";
+		for (int i = 1; i <= size; i++) {
+
+			replaceString+="1";
+			
+			String componentStr = "	SwitchableRouteDataTransfers route1 = new SwitchableRouteDataTransfers(\"1\", camelContext);\nfinal ExecutorImpl executor1 = new ExecutorImpl(\"\", route1, true);\n\n";
+			outStream.write(componentStr.replace("1", replaceString).getBytes());
+
+			String routePolicyStr = "		final RoutePolicy routePolicy1 = new RoutePolicy() {public void onInit(Route route) {}\n	public void onExchangeDone(Route route, Exchange exchange) {executor1.inform(\"end\");}\n\n	public void onExchangeBegin(Route route, Exchange exchange) {}\n	public void onRemove(Route arg0) {}\n	@Override	public void onResume(Route arg0) {}\n @Override public void onStart(Route arg0) {}\n			@Override	public void onStop(Route arg0) {}\n	@Override	public void onSuspend(Route arg0) {}\n		};";
+			outStream.write(routePolicyStr.replace("1", replaceString).getBytes());
+
+		}
+		String routeBuilderStr = "\nRouteBuilder builder = new RouteBuilder() \n{@Override	public void configure() throws Exception {";
+		outStream.write(routeBuilderStr.getBytes());
+		
+		replaceString = "";
+		for (int i = 1; i <= size; i++) {
+			replaceString+="1";
+			String routeBuilder = "from(\"file:inputfolder1?delete=true\").routeId(\"1\").routePolicy(routePolicy1).process(new Processor() {\n	public void process(Exchange exchange) throws Exception {}}).to(\"file:outputfolder1\");\n\n";
+
+			outStream.write(routeBuilder.replace("1", replaceString)
+					.getBytes());
+		}
+		
+		String camelContext = "		}};\n	camelContext.setAutoStartup(false);try { camelContext.addRoutes(builder);	camelContext.start(); } catch (Exception e){e.printStackTrace();}\n";
+		outStream.write(camelContext.getBytes());
+
+		replaceString = "";
+		for (int i = 1; i <= size; i++) {
+			replaceString+="1";
+			String setup = "		route1.setCamelContext(camelContext);\n"
+					+ "Thread t1 = new Thread(executor1, \"SW1\");\n"
+					+ "executor1.setEngine(engine);\n"
+					+ "executor1.register(engine);\n";
+			outStream.write(setup.replace("1", replaceString).getBytes());
+		}
+		
+		String engineSetup = "	engine.specifyGlue(bipGlue);\n"+"		engine.start();\n"+"try { tM.start();";
+		outStream.write(engineSetup.getBytes());
+		
+		replaceString = "";
+		for (int i = 1; i <= size; i++) {
+			replaceString+="1";
+			String threadStart = "t1.start();\n";
+			outStream.write(threadStart.replace("1", replaceString).getBytes());
+		}
+		
+		String threadrun  ="}\n catch (IllegalArgumentException e) {e.printStackTrace();} catch (SecurityException e) {	e.printStackTrace();}\n"
+		+"engine.execute();";
+		outStream.write(threadrun.getBytes());
+		
+		String endStr = "}}";
+		outStream.write(endStr.getBytes());
+		
+		outStream.close();
+	}
+
+	public static long copyLarge(InputStream input, OutputStream output)
+		       throws IOException {
+		   byte[] buffer = new byte[100000000];
+		   long count = 0;
+		   int n = 0;
+		   while (-1 != (n = input.read(buffer))) {
+		       output.write(buffer, 0, n);
+		       count += n;
+		   }
+		   return count;
+		}
+
 }

@@ -2,6 +2,10 @@ package org.bip.executor;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+
 import javax.xml.bind.JAXBException;
 
 import org.apache.camel.CamelContext;
@@ -30,8 +34,10 @@ import org.bip.spec.LeftHanoiPeg;
 import org.bip.spec.MemoryMonitor;
 import org.bip.spec.MiddleHanoiPeg;
 import org.bip.spec.PSSComponent;
+import org.bip.spec.Peer;
 import org.bip.spec.RightHanoiPeg;
 import org.bip.spec.SwitchableRouteDataTransfers;
+import org.bip.spec.Tracker;
 import org.bip.spec.hanoi.HanoiOptimalMonitor;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -513,7 +519,59 @@ public class AkkaExecutorTests {
 
 	}
 
-	
+	@Test
+	public void TrackerPeerTest()
+	{		
+				
 
+		ActorSystem system = ActorSystem.create("MySystem");
+		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(
+				system);
+		EngineFactory engineFactory = new EngineFactory(system);
+		BIPEngine engine = engineFactory.create("myEngine",
+				new DataCoordinatorKernel(new BIPCoordinatorImpl()));
+		
+		BIPGlue bipGlue = createGlue("src/test/resources/trackerPeerGlue.xml");
+		
+		Tracker tracker1 = new Tracker(1);
+		Peer peer1a = new Peer(11);
+		Peer peer1b = new Peer(12);
+		Tracker tracker2 = new Tracker(2);
+		Peer peer2a = new Peer(21);
+		Peer peer2b = new Peer(22);
+
+		final Executor executor1 = factory.create(engine, tracker1, "1", true);
+		final Executor executor1a = factory.create(engine, peer1a, "1a", true);
+		final Executor executor1b = factory.create(engine, peer1b, "1b", true);
+		final Executor executor2 = factory.create(engine, tracker2, "2", true);
+		final Executor executor2a = factory.create(engine, peer2a, "2a", true);
+		final Executor executor2b = factory.create(engine, peer2b, "2b", true);
+		
+		engine.specifyGlue(bipGlue);
+		engine.start();
+		engine.execute();
+		
+		try {
+			Thread.sleep(30000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+}
+	
+	private BIPGlue createGlue(String bipGlueFilename) {
+		BIPGlue bipGlue = null;
+
+		InputStream inputStream;
+		try {
+			inputStream = new FileInputStream(bipGlueFilename);
+
+			bipGlue = GlueBuilder.fromXML(inputStream);
+
+		} catch (FileNotFoundException e) {
+
+			e.printStackTrace();
+		}
+		return bipGlue;
+	}
 
 }

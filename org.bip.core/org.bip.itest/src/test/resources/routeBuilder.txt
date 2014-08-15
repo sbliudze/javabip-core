@@ -1,0 +1,14 @@
+RouteBuilder builder = new RouteBuilder() {
+
+			@Override
+			public void configure() throws Exception {
+				from("file:inputfolder1?delete=true").routeId("1")
+						.routePolicy(routePolicy1).process(new Processor() {
+
+							public void process(Exchange exchange)
+									throws Exception {
+
+							}
+						}).to("file:outputfolder1");
+
+		};

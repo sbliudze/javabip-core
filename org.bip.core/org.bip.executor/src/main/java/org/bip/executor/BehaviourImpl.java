@@ -298,6 +298,11 @@ class BehaviourImpl implements ExecutableBehaviour, BIPBuilderBehaviour {
 
 	}
 	
+	public boolean transitionNoDataGuardData(String port) throws BIPException {
+		ExecutableTransition transition = this.nameToTransition.get(currentState).get(port);
+				return transition.hasDataOnGuards()&&! transition.hasData();
+	}
+	
 	@Override
 	public boolean existInCurrentStateAndEnabledSpontaneous(Map<String, Boolean> guardToValue) throws BIPException {
 	
@@ -396,7 +401,7 @@ class BehaviourImpl implements ExecutableBehaviour, BIPBuilderBehaviour {
 		}
 		ExecutableTransition transition = getTransition(currentState, portID);
 		if (transition == null) { // this shouldn't normally happen
-			throw new BIPException("The spontaneous transition cannot be null after inform");
+			throw new BIPException("The spontaneous transition for port " + portID + " cannot be null after inform");
 		}
 		invokeMethod(transition);
 	}

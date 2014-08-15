@@ -182,10 +182,16 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 
 			if (dataEvaluation.isEmpty()) {
 
-				if (!behaviour.existInCurrentStateAndEnabledEnforceableWithoutData(guardToValue))
-					throw new BIPException("Port with " + portID + "is not enabled in the current state");
-
-				behaviour.executePort(portID);
+				if (behaviour.transitionNoDataGuardData(portID)) //TODO what about checking if is enabled?
+				{
+					behaviour.executePort(portID);
+				}
+				
+				else if (!behaviour.existInCurrentStateAndEnabledEnforceableWithoutData(guardToValue))
+					throw new BIPException("Port " + portID + " is not enabled in the current state");
+				else {
+					behaviour.executePort(portID);
+				}
 			}
 			else {
 

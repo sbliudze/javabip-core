@@ -26,6 +26,8 @@ interface ExecutableTransition extends Transition {
 	public Iterable<Data<?>> dataRequired();
 
 	public boolean hasDataOnGuards();
+	
+	public boolean hasData();
 
 	public boolean guardIsTrue(Map<String, Boolean> guardToValue);
 

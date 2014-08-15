@@ -97,6 +97,14 @@ public interface ExecutableBehaviour extends Behaviour {
 	public boolean existInCurrentStateAndEnabledEnforceableWithoutData(Map<String, Boolean> guardToValue) throws BIPException;
 	
 	/**
+	 * Return true if a transition corresponding to the particular port in the current state has guards on data but does not have data itself.
+	 * @param port name of the port (transition)
+	 * @return
+	 * @throws BIPException
+	 */
+	public boolean transitionNoDataGuardData(String port) throws BIPException;
+	
+	/**
 	 * It returns true if there is an enabled spontaneous transition.
 	 * @param guardToValue
 	 * @return
