@@ -65,6 +65,14 @@ public class PResizableBehaviorComponent {
 		states.add(currentState);
 		ArrayList<TransitionImpl> allTransitions = new ArrayList<TransitionImpl>();
 */
+
+		// [Port=(id = sr, specType = null, type = spontaneous),
+		behaviourBuilder.addPort("sr", PortType.spontaneous, this.getClass());
+
+		behaviourBuilder.addPort("se", PortType.spontaneous, this.getClass());
+
+		behaviourBuilder.addPort("p", PortType.enforceable, this.getClass());
+
 		for (int i = 0; i < size; i++) {
 
 			behaviourBuilder.addState("state" + (i + 1));
@@ -89,12 +97,7 @@ public class PResizableBehaviorComponent {
 
 		}
 
-		// [Port=(id = sr, specType = null, type = spontaneous),
-		behaviourBuilder.addPort("sr", PortType.spontaneous, this.getClass());
 
-		behaviourBuilder.addPort("se", PortType.spontaneous, this.getClass());
-
-		behaviourBuilder.addPort("p", PortType.enforceable, this.getClass());
 
 		// [Guard=(name = isFinished, method = isFinished)]
 		//ArrayList<Guard> guards = new ArrayList<Guard>();
