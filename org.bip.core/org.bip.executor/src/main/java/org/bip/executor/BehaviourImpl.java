@@ -19,12 +19,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.bip.api.BIPBuilderBehaviour;
 import org.bip.api.Data;
 import org.bip.api.DataOut;
 import org.bip.api.ExecutableBehaviour;
 import org.bip.api.Guard;
 import org.bip.api.Port;
 import org.bip.api.PortType;
+import org.bip.api.Transition;
 import org.bip.exceptions.BIPException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * Implements the Behaviour and ExecutableBehaviour interfaces, providing the behaviour of the component together with additional helper structures.
  * 
  */
-class BehaviourImpl implements ExecutableBehaviour {
+class BehaviourImpl implements ExecutableBehaviour, BIPBuilderBehaviour {
 
 	private String currentState;
 
@@ -558,6 +560,11 @@ class BehaviourImpl implements ExecutableBehaviour {
 			}
 		}
 		return new HashSet<Port>();
+	}
+
+	public List<Transition> getAllTransitions() {
+		List<Transition> result = (ArrayList<Transition>) allTransitions.clone();
+		return result;
 	}
 
 	@Override

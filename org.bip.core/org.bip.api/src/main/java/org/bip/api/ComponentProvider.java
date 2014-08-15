@@ -22,4 +22,6 @@ public interface ComponentProvider {
 	 */
 	public BIPComponent component();
 
+
+
 }

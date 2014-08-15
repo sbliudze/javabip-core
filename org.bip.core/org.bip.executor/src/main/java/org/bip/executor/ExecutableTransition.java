@@ -15,8 +15,9 @@ import java.util.Map;
 import org.bip.api.Data;
 import org.bip.api.Guard;
 import org.bip.api.PortType;
+import org.bip.api.Transition;
 
-interface ExecutableTransition {
+interface ExecutableTransition extends Transition {
 
 	public Method method();
 

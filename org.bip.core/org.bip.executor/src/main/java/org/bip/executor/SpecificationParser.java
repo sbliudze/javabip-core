@@ -16,6 +16,7 @@ import org.bip.annotations.ComponentType;
 import org.bip.annotations.Data;
 import org.bip.annotations.Ports;
 import org.bip.annotations.Transitions;
+import org.bip.api.BIPBuilderBehaviour;
 import org.bip.api.ComponentProvider;
 import org.bip.api.ExecutableBehaviour;
 import org.bip.exceptions.BIPException;
@@ -39,6 +40,10 @@ public abstract class SpecificationParser implements ComponentProvider {
 			this.behaviour = getExecutableBehaviour( bipComponent.getClass() ).build(this);
 		}
 
+	}
+
+	public BIPBuilderBehaviour bipBuilderBehaviour() {
+		return (BIPBuilderBehaviour) behaviour;
 	}
 
 	private BehaviourBuilder getExecutableBehaviour( Class<?> componentClass ) throws BIPException {

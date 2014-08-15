@@ -29,5 +29,5 @@ public interface Executor extends BIPComponent {
 	 * It returns the BIP engine that Executor uses.
 	 */
 	BIPEngine engine();
-	
+
 }

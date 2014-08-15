@@ -1,5 +1,6 @@
 package org.bip.executor;
 
+import org.bip.api.BIPBuilderBehaviour;
 import org.bip.api.BIPEngine;
 import org.bip.exceptions.BIPException;
 
@@ -28,6 +29,10 @@ public class ExecutorImpl extends AbstractExecutor {
 	@Override
 	public String getId() {
 		return id;
+	}
+
+	public BIPBuilderBehaviour getBeh() {
+		return (BIPBuilderBehaviour) this.behaviour;
 	}
 
 }
