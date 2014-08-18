@@ -910,20 +910,29 @@ public class DataTests {
 	
 	@Test
 	public void bipMultipleSwRTransferTest() throws BIPException, IOException {
-		int size = 10;
+		int size = 74;
+		int memoryMonitorLimit = 3750;
+		int sleepTime = 12000;
 		
 		FileInputStream inStream = new FileInputStream(
 				"src/test/resources/header.txt");
 
 		FileOutputStream outStream = new FileOutputStream(
-				"src/test/java/org/bip/executor/swRouteMultTest.java");
+				"src/test/java/org/bip/executor/ManyDataRoutesTests"+size+".java");
 		long k = copyLarge(inStream, outStream);
 		inStream.close();
+		
+	     String monitorString = " MemoryMonitor routeOnOffMonitor = new MemoryMonitor("+memoryMonitorLimit+");\n"+
+			"final ExecutorImpl executorM = new ExecutorImpl(\"\", routeOnOffMonitor, true);\n"+
+			"Thread tM = new Thread(executorM, \"M\");\n"+
+			"executorM.setEngine(engine);\n"+
+			"executorM.register(engine);\n";
+	 	outStream.write(monitorString.getBytes());
 		
 		String replaceString = "";
 		for (int i = 1; i <= size; i++) {
 
-			replaceString+="1";
+			replaceString=String.valueOf(i);
 			
 			String componentStr = "	SwitchableRouteDataTransfers route1 = new SwitchableRouteDataTransfers(\"1\", camelContext);\nfinal ExecutorImpl executor1 = new ExecutorImpl(\"\", route1, true);\n\n";
 			outStream.write(componentStr.replace("1", replaceString).getBytes());
@@ -937,7 +946,7 @@ public class DataTests {
 		
 		replaceString = "";
 		for (int i = 1; i <= size; i++) {
-			replaceString+="1";
+			replaceString=String.valueOf(i);
 			String routeBuilder = "from(\"file:inputfolder1?delete=true\").routeId(\"1\").routePolicy(routePolicy1).process(new Processor() {\n	public void process(Exchange exchange) throws Exception {}}).to(\"file:outputfolder1\");\n\n";
 
 			outStream.write(routeBuilder.replace("1", replaceString)
@@ -949,7 +958,7 @@ public class DataTests {
 
 		replaceString = "";
 		for (int i = 1; i <= size; i++) {
-			replaceString+="1";
+			replaceString=String.valueOf(i);
 			String setup = "		route1.setCamelContext(camelContext);\n"
 					+ "Thread t1 = new Thread(executor1, \"SW1\");\n"
 					+ "executor1.setEngine(engine);\n"
@@ -962,7 +971,7 @@ public class DataTests {
 		
 		replaceString = "";
 		for (int i = 1; i <= size; i++) {
-			replaceString+="1";
+			replaceString=String.valueOf(i);
 			String threadStart = "t1.start();\n";
 			outStream.write(threadStart.replace("1", replaceString).getBytes());
 		}
@@ -971,6 +980,8 @@ public class DataTests {
 		+"engine.execute();";
 		outStream.write(threadrun.getBytes());
 		
+		String threadSleep  ="Thread.sleep("+ sleepTime+");";
+		outStream.write(threadSleep.getBytes());
 		String endStr = "}}";
 		outStream.write(endStr.getBytes());
 		
