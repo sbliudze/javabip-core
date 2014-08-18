@@ -1000,7 +1000,6 @@ public class AkkaManyDataRoutesTests {
 				port(SwitchableRouteDataTransfers.class, "off").requiresNothing();
 				data(SwitchableRouteDataTransfers.class, "deltaMemoryOnTransition").to(MemoryMonitor.class,
 						"memoryUsage");
-
 			}
 
 		}.build();
@@ -1302,7 +1301,7 @@ public class AkkaManyDataRoutesTests {
 
 		engine.execute();
 		try {
-			Thread.sleep(300000);
+			Thread.sleep(100000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -2067,7 +2066,7 @@ public class AkkaManyDataRoutesTests {
 
 		engine.execute();
 		try {
-			Thread.sleep(800000);
+			Thread.sleep(8000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -2096,7 +2095,6 @@ public class AkkaManyDataRoutesTests {
 			}
 
 		}.build();
-		System.out.println("BIP Glue is created");
 
 		CamelContext camelContext = new DefaultCamelContext();
 		camelContext.setAutoStartup(false);
@@ -2112,8 +2110,6 @@ public class AkkaManyDataRoutesTests {
 		SwitchableRouteDataTransfers route9 = new SwitchableRouteDataTransfers("9", camelContext);
 		SwitchableRouteDataTransfers route10 = new SwitchableRouteDataTransfers("10", camelContext);
 
-		System.out.println("Camel context ");
-
 		final Executor executor1 = factory.create(engine, route1, "1", true);
 		final Executor executor2 = factory.create(engine, route2, "2", true);
 		final Executor executor3 = factory.create(engine, route3, "3", true);
@@ -2125,7 +2121,6 @@ public class AkkaManyDataRoutesTests {
 		final Executor executor9 = factory.create(engine, route9, "9", true);
 		final Executor executor10 = factory.create(engine, route10, "10", true);
 
-		System.out.println("Executors");
 		final RoutePolicy routePolicy1 = new RoutePolicy() {
 
 			public void onInit(Route route) {
@@ -2465,8 +2460,6 @@ public class AkkaManyDataRoutesTests {
 			}
 		};
 
-		System.out.println("Route policies");
-
 		RouteBuilder builder1 = new RouteBuilder() {
 
 			@Override
@@ -2502,18 +2495,14 @@ public class AkkaManyDataRoutesTests {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println("Route builders");
 		MemoryMonitor routeOnOffMonitor = new MemoryMonitor(500);
 		final Executor executorM = factory.create(engine, routeOnOffMonitor, "monitor", true);
 
-		System.out.println("before specify glue");
 		engine.specifyGlue(bipGlue);
-		System.out.println("before start");
 		engine.start();
-		System.out.println("before execute");
 		engine.execute();
 		try {
-			Thread.sleep(1000000000);
+			Thread.sleep(10000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -3102,7 +3091,7 @@ public class AkkaManyDataRoutesTests {
 		engine.start();
 		engine.execute();
 		try {
-			Thread.sleep(100000000);
+			Thread.sleep(10000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -3881,7 +3870,7 @@ public class AkkaManyDataRoutesTests {
 		engine.start();
 		engine.execute();
 		try {
-			Thread.sleep(100000000);
+			Thread.sleep(10000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
