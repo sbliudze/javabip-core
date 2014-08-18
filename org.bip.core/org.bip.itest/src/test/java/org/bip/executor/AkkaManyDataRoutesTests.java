@@ -967,11 +967,6 @@ public class AkkaManyDataRoutesTests {
 		engine.specifyGlue(bipGlue);
 		engine.start();
 
-		// try {
-		// Thread.sleep(2000);
-		// } catch (InterruptedException e) {
-		// e.printStackTrace();
-		// }
 		engine.execute();
 		try {
 			Thread.sleep(8000);
