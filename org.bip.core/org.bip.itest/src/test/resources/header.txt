@@ -16,10 +16,10 @@ import org.bip.spec.SwitchableRouteDataTransfers;
 import org.bip.spec.MemoryMonitor;
 import org.junit.Test;
 
-public class ManyDataRoutesTest {
+public class ManyDataRoutesTests {
 
 	@Test
-	public void bipSwMultiTest() throws BIPException {
+	public void bipSwMultiTest() throws BIPException, InterruptedException {
 
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
@@ -44,8 +44,4 @@ public class ManyDataRoutesTest {
 		CamelContext camelContext = new DefaultCamelContext();
 
 		DataCoordinator engine = new DataCoordinatorImpl(null);
-      MemoryMonitor routeOnOffMonitor = new MemoryMonitor(200);
-		final ExecutorImpl executorM = new ExecutorImpl("", routeOnOffMonitor, true);
-		Thread tM = new Thread(executorM, "M");
-		executorM.setEngine(engine);
-		executorM.register(engine);
+
