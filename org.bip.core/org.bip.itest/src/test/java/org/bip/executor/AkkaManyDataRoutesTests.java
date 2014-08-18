@@ -197,7 +197,7 @@ public class AkkaManyDataRoutesTests {
 		engine.start();
 		engine.execute();
 		try {
-			Thread.sleep(8000);
+			Thread.sleep(800000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -411,15 +411,9 @@ public class AkkaManyDataRoutesTests {
 
 		engine.specifyGlue(bipGlue);
 		engine.start();
-
-		// try {
-		// Thread.sleep(2000);
-		// } catch (InterruptedException e) {
-		// e.printStackTrace();
-		// }
 		engine.execute();
 		try {
-			Thread.sleep(8000);
+			Thread.sleep(800000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -969,7 +963,7 @@ public class AkkaManyDataRoutesTests {
 
 		engine.execute();
 		try {
-			Thread.sleep(8000);
+			Thread.sleep(800000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

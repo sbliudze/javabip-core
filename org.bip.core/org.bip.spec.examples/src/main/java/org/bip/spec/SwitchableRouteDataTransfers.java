@@ -24,9 +24,9 @@ import org.bip.annotations.Guard;
 import org.bip.annotations.Port;
 import org.bip.annotations.Ports;
 import org.bip.annotations.Transition;
+import org.bip.api.DataOut.AccessType;
 import org.bip.api.Executor;
 import org.bip.api.PortType;
-import org.bip.api.DataOut.AccessType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -88,11 +88,6 @@ public class SwitchableRouteDataTransfers implements CamelContextAware, Initiali
 	 */
 	@Transition(name = "off", source = "on", target = "wait", guard = "")
 	public void stopRoute() throws Exception {
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 		logger.debug("Stop transition handler for {} is being executed.", routeId);
 		camelContext.suspendRoute(routeId);
 
