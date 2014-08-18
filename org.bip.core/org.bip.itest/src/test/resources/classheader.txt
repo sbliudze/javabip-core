@@ -1,0 +1,25 @@
+package org.bip.executor;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.Route;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.RoutePolicy;
+import org.bip.api.BIPEngine;
+import org.bip.api.BIPGlue;
+import org.bip.api.Executor;
+import org.bip.engine.api.EngineFactory;
+import org.bip.engine.BIPCoordinatorImpl;
+import org.bip.engine.DataCoordinatorKernel;
+import org.bip.exceptions.BIPException;
+import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
+import org.bip.glue.TwoSynchronGlueBuilder;
+import org.bip.spec.SwitchableRouteDataTransfers;
+import org.bip.spec.MemoryMonitor;
+import org.junit.Test;
+
+public class ManyDataRoutesTests {
+
+	

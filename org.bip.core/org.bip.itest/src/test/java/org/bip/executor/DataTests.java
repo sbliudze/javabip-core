@@ -911,16 +911,24 @@ public class DataTests {
 	
 	@Test
 	public void bipMultipleSwRTransferTest() throws BIPException, IOException {
-		int size = 24;
-		int memoryMonitorLimit = 1250;
+		int size = 64;
+		int memoryMonitorLimit = 3250;
 		int sleepTime = 12000;
 		
-		FileInputStream inStream = new FileInputStream(
-				"src/test/resources/header.txt");
+//		FileInputStream inStream = new FileInputStream(
+//				"src/test/resources/classheader.txt");
 
 		FileOutputStream outStream = new FileOutputStream(
 				"src/test/java/org/bip/executor/ManyDataRoutesTests"+size+".java");
-		long k = copyLarge(inStream, outStream);
+//		copyLarge(inStream, outStream);
+//		inStream.close();
+//		
+		String testName = "@Test\n	public void bipSwMultiTest"+size+"()";
+		outStream.write(testName.getBytes());
+		
+		FileInputStream inStream = new FileInputStream(
+				"src/test/resources/header.txt");
+		copyLarge(inStream, outStream);
 		inStream.close();
 		
 	     String monitorString = " MemoryMonitor routeOnOffMonitor = new MemoryMonitor("+memoryMonitorLimit+");\n"+
@@ -984,7 +992,7 @@ public class DataTests {
 		
 		String threadSleep  ="Thread.sleep("+ sleepTime+");";
 		outStream.write(threadSleep.getBytes());
-		String endStr = "}}";
+		String endStr = "}";
 		outStream.write(endStr.getBytes());
 		
 		outStream.close();
