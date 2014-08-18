@@ -20,6 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RoutePolicy;
 import org.bip.api.BIPGlue;
+import org.bip.api.Executor;
 import org.bip.engine.api.DataCoordinator;
 import org.bip.engine.DataCoordinatorImpl;
 import org.bip.exceptions.BIPException;
@@ -910,8 +911,8 @@ public class DataTests {
 	
 	@Test
 	public void bipMultipleSwRTransferTest() throws BIPException, IOException {
-		int size = 74;
-		int memoryMonitorLimit = 3750;
+		int size = 24;
+		int memoryMonitorLimit = 1250;
 		int sleepTime = 12000;
 		
 		FileInputStream inStream = new FileInputStream(
@@ -923,10 +924,10 @@ public class DataTests {
 		inStream.close();
 		
 	     String monitorString = " MemoryMonitor routeOnOffMonitor = new MemoryMonitor("+memoryMonitorLimit+");\n"+
-			"final ExecutorImpl executorM = new ExecutorImpl(\"\", routeOnOffMonitor, true);\n"+
-			"Thread tM = new Thread(executorM, \"M\");\n"+
-			"executorM.setEngine(engine);\n"+
-			"executorM.register(engine);\n";
+			"final Executor executorM = factory.create(engine, routeOnOffMonitor, \"monitor\", true);\n";
+			//"Thread tM = new Thread(executorM, \"M\");\n"+
+			//"executorM.setEngine(engine);\n"+
+			//"executorM.register(engine);\n";
 	 	outStream.write(monitorString.getBytes());
 		
 		String replaceString = "";
@@ -934,7 +935,8 @@ public class DataTests {
 
 			replaceString=String.valueOf(i);
 			
-			String componentStr = "	SwitchableRouteDataTransfers route1 = new SwitchableRouteDataTransfers(\"1\", camelContext);\nfinal ExecutorImpl executor1 = new ExecutorImpl(\"\", route1, true);\n\n";
+			String componentStr = "	SwitchableRouteDataTransfers route1 = new SwitchableRouteDataTransfers(\"1\", camelContext);\n"+
+			"final Executor executor1 = factory.create(engine, route1, \"1\", true);\n\n";
 			outStream.write(componentStr.replace("1", replaceString).getBytes());
 
 			String routePolicyStr = "		final RoutePolicy routePolicy1 = new RoutePolicy() {public void onInit(Route route) {}\n	public void onExchangeDone(Route route, Exchange exchange) {executor1.inform(\"end\");}\n\n	public void onExchangeBegin(Route route, Exchange exchange) {}\n	public void onRemove(Route arg0) {}\n	@Override	public void onResume(Route arg0) {}\n @Override public void onStart(Route arg0) {}\n			@Override	public void onStop(Route arg0) {}\n	@Override	public void onSuspend(Route arg0) {}\n		};";
@@ -953,31 +955,31 @@ public class DataTests {
 					.getBytes());
 		}
 		
-		String camelContext = "		}};\n	camelContext.setAutoStartup(false);try { camelContext.addRoutes(builder);	camelContext.start(); } catch (Exception e){e.printStackTrace();}\n";
+		String camelContext = "		}};\n try { camelContext.addRoutes(builder);	camelContext.start(); } catch (Exception e){e.printStackTrace();}\n";
 		outStream.write(camelContext.getBytes());
 
 		replaceString = "";
 		for (int i = 1; i <= size; i++) {
 			replaceString=String.valueOf(i);
-			String setup = "		route1.setCamelContext(camelContext);\n"
-					+ "Thread t1 = new Thread(executor1, \"SW1\");\n"
-					+ "executor1.setEngine(engine);\n"
-					+ "executor1.register(engine);\n";
+			String setup = "		route1.setCamelContext(camelContext);\n";
+				//	+ "Thread t1 = new Thread(executor1, \"SW1\");\n"
+				//	+ "executor1.setEngine(engine);\n"
+				//	+ "executor1.register(engine);\n";
 			outStream.write(setup.replace("1", replaceString).getBytes());
 		}
 		
-		String engineSetup = "	engine.specifyGlue(bipGlue);\n"+"		engine.start();\n"+"try { tM.start();";
+		String engineSetup = "	engine.specifyGlue(bipGlue);\n"+"		engine.start();\n";//+"try { tM.start();";
 		outStream.write(engineSetup.getBytes());
 		
-		replaceString = "";
-		for (int i = 1; i <= size; i++) {
-			replaceString=String.valueOf(i);
-			String threadStart = "t1.start();\n";
-			outStream.write(threadStart.replace("1", replaceString).getBytes());
-		}
+//		replaceString = "";
+//		for (int i = 1; i <= size; i++) {
+//			replaceString=String.valueOf(i);
+//			String threadStart = "t1.start();\n";
+//			outStream.write(threadStart.replace("1", replaceString).getBytes());
+//		}
 		
-		String threadrun  ="}\n catch (IllegalArgumentException e) {e.printStackTrace();} catch (SecurityException e) {	e.printStackTrace();}\n"
-		+"engine.execute();";
+		String threadrun  = //"}\n catch (IllegalArgumentException e) {e.printStackTrace();} catch (SecurityException e) {	e.printStackTrace();}\n"+
+		"engine.execute();";
 		outStream.write(threadrun.getBytes());
 		
 		String threadSleep  ="Thread.sleep("+ sleepTime+");";

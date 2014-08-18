@@ -7,10 +7,14 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RoutePolicy;
+import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
-import org.bip.engine.api.DataCoordinator;
-import org.bip.engine.DataCoordinatorImpl;
+import org.bip.api.Executor;
+import org.bip.engine.api.EngineFactory;
+import org.bip.engine.BIPCoordinatorImpl;
+import org.bip.engine.DataCoordinatorKernel;
 import org.bip.exceptions.BIPException;
+import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
 import org.bip.glue.TwoSynchronGlueBuilder;
 import org.bip.spec.SwitchableRouteDataTransfers;
 import org.bip.spec.MemoryMonitor;
@@ -20,6 +24,11 @@ public class ManyDataRoutesTests {
 
 	@Test
 	public void bipSwMultiTest() throws BIPException, InterruptedException {
+
+		ActorSystem system = ActorSystem.create("MySystem");
+		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
+		EngineFactory engineFactory = new EngineFactory(system);
+		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl()));
 
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
@@ -42,6 +51,5 @@ public class ManyDataRoutesTests {
 		}.build();
 
 		CamelContext camelContext = new DefaultCamelContext();
-
-		DataCoordinator engine = new DataCoordinatorImpl(null);
+		camelContext.setAutoStartup(false);
 
