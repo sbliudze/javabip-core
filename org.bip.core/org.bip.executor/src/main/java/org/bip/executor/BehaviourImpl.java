@@ -300,7 +300,11 @@ class BehaviourImpl implements ExecutableBehaviour, BIPBuilderBehaviour {
 	
 	public boolean transitionNoDataGuardData(String port) throws BIPException {
 		ExecutableTransition transition = this.nameToTransition.get(currentState).get(port);
-				return transition.hasDataOnGuards()&&! transition.hasData();
+		if (transition == null) {
+			throw new BIPException("No transition " + port + " from state " + currentState + " in component "
+					+ componentType);
+		}
+		return transition.hasDataOnGuards() && !transition.hasData();
 	}
 	
 	@Override
@@ -500,6 +504,8 @@ class BehaviourImpl implements ExecutableBehaviour, BIPBuilderBehaviour {
 		ArrayList<Port> result = new ArrayList<Port>();
 		for (ExecutableTransition transition : this.allTransitions) {
 			Iterable<Data<?>> data = transition.dataRequired();
+			System.out.println("For comp " + this.componentType + " and data " + dataName + " req data is "
+					+ transition.dataRequired());
 			for (Data<?> d : data) {
 				if (d.name().equals(dataName)) {
 					result.add(this.transitionToPort.get(transition));
