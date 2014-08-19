@@ -40,6 +40,7 @@
             <causes>
                <port id="speak" specType="org.bip.spec.Peer"/>
                <port id="listen" specType="org.bip.spec.Peer"/>
+               <port id="broadcast" specType="org.bip.spec.Tracker"/>
             </causes>
         </accept>
     </accepts>
@@ -98,12 +99,12 @@
             <causes>
                 <option>
                     <causes>
-								<effect id="unregister" specType="org.bip.spec.Peer"/>
+						<port id="unregister" specType="org.bip.spec.Peer"/>
                     </causes>
                 </option>
 					 <option>
                     <causes>
-								<effect id="register" specType="org.bip.spec.Peer"/>
+						<port id="register" specType="org.bip.spec.Peer"/>
                     </causes>
                 </option>
             </causes>
