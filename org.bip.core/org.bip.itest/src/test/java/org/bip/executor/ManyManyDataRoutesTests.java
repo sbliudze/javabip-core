@@ -10,14 +10,14 @@ import org.apache.camel.spi.RoutePolicy;
 import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
 import org.bip.api.Executor;
-import org.bip.engine.api.EngineFactory;
 import org.bip.engine.BIPCoordinatorImpl;
 import org.bip.engine.DataCoordinatorKernel;
+import org.bip.engine.api.EngineFactory;
 import org.bip.exceptions.BIPException;
 import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
 import org.bip.glue.TwoSynchronGlueBuilder;
-import org.bip.spec.SwitchableRouteDataTransfers;
 import org.bip.spec.MemoryMonitor;
+import org.bip.spec.SwitchableRouteDataTransfers;
 import org.junit.Test;
 
 import akka.actor.ActorSystem;
@@ -26,7 +26,6 @@ public class ManyManyDataRoutesTests {
 
 	@Test
 	public void bipSwMultiTest64() throws BIPException, InterruptedException {
-
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(
 				system);
@@ -2762,12 +2761,11 @@ public class ManyManyDataRoutesTests {
 		engine.specifyGlue(bipGlue);
 		engine.start();
 		engine.execute();
-		Thread.sleep(12000);
+		Thread.sleep(80000);
 	}
 
 	@Test
 	public void bipSwMultiTest69() throws BIPException, InterruptedException {
-
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(
 				system);
@@ -5713,12 +5711,11 @@ public class ManyManyDataRoutesTests {
 		engine.specifyGlue(bipGlue);
 		engine.start();
 		engine.execute();
-		Thread.sleep(12000);
+		Thread.sleep(80000);
 	}
 
 	@Test
 	public void bipSwMultiTest74() throws BIPException, InterruptedException {
-
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(
 				system);
@@ -8874,12 +8871,11 @@ public class ManyManyDataRoutesTests {
 		engine.specifyGlue(bipGlue);
 		engine.start();
 		engine.execute();
-		Thread.sleep(12000);
+		Thread.sleep(80000);
 	}
 
 	@Test
 	public void bipSwMultiTest79() throws BIPException, InterruptedException {
-
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(
 				system);
@@ -12245,12 +12241,11 @@ public class ManyManyDataRoutesTests {
 		engine.specifyGlue(bipGlue);
 		engine.start();
 		engine.execute();
-		Thread.sleep(12000);
+		Thread.sleep(80000);
 	}
 
 	@Test
 	public void bipSwMultiTest84() throws BIPException, InterruptedException {
-
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(
 				system);
@@ -15826,12 +15821,11 @@ public class ManyManyDataRoutesTests {
 		engine.specifyGlue(bipGlue);
 		engine.start();
 		engine.execute();
-		Thread.sleep(12000);
+		Thread.sleep(80000);
 	}
 
 	@Test
 	public void bipSwMultiTest89() throws BIPException, InterruptedException {
-
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(
 				system);
@@ -19617,12 +19611,11 @@ public class ManyManyDataRoutesTests {
 		engine.specifyGlue(bipGlue);
 		engine.start();
 		engine.execute();
-		Thread.sleep(12000);
+		Thread.sleep(80000);
 	}
 
 	@Test
 	public void bipSwMultiTest94() throws BIPException, InterruptedException {
-
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(
 				system);
@@ -23618,12 +23611,11 @@ public class ManyManyDataRoutesTests {
 		engine.specifyGlue(bipGlue);
 		engine.start();
 		engine.execute();
-		Thread.sleep(12000);
+		Thread.sleep(80000);
 	}
 
 	@Test
 	public void bipSwMultiTest99() throws BIPException, InterruptedException {
-
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(
 				system);
@@ -27829,6 +27821,6 @@ public class ManyManyDataRoutesTests {
 		engine.specifyGlue(bipGlue);
 		engine.start();
 		engine.execute();
-		Thread.sleep(12000);
+		Thread.sleep(100000);
 	}
 }

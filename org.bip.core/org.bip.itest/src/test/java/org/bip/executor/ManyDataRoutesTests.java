@@ -1,5 +1,10 @@
 package org.bip.executor;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -10,14 +15,14 @@ import org.apache.camel.spi.RoutePolicy;
 import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
 import org.bip.api.Executor;
-import org.bip.engine.api.EngineFactory;
 import org.bip.engine.BIPCoordinatorImpl;
 import org.bip.engine.DataCoordinatorKernel;
+import org.bip.engine.api.EngineFactory;
 import org.bip.exceptions.BIPException;
 import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
 import org.bip.glue.TwoSynchronGlueBuilder;
-import org.bip.spec.SwitchableRouteDataTransfers;
 import org.bip.spec.MemoryMonitor;
+import org.bip.spec.SwitchableRouteDataTransfers;
 import org.junit.Test;
 
 import akka.actor.ActorSystem;
@@ -26,7 +31,7 @@ public class ManyDataRoutesTests {
 
 	@Test
 	public void bipSwMultiTest24() throws BIPException, InterruptedException {
-
+		System.out.println("Switchable Routes with Data: 24+1");
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(
 				system);
@@ -1083,12 +1088,12 @@ public class ManyDataRoutesTests {
 		engine.specifyGlue(bipGlue);
 		engine.start();
 		engine.execute();
-		Thread.sleep(12000);
+		Thread.sleep(40000);
 	}
 
 	@Test
 	public void bipSwMultiTest29() throws BIPException, InterruptedException {
-
+		System.out.println("Switchable Routes with Data: 29+1");
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(
 				system);
@@ -2354,12 +2359,12 @@ public class ManyDataRoutesTests {
 		engine.specifyGlue(bipGlue);
 		engine.start();
 		engine.execute();
-		Thread.sleep(12000);
+		Thread.sleep(60000);
 	}
 
 	@Test
 	public void bipSwMultiTest34() throws BIPException, InterruptedException {
-
+		System.out.println("Switchable Routes with Data: 34+1");
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(
 				system);
@@ -3835,12 +3840,12 @@ public class ManyDataRoutesTests {
 		engine.specifyGlue(bipGlue);
 		engine.start();
 		engine.execute();
-		Thread.sleep(12000);
+		Thread.sleep(60000);
 	}
 
 	@Test
 	public void bipSwMultiTest39() throws BIPException, InterruptedException {
-
+		System.out.println("Switchable Routes with Data: 39+1");
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(
 				system);
@@ -5526,12 +5531,12 @@ public class ManyDataRoutesTests {
 		engine.specifyGlue(bipGlue);
 		engine.start();
 		engine.execute();
-		Thread.sleep(12000);
+		Thread.sleep(60000);
 	}
 
 	@Test
 	public void bipSwMultiTest44() throws BIPException, InterruptedException {
-
+		System.out.println("Switchable Routes with Data: 44+1");
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(
 				system);
@@ -7427,12 +7432,12 @@ public class ManyDataRoutesTests {
 		engine.specifyGlue(bipGlue);
 		engine.start();
 		engine.execute();
-		Thread.sleep(12000);
+		Thread.sleep(60000);
 	}
 
 	@Test
 	public void bipSwMultiTest49() throws BIPException, InterruptedException {
-
+		System.out.println("Switchable Routes with Data: 49+1");
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(
 				system);
@@ -9538,12 +9543,12 @@ public class ManyDataRoutesTests {
 		engine.specifyGlue(bipGlue);
 		engine.start();
 		engine.execute();
-		Thread.sleep(12000);
+		Thread.sleep(100000);
 	}
 
 	@Test
 	public void bipSwMultiTest54() throws BIPException, InterruptedException {
-
+		System.out.println("Switchable Routes with Data: 54+1");
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(
 				system);
@@ -11859,12 +11864,12 @@ public class ManyDataRoutesTests {
 		engine.specifyGlue(bipGlue);
 		engine.start();
 		engine.execute();
-		Thread.sleep(12000);
+		Thread.sleep(80000);
 	}
 
 	@Test
 	public void bipSwMultiTest59() throws BIPException, InterruptedException {
-
+		System.out.println("Switchable Routes with Data: 59+1");
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(
 				system);
@@ -14390,6 +14395,31 @@ public class ManyDataRoutesTests {
 		engine.specifyGlue(bipGlue);
 		engine.start();
 		engine.execute();
-		Thread.sleep(12000);
+		Thread.sleep(60000);
+	}
+
+	@Test
+	public void computeAverage() throws IOException {
+		int i;
+		for (i = 24; i < 100; i = i + 5) {
+			File file = new File("performanceResults/DataSwitchableRoutes/Time/terminal/" + i + "+1.log");
+			FileReader fileReader = new FileReader(file);
+			BufferedReader bufferedReader = new BufferedReader(fileReader);
+			String line;
+			int count = 0;
+			double sum = 0;
+			bufferedReader.readLine();
+			while ((line = bufferedReader.readLine()) != null) {
+				if (!line.equals("")) {
+				sum += Integer.parseInt(line);
+					count++;
+				}
+			}
+			if (count == 0)
+				return;
+			System.out.println(i+"+1: " + sum / count);
+		}
+
+		
 	}
 }
