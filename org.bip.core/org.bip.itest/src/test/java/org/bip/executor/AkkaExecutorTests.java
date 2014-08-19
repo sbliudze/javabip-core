@@ -30,12 +30,14 @@ import org.bip.spec.ComponentB;
 import org.bip.spec.Consumer;
 import org.bip.spec.HanoiGlueBuilder;
 import org.bip.spec.HanoiMonitor;
+import org.bip.spec.InitialServer;
 import org.bip.spec.LeftHanoiPeg;
 import org.bip.spec.MemoryMonitor;
 import org.bip.spec.MiddleHanoiPeg;
 import org.bip.spec.PSSComponent;
 import org.bip.spec.Peer;
 import org.bip.spec.RightHanoiPeg;
+import org.bip.spec.Server;
 import org.bip.spec.SwitchableRouteDataTransfers;
 import org.bip.spec.Tracker;
 import org.bip.spec.hanoi.HanoiOptimalMonitor;
@@ -296,12 +298,12 @@ public class AkkaExecutorTests {
 		BIPEngine engine = engineFactory.create("myEngine",
 				new DataCoordinatorKernel(new BIPCoordinatorImpl()));
 
-		int size = 8;
+		int size = 3;
 
 		BIPGlue bipGlue4Hanoi = new org.bip.spec.hanoi.HanoiOptimalGlueBuilder()
 				.build();
 
-		bipGlue4Hanoi.toXML(System.out);
+		// bipGlue4Hanoi.toXML(System.out);
 
 		HanoiOptimalMonitor hanoiMonitor = new HanoiOptimalMonitor(size);
 		Executor hanoiExecutor = factory.create(engine, hanoiMonitor, "hanoiMonitor", false);
@@ -363,8 +365,6 @@ public class AkkaExecutorTests {
 
 		// bipGlue4Hanoi.toXML(System.out);
 
-		// BIP engine.
-
 		HanoiMonitor hanoiMonitor = new HanoiMonitor(size);
 		Executor hanoiExecutor = factory.create(engine, hanoiMonitor, "hanoiMonitor", false);
 
@@ -383,7 +383,7 @@ public class AkkaExecutorTests {
 		engine.execute();
 
 		try {
-			Thread.sleep(5000);
+			Thread.sleep(2000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -410,7 +410,7 @@ public class AkkaExecutorTests {
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 
 
-		int size = 3;
+		int size = 8;
 
 		BIPGlue bipGlue4Hanoi = new HanoiGlueBuilder(size).build();
 
@@ -520,6 +520,37 @@ public class AkkaExecutorTests {
 	}
 
 	@Test
+	public void ServersTest() {
+		ActorSystem system = ActorSystem.create("MySystem");
+		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
+		EngineFactory engineFactory = new EngineFactory(system);
+		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl()));
+
+		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueServers.xml");
+
+
+		Server server2 = new Server(2);
+		Server server3 = new Server(3);
+		Server server4 = new Server(4);
+		InitialServer server12 = new InitialServer(12);
+
+		final Executor executor2 = factory.create(engine, server2, "2", true);
+		final Executor executor3 = factory.create(engine, server3, "3", true);
+		final Executor executor4 = factory.create(engine, server4, "4", true);
+		final Executor executor12 = factory.create(engine, server12, "12", true);
+
+		engine.specifyGlue(bipGlue);
+		engine.start();
+		engine.execute();
+
+		try {
+			Thread.sleep(30000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
 	public void TrackerPeerTest()
 	{		
 				
@@ -542,9 +573,9 @@ public class AkkaExecutorTests {
 
 		final Executor executor1 = factory.create(engine, tracker1, "1", true);
 		final Executor executor1a = factory.create(engine, peer1a, "11", true);
-		final Executor executor1b = factory.create(engine, peer1b, "12", true);
+		// final Executor executor1b = factory.create(engine, peer1b, "12", true);
 		final Executor executor2 = factory.create(engine, tracker2, "2", true);
-		final Executor executor2a = factory.create(engine, peer2a, "21", true);
+		// final Executor executor2a = factory.create(engine, peer2a, "21", true);
 		final Executor executor2b = factory.create(engine, peer2b, "22", true);
 		
 		engine.specifyGlue(bipGlue);
