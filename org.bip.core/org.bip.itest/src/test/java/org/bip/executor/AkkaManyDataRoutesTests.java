@@ -28,6 +28,7 @@ public class AkkaManyDataRoutesTests {
 
 	@Test
 	public void bipDataTransferTest() throws BIPException {
+		System.out.println("Switchable Routes with Data: 3+1");
 
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
@@ -197,17 +198,16 @@ public class AkkaManyDataRoutesTests {
 		engine.start();
 		engine.execute();
 		try {
-			Thread.sleep(800000);
+			Thread.sleep(20000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-
 		assertEquals("Monitor does not have a proper id ", executorM.getId(), "monitor");
 	}
 
 	@Test
 	public void bipFourSRTest() throws BIPException {
-
+		System.out.println("Switchable Routes with Data: 4+1");
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
@@ -413,7 +413,7 @@ public class AkkaManyDataRoutesTests {
 		engine.start();
 		engine.execute();
 		try {
-			Thread.sleep(800000);
+			Thread.sleep(20000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -423,7 +423,7 @@ public class AkkaManyDataRoutesTests {
 
 	@Test
 	public void bipFiveSRTest() throws BIPException {
-
+		System.out.println("Switchable Routes with Data: 5+1");
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
@@ -664,15 +664,9 @@ public class AkkaManyDataRoutesTests {
 
 		engine.specifyGlue(bipGlue);
 		engine.start();
-
-		// try {
-		// Thread.sleep(2000);
-		// } catch (InterruptedException e) {
-		// e.printStackTrace();
-		// }
 		engine.execute();
 		try {
-			Thread.sleep(8000);
+			Thread.sleep(20000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -682,7 +676,7 @@ public class AkkaManyDataRoutesTests {
 
 	@Test
 	public void bipSixSRTest() throws BIPException {
-
+		System.out.println("Switchable Routes with Data: 6+1");
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
@@ -963,7 +957,7 @@ public class AkkaManyDataRoutesTests {
 
 		engine.execute();
 		try {
-			Thread.sleep(800000);
+			Thread.sleep(20000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -973,7 +967,7 @@ public class AkkaManyDataRoutesTests {
 
 	@Test
 	public void bipSevenSRTest() throws BIPException {
-
+		System.out.println("Switchable Routes with Data: 7+1");
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
@@ -1290,7 +1284,7 @@ public class AkkaManyDataRoutesTests {
 
 		engine.execute();
 		try {
-			Thread.sleep(100000);
+			Thread.sleep(20000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -1300,7 +1294,7 @@ public class AkkaManyDataRoutesTests {
 
 	@Test
 	public void bipEightSRTest() throws BIPException {
-
+		System.out.println("Switchable Routes with Data: 8+1");
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
@@ -1653,7 +1647,7 @@ public class AkkaManyDataRoutesTests {
 
 		engine.execute();
 		try {
-			Thread.sleep(150000);
+			Thread.sleep(20000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -1663,7 +1657,7 @@ public class AkkaManyDataRoutesTests {
 
 	@Test
 	public void bipNineSRTest() throws BIPException {
-
+		System.out.println("Switchable Routes with Data: 9+1");
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
@@ -2065,7 +2059,7 @@ public class AkkaManyDataRoutesTests {
 
 	@Test
 	public void bipTenSRTest() throws BIPException {
-
+		System.out.println("Switchable Routes with Data: 10+1");
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
@@ -2491,7 +2485,7 @@ public class AkkaManyDataRoutesTests {
 		engine.start();
 		engine.execute();
 		try {
-			Thread.sleep(10000);
+			Thread.sleep(20000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -2501,7 +2495,7 @@ public class AkkaManyDataRoutesTests {
 
 	@Test
 	public void bipFourteenSRTest() throws BIPException {
-
+		System.out.println("Switchable Routes with Data: 14+1");
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
@@ -3080,7 +3074,7 @@ public class AkkaManyDataRoutesTests {
 		engine.start();
 		engine.execute();
 		try {
-			Thread.sleep(10000);
+			Thread.sleep(20000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -3090,7 +3084,7 @@ public class AkkaManyDataRoutesTests {
 
 	@Test
 	public void bipNineTeenSRTest() throws BIPException {
-
+		System.out.println("Switchable Routes with Data: 19+1");
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
@@ -3859,7 +3853,7 @@ public class AkkaManyDataRoutesTests {
 		engine.start();
 		engine.execute();
 		try {
-			Thread.sleep(10000);
+			Thread.sleep(30000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
