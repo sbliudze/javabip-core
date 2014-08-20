@@ -141,6 +141,15 @@ public class BehaviourBuilder {
 		allPorts.put(id, port);
 	}
 	
+
+	public void addPort(String id, PortType type, String specType) {
+		Port port = new PortImpl(id, type, specType);
+		// PortImpl constructor already protects against null id.
+		if (allPorts.containsKey(id))
+			throw new BIPException("Port with id " + id + " has been already defined.");
+		allPorts.put(id, port);
+	}
+	
 	public void addState(String state) {		
 		states.add(state);		
 	}
@@ -241,6 +250,5 @@ public class BehaviourBuilder {
 		dataOutName.put(data.name(), method);
 								
 	}
-	
-	
+
 }
