@@ -5,8 +5,8 @@ import org.bip.annotations.Data;
 import org.bip.annotations.Port;
 import org.bip.annotations.Ports;
 import org.bip.annotations.Transition;
-import org.bip.api.PortType;
 import org.bip.api.DataOut.AccessType;
+import org.bip.api.PortType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,12 +24,12 @@ public class Tracker {
 
 	@Transition(name = "log", source = "zero", target = "zero")
 	public void logging() {
-		System.out.println("Peer has updates his status");
+		// System.out.println("Peer has updates his status");
 	}
 
 	@Transition(name = "broadcast", source = "zero", target = "zero")
 	public void broadcasting() {
-		System.out.println("Broadcasting " + trackerId);
+		// System.out.println("Broadcasting " + trackerId);
 	}
 
 	@Data(name = "trackerId", accessTypePort = AccessType.any)

@@ -60,7 +60,8 @@
             <causes>
                 <option>
                     <causes>
-                        <port id="broadcast" specType="org.bip.spec.Tracker"/>
+                                        <!-- require enforces only cardinality=1 -->
+<!--                         <port id="broadcast" specType="org.bip.spec.Tracker"/> -->
                     </causes>
                 </option>
             </causes>
@@ -70,7 +71,8 @@
             <causes>
                 <option>
                     <causes>
-                        <port id="broadcast" specType="org.bip.spec.Tracker"/>
+                    <!-- require enforces only cardinality=1 -->
+<!--                         <port id="broadcast" specType="org.bip.spec.Tracker"/> -->
                     </causes>
                 </option>
             </causes>
