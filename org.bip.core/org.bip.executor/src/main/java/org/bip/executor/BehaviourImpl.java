@@ -504,8 +504,6 @@ class BehaviourImpl implements ExecutableBehaviour, BIPBuilderBehaviour {
 		ArrayList<Port> result = new ArrayList<Port>();
 		for (ExecutableTransition transition : this.allTransitions) {
 			Iterable<Data<?>> data = transition.dataRequired();
-			System.out.println("For comp " + this.componentType + " and data " + dataName + " req data is "
-					+ transition.dataRequired());
 			for (Data<?> d : data) {
 				if (d.name().equals(dataName)) {
 					result.add(this.transitionToPort.get(transition));

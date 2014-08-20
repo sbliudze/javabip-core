@@ -37,7 +37,7 @@ public class InitialServer {
 	@Transition(name = "crash", source = "on", target = "crash")
 	public void crashing(@Data(name = "sId") Integer id) {
 		this.turnOnServerId = id;
-		System.out.println("Server with id " + serverId + " has crashed. Server with id " + turnOnServerId + "is on.");
+		System.out.println("Server with id " + serverId + " has crashed. Server with id " + turnOnServerId + " is on.");
 	}
 
 	@Transition(name = "repair", source = "crash", target = "on", guard = "h1CanInteract")
@@ -71,15 +71,11 @@ public class InitialServer {
 
 	@Guard(name = "h1CanInteract")
 	public boolean canInteract1(@Data(name = "serverId") Integer id) {
-		System.out.println("Server with id " + serverId + " has previously stored " + crashServerId
-				+ " and now is thinking about " + id + ": " + (crashServerId >= 0 && id == crashServerId));
 		return (crashServerId >= 0 && id == crashServerId);
 	}
 
 	@Guard(name = "h2CanInteract")
 	public boolean canInteract2(@Data(name = "serverId") Integer id) {
-		System.out.println("Server with id" + serverId + " has previously stored " + turnOnServerId
-				+ " and now is thinking about " + id + ": " + (turnOnServerId >= 0 && id == turnOnServerId));
 		return (turnOnServerId >= 0 && id == turnOnServerId);
 	}
 
