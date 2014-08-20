@@ -14,6 +14,7 @@ import java.lang.reflect.Method;
 
 import org.bip.annotations.ComponentType;
 import org.bip.annotations.Data;
+import org.bip.annotations.Port;
 import org.bip.annotations.Ports;
 import org.bip.annotations.Transitions;
 import org.bip.api.BIPBuilderBehaviour;
@@ -81,11 +82,15 @@ public abstract class SpecificationParser implements ComponentProvider {
 		
 		builder.setComponent(bipComponent);
 		
+		//TODO DISCUSS with Radek the spectype provided as a string but not as a class
+		String specType = "";
+		
 		Annotation classAnnotation = componentClass.getAnnotation(ComponentType.class);
 		// get component name and type
 		if (classAnnotation instanceof ComponentType) {
 			ComponentType initialState = (ComponentType) classAnnotation;
 			builder.setComponentType( initialState.name() );
+			specType = initialState.name();
 			builder.setInitialState( initialState.initial() );
 		} else {
 			throw new BIPException("ComponentType annotation is not specified.");
@@ -99,7 +104,7 @@ public abstract class SpecificationParser implements ComponentProvider {
 			for (org.bip.annotations.Port bipPortAnnotation : portArray) {
 				
 				if (bipPortAnnotation instanceof org.bip.annotations.Port)
-					addPort((org.bip.annotations.Port) bipPortAnnotation, componentClass, builder);
+					addPort((org.bip.annotations.Port) bipPortAnnotation, specType, builder);
 
 			}
 		} else {
@@ -153,7 +158,7 @@ public abstract class SpecificationParser implements ComponentProvider {
 		}
 		return builder;
 	}
-	
+
 	private void addGuard(Method method, 
 						  org.bip.annotations.Guard annotation,
 						  BehaviourBuilder builder) throws BIPException {
@@ -184,6 +189,11 @@ public abstract class SpecificationParser implements ComponentProvider {
 		
 		builder.addPort( portAnnotation.name(), portAnnotation.type(), componentClass );
 
+	}
+	
+	private void addPort(org.bip.annotations.Port portAnnotation, String specType,	BehaviourBuilder builder) {
+		builder.addPort( portAnnotation.name(), portAnnotation.type(), specType );
+		
 	}
 	
 }
