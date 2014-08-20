@@ -573,9 +573,9 @@ public class AkkaExecutorTests {
 
 		final Executor executor1 = factory.create(engine, tracker1, "1", true);
 		final Executor executor1a = factory.create(engine, peer1a, "11", true);
-		// final Executor executor1b = factory.create(engine, peer1b, "12", true);
+		final Executor executor1b = factory.create(engine, peer1b, "12", true);
 		final Executor executor2 = factory.create(engine, tracker2, "2", true);
-		// final Executor executor2a = factory.create(engine, peer2a, "21", true);
+		final Executor executor2a = factory.create(engine, peer2a, "21", true);
 		final Executor executor2b = factory.create(engine, peer2b, "22", true);
 		
 		engine.specifyGlue(bipGlue);
