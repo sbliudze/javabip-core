@@ -1,5 +1,10 @@
 package org.bip.executor;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -27823,4 +27828,24 @@ public class ManyManyDataRoutesTests {
 		engine.execute();
 		Thread.sleep(100000);
 	}
+	
+	@Test
+	public void computeAverage() throws IOException {
+		File file = new File("/home/mavridou/workspace/javaengineperformance/DataSwitchableRoutes/Time/eclipse/99+1");
+		FileReader fileReader = new FileReader(file);
+		BufferedReader bufferedReader = new BufferedReader(fileReader);
+		String line;
+		int count = 0;
+		double sum = 0;
+		bufferedReader.readLine();
+		while ((line = bufferedReader.readLine()) != null) {
+			sum += Integer.parseInt(line);
+			count++;
+		}
+		if (count == 0)
+			return;
+		System.out.println(sum / count);
+	}
+	
 }
+

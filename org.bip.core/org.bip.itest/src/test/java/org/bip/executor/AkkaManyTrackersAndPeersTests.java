@@ -325,7 +325,7 @@ public class AkkaManyTrackersAndPeersTests {
 		engine.execute();
 
 		try {
-			Thread.sleep(100000);
+			Thread.sleep(150000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -349,7 +349,7 @@ public class AkkaManyTrackersAndPeersTests {
 
 	@Test
 	public void computeAverage() throws IOException {
-		File file = new File("/home/mavridou/workspace/javaengineperformance/Trackers&Peers/40+10");
+		File file = new File("/home/mavridou/workspace/javaengineperformance/Trackers&Peers/output5.txt");
 		FileReader fileReader = new FileReader(file);
 		BufferedReader bufferedReader = new BufferedReader(fileReader);
 		String line;
