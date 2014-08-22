@@ -26,7 +26,7 @@ import org.junit.Test;
 
 import akka.actor.ActorSystem;
 
-public class ManyManyRoutesTests {
+public class AkkaRoutes64to99Tests {
 
 	@Test
 	public void bipSwMultiTest64() throws BIPException, InterruptedException {

@@ -18,31 +18,33 @@ import org.bip.engine.api.EngineFactory;
 import org.bip.exceptions.BIPException;
 import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
 import org.bip.glue.TwoSynchronGlueBuilder;
-import org.bip.spec.RouteOnOffMonitor;
-import org.bip.spec.SwitchableRoute;
+import org.bip.spec.MemoryMonitor;
+import org.bip.spec.SwitchableRouteDataTransfers;
 import org.junit.Test;
 
 import akka.actor.ActorSystem;
 
-public class AkkaManyRoutesTests {
+public class AkkaDataRoutes3to19Tests {
 
 	@Test
 	public void bipDataTransferTest() throws BIPException {
-		System.out.println("Switchable Routes without Data: 3+1");
+		System.out.println("Switchable Routes with Data: 3+1");
 
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl());
+		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl()));
 
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
 			public void configure() {
 
-				synchron(SwitchableRoute.class, "on").to(RouteOnOffMonitor.class, "add");
-				synchron(SwitchableRoute.class, "finished").to(RouteOnOffMonitor.class, "rm");
-				port(SwitchableRoute.class, "off").acceptsNothing();
-				port(SwitchableRoute.class, "off").requiresNothing();
+				synchron(SwitchableRouteDataTransfers.class, "on").to(MemoryMonitor.class, "add");
+				synchron(SwitchableRouteDataTransfers.class, "finished").to(MemoryMonitor.class, "rm");
+				port(SwitchableRouteDataTransfers.class, "off").acceptsNothing();
+				port(SwitchableRouteDataTransfers.class, "off").requiresNothing();
+				data(SwitchableRouteDataTransfers.class, "deltaMemoryOnTransition").to(MemoryMonitor.class,
+						"memoryUsage");
 
 			}
 
@@ -51,9 +53,9 @@ public class AkkaManyRoutesTests {
 		CamelContext camelContext = new DefaultCamelContext();
 		camelContext.setAutoStartup(false);
 
-		SwitchableRoute route1 = new SwitchableRoute("1", camelContext);
-		SwitchableRoute route2 = new SwitchableRoute("2", camelContext);
-		SwitchableRoute route3 = new SwitchableRoute("3", camelContext);
+		SwitchableRouteDataTransfers route1 = new SwitchableRouteDataTransfers("1", camelContext);
+		SwitchableRouteDataTransfers route2 = new SwitchableRouteDataTransfers("2", camelContext);
+		SwitchableRouteDataTransfers route3 = new SwitchableRouteDataTransfers("3", camelContext);
 
 		final Executor executor1 = factory.create(engine, route1, "1", true);
 
@@ -189,7 +191,7 @@ public class AkkaManyRoutesTests {
 			e.printStackTrace();
 		}
 
-		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
+		MemoryMonitor routeOnOffMonitor = new MemoryMonitor(200);
 		final Executor executorM = factory.create(engine, routeOnOffMonitor, "monitor", true);
 
 		engine.specifyGlue(bipGlue);
@@ -205,20 +207,22 @@ public class AkkaManyRoutesTests {
 
 	@Test
 	public void bipFourSRTest() throws BIPException {
-		System.out.println("Switchable Routes without Data: 4+1");
+		System.out.println("Switchable Routes with Data: 4+1");
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl());
+		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl()));
 
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
 			public void configure() {
 
-				synchron(SwitchableRoute.class, "on").to(RouteOnOffMonitor.class, "add");
-				synchron(SwitchableRoute.class, "finished").to(RouteOnOffMonitor.class, "rm");
-				port(SwitchableRoute.class, "off").acceptsNothing();
-				port(SwitchableRoute.class, "off").requiresNothing();
+				synchron(SwitchableRouteDataTransfers.class, "on").to(MemoryMonitor.class, "add");
+				synchron(SwitchableRouteDataTransfers.class, "finished").to(MemoryMonitor.class, "rm");
+				port(SwitchableRouteDataTransfers.class, "off").acceptsNothing();
+				port(SwitchableRouteDataTransfers.class, "off").requiresNothing();
+				data(SwitchableRouteDataTransfers.class, "deltaMemoryOnTransition").to(MemoryMonitor.class,
+						"memoryUsage");
 
 			}
 
@@ -227,10 +231,10 @@ public class AkkaManyRoutesTests {
 		CamelContext camelContext = new DefaultCamelContext();
 		camelContext.setAutoStartup(false);
 
-		SwitchableRoute route1 = new SwitchableRoute("1", camelContext);
-		SwitchableRoute route2 = new SwitchableRoute("2", camelContext);
-		SwitchableRoute route3 = new SwitchableRoute("3", camelContext);
-		SwitchableRoute route4 = new SwitchableRoute("4", camelContext);
+		SwitchableRouteDataTransfers route1 = new SwitchableRouteDataTransfers("1", camelContext);
+		SwitchableRouteDataTransfers route2 = new SwitchableRouteDataTransfers("2", camelContext);
+		SwitchableRouteDataTransfers route3 = new SwitchableRouteDataTransfers("3", camelContext);
+		SwitchableRouteDataTransfers route4 = new SwitchableRouteDataTransfers("4", camelContext);
 
 		final Executor executor1 = factory.create(engine, route1, "1", true);
 
@@ -402,7 +406,7 @@ public class AkkaManyRoutesTests {
 			e.printStackTrace();
 		}
 
-		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
+		MemoryMonitor routeOnOffMonitor = new MemoryMonitor(400);
 		final Executor executorM = factory.create(engine, routeOnOffMonitor, "monitor", true);
 
 		engine.specifyGlue(bipGlue);
@@ -419,20 +423,22 @@ public class AkkaManyRoutesTests {
 
 	@Test
 	public void bipFiveSRTest() throws BIPException {
-		System.out.println("Switchable Routes without Data: 5+1");
+		System.out.println("Switchable Routes with Data: 5+1");
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl());
+		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl()));
 
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
 			public void configure() {
 
-				synchron(SwitchableRoute.class, "on").to(RouteOnOffMonitor.class, "add");
-				synchron(SwitchableRoute.class, "finished").to(RouteOnOffMonitor.class, "rm");
-				port(SwitchableRoute.class, "off").acceptsNothing();
-				port(SwitchableRoute.class, "off").requiresNothing();
+				synchron(SwitchableRouteDataTransfers.class, "on").to(MemoryMonitor.class, "add");
+				synchron(SwitchableRouteDataTransfers.class, "finished").to(MemoryMonitor.class, "rm");
+				port(SwitchableRouteDataTransfers.class, "off").acceptsNothing();
+				port(SwitchableRouteDataTransfers.class, "off").requiresNothing();
+				data(SwitchableRouteDataTransfers.class, "deltaMemoryOnTransition").to(MemoryMonitor.class,
+						"memoryUsage");
 
 			}
 
@@ -441,11 +447,11 @@ public class AkkaManyRoutesTests {
 		CamelContext camelContext = new DefaultCamelContext();
 		camelContext.setAutoStartup(false);
 
-		SwitchableRoute route1 = new SwitchableRoute("1", camelContext);
-		SwitchableRoute route2 = new SwitchableRoute("2", camelContext);
-		SwitchableRoute route3 = new SwitchableRoute("3", camelContext);
-		SwitchableRoute route4 = new SwitchableRoute("4", camelContext);
-		SwitchableRoute route5 = new SwitchableRoute("5", camelContext);
+		SwitchableRouteDataTransfers route1 = new SwitchableRouteDataTransfers("1", camelContext);
+		SwitchableRouteDataTransfers route2 = new SwitchableRouteDataTransfers("2", camelContext);
+		SwitchableRouteDataTransfers route3 = new SwitchableRouteDataTransfers("3", camelContext);
+		SwitchableRouteDataTransfers route4 = new SwitchableRouteDataTransfers("4", camelContext);
+		SwitchableRouteDataTransfers route5 = new SwitchableRouteDataTransfers("5", camelContext);
 
 		final Executor executor1 = factory.create(engine, route1, "1", true);
 
@@ -653,7 +659,7 @@ public class AkkaManyRoutesTests {
 			e.printStackTrace();
 		}
 
-		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
+		MemoryMonitor routeOnOffMonitor = new MemoryMonitor(500);
 		final Executor executorM = factory.create(engine, routeOnOffMonitor, "monitor", true);
 
 		engine.specifyGlue(bipGlue);
@@ -670,20 +676,22 @@ public class AkkaManyRoutesTests {
 
 	@Test
 	public void bipSixSRTest() throws BIPException {
-		System.out.println("Switchable Routes without Data: 6+1");
+		System.out.println("Switchable Routes with Data: 6+1");
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl());
+		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl()));
 
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
 			public void configure() {
 
-				synchron(SwitchableRoute.class, "on").to(RouteOnOffMonitor.class, "add");
-				synchron(SwitchableRoute.class, "finished").to(RouteOnOffMonitor.class, "rm");
-				port(SwitchableRoute.class, "off").acceptsNothing();
-				port(SwitchableRoute.class, "off").requiresNothing();
+				synchron(SwitchableRouteDataTransfers.class, "on").to(MemoryMonitor.class, "add");
+				synchron(SwitchableRouteDataTransfers.class, "finished").to(MemoryMonitor.class, "rm");
+				port(SwitchableRouteDataTransfers.class, "off").acceptsNothing();
+				port(SwitchableRouteDataTransfers.class, "off").requiresNothing();
+				data(SwitchableRouteDataTransfers.class, "deltaMemoryOnTransition").to(MemoryMonitor.class,
+						"memoryUsage");
 
 			}
 
@@ -692,12 +700,12 @@ public class AkkaManyRoutesTests {
 		CamelContext camelContext = new DefaultCamelContext();
 		camelContext.setAutoStartup(false);
 
-		SwitchableRoute route1 = new SwitchableRoute("1", camelContext);
-		SwitchableRoute route2 = new SwitchableRoute("2", camelContext);
-		SwitchableRoute route3 = new SwitchableRoute("3", camelContext);
-		SwitchableRoute route4 = new SwitchableRoute("4", camelContext);
-		SwitchableRoute route5 = new SwitchableRoute("5", camelContext);
-		SwitchableRoute route6 = new SwitchableRoute("6", camelContext);
+		SwitchableRouteDataTransfers route1 = new SwitchableRouteDataTransfers("1", camelContext);
+		SwitchableRouteDataTransfers route2 = new SwitchableRouteDataTransfers("2", camelContext);
+		SwitchableRouteDataTransfers route3 = new SwitchableRouteDataTransfers("3", camelContext);
+		SwitchableRouteDataTransfers route4 = new SwitchableRouteDataTransfers("4", camelContext);
+		SwitchableRouteDataTransfers route5 = new SwitchableRouteDataTransfers("5", camelContext);
+		SwitchableRouteDataTransfers route6 = new SwitchableRouteDataTransfers("6", camelContext);
 
 		final Executor executor1 = factory.create(engine, route1, "1", true);
 
@@ -941,7 +949,7 @@ public class AkkaManyRoutesTests {
 			e.printStackTrace();
 		}
 
-		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
+		MemoryMonitor routeOnOffMonitor = new MemoryMonitor(600);
 		final Executor executorM = factory.create(engine, routeOnOffMonitor, "monitor", true);
 
 		engine.specifyGlue(bipGlue);
@@ -959,20 +967,22 @@ public class AkkaManyRoutesTests {
 
 	@Test
 	public void bipSevenSRTest() throws BIPException {
-		System.out.println("Switchable Routes without Data: 7+1");
+		System.out.println("Switchable Routes with Data: 7+1");
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl());
+		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl()));
 
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
 			public void configure() {
 
-				synchron(SwitchableRoute.class, "on").to(RouteOnOffMonitor.class, "add");
-				synchron(SwitchableRoute.class, "finished").to(RouteOnOffMonitor.class, "rm");
-				port(SwitchableRoute.class, "off").acceptsNothing();
-				port(SwitchableRoute.class, "off").requiresNothing();
+				synchron(SwitchableRouteDataTransfers.class, "on").to(MemoryMonitor.class, "add");
+				synchron(SwitchableRouteDataTransfers.class, "finished").to(MemoryMonitor.class, "rm");
+				port(SwitchableRouteDataTransfers.class, "off").acceptsNothing();
+				port(SwitchableRouteDataTransfers.class, "off").requiresNothing();
+				data(SwitchableRouteDataTransfers.class, "deltaMemoryOnTransition").to(MemoryMonitor.class,
+						"memoryUsage");
 			}
 
 		}.build();
@@ -980,13 +990,13 @@ public class AkkaManyRoutesTests {
 		CamelContext camelContext = new DefaultCamelContext();
 		camelContext.setAutoStartup(false);
 
-		SwitchableRoute route1 = new SwitchableRoute("1", camelContext);
-		SwitchableRoute route2 = new SwitchableRoute("2", camelContext);
-		SwitchableRoute route3 = new SwitchableRoute("3", camelContext);
-		SwitchableRoute route4 = new SwitchableRoute("4", camelContext);
-		SwitchableRoute route5 = new SwitchableRoute("5", camelContext);
-		SwitchableRoute route6 = new SwitchableRoute("6", camelContext);
-		SwitchableRoute route7 = new SwitchableRoute("7", camelContext);
+		SwitchableRouteDataTransfers route1 = new SwitchableRouteDataTransfers("1", camelContext);
+		SwitchableRouteDataTransfers route2 = new SwitchableRouteDataTransfers("2", camelContext);
+		SwitchableRouteDataTransfers route3 = new SwitchableRouteDataTransfers("3", camelContext);
+		SwitchableRouteDataTransfers route4 = new SwitchableRouteDataTransfers("4", camelContext);
+		SwitchableRouteDataTransfers route5 = new SwitchableRouteDataTransfers("5", camelContext);
+		SwitchableRouteDataTransfers route6 = new SwitchableRouteDataTransfers("6", camelContext);
+		SwitchableRouteDataTransfers route7 = new SwitchableRouteDataTransfers("7", camelContext);
 
 		final Executor executor1 = factory.create(engine, route1, "1", true);
 
@@ -1266,7 +1276,7 @@ public class AkkaManyRoutesTests {
 			e.printStackTrace();
 		}
 
-		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
+		MemoryMonitor routeOnOffMonitor = new MemoryMonitor(700);
 		final Executor executorM = factory.create(engine, routeOnOffMonitor, "monitor", true);
 
 		engine.specifyGlue(bipGlue);
@@ -1284,20 +1294,22 @@ public class AkkaManyRoutesTests {
 
 	@Test
 	public void bipEightSRTest() throws BIPException {
-		System.out.println("Switchable Routes without Data: 8+1");
+		System.out.println("Switchable Routes with Data: 8+1");
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl());
+		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl()));
 
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
 			public void configure() {
 
-				synchron(SwitchableRoute.class, "on").to(RouteOnOffMonitor.class, "add");
-				synchron(SwitchableRoute.class, "finished").to(RouteOnOffMonitor.class, "rm");
-				port(SwitchableRoute.class, "off").acceptsNothing();
-				port(SwitchableRoute.class, "off").requiresNothing();
+				synchron(SwitchableRouteDataTransfers.class, "on").to(MemoryMonitor.class, "add");
+				synchron(SwitchableRouteDataTransfers.class, "finished").to(MemoryMonitor.class, "rm");
+				port(SwitchableRouteDataTransfers.class, "off").acceptsNothing();
+				port(SwitchableRouteDataTransfers.class, "off").requiresNothing();
+				data(SwitchableRouteDataTransfers.class, "deltaMemoryOnTransition").to(MemoryMonitor.class,
+						"memoryUsage");
 
 			}
 
@@ -1306,14 +1318,14 @@ public class AkkaManyRoutesTests {
 		CamelContext camelContext = new DefaultCamelContext();
 		camelContext.setAutoStartup(false);
 
-		SwitchableRoute route1 = new SwitchableRoute("1", camelContext);
-		SwitchableRoute route2 = new SwitchableRoute("2", camelContext);
-		SwitchableRoute route3 = new SwitchableRoute("3", camelContext);
-		SwitchableRoute route4 = new SwitchableRoute("4", camelContext);
-		SwitchableRoute route5 = new SwitchableRoute("5", camelContext);
-		SwitchableRoute route6 = new SwitchableRoute("6", camelContext);
-		SwitchableRoute route7 = new SwitchableRoute("7", camelContext);
-		SwitchableRoute route8 = new SwitchableRoute("8", camelContext);
+		SwitchableRouteDataTransfers route1 = new SwitchableRouteDataTransfers("1", camelContext);
+		SwitchableRouteDataTransfers route2 = new SwitchableRouteDataTransfers("2", camelContext);
+		SwitchableRouteDataTransfers route3 = new SwitchableRouteDataTransfers("3", camelContext);
+		SwitchableRouteDataTransfers route4 = new SwitchableRouteDataTransfers("4", camelContext);
+		SwitchableRouteDataTransfers route5 = new SwitchableRouteDataTransfers("5", camelContext);
+		SwitchableRouteDataTransfers route6 = new SwitchableRouteDataTransfers("6", camelContext);
+		SwitchableRouteDataTransfers route7 = new SwitchableRouteDataTransfers("7", camelContext);
+		SwitchableRouteDataTransfers route8 = new SwitchableRouteDataTransfers("8", camelContext);
 
 		final Executor executor1 = factory.create(engine, route1, "1", true);
 		final Executor executor2 = factory.create(engine, route2, "2", true);
@@ -1627,7 +1639,7 @@ public class AkkaManyRoutesTests {
 			e.printStackTrace();
 		}
 
-		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
+		MemoryMonitor routeOnOffMonitor = new MemoryMonitor(800);
 		final Executor executorM = factory.create(engine, routeOnOffMonitor, "monitor", true);
 
 		engine.specifyGlue(bipGlue);
@@ -1645,20 +1657,22 @@ public class AkkaManyRoutesTests {
 
 	@Test
 	public void bipNineSRTest() throws BIPException {
-		System.out.println("Switchable Routes without Data: 9+1");
+		System.out.println("Switchable Routes with Data: 9+1");
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl());
+		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl()));
 
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
 			public void configure() {
 
-				synchron(SwitchableRoute.class, "on").to(RouteOnOffMonitor.class, "add");
-				synchron(SwitchableRoute.class, "finished").to(RouteOnOffMonitor.class, "rm");
-				port(SwitchableRoute.class, "off").acceptsNothing();
-				port(SwitchableRoute.class, "off").requiresNothing();
+				synchron(SwitchableRouteDataTransfers.class, "on").to(MemoryMonitor.class, "add");
+				synchron(SwitchableRouteDataTransfers.class, "finished").to(MemoryMonitor.class, "rm");
+				port(SwitchableRouteDataTransfers.class, "off").acceptsNothing();
+				port(SwitchableRouteDataTransfers.class, "off").requiresNothing();
+				data(SwitchableRouteDataTransfers.class, "deltaMemoryOnTransition").to(MemoryMonitor.class,
+						"memoryUsage");
 
 			}
 
@@ -1667,15 +1681,15 @@ public class AkkaManyRoutesTests {
 		CamelContext camelContext = new DefaultCamelContext();
 		camelContext.setAutoStartup(false);
 
-		SwitchableRoute route1 = new SwitchableRoute("1", camelContext);
-		SwitchableRoute route2 = new SwitchableRoute("2", camelContext);
-		SwitchableRoute route3 = new SwitchableRoute("3", camelContext);
-		SwitchableRoute route4 = new SwitchableRoute("4", camelContext);
-		SwitchableRoute route5 = new SwitchableRoute("5", camelContext);
-		SwitchableRoute route6 = new SwitchableRoute("6", camelContext);
-		SwitchableRoute route7 = new SwitchableRoute("7", camelContext);
-		SwitchableRoute route8 = new SwitchableRoute("8", camelContext);
-		SwitchableRoute route9 = new SwitchableRoute("9", camelContext);
+		SwitchableRouteDataTransfers route1 = new SwitchableRouteDataTransfers("1", camelContext);
+		SwitchableRouteDataTransfers route2 = new SwitchableRouteDataTransfers("2", camelContext);
+		SwitchableRouteDataTransfers route3 = new SwitchableRouteDataTransfers("3", camelContext);
+		SwitchableRouteDataTransfers route4 = new SwitchableRouteDataTransfers("4", camelContext);
+		SwitchableRouteDataTransfers route5 = new SwitchableRouteDataTransfers("5", camelContext);
+		SwitchableRouteDataTransfers route6 = new SwitchableRouteDataTransfers("6", camelContext);
+		SwitchableRouteDataTransfers route7 = new SwitchableRouteDataTransfers("7", camelContext);
+		SwitchableRouteDataTransfers route8 = new SwitchableRouteDataTransfers("8", camelContext);
+		SwitchableRouteDataTransfers route9 = new SwitchableRouteDataTransfers("9", camelContext);
 
 		final Executor executor1 = factory.create(engine, route1, "1", true);
 
@@ -2027,7 +2041,7 @@ public class AkkaManyRoutesTests {
 			e.printStackTrace();
 		}
 
-		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
+		MemoryMonitor routeOnOffMonitor = new MemoryMonitor(900);
 		final Executor executorM = factory.create(engine, routeOnOffMonitor, "monitor", true);
 
 		engine.specifyGlue(bipGlue);
@@ -2045,19 +2059,21 @@ public class AkkaManyRoutesTests {
 
 	@Test
 	public void bipTenSRTest() throws BIPException {
-		System.out.println("Switchable Routes without Data: 10+1");
+		System.out.println("Switchable Routes with Data: 10+1");
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl());
+		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl()));
 
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
 			public void configure() {
-				synchron(SwitchableRoute.class, "on").to(RouteOnOffMonitor.class, "add");
-				synchron(SwitchableRoute.class, "finished").to(RouteOnOffMonitor.class, "rm");
-				port(SwitchableRoute.class, "off").acceptsNothing();
-				port(SwitchableRoute.class, "off").requiresNothing();
+				synchron(SwitchableRouteDataTransfers.class, "on").to(MemoryMonitor.class, "add");
+				synchron(SwitchableRouteDataTransfers.class, "finished").to(MemoryMonitor.class, "rm");
+				port(SwitchableRouteDataTransfers.class, "off").acceptsNothing();
+				port(SwitchableRouteDataTransfers.class, "off").requiresNothing();
+				data(SwitchableRouteDataTransfers.class, "deltaMemoryOnTransition").to(MemoryMonitor.class,
+						"memoryUsage");
 
 			}
 
@@ -2066,16 +2082,16 @@ public class AkkaManyRoutesTests {
 		CamelContext camelContext = new DefaultCamelContext();
 		camelContext.setAutoStartup(false);
 
-		SwitchableRoute route1 = new SwitchableRoute("1", camelContext);
-		SwitchableRoute route2 = new SwitchableRoute("2", camelContext);
-		SwitchableRoute route3 = new SwitchableRoute("3", camelContext);
-		SwitchableRoute route4 = new SwitchableRoute("4", camelContext);
-		SwitchableRoute route5 = new SwitchableRoute("5", camelContext);
-		SwitchableRoute route6 = new SwitchableRoute("6", camelContext);
-		SwitchableRoute route7 = new SwitchableRoute("7", camelContext);
-		SwitchableRoute route8 = new SwitchableRoute("8", camelContext);
-		SwitchableRoute route9 = new SwitchableRoute("9", camelContext);
-		SwitchableRoute route10 = new SwitchableRoute("10", camelContext);
+		SwitchableRouteDataTransfers route1 = new SwitchableRouteDataTransfers("1", camelContext);
+		SwitchableRouteDataTransfers route2 = new SwitchableRouteDataTransfers("2", camelContext);
+		SwitchableRouteDataTransfers route3 = new SwitchableRouteDataTransfers("3", camelContext);
+		SwitchableRouteDataTransfers route4 = new SwitchableRouteDataTransfers("4", camelContext);
+		SwitchableRouteDataTransfers route5 = new SwitchableRouteDataTransfers("5", camelContext);
+		SwitchableRouteDataTransfers route6 = new SwitchableRouteDataTransfers("6", camelContext);
+		SwitchableRouteDataTransfers route7 = new SwitchableRouteDataTransfers("7", camelContext);
+		SwitchableRouteDataTransfers route8 = new SwitchableRouteDataTransfers("8", camelContext);
+		SwitchableRouteDataTransfers route9 = new SwitchableRouteDataTransfers("9", camelContext);
+		SwitchableRouteDataTransfers route10 = new SwitchableRouteDataTransfers("10", camelContext);
 
 		final Executor executor1 = factory.create(engine, route1, "1", true);
 		final Executor executor2 = factory.create(engine, route2, "2", true);
@@ -2462,7 +2478,7 @@ public class AkkaManyRoutesTests {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
+		MemoryMonitor routeOnOffMonitor = new MemoryMonitor(500);
 		final Executor executorM = factory.create(engine, routeOnOffMonitor, "monitor", true);
 
 		engine.specifyGlue(bipGlue);
@@ -2479,19 +2495,21 @@ public class AkkaManyRoutesTests {
 
 	@Test
 	public void bipFourteenSRTest() throws BIPException {
-		System.out.println("Switchable Routes without Data: 14+1");
+		System.out.println("Switchable Routes with Data: 14+1");
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl());
+		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl()));
 
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
 			public void configure() {
-				synchron(SwitchableRoute.class, "on").to(RouteOnOffMonitor.class, "add");
-				synchron(SwitchableRoute.class, "finished").to(RouteOnOffMonitor.class, "rm");
-				port(SwitchableRoute.class, "off").acceptsNothing();
-				port(SwitchableRoute.class, "off").requiresNothing();
+				synchron(SwitchableRouteDataTransfers.class, "on").to(MemoryMonitor.class, "add");
+				synchron(SwitchableRouteDataTransfers.class, "finished").to(MemoryMonitor.class, "rm");
+				port(SwitchableRouteDataTransfers.class, "off").acceptsNothing();
+				port(SwitchableRouteDataTransfers.class, "off").requiresNothing();
+				data(SwitchableRouteDataTransfers.class, "deltaMemoryOnTransition").to(MemoryMonitor.class,
+						"memoryUsage");
 
 			}
 
@@ -2500,20 +2518,20 @@ public class AkkaManyRoutesTests {
 		CamelContext camelContext = new DefaultCamelContext();
 		camelContext.setAutoStartup(false);
 
-		SwitchableRoute route1 = new SwitchableRoute("1", camelContext);
-		SwitchableRoute route2 = new SwitchableRoute("2", camelContext);
-		SwitchableRoute route3 = new SwitchableRoute("3", camelContext);
-		SwitchableRoute route4 = new SwitchableRoute("4", camelContext);
-		SwitchableRoute route5 = new SwitchableRoute("5", camelContext);
-		SwitchableRoute route6 = new SwitchableRoute("6", camelContext);
-		SwitchableRoute route7 = new SwitchableRoute("7", camelContext);
-		SwitchableRoute route8 = new SwitchableRoute("8", camelContext);
-		SwitchableRoute route9 = new SwitchableRoute("9", camelContext);
-		SwitchableRoute route10 = new SwitchableRoute("10", camelContext);
-		SwitchableRoute route11 = new SwitchableRoute("11", camelContext);
-		SwitchableRoute route12 = new SwitchableRoute("12", camelContext);
-		SwitchableRoute route13 = new SwitchableRoute("13", camelContext);
-		SwitchableRoute route14 = new SwitchableRoute("14", camelContext);
+		SwitchableRouteDataTransfers route1 = new SwitchableRouteDataTransfers("1", camelContext);
+		SwitchableRouteDataTransfers route2 = new SwitchableRouteDataTransfers("2", camelContext);
+		SwitchableRouteDataTransfers route3 = new SwitchableRouteDataTransfers("3", camelContext);
+		SwitchableRouteDataTransfers route4 = new SwitchableRouteDataTransfers("4", camelContext);
+		SwitchableRouteDataTransfers route5 = new SwitchableRouteDataTransfers("5", camelContext);
+		SwitchableRouteDataTransfers route6 = new SwitchableRouteDataTransfers("6", camelContext);
+		SwitchableRouteDataTransfers route7 = new SwitchableRouteDataTransfers("7", camelContext);
+		SwitchableRouteDataTransfers route8 = new SwitchableRouteDataTransfers("8", camelContext);
+		SwitchableRouteDataTransfers route9 = new SwitchableRouteDataTransfers("9", camelContext);
+		SwitchableRouteDataTransfers route10 = new SwitchableRouteDataTransfers("10", camelContext);
+		SwitchableRouteDataTransfers route11 = new SwitchableRouteDataTransfers("11", camelContext);
+		SwitchableRouteDataTransfers route12 = new SwitchableRouteDataTransfers("12", camelContext);
+		SwitchableRouteDataTransfers route13 = new SwitchableRouteDataTransfers("13", camelContext);
+		SwitchableRouteDataTransfers route14 = new SwitchableRouteDataTransfers("14", camelContext);
 
 		final Executor executor1 = factory.create(engine, route1, "1", true);
 		final Executor executor2 = factory.create(engine, route2, "2", true);
@@ -3049,7 +3067,7 @@ public class AkkaManyRoutesTests {
 			e.printStackTrace();
 		}
 
-		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
+		MemoryMonitor routeOnOffMonitor = new MemoryMonitor(800);
 		final Executor executorM = factory.create(engine, routeOnOffMonitor, "monitor", true);
 
 		engine.specifyGlue(bipGlue);
@@ -3066,19 +3084,21 @@ public class AkkaManyRoutesTests {
 
 	@Test
 	public void bipNineTeenSRTest() throws BIPException {
-		System.out.println("Switchable Routes without Data: 19+1");
+		System.out.println("Switchable Routes with Data: 19+1");
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl());
+		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl()));
 
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
 			public void configure() {
-				synchron(SwitchableRoute.class, "on").to(RouteOnOffMonitor.class, "add");
-				synchron(SwitchableRoute.class, "finished").to(RouteOnOffMonitor.class, "rm");
-				port(SwitchableRoute.class, "off").acceptsNothing();
-				port(SwitchableRoute.class, "off").requiresNothing();
+				synchron(SwitchableRouteDataTransfers.class, "on").to(MemoryMonitor.class, "add");
+				synchron(SwitchableRouteDataTransfers.class, "finished").to(MemoryMonitor.class, "rm");
+				port(SwitchableRouteDataTransfers.class, "off").acceptsNothing();
+				port(SwitchableRouteDataTransfers.class, "off").requiresNothing();
+				data(SwitchableRouteDataTransfers.class, "deltaMemoryOnTransition").to(MemoryMonitor.class,
+						"memoryUsage");
 
 			}
 
@@ -3087,25 +3107,25 @@ public class AkkaManyRoutesTests {
 		CamelContext camelContext = new DefaultCamelContext();
 		camelContext.setAutoStartup(false);
 
-		SwitchableRoute route1 = new SwitchableRoute("1", camelContext);
-		SwitchableRoute route2 = new SwitchableRoute("2", camelContext);
-		SwitchableRoute route3 = new SwitchableRoute("3", camelContext);
-		SwitchableRoute route4 = new SwitchableRoute("4", camelContext);
-		SwitchableRoute route5 = new SwitchableRoute("5", camelContext);
-		SwitchableRoute route6 = new SwitchableRoute("6", camelContext);
-		SwitchableRoute route7 = new SwitchableRoute("7", camelContext);
-		SwitchableRoute route8 = new SwitchableRoute("8", camelContext);
-		SwitchableRoute route9 = new SwitchableRoute("9", camelContext);
-		SwitchableRoute route10 = new SwitchableRoute("10", camelContext);
-		SwitchableRoute route11 = new SwitchableRoute("11", camelContext);
-		SwitchableRoute route12 = new SwitchableRoute("12", camelContext);
-		SwitchableRoute route13 = new SwitchableRoute("13", camelContext);
-		SwitchableRoute route14 = new SwitchableRoute("14", camelContext);
-		SwitchableRoute route15 = new SwitchableRoute("15", camelContext);
-		SwitchableRoute route16 = new SwitchableRoute("16", camelContext);
-		SwitchableRoute route17 = new SwitchableRoute("17", camelContext);
-		SwitchableRoute route18 = new SwitchableRoute("18", camelContext);
-		SwitchableRoute route19 = new SwitchableRoute("19", camelContext);
+		SwitchableRouteDataTransfers route1 = new SwitchableRouteDataTransfers("1", camelContext);
+		SwitchableRouteDataTransfers route2 = new SwitchableRouteDataTransfers("2", camelContext);
+		SwitchableRouteDataTransfers route3 = new SwitchableRouteDataTransfers("3", camelContext);
+		SwitchableRouteDataTransfers route4 = new SwitchableRouteDataTransfers("4", camelContext);
+		SwitchableRouteDataTransfers route5 = new SwitchableRouteDataTransfers("5", camelContext);
+		SwitchableRouteDataTransfers route6 = new SwitchableRouteDataTransfers("6", camelContext);
+		SwitchableRouteDataTransfers route7 = new SwitchableRouteDataTransfers("7", camelContext);
+		SwitchableRouteDataTransfers route8 = new SwitchableRouteDataTransfers("8", camelContext);
+		SwitchableRouteDataTransfers route9 = new SwitchableRouteDataTransfers("9", camelContext);
+		SwitchableRouteDataTransfers route10 = new SwitchableRouteDataTransfers("10", camelContext);
+		SwitchableRouteDataTransfers route11 = new SwitchableRouteDataTransfers("11", camelContext);
+		SwitchableRouteDataTransfers route12 = new SwitchableRouteDataTransfers("12", camelContext);
+		SwitchableRouteDataTransfers route13 = new SwitchableRouteDataTransfers("13", camelContext);
+		SwitchableRouteDataTransfers route14 = new SwitchableRouteDataTransfers("14", camelContext);
+		SwitchableRouteDataTransfers route15 = new SwitchableRouteDataTransfers("15", camelContext);
+		SwitchableRouteDataTransfers route16 = new SwitchableRouteDataTransfers("16", camelContext);
+		SwitchableRouteDataTransfers route17 = new SwitchableRouteDataTransfers("17", camelContext);
+		SwitchableRouteDataTransfers route18 = new SwitchableRouteDataTransfers("18", camelContext);
+		SwitchableRouteDataTransfers route19 = new SwitchableRouteDataTransfers("19", camelContext);
 
 		final Executor executor1 = factory.create(engine, route1, "1", true);
 		final Executor executor2 = factory.create(engine, route2, "2", true);
@@ -3826,7 +3846,7 @@ public class AkkaManyRoutesTests {
 			e.printStackTrace();
 		}
 
-		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
+		MemoryMonitor routeOnOffMonitor = new MemoryMonitor(1000);
 		final Executor executorM = factory.create(engine, routeOnOffMonitor, "monitor", true);
 
 		engine.specifyGlue(bipGlue);
