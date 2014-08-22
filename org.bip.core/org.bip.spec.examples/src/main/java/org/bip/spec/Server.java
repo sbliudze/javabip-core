@@ -32,32 +32,34 @@ public class Server {
 	@Transition(name = "turnon", source = "off", target = "on")
 	public void turningon(@Data(name = "serverId") Integer id) {
 		this.crashServerId = id;
-		System.out.println("Server with id " + serverId + " is on. Server with id " + crashServerId + " has crashed.");
+		// System.out.println("Server with id " + serverId + " is on. Server with id " +
+		// crashServerId + " has crashed.");
 	}
 
 	@Transition(name = "crash", source = "on", target = "crash")
 	public void crashing(@Data(name = "sId") Integer id) {
 		this.turnOnServerId = id;
-		System.out.println("Server with id " + serverId + " has crashed. Server with id " + turnOnServerId + " is on.");
+		// System.out.println("Server with id " + serverId + " has crashed. Server with id " +
+		// turnOnServerId + " is on.");
 	}
 
 	@Transition(name = "repair", source = "crash", target = "on", guard = "h1CanInteract")
 	public void repairing() {
 		turnOnServerId = -1;
-		System.out.println("Server with id " + serverId + " is repaired");
+		// System.out.println("Server with id " + serverId + " is repaired");
 	}
 
 	@Transition(name = "turnoff", source = "on", target = "off", guard = "h2CanInteract")
 	public void turningoff() {
 		crashServerId = -1;
-		System.out.println("Server with id " + serverId + " is off");
+		// System.out.println("Server with id " + serverId + " is off");
 	}
 
 	@Transition(name = "softrepair", source = "crash", target = "off", guard = "h1CanInteract&h2CanInteract")
 	public void softrepairing() {
 		turnOnServerId = -1;
 		crashServerId = -1;
-		System.out.println("Server with id " + serverId + " is softrepaired");
+		// System.out.println("Server with id " + serverId + " is softrepaired");
 	}
 
 	@Data(name = "serverId", accessTypePort = AccessType.any)
