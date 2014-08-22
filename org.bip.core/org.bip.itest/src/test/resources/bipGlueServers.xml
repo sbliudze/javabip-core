@@ -99,18 +99,27 @@
                 <option>
                     <causes>
                         <port id="turnoff" specType="org.bip.spec.Server"/>
+                        <port id="repair" specType="org.bip.spec.Server"/>
                     </causes>
                 </option>
                 <option>
                     <causes>
                         <port id="softrepair" specType="org.bip.spec.Server"/>
-                    </causes>
-                </option>
-                <option>
-                    <causes>
                         <port id="repair" specType="org.bip.spec.Server"/>
                     </causes>
                 </option>
+<!--                 <option> -->
+<!--                     <causes> -->
+<!--                         <port id="turnoff" specType="org.bip.spec.Server"/> -->
+<!--                         <port id="softrepair" specType="org.bip.spec.Server"/> -->
+<!--                     </causes> -->
+<!--                 </option> -->
+<!--                 <option> -->
+<!--                     <causes> -->
+<!--                         <port id="softrepair" specType="org.bip.spec.Server"/> -->
+<!--                         <port id="softrepair" specType="org.bip.spec.Server"/> -->
+<!--                     </causes> -->
+<!--                 </option> -->
             </causes>
         </require>
     </requires>
