@@ -531,13 +531,11 @@ public class AkkaExecutorTests {
 
 		Server server2 = new Server(2);
 		Server server3 = new Server(3);
-		Server server4 = new Server(4);
-		InitialServer server12 = new InitialServer(12);
+		InitialServer server1 = new InitialServer(1);
 
 		final Executor executor2 = factory.create(engine, server2, "2", true);
 		final Executor executor3 = factory.create(engine, server3, "3", true);
-		final Executor executor4 = factory.create(engine, server4, "4", true);
-		final Executor executor12 = factory.create(engine, server12, "12", true);
+		final Executor executor1 = factory.create(engine, server1, "1", true);
 
 		engine.specifyGlue(bipGlue);
 		engine.start();
