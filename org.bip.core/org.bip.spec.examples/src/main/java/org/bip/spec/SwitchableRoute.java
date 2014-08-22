@@ -72,6 +72,11 @@ public class SwitchableRoute implements CamelContextAware, InitializingBean, Dis
 	public SwitchableRoute(String routeId) {
 		this.routeId = routeId;
 	}
+	
+	public SwitchableRoute(String routeId, CamelContext camelContext) {
+		this.routeId = routeId;
+		this.camelContext = (ModelCamelContext)camelContext;
+	}
 
 	/**
 	 * In some cases you may want to execute
