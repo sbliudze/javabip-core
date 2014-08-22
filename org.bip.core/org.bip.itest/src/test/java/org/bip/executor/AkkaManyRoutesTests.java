@@ -33,7 +33,7 @@ public class AkkaManyRoutesTests {
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
-		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl()));
+		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl());
 
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
@@ -209,7 +209,7 @@ public class AkkaManyRoutesTests {
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
-		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl()));
+		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl());
 
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
@@ -423,7 +423,7 @@ public class AkkaManyRoutesTests {
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
-		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl()));
+		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl());
 
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
@@ -674,7 +674,7 @@ public class AkkaManyRoutesTests {
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
-		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl()));
+		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl());
 
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
@@ -963,7 +963,7 @@ public class AkkaManyRoutesTests {
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
-		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl()));
+		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl());
 
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
@@ -1288,7 +1288,7 @@ public class AkkaManyRoutesTests {
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
-		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl()));
+		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl());
 
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
@@ -1649,7 +1649,7 @@ public class AkkaManyRoutesTests {
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
-		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl()));
+		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl());
 
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
@@ -2049,7 +2049,7 @@ public class AkkaManyRoutesTests {
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
-		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl()));
+		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl());
 
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
@@ -2483,7 +2483,7 @@ public class AkkaManyRoutesTests {
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
-		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl()));
+		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl());
 
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
@@ -3070,7 +3070,7 @@ public class AkkaManyRoutesTests {
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
-		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl()));
+		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl());
 
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
