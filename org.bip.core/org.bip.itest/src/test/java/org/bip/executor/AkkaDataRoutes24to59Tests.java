@@ -27,11 +27,10 @@ import org.junit.Test;
 
 import akka.actor.ActorSystem;
 
-public class ManyDataRoutesTests {
+public class AkkaDataRoutes24to59Tests {
 
 	@Test
 	public void bipSwMultiTest24() throws BIPException, InterruptedException {
-		System.out.println("Switchable Routes with Data: 24+1");
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(
 				system);
