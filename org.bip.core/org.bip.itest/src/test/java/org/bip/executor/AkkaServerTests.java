@@ -1,7 +1,11 @@
 package org.bip.executor;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.bip.api.BIPEngine;
@@ -18,7 +22,7 @@ import org.junit.Test;
 
 import akka.actor.ActorSystem;
 
-public class ServerTests {
+public class AkkaServerTests {
 
 	@Test
 	public void Servers3Test() {
@@ -120,7 +124,7 @@ public class ServerTests {
 		engine.execute();
 
 		try {
-			Thread.sleep(30000);
+			Thread.sleep(3000000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -161,13 +165,14 @@ public class ServerTests {
 		final Executor executor11 = factory.create(engine, server11, "11", true);
 		final Executor executor12 = factory.create(engine, server12, "12", true);
 		final Executor executor13 = factory.create(engine, server13, "13", true);
+		final Executor executor14 = factory.create(engine, server14, "14", true);
 
 		engine.specifyGlue(bipGlue);
 		engine.start();
 		engine.execute();
 
 		try {
-			Thread.sleep(30000);
+			Thread.sleep(3000000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -221,7 +226,7 @@ public class ServerTests {
 		engine.execute();
 
 		try {
-			Thread.sleep(30000);
+			Thread.sleep(30000000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -281,7 +286,7 @@ public class ServerTests {
 		engine.execute();
 
 		try {
-			Thread.sleep(30000);
+			Thread.sleep(30000000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -347,7 +352,7 @@ public class ServerTests {
 		engine.execute();
 
 		try {
-			Thread.sleep(30000);
+			Thread.sleep(30000000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -420,7 +425,7 @@ public class ServerTests {
 		engine.execute();
 
 		try {
-			Thread.sleep(30000);
+			Thread.sleep(30000000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -498,7 +503,7 @@ public class ServerTests {
 		engine.execute();
 
 		try {
-			Thread.sleep(30000);
+			Thread.sleep(30000000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -582,7 +587,7 @@ public class ServerTests {
 		engine.execute();
 
 		try {
-			Thread.sleep(30000);
+			Thread.sleep(30000000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -672,7 +677,7 @@ public class ServerTests {
 		engine.execute();
 
 		try {
-			Thread.sleep(30000);
+			Thread.sleep(30000000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -768,7 +773,7 @@ public class ServerTests {
 		engine.execute();
 
 		try {
-			Thread.sleep(30000);
+			Thread.sleep(30000000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -870,7 +875,7 @@ public class ServerTests {
 		engine.execute();
 
 		try {
-			Thread.sleep(30000);
+			Thread.sleep(30000000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -978,7 +983,7 @@ public class ServerTests {
 		engine.execute();
 
 		try {
-			Thread.sleep(30000);
+			Thread.sleep(30000000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -1092,7 +1097,7 @@ public class ServerTests {
 		engine.execute();
 
 		try {
-			Thread.sleep(30000);
+			Thread.sleep(30000000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -1113,4 +1118,57 @@ public class ServerTests {
 		}
 		return bipGlue;
 	}
+
+	@Test
+	// Compute time in seconds for 1000 iterations
+	public void computeTimeInSecsfor1000Iterations() throws IOException {
+		int i;
+		for (i = 3; i < 100; i = i + 3) {
+
+			File file = new File("/home/mavridou/workspace/javaengineperformance/Servers/Time/" + "S" + i + ".txt");
+			FileReader fileReader = new FileReader(file);
+			BufferedReader bufferedReader = new BufferedReader(fileReader);
+			String line;
+			int count = 0;
+			double sum = 0;
+			bufferedReader.readLine();
+			while ((line = bufferedReader.readLine()) != null) {
+				if (count == 1000)
+					break;
+				if (!line.equals("")) {
+					sum += Integer.parseInt(line);
+					count++;
+				}
+			}
+			if (count == 0)
+				return;
+			System.out.println(i + " " + sum / 1000);
+		}
+	}
+
+	@Test
+	// Compute time in seconds for 1000 iterations
+	public void computeAverage() throws IOException {
+		int i;
+		for (i = 3; i < 100; i = i + 3) {
+
+			File file = new File("/home/mavridou/workspace/javaengineperformance/Servers/Time/" + "S" + i + ".txt");
+			FileReader fileReader = new FileReader(file);
+			BufferedReader bufferedReader = new BufferedReader(fileReader);
+			String line;
+			int count = 0;
+			double sum = 0;
+			bufferedReader.readLine();
+			while ((line = bufferedReader.readLine()) != null) {
+				if (!line.equals("")) {
+					sum += Integer.parseInt(line);
+					count++;
+				}
+			}
+			if (count == 0)
+				return;
+			System.out.println(i + " " + sum / count + " for iterations: " + count);
+		}
+	}
+
 }

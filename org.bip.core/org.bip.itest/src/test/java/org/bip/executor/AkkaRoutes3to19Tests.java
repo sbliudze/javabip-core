@@ -13,7 +13,6 @@ import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
 import org.bip.api.Executor;
 import org.bip.engine.BIPCoordinatorImpl;
-import org.bip.engine.DataCoordinatorKernel;
 import org.bip.engine.api.EngineFactory;
 import org.bip.exceptions.BIPException;
 import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
@@ -205,7 +204,6 @@ public class AkkaRoutes3to19Tests {
 
 	@Test
 	public void bipFourSRTest() throws BIPException {
-		System.out.println("Switchable Routes without Data: 4+1");
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
@@ -2479,7 +2477,6 @@ public class AkkaRoutes3to19Tests {
 
 	@Test
 	public void bipFourteenSRTest() throws BIPException {
-		System.out.println("Switchable Routes without Data: 14+1");
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
@@ -3065,8 +3062,8 @@ public class AkkaRoutes3to19Tests {
 	}
 
 	@Test
-	public void bipNineTeenSRTest() throws BIPException {
-		System.out.println("Switchable Routes without Data: 19+1");
+	public void bipNineteenSRTest() throws BIPException {
+
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
@@ -3840,5 +3837,6 @@ public class AkkaRoutes3to19Tests {
 
 		assertEquals("Monitor does not have a proper id ", executorM.getId(), "monitor");
 	}
+
 
 }

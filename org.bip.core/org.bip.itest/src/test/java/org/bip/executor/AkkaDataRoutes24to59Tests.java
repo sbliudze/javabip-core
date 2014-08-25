@@ -14398,10 +14398,41 @@ public class AkkaDataRoutes24to59Tests {
 	}
 
 	@Test
+	// Compute time in seconds for 1000 iterations
+	public void computeTimeInSecsfor1000Iterations() throws IOException {
+		int i;
+		for (i = 4; i < 100; i = i + 5) {
+
+			File file = new File("/home/mavridou/workspace/javaengineperformance/DataSwitchableRoutes/Time/" + "SW" + i
+					+ ".txt");
+			FileReader fileReader = new FileReader(file);
+			BufferedReader bufferedReader = new BufferedReader(fileReader);
+			String line;
+			int count = 0;
+			double sum = 0;
+			bufferedReader.readLine();
+			while ((line = bufferedReader.readLine()) != null) {
+				if (count == 1000)
+					break;
+				if (!line.equals("")) {
+				sum += Integer.parseInt(line);
+					count++;
+				}
+			}
+			if (count == 0)
+				return;
+			System.out.println(i + 1 + " " + sum / 1000);
+		}
+	}
+
+	@Test
+	// Compute time in seconds for 1000 iterations
 	public void computeAverage() throws IOException {
 		int i;
-		for (i = 24; i < 100; i = i + 5) {
-			File file = new File("performanceResults/DataSwitchableRoutes/Time/terminal/" + i + "+1.log");
+		for (i = 4; i < 100; i = i + 5) {
+
+			File file = new File("/home/mavridou/workspace/javaengineperformance/DataSwitchableRoutes/Time/" + "SW" + i
+					+ ".txt");
 			FileReader fileReader = new FileReader(file);
 			BufferedReader bufferedReader = new BufferedReader(fileReader);
 			String line;
@@ -14410,15 +14441,13 @@ public class AkkaDataRoutes24to59Tests {
 			bufferedReader.readLine();
 			while ((line = bufferedReader.readLine()) != null) {
 				if (!line.equals("")) {
-				sum += Integer.parseInt(line);
+					sum += Integer.parseInt(line);
 					count++;
 				}
 			}
 			if (count == 0)
 				return;
-			System.out.println(i+"+1: " + sum / count);
+			System.out.println(i + 1 + " " + sum / count + " for iterations: " + count);
 		}
-
-		
 	}
 }
