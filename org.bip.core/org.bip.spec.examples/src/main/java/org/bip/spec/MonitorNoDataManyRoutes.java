@@ -5,7 +5,7 @@ import org.bip.api.PortType;
 
 @Ports({ @Port(name = "add", type = PortType.enforceable),
 		    @Port(name = "rm", type = PortType.enforceable) })
-@ComponentType(initial = "init", name = "org.bip.spec.RouteOnOffMonitor")
+@ComponentType(initial = "init", name = "org.bip.spec.MonitorNoDataManyRoutes")
 public class MonitorNoDataManyRoutes {
 
     final private int routeLimit;
