@@ -124,7 +124,7 @@ public class AkkaServerTests {
 		engine.execute();
 
 		try {
-			Thread.sleep(3000000);
+			Thread.sleep(30000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -172,7 +172,7 @@ public class AkkaServerTests {
 		engine.execute();
 
 		try {
-			Thread.sleep(3000000);
+			Thread.sleep(30000000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
