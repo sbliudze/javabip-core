@@ -17,7 +17,7 @@ import org.bip.engine.api.EngineFactory;
 import org.bip.exceptions.BIPException;
 import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
 import org.bip.glue.TwoSynchronGlueBuilder;
-import org.bip.spec.RouteOnOffMonitor;
+import org.bip.spec.MonitorNoDataManyRoutes;
 import org.bip.spec.SwitchableRoute;
 import org.junit.Test;
 
@@ -38,8 +38,8 @@ public class AkkaRoutes3to19Tests {
 			@Override
 			public void configure() {
 
-				synchron(SwitchableRoute.class, "on").to(RouteOnOffMonitor.class, "add");
-				synchron(SwitchableRoute.class, "finished").to(RouteOnOffMonitor.class, "rm");
+				synchron(SwitchableRoute.class, "on").to(MonitorNoDataManyRoutes.class, "add");
+				synchron(SwitchableRoute.class, "finished").to(MonitorNoDataManyRoutes.class, "rm");
 				port(SwitchableRoute.class, "off").acceptsNothing();
 				port(SwitchableRoute.class, "off").requiresNothing();
 
@@ -188,8 +188,8 @@ public class AkkaRoutes3to19Tests {
 			e.printStackTrace();
 		}
 
-		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
-		final Executor executorM = factory.create(engine, routeOnOffMonitor, "monitor", true);
+		MonitorNoDataManyRoutes monitorNoDataManyRoutes = new MonitorNoDataManyRoutes(2);
+		final Executor executorM = factory.create(engine, monitorNoDataManyRoutes, "monitor", true);
 
 		engine.specifyGlue(bipGlue);
 		engine.start();
@@ -213,8 +213,8 @@ public class AkkaRoutes3to19Tests {
 			@Override
 			public void configure() {
 
-				synchron(SwitchableRoute.class, "on").to(RouteOnOffMonitor.class, "add");
-				synchron(SwitchableRoute.class, "finished").to(RouteOnOffMonitor.class, "rm");
+				synchron(SwitchableRoute.class, "on").to(MonitorNoDataManyRoutes.class, "add");
+				synchron(SwitchableRoute.class, "finished").to(MonitorNoDataManyRoutes.class, "rm");
 				port(SwitchableRoute.class, "off").acceptsNothing();
 				port(SwitchableRoute.class, "off").requiresNothing();
 
@@ -400,8 +400,8 @@ public class AkkaRoutes3to19Tests {
 			e.printStackTrace();
 		}
 
-		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
-		final Executor executorM = factory.create(engine, routeOnOffMonitor, "monitor", true);
+		MonitorNoDataManyRoutes monitorNoDataManyRoutes = new MonitorNoDataManyRoutes(2);
+		final Executor executorM = factory.create(engine, monitorNoDataManyRoutes, "monitor", true);
 
 		engine.specifyGlue(bipGlue);
 		engine.start();
@@ -427,8 +427,8 @@ public class AkkaRoutes3to19Tests {
 			@Override
 			public void configure() {
 
-				synchron(SwitchableRoute.class, "on").to(RouteOnOffMonitor.class, "add");
-				synchron(SwitchableRoute.class, "finished").to(RouteOnOffMonitor.class, "rm");
+				synchron(SwitchableRoute.class, "on").to(MonitorNoDataManyRoutes.class, "add");
+				synchron(SwitchableRoute.class, "finished").to(MonitorNoDataManyRoutes.class, "rm");
 				port(SwitchableRoute.class, "off").acceptsNothing();
 				port(SwitchableRoute.class, "off").requiresNothing();
 
@@ -651,8 +651,8 @@ public class AkkaRoutes3to19Tests {
 			e.printStackTrace();
 		}
 
-		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
-		final Executor executorM = factory.create(engine, routeOnOffMonitor, "monitor", true);
+		MonitorNoDataManyRoutes monitorNoDataManyRoutes = new MonitorNoDataManyRoutes(3);
+		final Executor executorM = factory.create(engine, monitorNoDataManyRoutes, "monitor", true);
 
 		engine.specifyGlue(bipGlue);
 		engine.start();
@@ -678,8 +678,8 @@ public class AkkaRoutes3to19Tests {
 			@Override
 			public void configure() {
 
-				synchron(SwitchableRoute.class, "on").to(RouteOnOffMonitor.class, "add");
-				synchron(SwitchableRoute.class, "finished").to(RouteOnOffMonitor.class, "rm");
+				synchron(SwitchableRoute.class, "on").to(MonitorNoDataManyRoutes.class, "add");
+				synchron(SwitchableRoute.class, "finished").to(MonitorNoDataManyRoutes.class, "rm");
 				port(SwitchableRoute.class, "off").acceptsNothing();
 				port(SwitchableRoute.class, "off").requiresNothing();
 
@@ -939,8 +939,8 @@ public class AkkaRoutes3to19Tests {
 			e.printStackTrace();
 		}
 
-		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
-		final Executor executorM = factory.create(engine, routeOnOffMonitor, "monitor", true);
+		MonitorNoDataManyRoutes monitorNoDataManyRoutes = new MonitorNoDataManyRoutes(3);
+		final Executor executorM = factory.create(engine, monitorNoDataManyRoutes, "monitor", true);
 
 		engine.specifyGlue(bipGlue);
 		engine.start();
@@ -967,8 +967,8 @@ public class AkkaRoutes3to19Tests {
 			@Override
 			public void configure() {
 
-				synchron(SwitchableRoute.class, "on").to(RouteOnOffMonitor.class, "add");
-				synchron(SwitchableRoute.class, "finished").to(RouteOnOffMonitor.class, "rm");
+				synchron(SwitchableRoute.class, "on").to(MonitorNoDataManyRoutes.class, "add");
+				synchron(SwitchableRoute.class, "finished").to(MonitorNoDataManyRoutes.class, "rm");
 				port(SwitchableRoute.class, "off").acceptsNothing();
 				port(SwitchableRoute.class, "off").requiresNothing();
 			}
@@ -1264,8 +1264,8 @@ public class AkkaRoutes3to19Tests {
 			e.printStackTrace();
 		}
 
-		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
-		final Executor executorM = factory.create(engine, routeOnOffMonitor, "monitor", true);
+		MonitorNoDataManyRoutes monitorNoDataManyRoutes = new MonitorNoDataManyRoutes(4);
+		final Executor executorM = factory.create(engine, monitorNoDataManyRoutes, "monitor", true);
 
 		engine.specifyGlue(bipGlue);
 		engine.start();
@@ -1292,8 +1292,8 @@ public class AkkaRoutes3to19Tests {
 			@Override
 			public void configure() {
 
-				synchron(SwitchableRoute.class, "on").to(RouteOnOffMonitor.class, "add");
-				synchron(SwitchableRoute.class, "finished").to(RouteOnOffMonitor.class, "rm");
+				synchron(SwitchableRoute.class, "on").to(MonitorNoDataManyRoutes.class, "add");
+				synchron(SwitchableRoute.class, "finished").to(MonitorNoDataManyRoutes.class, "rm");
 				port(SwitchableRoute.class, "off").acceptsNothing();
 				port(SwitchableRoute.class, "off").requiresNothing();
 
@@ -1625,8 +1625,8 @@ public class AkkaRoutes3to19Tests {
 			e.printStackTrace();
 		}
 
-		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
-		final Executor executorM = factory.create(engine, routeOnOffMonitor, "monitor", true);
+		MonitorNoDataManyRoutes monitorNoDataManyRoutes = new MonitorNoDataManyRoutes(4);
+		final Executor executorM = factory.create(engine, monitorNoDataManyRoutes, "monitor", true);
 
 		engine.specifyGlue(bipGlue);
 		engine.start();
@@ -1653,8 +1653,8 @@ public class AkkaRoutes3to19Tests {
 			@Override
 			public void configure() {
 
-				synchron(SwitchableRoute.class, "on").to(RouteOnOffMonitor.class, "add");
-				synchron(SwitchableRoute.class, "finished").to(RouteOnOffMonitor.class, "rm");
+				synchron(SwitchableRoute.class, "on").to(MonitorNoDataManyRoutes.class, "add");
+				synchron(SwitchableRoute.class, "finished").to(MonitorNoDataManyRoutes.class, "rm");
 				port(SwitchableRoute.class, "off").acceptsNothing();
 				port(SwitchableRoute.class, "off").requiresNothing();
 
@@ -2025,8 +2025,8 @@ public class AkkaRoutes3to19Tests {
 			e.printStackTrace();
 		}
 
-		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
-		final Executor executorM = factory.create(engine, routeOnOffMonitor, "monitor", true);
+		MonitorNoDataManyRoutes monitorNoDataManyRoutes = new MonitorNoDataManyRoutes(5);
+		final Executor executorM = factory.create(engine, monitorNoDataManyRoutes, "monitor", true);
 
 		engine.specifyGlue(bipGlue);
 		engine.start();
@@ -2052,8 +2052,8 @@ public class AkkaRoutes3to19Tests {
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
 			public void configure() {
-				synchron(SwitchableRoute.class, "on").to(RouteOnOffMonitor.class, "add");
-				synchron(SwitchableRoute.class, "finished").to(RouteOnOffMonitor.class, "rm");
+				synchron(SwitchableRoute.class, "on").to(MonitorNoDataManyRoutes.class, "add");
+				synchron(SwitchableRoute.class, "finished").to(MonitorNoDataManyRoutes.class, "rm");
 				port(SwitchableRoute.class, "off").acceptsNothing();
 				port(SwitchableRoute.class, "off").requiresNothing();
 
@@ -2460,8 +2460,8 @@ public class AkkaRoutes3to19Tests {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
-		final Executor executorM = factory.create(engine, routeOnOffMonitor, "monitor", true);
+		MonitorNoDataManyRoutes monitorNoDataManyRoutes = new MonitorNoDataManyRoutes(5);
+		final Executor executorM = factory.create(engine, monitorNoDataManyRoutes, "monitor", true);
 
 		engine.specifyGlue(bipGlue);
 		engine.start();
@@ -2485,8 +2485,8 @@ public class AkkaRoutes3to19Tests {
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
 			public void configure() {
-				synchron(SwitchableRoute.class, "on").to(RouteOnOffMonitor.class, "add");
-				synchron(SwitchableRoute.class, "finished").to(RouteOnOffMonitor.class, "rm");
+				synchron(SwitchableRoute.class, "on").to(MonitorNoDataManyRoutes.class, "add");
+				synchron(SwitchableRoute.class, "finished").to(MonitorNoDataManyRoutes.class, "rm");
 				port(SwitchableRoute.class, "off").acceptsNothing();
 				port(SwitchableRoute.class, "off").requiresNothing();
 
@@ -3046,8 +3046,8 @@ public class AkkaRoutes3to19Tests {
 			e.printStackTrace();
 		}
 
-		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
-		final Executor executorM = factory.create(engine, routeOnOffMonitor, "monitor", true);
+		MonitorNoDataManyRoutes monitorNoDataManyRoutes = new MonitorNoDataManyRoutes(7);
+		final Executor executorM = factory.create(engine, monitorNoDataManyRoutes, "monitor", true);
 
 		engine.specifyGlue(bipGlue);
 		engine.start();
@@ -3072,8 +3072,8 @@ public class AkkaRoutes3to19Tests {
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
 			public void configure() {
-				synchron(SwitchableRoute.class, "on").to(RouteOnOffMonitor.class, "add");
-				synchron(SwitchableRoute.class, "finished").to(RouteOnOffMonitor.class, "rm");
+				synchron(SwitchableRoute.class, "on").to(MonitorNoDataManyRoutes.class, "add");
+				synchron(SwitchableRoute.class, "finished").to(MonitorNoDataManyRoutes.class, "rm");
 				port(SwitchableRoute.class, "off").acceptsNothing();
 				port(SwitchableRoute.class, "off").requiresNothing();
 
@@ -3823,8 +3823,8 @@ public class AkkaRoutes3to19Tests {
 			e.printStackTrace();
 		}
 
-		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
-		final Executor executorM = factory.create(engine, routeOnOffMonitor, "monitor", true);
+		MonitorNoDataManyRoutes monitorNoDataManyRoutes = new MonitorNoDataManyRoutes(9);
+		final Executor executorM = factory.create(engine, monitorNoDataManyRoutes, "monitor", true);
 
 		engine.specifyGlue(bipGlue);
 		engine.start();

@@ -20,7 +20,7 @@ import org.bip.engine.api.EngineFactory;
 import org.bip.exceptions.BIPException;
 import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
 import org.bip.glue.TwoSynchronGlueBuilder;
-import org.bip.spec.RouteOnOffMonitor;
+import org.bip.spec.MonitorNoDataManyRoutes;
 import org.bip.spec.SwitchableRoute;
 import org.junit.Test;
 
@@ -42,9 +42,9 @@ public class AkkaRoutes64to99Tests {
 			public void configure() {
 
 				synchron(SwitchableRoute.class, "on").to(
-						RouteOnOffMonitor.class, "add");
+						MonitorNoDataManyRoutes.class, "add");
 				synchron(SwitchableRoute.class, "finished").to(
-						RouteOnOffMonitor.class, "rm");
+						MonitorNoDataManyRoutes.class, "rm");
 				port(SwitchableRoute.class, "off")
 						.acceptsNothing();
 				port(SwitchableRoute.class, "off")
@@ -57,8 +57,8 @@ public class AkkaRoutes64to99Tests {
 		CamelContext camelContext = new DefaultCamelContext();
 		camelContext.setAutoStartup(false);
 
-		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
-		final Executor executorM = factory.create(engine, routeOnOffMonitor,
+		MonitorNoDataManyRoutes monitorNoDataManyRoutes = new MonitorNoDataManyRoutes(32);
+		final Executor executorM = factory.create(engine, monitorNoDataManyRoutes,
 				"monitor", true);
 		SwitchableRoute route1 = new SwitchableRoute(
 				"1", camelContext);
@@ -2779,9 +2779,9 @@ public class AkkaRoutes64to99Tests {
 			public void configure() {
 
 				synchron(SwitchableRoute.class, "on").to(
-						RouteOnOffMonitor.class, "add");
+						MonitorNoDataManyRoutes.class, "add");
 				synchron(SwitchableRoute.class, "finished").to(
-						RouteOnOffMonitor.class, "rm");
+						MonitorNoDataManyRoutes.class, "rm");
 				port(SwitchableRoute.class, "off")
 						.acceptsNothing();
 				port(SwitchableRoute.class, "off")
@@ -2794,8 +2794,8 @@ public class AkkaRoutes64to99Tests {
 		CamelContext camelContext = new DefaultCamelContext();
 		camelContext.setAutoStartup(false);
 
-		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
-		final Executor executorM = factory.create(engine, routeOnOffMonitor,
+		MonitorNoDataManyRoutes monitorNoDataManyRoutes = new MonitorNoDataManyRoutes(34);
+		final Executor executorM = factory.create(engine, monitorNoDataManyRoutes,
 				"monitor", true);
 		SwitchableRoute route1 = new SwitchableRoute(
 				"1", camelContext);
@@ -5726,9 +5726,9 @@ public class AkkaRoutes64to99Tests {
 			public void configure() {
 
 				synchron(SwitchableRoute.class, "on").to(
-						RouteOnOffMonitor.class, "add");
+						MonitorNoDataManyRoutes.class, "add");
 				synchron(SwitchableRoute.class, "finished").to(
-						RouteOnOffMonitor.class, "rm");
+						MonitorNoDataManyRoutes.class, "rm");
 				port(SwitchableRoute.class, "off")
 						.acceptsNothing();
 				port(SwitchableRoute.class, "off")
@@ -5741,8 +5741,8 @@ public class AkkaRoutes64to99Tests {
 		CamelContext camelContext = new DefaultCamelContext();
 		camelContext.setAutoStartup(false);
 
-		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
-		final Executor executorM = factory.create(engine, routeOnOffMonitor,
+		MonitorNoDataManyRoutes monitorNoDataManyRoutes = new MonitorNoDataManyRoutes(37);
+		final Executor executorM = factory.create(engine, monitorNoDataManyRoutes,
 				"monitor", true);
 		SwitchableRoute route1 = new SwitchableRoute(
 				"1", camelContext);
@@ -8883,9 +8883,9 @@ public class AkkaRoutes64to99Tests {
 			public void configure() {
 
 				synchron(SwitchableRoute.class, "on").to(
-						RouteOnOffMonitor.class, "add");
+						MonitorNoDataManyRoutes.class, "add");
 				synchron(SwitchableRoute.class, "finished").to(
-						RouteOnOffMonitor.class, "rm");
+						MonitorNoDataManyRoutes.class, "rm");
 				port(SwitchableRoute.class, "off")
 						.acceptsNothing();
 				port(SwitchableRoute.class, "off")
@@ -8898,8 +8898,8 @@ public class AkkaRoutes64to99Tests {
 		CamelContext camelContext = new DefaultCamelContext();
 		camelContext.setAutoStartup(false);
 
-		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
-		final Executor executorM = factory.create(engine, routeOnOffMonitor,
+		MonitorNoDataManyRoutes monitorNoDataManyRoutes = new MonitorNoDataManyRoutes(39);
+		final Executor executorM = factory.create(engine, monitorNoDataManyRoutes,
 				"monitor", true);
 		SwitchableRoute route1 = new SwitchableRoute(
 				"1", camelContext);
@@ -12250,9 +12250,9 @@ public class AkkaRoutes64to99Tests {
 			public void configure() {
 
 				synchron(SwitchableRoute.class, "on").to(
-						RouteOnOffMonitor.class, "add");
+						MonitorNoDataManyRoutes.class, "add");
 				synchron(SwitchableRoute.class, "finished").to(
-						RouteOnOffMonitor.class, "rm");
+						MonitorNoDataManyRoutes.class, "rm");
 				port(SwitchableRoute.class, "off")
 						.acceptsNothing();
 				port(SwitchableRoute.class, "off")
@@ -12265,8 +12265,8 @@ public class AkkaRoutes64to99Tests {
 		CamelContext camelContext = new DefaultCamelContext();
 		camelContext.setAutoStartup(false);
 
-		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
-		final Executor executorM = factory.create(engine, routeOnOffMonitor,
+		MonitorNoDataManyRoutes monitorNoDataManyRoutes = new MonitorNoDataManyRoutes(42);
+		final Executor executorM = factory.create(engine, monitorNoDataManyRoutes,
 				"monitor", true);
 		SwitchableRoute route1 = new SwitchableRoute(
 				"1", camelContext);
@@ -15827,9 +15827,9 @@ public class AkkaRoutes64to99Tests {
 			public void configure() {
 
 				synchron(SwitchableRoute.class, "on").to(
-						RouteOnOffMonitor.class, "add");
+						MonitorNoDataManyRoutes.class, "add");
 				synchron(SwitchableRoute.class, "finished").to(
-						RouteOnOffMonitor.class, "rm");
+						MonitorNoDataManyRoutes.class, "rm");
 				port(SwitchableRoute.class, "off")
 						.acceptsNothing();
 				port(SwitchableRoute.class, "off")
@@ -15842,8 +15842,8 @@ public class AkkaRoutes64to99Tests {
 		CamelContext camelContext = new DefaultCamelContext();
 		camelContext.setAutoStartup(false);
 
-		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
-		final Executor executorM = factory.create(engine, routeOnOffMonitor,
+		MonitorNoDataManyRoutes monitorNoDataManyRoutes = new MonitorNoDataManyRoutes(45);
+		final Executor executorM = factory.create(engine, monitorNoDataManyRoutes,
 				"monitor", true);
 		SwitchableRoute route1 = new SwitchableRoute(
 				"1", camelContext);
@@ -19614,9 +19614,9 @@ public class AkkaRoutes64to99Tests {
 			public void configure() {
 
 				synchron(SwitchableRoute.class, "on").to(
-						RouteOnOffMonitor.class, "add");
+						MonitorNoDataManyRoutes.class, "add");
 				synchron(SwitchableRoute.class, "finished").to(
-						RouteOnOffMonitor.class, "rm");
+						MonitorNoDataManyRoutes.class, "rm");
 				port(SwitchableRoute.class, "off")
 						.acceptsNothing();
 				port(SwitchableRoute.class, "off")
@@ -19629,8 +19629,8 @@ public class AkkaRoutes64to99Tests {
 		CamelContext camelContext = new DefaultCamelContext();
 		camelContext.setAutoStartup(false);
 
-		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
-		final Executor executorM = factory.create(engine, routeOnOffMonitor,
+		MonitorNoDataManyRoutes monitorNoDataManyRoutes = new MonitorNoDataManyRoutes(47);
+		final Executor executorM = factory.create(engine, monitorNoDataManyRoutes,
 				"monitor", true);
 		SwitchableRoute route1 = new SwitchableRoute(
 				"1", camelContext);
@@ -23611,9 +23611,9 @@ public class AkkaRoutes64to99Tests {
 			public void configure() {
 
 				synchron(SwitchableRoute.class, "on").to(
-						RouteOnOffMonitor.class, "add");
+						MonitorNoDataManyRoutes.class, "add");
 				synchron(SwitchableRoute.class, "finished").to(
-						RouteOnOffMonitor.class, "rm");
+						MonitorNoDataManyRoutes.class, "rm");
 				port(SwitchableRoute.class, "off")
 						.acceptsNothing();
 				port(SwitchableRoute.class, "off")
@@ -23626,8 +23626,8 @@ public class AkkaRoutes64to99Tests {
 		CamelContext camelContext = new DefaultCamelContext();
 		camelContext.setAutoStartup(false);
 
-		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
-		final Executor executorM = factory.create(engine, routeOnOffMonitor,
+		MonitorNoDataManyRoutes monitorNoDataManyRoutes = new MonitorNoDataManyRoutes(50);
+		final Executor executorM = factory.create(engine, monitorNoDataManyRoutes,
 				"monitor", true);
 		SwitchableRoute route1 = new SwitchableRoute(
 				"1", camelContext);
