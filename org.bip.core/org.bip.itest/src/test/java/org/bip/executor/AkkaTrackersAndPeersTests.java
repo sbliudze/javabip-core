@@ -825,9 +825,10 @@ public class AkkaTrackersAndPeersTests {
 	// Compute time in seconds for 1000 iterations
 	public void computeTimeInSecsfor1000Iterations() throws IOException {
 		int i;
-		for (i = 5; i < 50; i = i + 5) {
+		for (i = 5; i < 55; i = i + 5) {
 
-			File file = new File("/home/mavridou/workspace/javaengineperformance/TrackersPeers/Time/" + "TP" + i
+			File file = new File("/home/mavridou/workspace/javaengineperformance/TrackersPeers/Time/100000Nodes/"
+					+ "TP" + i
 					+ ".txt");
 			FileReader fileReader = new FileReader(file);
 			BufferedReader bufferedReader = new BufferedReader(fileReader);
@@ -853,9 +854,11 @@ public class AkkaTrackersAndPeersTests {
 	// Compute time in seconds for 1000 iterations
 	public void computeAverage() throws IOException {
 		int i;
-		for (i = 5; i < 50; i = i + 5) {
+		for (i = 5; i < 55; i = i + 5) {
 
-			File file = new File("/home/mavridou/workspace/javaengineperformance/TrackersPeers/Time/" + "TP" + i
+			File file = new File("/home/mavridou/workspace/javaengineperformance/TrackersPeers/Time/100000Nodes/"
+					+ "TP"
+					+ i
 					+ ".txt");
 			FileReader fileReader = new FileReader(file);
 			BufferedReader bufferedReader = new BufferedReader(fileReader);

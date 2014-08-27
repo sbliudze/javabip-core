@@ -2495,7 +2495,6 @@ public class AkkaDataRoutes3to19Tests {
 
 	@Test
 	public void bipFourteenSRTest() throws BIPException {
-		System.out.println("Switchable Routes with Data: 14+1");
 		ActorSystem system = ActorSystem.create("MySystem");
 		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
 		EngineFactory engineFactory = new EngineFactory(system);
@@ -3074,7 +3073,7 @@ public class AkkaDataRoutes3to19Tests {
 		engine.start();
 		engine.execute();
 		try {
-			Thread.sleep(20000);
+			Thread.sleep(800000000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

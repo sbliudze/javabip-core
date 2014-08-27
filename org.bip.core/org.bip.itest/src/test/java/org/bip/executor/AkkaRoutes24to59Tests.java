@@ -14379,7 +14379,8 @@ public class AkkaRoutes24to59Tests {
 		int i;
 		for (i = 4; i < 100; i = i + 5) {
 
-			File file = new File("/home/mavridou/workspace/javaengineperformance/SwitchableRoutesNoData/Time/" + "SW"
+			File file = new File(
+					"/home/mavridou/workspace/javaengineperformance/SwitchableRoutesNoData/Time/100000Nodes/" + "SW"
 					+ i + ".txt");
 			FileReader fileReader = new FileReader(file);
 			BufferedReader bufferedReader = new BufferedReader(fileReader);
@@ -14402,12 +14403,12 @@ public class AkkaRoutes24to59Tests {
 	}
 
 	@Test
-	// Compute time in seconds for 1000 iterations
 	public void computeAverage() throws IOException {
 		int i;
 		for (i = 4; i < 100; i = i + 5) {
 
-			File file = new File("/home/mavridou/workspace/javaengineperformance/SwitchableRoutesNoData/Time/" + "SW"
+			File file = new File(
+					"/home/mavridou/workspace/javaengineperformance/SwitchableRoutesNoData/Time/100000Nodes/" + "SW"
 					+ i + ".txt");
 			FileReader fileReader = new FileReader(file);
 			BufferedReader bufferedReader = new BufferedReader(fileReader);

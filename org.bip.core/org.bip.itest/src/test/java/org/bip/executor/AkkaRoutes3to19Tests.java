@@ -2033,7 +2033,7 @@ public class AkkaRoutes3to19Tests {
 
 		engine.execute();
 		try {
-			Thread.sleep(8000);
+			Thread.sleep(800000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -3053,7 +3053,7 @@ public class AkkaRoutes3to19Tests {
 		engine.start();
 		engine.execute();
 		try {
-			Thread.sleep(20000);
+			Thread.sleep(20000000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
