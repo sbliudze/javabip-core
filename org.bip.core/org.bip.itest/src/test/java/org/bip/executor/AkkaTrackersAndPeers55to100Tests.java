@@ -22,7 +22,7 @@ import org.junit.Test;
 
 import akka.actor.ActorSystem;
 
-public class AkkaTrackersAndPeers50to100Tests {
+public class AkkaTrackersAndPeers55to100Tests {
 
 	@Test
 	public void TrackerPeer55Test() {
@@ -151,7 +151,7 @@ public class AkkaTrackersAndPeers50to100Tests {
 		engine.execute();
 
 		try {
-			Thread.sleep(60000);
+			Thread.sleep(120000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -294,7 +294,7 @@ public class AkkaTrackersAndPeers50to100Tests {
 		engine.execute();
 
 		try {
-			Thread.sleep(60000);
+			Thread.sleep(150000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -447,7 +447,7 @@ public class AkkaTrackersAndPeers50to100Tests {
 		engine.execute();
 
 		try {
-			Thread.sleep(60000);
+			Thread.sleep(250000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -610,7 +610,7 @@ public class AkkaTrackersAndPeers50to100Tests {
 		engine.execute();
 
 		try {
-			Thread.sleep(60000);
+			Thread.sleep(350000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -783,7 +783,7 @@ public class AkkaTrackersAndPeers50to100Tests {
 		engine.execute();
 
 		try {
-			Thread.sleep(60000);
+			Thread.sleep(400000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -966,7 +966,7 @@ public class AkkaTrackersAndPeers50to100Tests {
 		engine.execute();
 
 		try {
-			Thread.sleep(60000);
+			Thread.sleep(550000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -1159,7 +1159,7 @@ public class AkkaTrackersAndPeers50to100Tests {
 		engine.execute();
 
 		try {
-			Thread.sleep(60000);
+			Thread.sleep(700000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -1362,7 +1362,7 @@ public class AkkaTrackersAndPeers50to100Tests {
 		engine.execute();
 
 		try {
-			Thread.sleep(60000);
+			Thread.sleep(700000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -1575,7 +1575,7 @@ public class AkkaTrackersAndPeers50to100Tests {
 		engine.execute();
 
 		try {
-			Thread.sleep(60000);
+			Thread.sleep(700000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -1798,7 +1798,7 @@ public class AkkaTrackersAndPeers50to100Tests {
 		engine.execute();
 
 		try {
-			Thread.sleep(60000);
+			Thread.sleep(700000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

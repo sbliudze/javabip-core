@@ -675,7 +675,7 @@ public class AkkaTrackersAndPeersTests {
 		engine.execute();
 
 		try {
-			Thread.sleep(50000);
+			Thread.sleep(60000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -799,7 +799,7 @@ public class AkkaTrackersAndPeersTests {
 		engine.execute();
 
 		try {
-			Thread.sleep(60000);
+			Thread.sleep(80000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
