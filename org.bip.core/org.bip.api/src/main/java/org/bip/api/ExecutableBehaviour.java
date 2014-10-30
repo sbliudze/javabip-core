@@ -102,6 +102,7 @@ public interface ExecutableBehaviour extends Behaviour {
 	 * @return
 	 * @throws BIPException
 	 */
+	// Big TODO: Check implementation
 	public boolean transitionNoDataGuardData(String port) throws BIPException;
 	
 	/**

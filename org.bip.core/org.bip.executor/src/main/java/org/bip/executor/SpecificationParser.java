@@ -14,10 +14,9 @@ import java.lang.reflect.Method;
 
 import org.bip.annotations.ComponentType;
 import org.bip.annotations.Data;
-import org.bip.annotations.Port;
 import org.bip.annotations.Ports;
 import org.bip.annotations.Transitions;
-import org.bip.api.BIPBuilderBehaviour;
+import org.bip.api.Behaviour;
 import org.bip.api.ComponentProvider;
 import org.bip.api.ExecutableBehaviour;
 import org.bip.exceptions.BIPException;
@@ -43,8 +42,8 @@ public abstract class SpecificationParser implements ComponentProvider {
 
 	}
 
-	public BIPBuilderBehaviour bipBuilderBehaviour() {
-		return (BIPBuilderBehaviour) behaviour;
+	public Behaviour getBehaviour() {
+		return behaviour;
 	}
 
 	private BehaviourBuilder getExecutableBehaviour( Class<?> componentClass ) throws BIPException {
@@ -82,9 +81,9 @@ public abstract class SpecificationParser implements ComponentProvider {
 		
 		builder.setComponent(bipComponent);
 		
-		//TODO DISCUSS with Radek the spectype provided as a string but not as a class
 		String specType = "";
-		
+		// TODO: Add simple test that forgets the componentType annotation to see whether the
+		// Exception (else part) is thrown.
 		Annotation classAnnotation = componentClass.getAnnotation(ComponentType.class);
 		// get component name and type
 		if (classAnnotation instanceof ComponentType) {

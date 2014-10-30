@@ -9,19 +9,15 @@
 package org.bip.executor;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.Map;
 
 import org.bip.api.Data;
-import org.bip.api.Guard;
 import org.bip.api.PortType;
 import org.bip.api.Transition;
 
 interface ExecutableTransition extends Transition {
 
 	public Method method();
-
-	public String guard();
 
 	public Iterable<Data<?>> dataRequired();
 
@@ -33,13 +29,4 @@ interface ExecutableTransition extends Transition {
 
 	public PortType getType();
 
-	public String name();
-
-	public String source();
-
-	public String target();
-
-	public boolean hasGuard();
-
-	public Collection<Guard> transitionGuards();
 }

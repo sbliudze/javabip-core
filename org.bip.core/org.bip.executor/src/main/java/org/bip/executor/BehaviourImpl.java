@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.bip.api.BIPBuilderBehaviour;
 import org.bip.api.Data;
 import org.bip.api.DataOut;
 import org.bip.api.ExecutableBehaviour;
@@ -35,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * Implements the Behaviour and ExecutableBehaviour interfaces, providing the behaviour of the component together with additional helper structures.
  * 
  */
-class BehaviourImpl implements ExecutableBehaviour, BIPBuilderBehaviour {
+class BehaviourImpl implements ExecutableBehaviour {
 
 	private String currentState;
 
@@ -298,6 +297,7 @@ class BehaviourImpl implements ExecutableBehaviour, BIPBuilderBehaviour {
 
 	}
 	
+	// TODO: The check that throws exception should be done by the Behaviour builder and not here
 	public boolean transitionNoDataGuardData(String port) throws BIPException {
 		ExecutableTransition transition = this.nameToTransition.get(currentState).get(port);
 		if (transition == null) {

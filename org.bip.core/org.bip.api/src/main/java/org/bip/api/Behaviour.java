@@ -95,4 +95,10 @@ public interface Behaviour {
 	 */
 	public Set<Port> getDataProvidingPorts(String dataName);
 
+	public List<Transition> getAllTransitions();
+
+	public String getCurrentState();
+
+	public Iterable<Port> getAllPorts();
+
 }
