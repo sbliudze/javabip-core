@@ -23,39 +23,6 @@ import org.junit.Test;
 import akka.actor.ActorSystem;
 
 public class AkkaTrackersAndPeersTests {
-
-	@Test
-	public void TrackerPeer5Test() {
-
-		ActorSystem system = ActorSystem.create("MySystem");
-		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
-		EngineFactory engineFactory = new EngineFactory(system);
-		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl()));
-
-		BIPGlue bipGlue = createGlue("src/test/resources/trackerPeerGlue.xml");
-
-		Tracker tracker1 = new Tracker(1);
-		Peer peer1a = new Peer(11);
-		Peer peer1b = new Peer(12);
-		Peer peer2a = new Peer(21);
-		Peer peer2b = new Peer(22);
-
-		final Executor executor1 = factory.create(engine, tracker1, "1", true);
-		final Executor executor1a = factory.create(engine, peer1a, "11", true);
-		final Executor executor1b = factory.create(engine, peer1b, "12", true);
-		final Executor executor2a = factory.create(engine, peer2a, "21", true);
-		final Executor executor2b = factory.create(engine, peer2b, "22", true);
-
-		engine.specifyGlue(bipGlue);
-		engine.start();
-		engine.execute();
-
-		try {
-			Thread.sleep(60000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
 	
 	@Test
 	public void TrackerPeer10Test() {
