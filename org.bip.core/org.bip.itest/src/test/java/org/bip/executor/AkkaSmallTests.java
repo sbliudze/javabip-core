@@ -88,65 +88,7 @@ public class AkkaSmallTests {
 		}
 		return bipGlue;
 	}
-
-	@Test
-	// Compute time in seconds for 1000 iterations
-	public void computeTimeInSecsfor1000Iterations() throws IOException {
-		int i;
-		for (i = 5; i < 55; i = i + 5) {
-
-			File file = new File("/home/mavridou/workspace/javaengineperformance/TrackersPeers/Time/100000Nodes/"
-					+ "TP" + i
-					+ ".txt");
-			FileReader fileReader = new FileReader(file);
-			BufferedReader bufferedReader = new BufferedReader(fileReader);
-			String line;
-			int count = 0;
-			double sum = 0;
-			bufferedReader.readLine();
-			while ((line = bufferedReader.readLine()) != null) {
-				if (count == 1000)
-					break;
-				if (!line.equals("")) {
-					sum += Integer.parseInt(line);
-					count++;
-				}
-			}
-			if (count == 0)
-				return;
-			System.out.println(i + " " + sum / 1000);
-		}
-	}
-
-	@Test
-	// Compute time in seconds for 1000 iterations
-	public void computeAverage() throws IOException {
-		int i;
-		for (i = 5; i < 55; i = i + 5) {
-
-			File file = new File("/home/mavridou/workspace/javaengineperformance/TrackersPeers/Time/100000Nodes/"
-					+ "TP"
-					+ i
-					+ ".txt");
-			FileReader fileReader = new FileReader(file);
-			BufferedReader bufferedReader = new BufferedReader(fileReader);
-			String line;
-			int count = 0;
-			double sum = 0;
-			bufferedReader.readLine();
-			while ((line = bufferedReader.readLine()) != null) {
-				if (!line.equals("")) {
-					sum += Integer.parseInt(line);
-					count++;
-				}
-			}
-			if (count == 0)
-				return;
-			System.out.println(i + " " + sum / count + " for iterations: " + count);
-		}
-	}
-	
-	
+		
 	@Test
 	public void bipDataTransferTest() throws BIPException {
 		System.out.println("Switchable Routes with Data: 3+1");
