@@ -18,6 +18,7 @@ import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
 import org.bip.glue.GlueBuilder;
 import org.bip.spec.Peer;
 import org.bip.spec.Tracker;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import akka.actor.ActorSystem;
@@ -1820,6 +1821,7 @@ public class AkkaTrackersAndPeers55to100Tests {
 		return bipGlue;
 	}
 
+	@Ignore
 	@Test
 	// Compute time in seconds for 1000 iterations
 	public void computeTimeInSecsfor1000Iterations() throws IOException {
@@ -1849,6 +1851,7 @@ public class AkkaTrackersAndPeers55to100Tests {
 		}
 	}
 
+	@Ignore
 	@Test
 	// Compute time in seconds for 1000 iterations
 	public void computeAverage() throws IOException {

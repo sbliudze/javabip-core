@@ -23,6 +23,7 @@ import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
 import org.bip.glue.TwoSynchronGlueBuilder;
 import org.bip.spec.MemoryMonitor;
 import org.bip.spec.SwitchableRouteDataTransfers;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import akka.actor.ActorSystem;
@@ -14397,6 +14398,7 @@ public class AkkaDataRoutes24to59Tests {
 		Thread.sleep(60000);
 	}
 
+	@Ignore
 	@Test
 	// Compute time in seconds for 1000 iterations
 	public void computeTimeInSecsfor1000Iterations() throws IOException {
@@ -14426,7 +14428,7 @@ public class AkkaDataRoutes24to59Tests {
 		}
 	}
 
-
+	@Ignore
 	@Test
 	// Compute time in seconds for 1000 iterations
 	public void computeAverage() throws IOException {

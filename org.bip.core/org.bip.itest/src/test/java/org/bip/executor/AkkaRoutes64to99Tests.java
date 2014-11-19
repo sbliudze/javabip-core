@@ -22,6 +22,7 @@ import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
 import org.bip.glue.TwoSynchronGlueBuilder;
 import org.bip.spec.MonitorNoDataManyRoutes;
 import org.bip.spec.SwitchableRoute;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import akka.actor.ActorSystem;
@@ -27804,6 +27805,7 @@ public class AkkaRoutes64to99Tests {
 		Thread.sleep(100000);
 	}
 	
+	@Ignore
 	@Test
 	public void computeAverage() throws IOException {
 		File file = new File("/home/mavridou/workspace/javaengineperformance/DataSwitchableRoutes/Time/eclipse/99+1");

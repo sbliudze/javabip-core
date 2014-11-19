@@ -8,7 +8,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
 
 import javax.xml.bind.JAXBException;
 
@@ -20,9 +19,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RoutePolicy;
 import org.bip.api.BIPGlue;
-import org.bip.api.Executor;
-import org.bip.engine.api.DataCoordinator;
 import org.bip.engine.DataCoordinatorImpl;
+import org.bip.engine.api.DataCoordinator;
 import org.bip.exceptions.BIPException;
 import org.bip.glue.GlueBuilder;
 import org.bip.glue.TwoSynchronGlueBuilder;
@@ -909,6 +907,7 @@ public class DataTests {
 
 	}
 	
+	@Ignore
 	@Test
 	public void bipMultipleSwRTransferTest() throws BIPException, IOException {
 		int size = 64;
@@ -998,6 +997,7 @@ public class DataTests {
 		outStream.close();
 	}
 
+	@Ignore
 	public static long copyLarge(InputStream input, OutputStream output)
 		       throws IOException {
 		   byte[] buffer = new byte[100000000];
