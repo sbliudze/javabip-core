@@ -15,8 +15,8 @@ import java.util.Set;
 
 import org.bip.annotations.Data;
 import org.bip.annotations.ExecutableBehaviour;
-import org.bip.api.PortType;
 import org.bip.api.DataOut.AccessType;
+import org.bip.api.PortType;
 import org.bip.executor.BehaviourBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -183,7 +183,7 @@ public class Client {
 	@ExecutableBehaviour
 	public BehaviourBuilder initializeBehavior() throws NoSuchMethodException {
 
-		BehaviourBuilder behaviourBuilder = new BehaviourBuilder();
+		BehaviourBuilder behaviourBuilder = new BehaviourBuilder(this);
 		
 		behaviourBuilder.setComponentType( this.getClass().getCanonicalName() );
 		
@@ -246,7 +246,6 @@ public class Client {
 		behaviourBuilder.addDataOut(this.getClass().getMethod("getClientId") );
 		//BUILD
 		
-		behaviourBuilder.setComponent(this);
 		
 
 		return behaviourBuilder;

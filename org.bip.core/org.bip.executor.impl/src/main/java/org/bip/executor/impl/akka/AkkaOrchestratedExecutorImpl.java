@@ -90,4 +90,9 @@ public class AkkaOrchestratedExecutorImpl implements AkkaOrchestratedExecutor {
 
 	}
 
+	@Override
+	public void inform(String portID, Map<String, Object> data) {
+		executor.inform(portID, data);
+	}
+
 }

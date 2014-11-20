@@ -97,4 +97,10 @@ public class ExecutorOSGiImpl implements BundleContextAware, Publishable, Execut
 	public BIPEngine engine() {
 		return executor.engine();
 	}
+
+	@Override
+	public void inform(String portID, Map<String, Object> data) {
+		executor.inform(portID, data);
+
+	}
 }

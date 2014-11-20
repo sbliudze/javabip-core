@@ -514,6 +514,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 		return result;
 	}
 
+	// TODO, now it also executes spontaneous transitions with data, does getTransition properly works?
 	public void execute(String portID, Map<String, ?> data) {
 		// this component does not take part in the interaction
 
@@ -524,6 +525,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 		invokeMethod(transition, data);
 	}
 
+	// TODO, now it also executes spontaneous transitions with data, does transition.dataRequired() works properly?
 	private void invokeMethod(ExecutableTransition transition, Map<String, ?> data) {
 		Method componentMethod;
 		try {

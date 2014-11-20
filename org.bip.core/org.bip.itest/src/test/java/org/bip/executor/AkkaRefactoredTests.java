@@ -2,14 +2,25 @@ package org.bip.executor;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.bip.api.BIPActor;
 import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
 import org.bip.engine.BIPCoordinatorImpl;
 import org.bip.engine.DataCoordinatorKernel;
 import org.bip.engine.api.EngineFactory;
+import org.bip.exceptions.BIPException;
 import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
+import org.bip.glue.GlueBuilder;
 import org.bip.glue.TwoSynchronGlueBuilder;
+import org.bip.spec.ComponentAWithEnvData;
+import org.bip.spec.ComponentB;
+import org.bip.spec.ComponentC;
 import org.bip.spec.seal.SealableData;
 import org.bip.spec.seal.SealableDataReader;
 import org.bip.spec.seal.SealableDataWriter;
@@ -98,5 +109,68 @@ public class AkkaRefactoredTests {
 		assertEquals("All SealableData are sealed", true, data1.isSealed() & data2.isSealed() & data3.isSealed());
 		
 	}	
+
+	@Test
+	public void bipDataAvailabilityTestWithEnvDataSpontaneous() throws BIPException {
+
+		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
+
+		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueDataAvailability.xml");
+
+		ComponentAWithEnvData componentA = new ComponentAWithEnvData(250);
+		BIPActor actor1 = engine.register(componentA, "compA", true);
+
+		ComponentB componentB = new ComponentB();
+		BIPActor actor2 = engine.register(componentB, "compB", true);
+
+		ComponentC componentC = new ComponentC();
+		BIPActor actor3 = engine.register(componentC, "compC", true);
+
+		engine.specifyGlue(bipGlue);
+		engine.start();
+
+		engine.execute();
+
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		Map<String, Object> data = new HashMap<String, Object>();
+
+		data.put("memoryLimit", new Integer(500));
+
+		actor1.inform("b", data);
+
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		engine.stop();
+		engineFactory.destroy(engine);
+
+
+		assertEquals("New environment based memory limit is not set", componentA.memoryLimit, 500);
+
+	}
+
+	private BIPGlue createGlue(String bipGlueFilename) {
+		BIPGlue bipGlue = null;
+
+		InputStream inputStream;
+		try {
+			inputStream = new FileInputStream(bipGlueFilename);
+
+			bipGlue = GlueBuilder.fromXML(inputStream);
+
+		} catch (FileNotFoundException e) {
+
+			e.printStackTrace();
+		}
+		return bipGlue;
+	}
 
 }

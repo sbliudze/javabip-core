@@ -26,10 +26,6 @@ public interface BIPComponent extends Identifiable, BIPActor {
 	 */
 	void execute(String portID);
 
-
-	// TODO EXTENSION make it possible to specify data for execution of spontaneous transitions that requires data.
-	// void inform(String portID, Map<String, ?> data);
-	
 	/**
 	 * It provides data specified by the name parameter casted to the type provided by clazz parameter.
 	 *

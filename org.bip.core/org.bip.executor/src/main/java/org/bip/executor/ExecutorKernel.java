@@ -11,6 +11,7 @@ package org.bip.executor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -40,6 +41,8 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 	
 	private ArrayList<String> notifiers  = new ArrayList<String>();
 
+	private ArrayList<Map<String, Object>> notifiersData = new ArrayList< Map<String, Object> >();
+	
 	protected boolean registered = false;
 
 	private Logger logger = LoggerFactory.getLogger(ExecutorKernel.class);
@@ -94,6 +97,7 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 
 	// Computed in guardToValue, used for checks in execute.
 	Map<String, Boolean> guardToValue;
+
 	/**
 	 * If no engine is registered it will exit immediately.
 	 * 
@@ -127,12 +131,23 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 
 		if (existSpontaneousTransition && !notifiers.isEmpty()) {
 
-			for (String port : notifiers) {
+			for (int i = 0; i < notifiers.size(); i++) {
+				
+				String port = notifiers.get(i);
+
 				if (behaviour.hasEnabledTransitionFromCurrentState(port, guardToValue)) {
 					logger.debug("About to execute spontaneous transition {} for component {}", port, id);
 					
-					notifiers.remove(port);
-					behaviour.executePort(port);
+					notifiers.remove(i);
+					Map<String, ?> data = notifiersData.remove(i); 
+					
+					// Both notifiers and notifiersData should be LinkedList to perform efficient removal from the middle.
+					if (data == null) {											
+						behaviour.executePort(port);
+					}
+					else {						
+						behaviour.execute(port, data);
+					}
 					
 					logger.debug("Issuing next step message for component {}", id);
 					// Scheduling the next execution step.					
@@ -221,6 +236,13 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 
 	public void inform(String portID) {
 		
+		inform(portID, null);
+		
+	}
+	
+	@Override
+	public void inform(String portID, Map<String, Object> data) {
+
 		// TODO DESIGN DISCUSSION what if the port (spontaneous does not exist?). It should throw an exception or ignore it.
 		if (portID == null || portID.isEmpty() || !behaviour.isSpontaneousPort(portID)) {
 			return;
@@ -229,6 +251,7 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 		logger.info("{} was informed of a spontaneous transition {}", this.getId(), portID);
 
 		notifiers.add(portID);
+		notifiersData.add(data);
 		
 		if (waitingForSpontaneous) {
 			logger.debug("Issuing next step message for component {}", id);
@@ -237,6 +260,7 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 		}
 		
 	}
+
 
 	public <T> T getData(String name, Class<T> clazz) {
 

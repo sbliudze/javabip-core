@@ -36,7 +36,7 @@ public interface ExecutableBehaviour extends Behaviour {
 	public void executePort(String portId);
 
 	/**
-	 * Execute the enforceable transition which needs data that is provided as map parameter.
+	 * Execute the enforceable or spontaneous event based transition which needs data that is provided as map parameter.
 	 *
 	 * @param portID the port id
 	 * @param data the data for the enforceable transition.
