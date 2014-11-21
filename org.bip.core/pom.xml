@@ -40,6 +40,7 @@
 		<org.bip.executor.springinosgi.version>0.1.0-SNAPSHOT</org.bip.executor.springinosgi.version>
  		<org.bip.jmx.version>0.1.0-SNAPSHOT</org.bip.jmx.version>	
  		<org.bip.spec.examples.version>0.1.0-SNAPSHOT</org.bip.spec.examples.version>
+ 		<akka.version>2.1.1</akka.version>
  		
   </properties>
  
