@@ -2,12 +2,8 @@ package org.bip.executor;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.camel.CamelContext;
@@ -27,9 +23,11 @@ import org.bip.exceptions.BIPException;
 import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
 import org.bip.glue.GlueBuilder;
 import org.bip.glue.TwoSynchronGlueBuilder;
+import org.bip.spec.InitialServer;
 import org.bip.spec.MemoryMonitor;
 import org.bip.spec.MonitorNoDataManyRoutes;
 import org.bip.spec.Peer;
+import org.bip.spec.Server;
 import org.bip.spec.SwitchableRoute;
 import org.bip.spec.SwitchableRouteDataTransfers;
 import org.bip.spec.Tracker;
@@ -39,6 +37,36 @@ import akka.actor.ActorSystem;
 
 public class AkkaSmallTests {
 
+	@Test
+	public void Servers3Test() {
+		ActorSystem system = ActorSystem.create("MySystem");
+		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(system);
+		EngineFactory engineFactory = new EngineFactory(system);
+		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl()));
+
+		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueServers.xml");
+
+
+		Server server2 = new Server(2);
+		Server server3 = new Server(3);
+		InitialServer server1 = new InitialServer(1);
+
+		final Executor executor2 = factory.create(engine, server2, "2", true);
+		final Executor executor3 = factory.create(engine, server3, "3", true);
+		final Executor executor1 = factory.create(engine, server1, "1", true);
+
+		engine.specifyGlue(bipGlue);
+		engine.start();
+		engine.execute();
+
+		try {
+			Thread.sleep(30000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	
 	@Test
 	public void TrackerPeer5Test() {
 

@@ -246,33 +246,12 @@ public class AkkaExecutorTests {
 			e.printStackTrace();
 		}
 
-
-
-
-
 		MemoryMonitor routeOnOffMonitor = new MemoryMonitor(200);
 		final Executor executorM = factory.create(engine, routeOnOffMonitor,
 				"monitor", true);
 
-
-		//
-		// executorM.register(engine);
-		// executor1.register(engine);
-		//
-		// executor2.register(engine);
-		// executor3.register(engine);
-
 		engine.specifyGlue(bipGlue);
 		engine.start();
-
-		// assertEquals("The state is not appropriate", "off",
-		// executor1.getCurrentState());
-		// assertEquals("The state is not appropriate", "off",
-		// executor2.getCurrentState());
-		// assertEquals("The state is not appropriate", "off",
-		// executor3.getCurrentState());
-		// assertEquals("The state is not appropriate", "one",
-		// executorM.getCurrentState());
 
 		try {
 			Thread.sleep(2000);
@@ -324,11 +303,6 @@ public class AkkaExecutorTests {
 
 		engine.specifyGlue(bipGlue4Hanoi);
 		engine.start();
-		// try {
-		// Thread.sleep(2000);
-		// } catch (InterruptedException e) {
-		// e.printStackTrace();
-		// }
 		engine.execute();
 
 		try {
@@ -362,7 +336,6 @@ public class AkkaExecutorTests {
 		int size = 3;
 
 		BIPGlue bipGlue4Hanoi = new HanoiGlueBuilder(size).build();
-
 		// bipGlue4Hanoi.toXML(System.out);
 
 		HanoiMonitor hanoiMonitor = new HanoiMonitor(size);
@@ -413,7 +386,6 @@ public class AkkaExecutorTests {
 		int size = 8;
 
 		BIPGlue bipGlue4Hanoi = new HanoiGlueBuilder(size).build();
-
 		// bipGlue4Hanoi.toXML(System.out);
 
 		// BIP engine.

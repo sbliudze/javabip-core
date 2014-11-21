@@ -217,6 +217,9 @@ public class DataTests {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		
+		// TODO, ADD a test assertion.
+		
 	}
 
 	// No asserts yet, just to see if the whole thing does not blow at
@@ -286,6 +289,7 @@ public class DataTests {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		
 		// assertEquals( (int) Math.pow(2, size) - 1,
 		// hanoiMonitor.getNumberOfMoves() );
 	}
@@ -528,27 +532,8 @@ public class DataTests {
 	public void bipDataTransferFromFileTest() throws BIPException {
 
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueExecutableBehaviourDataTransfers.xml");
-		bipGlue.toXML(System.out);
-
-		// BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
-		// @Override
-		// public void configure() {
-		//
-		// synchron(SwitchableRouteDataTransfers.class, "on").to(
-		// MemoryMonitor.class, "add");
-		// synchron(SwitchableRouteDataTransfers.class, "finished").to(
-		// MemoryMonitor.class, "rm");
-		// port(SwitchableRouteDataTransfers.class, "off")
-		// .acceptsNothing();
-		// port(SwitchableRouteDataTransfers.class, "off")
-		// .requiresNothing();
-		// data(SwitchableRouteDataTransfers.class,
-		// "deltaMemoryOnTransition").to(MemoryMonitor.class,
-		// "memoryUsage");
-		//
-		// }
-		//
-		// }.build();
+		
+		// bipGlue.toXML(System.out);
 
 		CamelContext camelContext = new DefaultCamelContext();
 		camelContext.setAutoStartup(false);
@@ -567,8 +552,6 @@ public class DataTests {
 		final ExecutorImpl executorM = new ExecutorImpl("", routeOnOffMonitor, true);
 
 		DataCoordinator engine = new DataCoordinatorImpl(null);
-
-
 
 		final RoutePolicy routePolicy1 = new RoutePolicy() {
 
@@ -806,6 +789,9 @@ public class DataTests {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		
+		// TODO, ADD a test assertion.
+		
 	}
 
 	// No asserts yet, just to see if the whole thing does not blow at
@@ -856,8 +842,10 @@ public class DataTests {
 			e.printStackTrace();
 		}
 
+		// TODO, ADD a test assertion.
 	}
 
+	// TODO, Why is this test ignored?
 	@Test
 	@Ignore
 	public void bipTwoDataTest() throws BIPException {
@@ -905,109 +893,8 @@ public class DataTests {
 			e.printStackTrace();
 		}
 
+		// TODO, ADD a test assertion.
+		
 	}
 	
-	@Ignore
-	@Test
-	public void bipMultipleSwRTransferTest() throws BIPException, IOException {
-		int size = 64;
-		int memoryMonitorLimit = 3250;
-		int sleepTime = 12000;
-		
-//		FileInputStream inStream = new FileInputStream(
-//				"src/test/resources/classheader.txt");
-
-		FileOutputStream outStream = new FileOutputStream(
-				"src/test/java/org/bip/executor/ManyDataRoutesTests"+size+".java");
-//		copyLarge(inStream, outStream);
-//		inStream.close();
-//		
-		String testName = "@Test\n	public void bipSwMultiTest"+size+"()";
-		outStream.write(testName.getBytes());
-		
-		FileInputStream inStream = new FileInputStream(
-				"src/test/resources/header.txt");
-		copyLarge(inStream, outStream);
-		inStream.close();
-		
-	     String monitorString = " MemoryMonitor routeOnOffMonitor = new MemoryMonitor("+memoryMonitorLimit+");\n"+
-			"final Executor executorM = factory.create(engine, routeOnOffMonitor, \"monitor\", true);\n";
-			//"Thread tM = new Thread(executorM, \"M\");\n"+
-			//"executorM.setEngine(engine);\n"+
-			//"executorM.register(engine);\n";
-	 	outStream.write(monitorString.getBytes());
-		
-		String replaceString = "";
-		for (int i = 1; i <= size; i++) {
-
-			replaceString=String.valueOf(i);
-			
-			String componentStr = "	SwitchableRouteDataTransfers route1 = new SwitchableRouteDataTransfers(\"1\", camelContext);\n"+
-			"final Executor executor1 = factory.create(engine, route1, \"1\", true);\n\n";
-			outStream.write(componentStr.replace("1", replaceString).getBytes());
-
-			String routePolicyStr = "		final RoutePolicy routePolicy1 = new RoutePolicy() {public void onInit(Route route) {}\n	public void onExchangeDone(Route route, Exchange exchange) {executor1.inform(\"end\");}\n\n	public void onExchangeBegin(Route route, Exchange exchange) {}\n	public void onRemove(Route arg0) {}\n	@Override	public void onResume(Route arg0) {}\n @Override public void onStart(Route arg0) {}\n			@Override	public void onStop(Route arg0) {}\n	@Override	public void onSuspend(Route arg0) {}\n		};";
-			outStream.write(routePolicyStr.replace("1", replaceString).getBytes());
-
-		}
-		String routeBuilderStr = "\nRouteBuilder builder = new RouteBuilder() \n{@Override	public void configure() throws Exception {";
-		outStream.write(routeBuilderStr.getBytes());
-		
-		replaceString = "";
-		for (int i = 1; i <= size; i++) {
-			replaceString=String.valueOf(i);
-			String routeBuilder = "from(\"file:inputfolder1?delete=true\").routeId(\"1\").routePolicy(routePolicy1).process(new Processor() {\n	public void process(Exchange exchange) throws Exception {}}).to(\"file:outputfolder1\");\n\n";
-
-			outStream.write(routeBuilder.replace("1", replaceString)
-					.getBytes());
-		}
-		
-		String camelContext = "		}};\n try { camelContext.addRoutes(builder);	camelContext.start(); } catch (Exception e){e.printStackTrace();}\n";
-		outStream.write(camelContext.getBytes());
-
-		replaceString = "";
-		for (int i = 1; i <= size; i++) {
-			replaceString=String.valueOf(i);
-			String setup = "		route1.setCamelContext(camelContext);\n";
-				//	+ "Thread t1 = new Thread(executor1, \"SW1\");\n"
-				//	+ "executor1.setEngine(engine);\n"
-				//	+ "executor1.register(engine);\n";
-			outStream.write(setup.replace("1", replaceString).getBytes());
-		}
-		
-		String engineSetup = "	engine.specifyGlue(bipGlue);\n"+"		engine.start();\n";//+"try { tM.start();";
-		outStream.write(engineSetup.getBytes());
-		
-//		replaceString = "";
-//		for (int i = 1; i <= size; i++) {
-//			replaceString=String.valueOf(i);
-//			String threadStart = "t1.start();\n";
-//			outStream.write(threadStart.replace("1", replaceString).getBytes());
-//		}
-		
-		String threadrun  = //"}\n catch (IllegalArgumentException e) {e.printStackTrace();} catch (SecurityException e) {	e.printStackTrace();}\n"+
-		"engine.execute();";
-		outStream.write(threadrun.getBytes());
-		
-		String threadSleep  ="Thread.sleep("+ sleepTime+");";
-		outStream.write(threadSleep.getBytes());
-		String endStr = "}";
-		outStream.write(endStr.getBytes());
-		
-		outStream.close();
-	}
-
-	@Ignore
-	public static long copyLarge(InputStream input, OutputStream output)
-		       throws IOException {
-		   byte[] buffer = new byte[100000000];
-		   long count = 0;
-		   int n = 0;
-		   while (-1 != (n = input.read(buffer))) {
-		       output.write(buffer, 0, n);
-		       count += n;
-		   }
-		   return count;
-		}
-
 }

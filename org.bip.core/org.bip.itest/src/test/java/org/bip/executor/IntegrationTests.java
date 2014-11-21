@@ -63,6 +63,8 @@ public class IntegrationTests {
 			e.printStackTrace();
 		}
 		return bipGlue;
+		
+		// TODO, ADD a test assertion.
 	}
 
 	
@@ -506,6 +508,8 @@ public class IntegrationTests {
 			e.printStackTrace();
 		}
 
+		// TODO, ADD a test assertion.
+		
 	}
 
 	@Test
@@ -792,27 +796,12 @@ public class IntegrationTests {
 
 		testDriver.start();
 
-		// int sleepCounter = 0;
-
 		engine.execute();
 		try {
 			Thread.sleep(40000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-
-		// while (pComponent.pCounter < noIterations) {
-		// final int internalSleep = 2000;
-		// try {
-		// Thread.sleep(internalSleep);
-		// } catch (InterruptedException e) {
-		// e.printStackTrace();
-		// }
-		// sleepCounter++;
-		// if (sleepCounter > 2 * noOfMilisecondsBetweenS * noIterations /
-		// internalSleep + executorLoopDelay * noIterations * 2)
-		// fail("Not enough spontaneous events have been executed within a given time frame.");
-		// }
 
 		assertEquals(noIterations, pComponent.pCounter);
 		assertEquals(noIterations, rComponent.rCounter);
@@ -834,7 +823,6 @@ public class IntegrationTests {
 
 		final int noIterations = 5;
 		final int noOfMilisecondsBetweenS = 1000;
-		// final int executorLoopDelay = 1000;
 
 		BIPGlue bipGlue = new GlueBuilder() {
 			@Override
@@ -937,7 +925,9 @@ public class IntegrationTests {
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
-		// TODO DESIGN can we write the test-condition properly?
+		
+		// TODO, ADD a test assertion.
+
 	}
 
 	@Test
