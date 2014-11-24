@@ -18,10 +18,16 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RoutePolicy;
+import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
+import org.bip.api.Executor;
+import org.bip.engine.BIPCoordinatorImpl;
 import org.bip.engine.DataCoordinatorImpl;
+import org.bip.engine.DataCoordinatorKernel;
 import org.bip.engine.api.DataCoordinator;
+import org.bip.engine.api.EngineFactory;
 import org.bip.exceptions.BIPException;
+import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
 import org.bip.glue.GlueBuilder;
 import org.bip.glue.TwoSynchronGlueBuilder;
 import org.bip.spec.ComponentA;
@@ -37,6 +43,8 @@ import org.bip.spec.TwoDataTaker;
 import org.bip.spec.hanoi.HanoiOptimalMonitor;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import akka.actor.ActorSystem;
 
 public class DataTests {
 
@@ -798,51 +806,47 @@ public class DataTests {
 	// initialization time and due to first few cycles.
 	@Test
 	public void bipDataAvailabilityTest() throws BIPException {
+		
+		ActorSystem system = ActorSystem.create("MySystem");
+		OrchestratedExecutorFactory factory = new OrchestratedExecutorFactory(
+				system);
+		EngineFactory engineFactory = new EngineFactory(system);
+		BIPEngine engine = engineFactory.create("myEngine",
+				new DataCoordinatorKernel(new BIPCoordinatorImpl()));		
+
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueDataAvailability.xml");
 
 		ComponentA componentA = new ComponentA(250);
-		final ExecutorImpl executorA = new ExecutorImpl("", componentA, true);
 		ComponentB componentB = new ComponentB();
-		final ExecutorImpl executorB = new ExecutorImpl("", componentB, true);
 		ComponentC componentC = new ComponentC();
-		final ExecutorImpl executorC = new ExecutorImpl("", componentC, true);
+		
+		final Executor executorA = factory.create(engine, componentA, "compA", true);
 
-		DataCoordinator engine = new DataCoordinatorImpl(null);
+		final Executor executorB = factory.create(engine, componentB, "compB", true);
 
-		Thread tA = new Thread(executorA, "ComponentA");
-		Thread tB = new Thread(executorB, "ComponentB");
-		Thread tC = new Thread(executorC, "ComponentC");
+		final Executor executorC = factory.create(engine, componentC, "compC", true);
 
-		executorA.setEngine(engine);
-		executorB.setEngine(engine);
-		executorC.setEngine(engine);
-		executorA.register(engine);
-		executorB.register(engine);
-		executorC.register(engine);
 
 		engine.specifyGlue(bipGlue);
 		engine.start();
 
-		try {
-			tA.start();
-			tB.start();
-			tC.start();
-
-		} catch (IllegalArgumentException e) {
-
-			e.printStackTrace();
-		} catch (SecurityException e) {
-
-			e.printStackTrace();
-		}
 		engine.execute();
+
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 
-		// TODO, ADD a test assertion.
+		boolean destroyed = factory.destroy(executorA);
+		destroyed &= factory.destroy(executorB);
+		destroyed &= factory.destroy(executorC);
+		
+		assertEquals("Not all BIP actors were terminated.", destroyed, true);
+
+		
+		// TODO, ADD a test assertion that checks that interactions were performed.
+		
 	}
 
 	// TODO, Why is this test ignored?

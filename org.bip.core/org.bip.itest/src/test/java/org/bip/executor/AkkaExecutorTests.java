@@ -266,6 +266,14 @@ public class AkkaExecutorTests {
 		}
 		
 		assertEquals("Monitor does not have a proper id ", executorM.getId(), "monitor");
+		
+		boolean destroyed = factory.destroy(executor1);
+		destroyed &= factory.destroy(executor2);
+		destroyed &= factory.destroy(executor3);
+		destroyed &= factory.destroy(executorM);
+		
+		assertEquals("Not all BIP actors were terminated.", destroyed, true);
+
 	}
 	
 	@Test
