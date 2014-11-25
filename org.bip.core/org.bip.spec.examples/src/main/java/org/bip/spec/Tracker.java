@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 @ComponentType(initial = "zero", name = "org.bip.spec.Tracker")
 public class Tracker {
 
+	public int noOfTransitions = 0;
+	
 	Logger logger = LoggerFactory.getLogger(Tracker.class);
 	private int trackerId;
 
@@ -25,10 +27,12 @@ public class Tracker {
 	@Transition(name = "log", source = "zero", target = "zero")
 	public void logging() {
 		// System.out.println("Peer has updates his status");
+		noOfTransitions++;
 	}
 
 	@Transition(name = "broadcast", source = "zero", target = "zero")
 	public void broadcasting() {
+		noOfTransitions++;		
 		// System.out.println("Broadcasting " + trackerId);
 	}
 

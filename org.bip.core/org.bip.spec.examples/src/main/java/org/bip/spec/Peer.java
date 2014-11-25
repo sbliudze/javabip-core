@@ -21,6 +21,8 @@ public class Peer {
 	private int trackerId;
 	private int peerId;
 
+	public int noOfTransitions = 0;
+	
 	public Peer(int id) {
 		this.trackerId = -1;
 		peerId = id;
@@ -30,16 +32,19 @@ public class Peer {
 	public void registering(@Data(name = "trackerId") Integer id) {
 		this.trackerId = id;
 		// System.out.println("Peer " + peerId + " registered with tracker " + id);
+		noOfTransitions++;
 	}
 
 	@Transition(name = "speak", source = "one", target = "one", guard = "canInteract")
 	public void speaking() {
 		// System.out.println("Peer " + peerId + " speaking to " + trackerId);
+		noOfTransitions++;		
 	}
 
 	@Transition(name = "listen", source = "one", target = "one", guard = "canInteract")
 	public void listening() {
 		// System.out.println("Peer " + peerId + " listening to " + trackerId);
+		noOfTransitions++;		
 	}
 
 	@Transition(name = "unregister", source = "one", target = "zero", guard = "canInteract")
@@ -47,6 +52,7 @@ public class Peer {
 		// System.out.println("Peer " + peerId + " unregistered with tracker "
 		// + this.trackerId);
 		this.trackerId = -1;
+		noOfTransitions++;		
 	}
 
 	@Guard(name = "canInteract")

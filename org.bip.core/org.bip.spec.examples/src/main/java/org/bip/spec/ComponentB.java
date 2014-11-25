@@ -11,7 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-@Ports({ @Port(name = "a", type = PortType.enforceable), @Port(name = "b", type = PortType.enforceable)})
+@Ports({ @Port(name = "a", type = PortType.enforceable), 
+	     @Port(name = "b", type = PortType.enforceable)})
 @ComponentType(initial = "zero", name = "org.bip.spec.ComponentB")
 public class ComponentB {
 	Logger logger = LoggerFactory.getLogger(ComponentB.class);

@@ -47,6 +47,8 @@ import org.springframework.beans.factory.InitializingBean;
 @ComponentType(initial = "off", name = "org.bip.spec.SwitchableRouteDataTransfers")
 public class SwitchableRouteDataTransfers implements CamelContextAware, InitializingBean, DisposableBean {
 
+	public int noOfEnforcedTransitions;
+	
 	public ModelCamelContext camelContext;
 
 	public String routeId;
@@ -90,7 +92,7 @@ public class SwitchableRouteDataTransfers implements CamelContextAware, Initiali
 	public void stopRoute() throws Exception {
 		logger.debug("Stop transition handler for {} is being executed.", routeId);
 		camelContext.suspendRoute(routeId);
-
+		noOfEnforcedTransitions++;
 	}
 
 	@Transition(name = "end", source = "wait", target = "done", guard = "!isFinished")
@@ -106,12 +108,14 @@ public class SwitchableRouteDataTransfers implements CamelContextAware, Initiali
 	@Transition(name = "finished", source = "done", target = "off", guard = "")
 	public void finishedTransition() {
 		logger.debug("Transitioning to off state from done for {}.", routeId);
+		noOfEnforcedTransitions++;
 	}
 
 	@Transition(name = "on", source = "off", target = "on", guard = "")
 	public void startRoute() throws Exception {
 		logger.debug("Start transition handler for {} is being executed.", routeId);
 		camelContext.resumeRoute(routeId);
+		noOfEnforcedTransitions++;
 	}
 
 	@Guard(name = "isFinished")

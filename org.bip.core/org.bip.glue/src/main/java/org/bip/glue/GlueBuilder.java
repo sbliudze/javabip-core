@@ -44,6 +44,10 @@ public abstract class GlueBuilder {
 
 		configure();
 
+		//TODO Here some housekeeping can be executed, for example do not allow mutability of Accepts and Requires, simply
+		// keep collecting causes within GlueBuilder and here you can build complete Accepts/Requires with the help of just 
+		// constructor.
+		
 		return glue;
 	}
 

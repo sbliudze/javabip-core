@@ -59,7 +59,6 @@ public class PSSComponent {
 	public void enableP() {
 		logger.debug("s1 transition is being executed.");
 		pEnabled++;
-		;
 		spontaneousEnableCounter++;
 	}
 
