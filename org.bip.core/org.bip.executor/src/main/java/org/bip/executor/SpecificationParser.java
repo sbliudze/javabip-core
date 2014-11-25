@@ -47,7 +47,7 @@ public abstract class SpecificationParser implements ComponentProvider {
 	}
 
 	private BehaviourBuilder getExecutableBehaviour( Class<?> componentClass ) throws BIPException {
-		BehaviourBuilder builder = new BehaviourBuilder();
+
 		Method[] componentMethods = componentClass.getMethods();
 		for (Method method : componentMethods) {
 			Annotation[] annotations = method.getAnnotations();
@@ -62,18 +62,16 @@ public abstract class SpecificationParser implements ComponentProvider {
 							throw new BIPException("The method " + method.getName() + " for getting executable behaviour for component " + bipComponent.getClass().getName()
 									+ "must have no arguments.");
 						}
-						builder = (BehaviourBuilder) method.invoke(bipComponent);
-					} catch (IllegalAccessException e) {
-						e.printStackTrace();
-					} catch (IllegalArgumentException e) {
-						e.printStackTrace();
-					} catch (InvocationTargetException e) {
-						e.printStackTrace();
+						return (BehaviourBuilder) method.invoke(bipComponent);
+					} catch (Exception e) {
+						throw new BIPException("Method annotated with ExecutableBehavior annotation threw exception upon execution", e);
 					}
 				}
 			}
 		}
-		return builder;
+		
+		throw new BIPException("No annotation ExecutableBehaviour found in class " + componentClass.getCanonicalName());
+
 	}
 
 	private BehaviourBuilder parseAnnotations( Class<?> componentClass ) throws BIPException {
@@ -87,10 +85,10 @@ public abstract class SpecificationParser implements ComponentProvider {
 		Annotation classAnnotation = componentClass.getAnnotation(ComponentType.class);
 		// get component name and type
 		if (classAnnotation instanceof ComponentType) {
-			ComponentType initialState = (ComponentType) classAnnotation;
-			builder.setComponentType( initialState.name() );
-			specType = initialState.name();
-			builder.setInitialState( initialState.initial() );
+			ComponentType componentTypeAnnotation = (ComponentType) classAnnotation;
+			builder.setComponentType( componentTypeAnnotation.name() );
+			specType = componentTypeAnnotation.name();
+			builder.setInitialState( componentTypeAnnotation.initial() );
 		} else {
 			throw new BIPException("ComponentType annotation is not specified.");
 		}

@@ -12,4 +12,8 @@ public class BIPException extends RuntimeException {
 		super(cause);
 	}
 	
+	public BIPException(String message, Throwable cause) {
+	    super(message, cause);
+	}
+	
 }

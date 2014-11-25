@@ -20,12 +20,17 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RoutePolicy;
+import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
+import org.bip.api.Executor;
 import org.bip.api.PortBase;
 import org.bip.api.PortType;
 import org.bip.engine.BIPCoordinatorImpl;
+import org.bip.engine.DataCoordinatorKernel;
 import org.bip.engine.api.BIPCoordinator;
+import org.bip.engine.api.EngineFactory;
 import org.bip.exceptions.BIPException;
+import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
 import org.bip.glue.GlueBuilder;
 import org.bip.glue.TwoSynchronGlueBuilder;
 import org.bip.spec.HanoiGlueBuilder;
@@ -44,10 +49,34 @@ import org.bip.spec.SwitchableRoute;
 import org.bip.spec.SwitchableRouteDataTransfers;
 import org.bip.spec.SwitchableRouteExecutableBehavior;
 import org.bip.spec.TestSpecEnforceableSpontaneous;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import akka.actor.ActorSystem;
+
 public class IntegrationTests {
+
+	ActorSystem system;
+	OrchestratedExecutorFactory factory;
+	EngineFactory engineFactory;
+	
+	@Before
+	public void initialize() {
+
+		system = ActorSystem.create("MySystem");
+		factory = new OrchestratedExecutorFactory(system);
+		engineFactory = new EngineFactory(system);
+
+	}
+	
+	@After
+	public void cleanup() {
+		
+		system.shutdown();
+		
+	}
 
 	private BIPGlue createGlue(String bipGlueFilename) {
 		BIPGlue bipGlue = null;
@@ -64,7 +93,6 @@ public class IntegrationTests {
 		}
 		return bipGlue;
 		
-		// TODO, ADD a test assertion.
 	}
 
 	
@@ -75,217 +103,6 @@ public class IntegrationTests {
 				bipGlue.getAcceptConstraints().size());
 		assertEquals("The number of require constraints is not appropriate", 5,
 				bipGlue.getRequiresConstraints().size());
-	}
-
-	@Test
-	public void test() throws BIPException {
-
-		// get Glue object from xml file
-		BIPGlue bipGlue = createGlue("src/test/resources/bipGlue.xml");
-
-		SwitchableRoute route1 = new SwitchableRoute("1");
-		SwitchableRoute route2 = new SwitchableRoute("2");
-		SwitchableRoute route3 = new SwitchableRoute("3");
-		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
-
-		final ExecutorImpl executor1 = new ExecutorImpl("", route1, true);
-		final ExecutorImpl executor2 = new ExecutorImpl("", route2, true);
-		final ExecutorImpl executor3 = new ExecutorImpl("", route3, true);
-
-		final ExecutorImpl executorM = new ExecutorImpl("", routeOnOffMonitor, true);
-
-		BIPCoordinator engine = new BIPCoordinatorImpl();
-
-		CamelContext camelContext = new DefaultCamelContext();
-		final RoutePolicy routePolicy1 = new RoutePolicy() {
-
-			public void onInit(Route route) {
-			}
-
-			public void onExchangeDone(Route route, Exchange exchange) {
-
-				executor1.inform("end");
-			}
-
-			public void onExchangeBegin(Route route, Exchange exchange) {
-			}
-
-			@Override
-			public void onRemove(Route arg0) {
-			}
-
-			@Override
-			public void onResume(Route arg0) {
-			}
-
-			@Override
-			public void onStart(Route arg0) {
-			}
-
-			@Override
-			public void onStop(Route arg0) {
-			}
-
-			@Override
-			public void onSuspend(Route arg0) {
-			}
-		};
-
-		final RoutePolicy routePolicy2 = new RoutePolicy() {
-
-			public void onInit(Route route) {
-			}
-
-			public void onExchangeDone(Route route, Exchange exchange) {
-
-				executor2.inform("end");
-			}
-
-			public void onExchangeBegin(Route route, Exchange exchange) {
-			}
-
-			@Override
-			public void onRemove(Route arg0) {
-			}
-
-			@Override
-			public void onResume(Route arg0) {
-			}
-
-			@Override
-			public void onStart(Route arg0) {
-			}
-
-			@Override
-			public void onStop(Route arg0) {
-			}
-
-			@Override
-			public void onSuspend(Route arg0) {
-			}
-		};
-		
-		final RoutePolicy routePolicy3 = new RoutePolicy() {
-
-			public void onInit(Route route) {
-			}
-
-			public void onExchangeDone(Route route, Exchange exchange) {
-
-				executor3.inform("end");
-			}
-
-			public void onExchangeBegin(Route route, Exchange exchange) {
-			}
-
-			@Override
-			public void onRemove(Route arg0) {
-			}
-
-			@Override
-			public void onResume(Route arg0) {
-			}
-
-			@Override
-			public void onStart(Route arg0) {
-			}
-
-			@Override
-			public void onStop(Route arg0) {
-			}
-
-			@Override
-			public void onSuspend(Route arg0) {
-			}
-		};
-		RouteBuilder builder1 = new RouteBuilder() {
-
-			@Override
-			public void configure() throws Exception {
-				from("file:inputfolder1?delete=true").routeId("1")
-						.routePolicy(routePolicy1).process(new Processor() {
-
-							public void process(Exchange exchange)
-									throws Exception {
-
-							}
-						}).to("file:outputfolder1");
-
-				from("file:inputfolder2?delete=true").routeId("2")
-						.routePolicy(routePolicy2).process(new Processor() {
-
-							public void process(Exchange exchange)
-									throws Exception {
-
-							}
-						}).to("file:outputfolder2");
-
-				from("file:inputfolder3?delete=true").routeId("3")
-						.routePolicy(routePolicy3).to("file:outputfolder3");
-			}
-		};
-		camelContext.setAutoStartup(false);
-		try {
-			camelContext.addRoutes(builder1);
-			camelContext.start();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		route1.setCamelContext(camelContext);
-		route2.setCamelContext(camelContext);
-		route3.setCamelContext(camelContext);
-
-		Thread t1 = new Thread(executor1, "SW1");
-		Thread t2 = new Thread(executor2, "SW2");
-		Thread t3 = new Thread(executor3, "SW3");
-		Thread tM = new Thread(executorM, "M");
-
-		executor1.setEngine(engine);
-		executor2.setEngine(engine);
-		executor3.setEngine(engine);
-		executorM.setEngine(engine);
-		executor1.register(engine);
-		t1.start();
-		executor2.register(engine);
-		executor3.register(engine);
-		executorM.register(engine);
-
-		engine.specifyGlue(bipGlue);
-		engine.start();
-
-		assertEquals("The state is not appropriate", "off",
-				executor1.getCurrentState());
-		assertEquals("The state is not appropriate", "off",
-				executor2.getCurrentState());
-		assertEquals("The state is not appropriate", "off",
-				executor3.getCurrentState());
-		assertEquals("The state is not appropriate", "0",
-				executorM.getCurrentState());
-		try {
-			t2.start();
-			t3.start();
-			tM.start();
-
-		} catch (IllegalArgumentException e) {
-
-			e.printStackTrace();
-		} catch (SecurityException e) {
-
-			e.printStackTrace();
-		}
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		engine.execute();
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
 	}
 
 	@Test
@@ -302,145 +119,42 @@ public class IntegrationTests {
 	@Test
 	public void testBehaviourBuilding() throws BIPException {
 
+		BIPEngine engine = engineFactory.create("myEngine",	new BIPCoordinatorImpl());
+		
 		// get Glue object from xml file
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueExecutableBehaviour.xml");
 
-		SwitchableRouteExecutableBehavior route1 = new SwitchableRouteExecutableBehavior(
-				"1");
-		SwitchableRouteExecutableBehavior route2 = new SwitchableRouteExecutableBehavior(
-				"2");
-		SwitchableRouteExecutableBehavior route3 = new SwitchableRouteExecutableBehavior(
-				"3");
-		final ExecutorImpl executor1 = new ExecutorImpl("", route1, false);
-		final ExecutorImpl executor2 = new ExecutorImpl("", route2, false);
-		final ExecutorImpl executor3 = new ExecutorImpl("", route3, false);
+		SwitchableRouteExecutableBehavior route1 = new SwitchableRouteExecutableBehavior("1");
+		SwitchableRouteExecutableBehavior route2 = new SwitchableRouteExecutableBehavior("2");
+		SwitchableRouteExecutableBehavior route3 = new SwitchableRouteExecutableBehavior("3");
 		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
-		final ExecutorImpl executorM = new ExecutorImpl("", routeOnOffMonitor, true);
-
-		BIPCoordinator engine = new BIPCoordinatorImpl();
 
 		CamelContext camelContext = new DefaultCamelContext();
-		final RoutePolicy routePolicy1 = new RoutePolicy() {
+		route1.setCamelContext(camelContext);
+		route2.setCamelContext(camelContext);
+		route3.setCamelContext(camelContext);
+		
+		final Executor executor1 = factory.create(engine, route1, "1", false);
+		final Executor executor2 = factory.create(engine, route2, "2", false);
+		final Executor executor3 = factory.create(engine, route3, "3", false);
 
-			public void onInit(Route route) {
-			}
-
-			public void onExchangeDone(Route route, Exchange exchange) {
-
-				executor1.inform("end");
-			}
-
-			public void onExchangeBegin(Route route, Exchange exchange) {
-			}
-
-			@Override
-			public void onRemove(Route arg0) {
-			}
-
-			@Override
-			public void onResume(Route arg0) {
-			}
-
-			@Override
-			public void onStart(Route arg0) {
-			}
-
-			@Override
-			public void onStop(Route arg0) {
-			}
-
-			@Override
-			public void onSuspend(Route arg0) {
-			}
-		};
-
-		final RoutePolicy routePolicy2 = new RoutePolicy() {
-
-			public void onInit(Route route) {
-			}
-
-			public void onExchangeDone(Route route, Exchange exchange) {
-
-				executor2.inform("end");
-			}
-
-			public void onExchangeBegin(Route route, Exchange exchange) {
-			}
-
-			@Override
-			public void onRemove(Route route) {
-			}
-
-			@Override
-			public void onStart(Route route) {
-			}
-
-			@Override
-			public void onStop(Route route) {
-			}
-
-			@Override
-			public void onSuspend(Route route) {
-			}
-
-			@Override
-			public void onResume(Route route) {
-			}
-		};
-		final RoutePolicy routePolicy3 = new RoutePolicy() {
-
-			public void onInit(Route route) {
-			}
-
-			public void onExchangeDone(Route route, Exchange exchange) {
-
-				executor3.inform("end");
-			}
-
-			public void onExchangeBegin(Route route, Exchange exchange) {
-			}
-
-			@Override
-			public void onRemove(Route route) {
-			}
-
-			@Override
-			public void onStart(Route route) {
-			}
-
-			@Override
-			public void onStop(Route route) {
-			}
-
-			@Override
-			public void onSuspend(Route route) {
-			}
-
-			@Override
-			public void onResume(Route route) {
-			}
-		};
-		RouteBuilder builder1 = new RouteBuilder() {
+		final Executor executorM = factory.create(engine, routeOnOffMonitor, "monitor", true);
+		
+		final RoutePolicy routePolicy1 = createRoutePolicy(executor1);
+		
+		final RoutePolicy routePolicy2 = createRoutePolicy(executor2); 
+				
+		final RoutePolicy routePolicy3 = createRoutePolicy(executor3);
+		
+		RouteBuilder builder = new RouteBuilder() {
 
 			@Override
 			public void configure() throws Exception {
 				from("file:inputfolder1?delete=true").routeId("1")
-						.routePolicy(routePolicy1).process(new Processor() {
-
-							public void process(Exchange exchange)
-									throws Exception {
-
-							}
-						}).to("file:outputfolder1");
+						.routePolicy(routePolicy1).to("file:outputfolder1");
 
 				from("file:inputfolder2?delete=true").routeId("2")
-						.routePolicy(routePolicy2).process(new Processor() {
-
-							public void process(Exchange exchange)
-									throws Exception {
-
-							}
-						}).to("file:outputfolder2");
+						.routePolicy(routePolicy2).to("file:outputfolder2");
 
 				from("file:inputfolder3?delete=true").routeId("3")
 						.routePolicy(routePolicy3).to("file:outputfolder3");
@@ -448,73 +162,49 @@ public class IntegrationTests {
 		};
 		camelContext.setAutoStartup(false);
 		try {
-			camelContext.addRoutes(builder1);
+			camelContext.addRoutes(builder);
 			camelContext.start();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		route1.setCamelContext(camelContext);
-		route2.setCamelContext(camelContext);
-		route3.setCamelContext(camelContext);
-
-		Thread t1 = new Thread(executor1, "SW1");
-		Thread t2 = new Thread(executor2, "SW2");
-		Thread t3 = new Thread(executor3, "SW3");
-		Thread tM = new Thread(executorM, "M");
-
-		executor1.setEngine(engine);
-		executor2.setEngine(engine);
-		executor3.setEngine(engine);
-		executorM.setEngine(engine);
-		executor1.register(engine);
-		t1.start();
-		executor2.register(engine);
-		executor3.register(engine);
-		executorM.register(engine);
-
 		engine.specifyGlue(bipGlue);
 		engine.start();
 
-		assertEquals("The state is not appropriate", "off",
-				executor1.getCurrentState());
-		assertEquals("The state is not appropriate", "off",
-				executor2.getCurrentState());
-		assertEquals("The state is not appropriate", "off",
-				executor3.getCurrentState());
-		assertEquals("The state is not appropriate", "0",
-				executorM.getCurrentState());
-		try {
-			t2.start();
-			t3.start();
-			tM.start();
-
-		} catch (IllegalArgumentException e) {
-
-			e.printStackTrace();
-		} catch (SecurityException e) {
-
-			e.printStackTrace();
-		}
 		try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+
 		engine.execute();
+		
 		try {
 			Thread.sleep(20000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 
-		// TODO, ADD a test assertion.
+		boolean destroyed = factory.destroy(executor1);
+		destroyed &= factory.destroy(executor2);
+		destroyed &= factory.destroy(executor3);
+		destroyed &= factory.destroy(executorM);
+
+		engine.stop();
+		
+		assertEquals("Not all BIP actors were terminated.", destroyed, true);
+		
+		assertTrue("Route 1 has not made any transitions", route1.noOfEnforcedTransitions > 0);
+		assertTrue("Route 2 has not made any transitions", route2.noOfEnforcedTransitions > 0);
+		assertTrue("Route 3 has not made any transitions", route3.noOfEnforcedTransitions > 0);
 		
 	}
 
 	@Test
 	public void testEnforceableSpontaneous() throws BIPException {
 
+		BIPEngine engine = engineFactory.create("myEngine",	new BIPCoordinatorImpl());
+		
 		final int noSpontaneousToBeSend = 5;
 		final int noOfMilisecondsBetweenS = 1000;
 		final int executorLoopDelay = 1000;
@@ -533,16 +223,12 @@ public class IntegrationTests {
 
 		}.build();
 
-		bipGlue.toXML(System.out);
+
 		TestSpecEnforceableSpontaneous component1 = new TestSpecEnforceableSpontaneous();
 
-		final ExecutorImpl executor1 = new ExecutorImpl("", component1, true);
+		final Executor executor1 = factory.create(engine, component1, "comp1", true);
 
-		BIPCoordinator engine = new BIPCoordinatorImpl();
-
-		Thread t1 = new Thread(executor1, "SW1");
-
-		Thread t2 = new Thread(new Runnable() {
+		Thread threadSendingSpontaneousEvents = new Thread(new Runnable() {
 
 			public void run() {
 
@@ -559,14 +245,10 @@ public class IntegrationTests {
 			}
 		}, "SW2");
 
-		executor1.setEngine(engine);
-		executor1.register(engine);
-		t1.start();
-
 		engine.specifyGlue(bipGlue);
 		engine.start();
 
-		t2.start();
+		threadSendingSpontaneousEvents.start();
 
 		int sleepCounter = 0;
 
@@ -586,6 +268,14 @@ public class IntegrationTests {
 				fail("Not enough spontaneous events have been executed within a given time frame.");
 		}
 
+		boolean destroyed = factory.destroy(executor1);
+
+		engine.stop();
+		
+		assertEquals("Not all BIP actors were terminated.", destroyed, true);
+		
+		assertTrue("Component 1 has not made any transitions", component1.pCounter > 0);
+		
 		assertEquals(component1.getsCounter(), noSpontaneousToBeSend);
 
 	}
@@ -593,6 +283,8 @@ public class IntegrationTests {
 	@Test
 	public void testEnforceableSpontaneous2() throws BIPException {
 
+		BIPEngine engine = engineFactory.create("myEngine",	new BIPCoordinatorImpl());
+		
 		final int noSpontaneousToBeSend = 1;
 		final int noOfMilisecondsBetweenS = 1000;
 
@@ -610,14 +302,12 @@ public class IntegrationTests {
 
 		}.build();
 
-		bipGlue.toXML(System.out);
+		// bipGlue.toXML(System.out);
+		
 		TestSpecEnforceableSpontaneous component1 = new TestSpecEnforceableSpontaneous();
 
-		final ExecutorImpl executor1 = new ExecutorImpl("", component1, true);
-
-		BIPCoordinator engine = new BIPCoordinatorImpl();
-
-		Thread t1 = new Thread(executor1, "SW1");
+		final Executor executor1 = factory.create(engine, component1, "comp1", true);
+		
 
 		Thread t2 = new Thread(new Runnable() {
 
@@ -636,10 +326,6 @@ public class IntegrationTests {
 			}
 		}, "SW2");
 
-		executor1.setEngine(engine);
-		executor1.register(engine);
-		t1.start();
-
 		engine.specifyGlue(bipGlue);
 		engine.start();
 
@@ -654,6 +340,7 @@ public class IntegrationTests {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		
 		while (component1.getsCounter() < noSpontaneousToBeSend) {
 			final int internalSleep = 2000;
 			try {
@@ -668,11 +355,19 @@ public class IntegrationTests {
 						+ component1.getsCounter());
 		}
 
+		boolean destroyed = factory.destroy(executor1);
+
+		engine.stop();
+		
+		assertEquals("Not all BIP actors were terminated.", destroyed, true);
+		
+		assertTrue("Component 1 has not made any transitions", component1.pCounter > 0);
+		
 		assertEquals(component1.getsCounter(), noSpontaneousToBeSend);
 
 	}
 
-	@Test
+	@Test	
 	public void testTernaryInteractionWithTrigger() throws BIPException {
 
 		/*
@@ -695,6 +390,8 @@ public class IntegrationTests {
 		final int noOfMilisecondsBetweenS = 1000;
 		// final int executorLoopDelay = 1000;
 
+		BIPEngine engine = engineFactory.create("myEngine",	new BIPCoordinatorImpl());
+		
 		BIPGlue bipGlue = new GlueBuilder() {
 			@Override
 			public void configure() {
@@ -718,6 +415,7 @@ public class IntegrationTests {
 
 		}.build();
 
+		// TODO, make it into a separate test that does test round trip to-from xml.
 		ByteArrayOutputStream bipGlueOutputStream = new ByteArrayOutputStream();
 
 		bipGlue.toXML(bipGlueOutputStream);
@@ -730,30 +428,20 @@ public class IntegrationTests {
 		// Component P that does not need enable signals.
 
 		PComponent pComponent = new PComponent(false);
-
-		final ExecutorImpl pExecutor = new ExecutorImpl("", pComponent);
-
-		Thread t1 = new Thread(pExecutor, "PComponent");
+		final Executor pExecutor = factory.create(engine, pComponent, "pComponent", true);
 
 		// Component Q
 
 		QComponent qComponent = new QComponent();
-
-		final ExecutorImpl qExecutor = new ExecutorImpl("", qComponent);
-
-		Thread t2 = new Thread(qExecutor, "QComponent");
+		final Executor qExecutor = factory.create(engine, qComponent, "qComponent", true);
 
 		// Component R
 
 		RComponent rComponent = new RComponent();
-
-		final ExecutorImpl rExecutor = new ExecutorImpl("", rComponent);
-
-		Thread t3 = new Thread(rExecutor, "RComponent");
-
+		final Executor rExecutor = factory.create(engine, rComponent, "rComponent", true);
+		
 		// BIP engine.
 
-		BIPCoordinator engine = new BIPCoordinatorImpl();
 
 		Thread testDriver = new Thread(new Runnable() {
 
@@ -766,6 +454,7 @@ public class IntegrationTests {
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
+
 					// This spontaneous signal can be a bit problematic as the
 					// guard is never true,
 
@@ -779,30 +468,28 @@ public class IntegrationTests {
 			}
 		}, "TestDriver");
 
-		pExecutor.setEngine(engine);
-		pExecutor.register(engine);
-		t1.start();
-
-		qExecutor.setEngine(engine);
-		qExecutor.register(engine);
-		t2.start();
-
-		rExecutor.setEngine(engine);
-		rExecutor.register(engine);
-		t3.start();
-
 		engine.specifyGlue(bipGlue);
 		engine.start();
 
 		testDriver.start();
 
 		engine.execute();
+		
 		try {
 			Thread.sleep(40000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 
+		boolean destroyed = factory.destroy(pExecutor);
+		destroyed &= factory.destroy(qExecutor);
+		destroyed &= factory.destroy(rExecutor);
+
+		engine.stop();
+		
+		assertEquals("Not all BIP actors were terminated.", destroyed, true);
+
+		
 		assertEquals(noIterations, pComponent.pCounter);
 		assertEquals(noIterations, rComponent.rCounter);
 
@@ -811,7 +498,6 @@ public class IntegrationTests {
 	}
 
 	@Test
-	// (expected = BIPEngineException.class)
 	public void testWithMistakeInWiring() throws BIPException {
 
 		/*
@@ -824,6 +510,8 @@ public class IntegrationTests {
 		final int noIterations = 5;
 		final int noOfMilisecondsBetweenS = 1000;
 
+		BIPEngine engine = engineFactory.create("myEngine",	new BIPCoordinatorImpl());
+		
 		BIPGlue bipGlue = new GlueBuilder() {
 			@Override
 			public void configure() {
@@ -847,35 +535,23 @@ public class IntegrationTests {
 
 		}.build();
 
-		bipGlue.toXML(System.out);
-
 		// Component P that does not need enable signals.
 
 		PComponent pComponent = new PComponent(false);
-
-		final ExecutorImpl pExecutor = new ExecutorImpl("", pComponent);
-
-		Thread t1 = new Thread(pExecutor, "PComponent");
-
+		final Executor pExecutor = factory.create(engine, pComponent, "pComponent", true);
+		
 		// Component Q
 
 		// QComponent qComponent = new QComponent();
 		// MISTAKE on purpose, so the above line can be commented out.
-		final ExecutorImpl qExecutor = new ExecutorImpl("", pComponent);
-
-		Thread t2 = new Thread(qExecutor, "QComponent");
+		final Executor qExecutor = factory.create(engine, pComponent, "qComponent", true);
 
 		// Component R
 
 		RComponent rComponent = new RComponent();
-
-		final ExecutorImpl rExecutor = new ExecutorImpl("", rComponent);
-
-		Thread t3 = new Thread(rExecutor, "RComponent");
-
+		final Executor rExecutor = factory.create(engine, rComponent, "rComponent", true);
+		
 		// BIP engine.
-
-		BIPCoordinator engine = new BIPCoordinatorImpl();
 
 		Thread testDriver = new Thread(new Runnable() {
 
@@ -901,18 +577,6 @@ public class IntegrationTests {
 			}
 		}, "TestDriver");
 
-		pExecutor.setEngine(engine);
-		pExecutor.register(engine);
-		t1.start();
-
-		qExecutor.setEngine(engine);
-		qExecutor.register(engine);
-		t2.start();
-
-		rExecutor.setEngine(engine);
-		rExecutor.register(engine);
-		t3.start();
-
 		engine.specifyGlue(bipGlue);
 		engine.start();
 
@@ -925,8 +589,18 @@ public class IntegrationTests {
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
+
+		boolean destroyed = factory.destroy(pExecutor);
+		destroyed &= factory.destroy(qExecutor);
+		destroyed &= factory.destroy(rExecutor);
+
+		engine.stop();
 		
-		// TODO, ADD a test assertion.
+		assertEquals("Not all BIP actors were terminated.", destroyed, true);
+
+		
+		assertEquals("No progress for pComponent due to lack of QComponent", 0, pComponent.pCounter);
+		assertEquals("No progress for rComponent due to lack of QComponent", 0, rComponent.rCounter);
 
 	}
 
@@ -956,6 +630,8 @@ public class IntegrationTests {
 		final int noOfMilisecondsBetweenS = 10;
 		final int executorLoopDelay = 1000;
 
+		BIPEngine engine = engineFactory.create("myEngine",	new BIPCoordinatorImpl());
+		
 		BIPGlue bipGlue = new GlueBuilder() {
 			@Override
 			public void configure() {
@@ -971,27 +647,19 @@ public class IntegrationTests {
 
 		}.build();
 
-		bipGlue.toXML(System.out);
-
 		// Component P that does not need enable signals.
 
 		PSSComponent pComponent = new PSSComponent(true);
-
-		final ExecutorImpl pExecutor = new ExecutorImpl("", pComponent);
-
-		Thread t1 = new Thread(pExecutor, "PSSComponent");
+		
+		final Executor pExecutor = factory.create(engine, pComponent, "pComponent", true);
 
 		// Component R
 
 		RComponent rComponent = new RComponent();
-
-		final ExecutorImpl rExecutor = new ExecutorImpl("", rComponent);
-
-		Thread t2 = new Thread(rExecutor, "RComponent");
+		
+		final Executor rExecutor = factory.create(engine, rComponent, "rComponent", true);
 
 		// BIP engine.
-
-		BIPCoordinator engine = new BIPCoordinatorImpl();
 
 		Thread testDriver1 = new Thread(new Runnable() {
 
@@ -1077,20 +745,12 @@ public class IntegrationTests {
 			}
 		}, "TestDriver4");
 
-		pExecutor.setEngine(engine);
-		pExecutor.register(engine);
-		t1.start();
-
-		rExecutor.setEngine(engine);
-		rExecutor.register(engine);
-		t2.start();
 
 		engine.specifyGlue(bipGlue);
 		engine.start();
 
 		testDriver1.start();
 		testDriver2.start();
-
 		testDriver3.start();
 		testDriver4.start();
 
@@ -1112,6 +772,13 @@ public class IntegrationTests {
 				break;
 		}
 
+		boolean destroyed = factory.destroy(pExecutor);
+		destroyed &= factory.destroy(rExecutor);
+
+		engine.stop();
+		
+		assertEquals("Not all BIP actors were terminated.", destroyed, true);
+
 		assertEquals(noIterations * 2, pComponent.spontaneousEnableCounter);
 		assertEquals(noIterations, pComponent.spontaneousDisableCounter);
 		assertEquals(noIterations, pComponent.pCounter);
@@ -1119,67 +786,7 @@ public class IntegrationTests {
 	}
 
 	@Test
-	public void bipHannoiTest() throws JAXBException, BIPException {
-
-		int size = 3;
-
-		BIPGlue bipGlue4Hanoi = new HanoiGlueBuilder(size).build();
-
-		bipGlue4Hanoi.toXML(System.out);
-
-		HanoiMonitor hanoiMonitor = new HanoiMonitor(size);
-		final ExecutorImpl hanoiExecutor = new ExecutorImpl("", hanoiMonitor, false);
-		Thread t1 = new Thread(hanoiExecutor, "hanoiMonitor");
-
-		LeftHanoiPeg leftHanoiPeg = new LeftHanoiPeg(size);
-		final ExecutorImpl lExecutor = new ExecutorImpl("", leftHanoiPeg, false);
-		Thread t2 = new Thread(lExecutor, "LeftHanoiPeg");
-
-		MiddleHanoiPeg middleHanoiPeg = new MiddleHanoiPeg(size);
-		final ExecutorImpl mExecutor = new ExecutorImpl("", middleHanoiPeg, false);
-		Thread t3 = new Thread(mExecutor, "MiddleHanoiPeg");
-
-		RightHanoiPeg rightHanoiPeg = new RightHanoiPeg(size);
-		final ExecutorImpl rExecutor = new ExecutorImpl("", rightHanoiPeg, false);
-		Thread t4 = new Thread(rExecutor, "RightHanoiPeg");
-
-		// BIP engine.
-
-		BIPCoordinator engine = new BIPCoordinatorImpl();
-
-		hanoiExecutor.setEngine(engine);
-		hanoiExecutor.register(engine);
-		t1.start();
-
-		lExecutor.setEngine(engine);
-		lExecutor.register(engine);
-		t2.start();
-
-		mExecutor.setEngine(engine);
-		mExecutor.register(engine);
-		t3.start();
-
-		rExecutor.setEngine(engine);
-		rExecutor.register(engine);
-		t4.start();
-
-		engine.specifyGlue(bipGlue4Hanoi);
-		engine.start();
-
-		engine.execute();
-
-		try {
-			Thread.sleep(30000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
-		assertEquals((int) Math.pow(2, size) - 1,
-				hanoiMonitor.getNumberOfMoves());
-	}
-
-	@Test
-	@Ignore
+	@Ignore // old ignore.
 	public void testBinaryInteractionLargeBehavior()
 			throws NoSuchMethodException, BIPException {
 
@@ -1206,6 +813,8 @@ public class IntegrationTests {
 										// too.
 		final int noOfMilisecondsBetweenS = 1000;
 		final int executorLoopDelay = 1000;
+		
+		BIPEngine engine = engineFactory.create("myEngine",	new BIPCoordinatorImpl());
 
 		BIPGlue bipGlue = new GlueBuilder() {
 			@Override
@@ -1234,21 +843,13 @@ public class IntegrationTests {
 		PResizableBehaviorComponent pComponent = new PResizableBehaviorComponent(
 				true, noIterations);
 
-		final ExecutorImpl pExecutor = new ExecutorImpl("", pComponent, false);
-
-		Thread t1 = new Thread(pExecutor, "PComponent");
-
+		final Executor pExecutor = factory.create(engine, pComponent, "pComponent", false);
+		
 		// Component Q
 
 		QComponent qComponent = new QComponent();
-
-		final ExecutorImpl qExecutor = new ExecutorImpl("", qComponent);
-
-		Thread t2 = new Thread(qExecutor, "QComponent");
-
-		// BIP engine.
-
-		BIPCoordinator engine = new BIPCoordinatorImpl();
+		
+		final Executor qExecutor = factory.create(engine, qComponent, "qComponent", true);
 
 		// We enable noIterations of pq interactions.
 		Thread testDriver = new Thread(new Runnable() {
@@ -1293,15 +894,6 @@ public class IntegrationTests {
 			}
 		}, "TestDriver2");
 
-		pExecutor.setEngine(engine);
-		pExecutor.register(engine);
-
-		t1.start();
-
-		qExecutor.setEngine(engine);
-		qExecutor.register(engine);
-		t2.start();
-
 		engine.specifyGlue(bipGlue);
 
 		engine.start();
@@ -1331,7 +923,14 @@ public class IntegrationTests {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		// }
+		
+		boolean destroyed = factory.destroy(pExecutor);
+		destroyed &= factory.destroy(qExecutor);
+
+		engine.stop();
+		
+		assertEquals("Not all BIP actors were terminated.", destroyed, true);
+
 		assertEquals(0, pComponent.pCounter);
 
 		assertEquals(noIterations, qComponent.qCounter);
@@ -1368,6 +967,44 @@ public class IntegrationTests {
 				.getRequiresConstraints().size());
 		assertEquals("Incorrect number of data wires ", 1, glue.getDataWires()
 				.size());
+
+	}
+
+	private RoutePolicy createRoutePolicy(final Executor executor) {
+		
+		return  new RoutePolicy() {
+
+			public void onInit(Route route) {
+			}
+
+			public void onExchangeDone(Route route, Exchange exchange) {
+
+				executor.inform("end");
+			}
+
+			public void onExchangeBegin(Route route, Exchange exchange) {
+			}
+
+			@Override
+			public void onRemove(Route arg0) {
+			}
+
+			@Override
+			public void onResume(Route arg0) {
+			}
+
+			@Override
+			public void onStart(Route arg0) {
+			}
+
+			@Override
+			public void onStop(Route arg0) {
+			}
+
+			@Override
+			public void onSuspend(Route arg0) {
+			}
+		};
 
 	}
 
