@@ -22,7 +22,7 @@ public class HanoiPeg {
 
 	private int size;
 
-	int numberOfMoves = 0;
+	public int noOfTransitions = 0;
 
 	final int maxPieces = 8;
 
@@ -89,6 +89,7 @@ public class HanoiPeg {
 	public void addPiece(@Data(name = "addedDisk") int no) {
 		logger.debug("EXECUTION: component " + this.getClass().getName() + " has added a piece.");
 		pieces[no - 1] = true;
+		noOfTransitions++;
 		logger.debug("Piece no. " + no + " is being added.");
 	}
 
@@ -98,6 +99,7 @@ public class HanoiPeg {
 			if (pieces[i]) {
 				logger.debug("Piece no. " + (i + 1) + " is being removed.");
 				pieces[i] = false;
+				noOfTransitions++;
 				return;
 			}
 

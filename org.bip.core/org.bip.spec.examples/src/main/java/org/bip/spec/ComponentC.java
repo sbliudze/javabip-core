@@ -17,14 +17,18 @@ public class ComponentC {
 
 	private int memoryZ = -200;
 
+	public int noOfTransitions;
+
 	@Transition(name = "a", source = "zero", target = "zero")
 	public void componentCTransitionA() {
 		logger.debug("Transition a of ComponentC has been performed");
+		noOfTransitions++;
 	}
 
 	@Transition(name = "b", source = "zero", target = "zero")
 	public void componentCTransitionB() {
 		logger.debug("Transition b of ComponentC has been performed");
+		noOfTransitions++;
 	}
 
 	@Data(name = "memoryZ", accessTypePort = AccessType.allowed, ports = {"b"})

@@ -18,14 +18,18 @@ public class TwoDataProvider1 {
 	private int memoryY = 20;
 	private int memoryQ = 90;
 
+	public int noOfTransitions;
+
 	@Transition(name = "a", source = "zero", target = "zero")
 	public void componentBTransitionA() {
 		logger.debug("Transition a of TwoDataProvider1 has been performed");
+		noOfTransitions++;
 	}
 
 	@Transition(name = "b", source = "zero", target = "zero")
 	public void componentBTransitionB() {
 		logger.debug("Transition b of TwoDataProvider1 has been performed");
+		noOfTransitions++;
 	}
 
 	@Data(name = "memoryY", accessTypePort = AccessType.any)

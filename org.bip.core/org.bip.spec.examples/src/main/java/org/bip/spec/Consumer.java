@@ -20,6 +20,8 @@ public class Consumer {
 
 	private int currentCapacity = 0;
 
+	public int noOfTransitions = 0;
+	
 	public Consumer(int memoryLimit) {
 		this.memoryLimit = memoryLimit;
 	}
@@ -28,12 +30,14 @@ public class Consumer {
 	public void addRoute(@Data(name = "memoryUsage") Integer deltaMemory) {
 		currentCapacity += deltaMemory;
 		logger.debug("Current capacity: " + currentCapacity + ", limit: " + memoryLimit);
+		noOfTransitions++;		
 	}
 
 	@Transition(name = "useData", source = "one", target = "zero")
 	public void addRoute() {
 		currentCapacity = 0;
 		logger.debug("Current capacity: " + currentCapacity + ", limit: " + memoryLimit);
+		noOfTransitions++;		
 	}
 
 	@Guard(name = "hasCapacity")

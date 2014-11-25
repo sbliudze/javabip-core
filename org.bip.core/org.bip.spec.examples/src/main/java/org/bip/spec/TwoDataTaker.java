@@ -17,6 +17,7 @@ public class TwoDataTaker {
 	final private int memoryLimit;
 
 	private int currentCapacity = 0;
+	public int noOfTransitions;
 
 	public TwoDataTaker(int memoryLimit) {
 		this.memoryLimit = memoryLimit;
@@ -26,12 +27,8 @@ public class TwoDataTaker {
 	public void enforceableOfA(@Data(name = "memoryUsageX") Integer memoryUsage1, @Data(name = "memoryUsageR") Integer memoryUsage2) {
 		currentCapacity += (memoryUsage1+memoryUsage2);
 		logger.debug("Current capacity: " + currentCapacity + ", limit: " + memoryLimit);
+		noOfTransitions++;
 	}
-
-//	@Transition(name = "b", source = "zero", target = "zero")
-//	public void spontaneousOfA() {
-//		logger.debug("Spontaneous transition b of component TwoDataTaker is being executed. ");
-//	}
 	
 	@Guard(name = "hasCapacity")
 	public boolean hasCapacity(@Data(name = "memoryUsageX") Integer memoryUsage1, @Data(name = "memoryUsageR") Integer memoryUsage2) {

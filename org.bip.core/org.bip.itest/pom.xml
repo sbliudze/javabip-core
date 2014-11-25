@@ -110,12 +110,9 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<includes>
- 						<include>**/org/bip/executor/DataTests.class</include>
-						<include>**/org/bip/executor/IntegrationTests.class</include>
-						<include>**/org/bip/executor/DiningPhilosopherTests.class</include>
-						<include>**/org/bip/executor/AkkaExecutorTests.class</include>
- 						<include>**/org/bip/executor/AkkaSmallTests.class</include>						
-					</includes>
+  						<include>**/org/bip/executor/IntegrationTests.class</include>
+						<include>**/org/bip/executor/AkkaExecutorTests.class</include>						
+ 					</includes>
 					<systemPropertyVariables>
 					  <log4j.configuration>file:${basedir}/src/test/resources/log4j-build.properties</log4j.configuration>
 					</systemPropertyVariables>

@@ -84,6 +84,8 @@ public class SwitchableRouteExecutableBehavior implements CamelContextAware, Ini
     private Executor executor;
     private RoutePolicy notifier;
 
+	public int noOfEnforcedTransitions;
+
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = (ModelCamelContext)camelContext;
     }
@@ -113,7 +115,7 @@ public class SwitchableRouteExecutableBehavior implements CamelContextAware, Ini
     public void stopRoute() throws Exception {
         logger.debug("Stop transition handler for {} is being executed.", routeId);
         camelContext.suspendRoute(routeId);
-
+    	noOfEnforcedTransitions++;
     }
 
     public void spontaneousEnd() throws Exception {
@@ -126,9 +128,11 @@ public class SwitchableRouteExecutableBehavior implements CamelContextAware, Ini
 
     public void finishedTransition() throws Exception {
         logger.debug("Transitioning to off state from done for {}.", routeId);
+    	noOfEnforcedTransitions++;
     }
 
     public void startRoute() throws Exception {
+    	noOfEnforcedTransitions++;
         logger.debug("Start transition handler for {} is being executed.", routeId);
         camelContext.resumeRoute(routeId);
     }

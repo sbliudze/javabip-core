@@ -20,6 +20,8 @@ public class ComponentA {
 
 	private int currentCapacity = 0;
 
+	public int noOfTransitions = 0;
+	
 	public ComponentA(int memoryLimit) {
 		this.memoryLimit = memoryLimit;
 	}
@@ -28,6 +30,7 @@ public class ComponentA {
 	public void enforceableOfA(@Data(name = "memoryUsage") Integer deltaMemory) {
 		currentCapacity += deltaMemory;
 		logger.debug("Current capacity: " + currentCapacity + ", limit: " + memoryLimit);
+		noOfTransitions++;
 	}
 
 	@Transition(name = "b", source = "zero", target = "zero")

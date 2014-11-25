@@ -11,7 +11,6 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -20,15 +19,20 @@ import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
 import org.bip.api.Executor;
 import org.bip.engine.BIPCoordinatorImpl;
+import org.bip.engine.DataCoordinatorImpl;
 import org.bip.engine.DataCoordinatorKernel;
 import org.bip.engine.api.BIPCoordinator;
+import org.bip.engine.api.DataCoordinator;
 import org.bip.engine.api.EngineFactory;
 import org.bip.exceptions.BIPException;
 import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
 import org.bip.glue.GlueBuilder;
 import org.bip.glue.TwoSynchronGlueBuilder;
+import org.bip.spec.ComponentA;
 import org.bip.spec.ComponentB;
+import org.bip.spec.ComponentC;
 import org.bip.spec.Consumer;
+import org.bip.spec.Feeder;
 import org.bip.spec.HanoiGlueBuilder;
 import org.bip.spec.HanoiMonitor;
 import org.bip.spec.InitialServer;
@@ -41,6 +45,12 @@ import org.bip.spec.RightHanoiPeg;
 import org.bip.spec.Server;
 import org.bip.spec.SwitchableRouteDataTransfers;
 import org.bip.spec.Tracker;
+import org.bip.spec.TwoDataProvider1;
+import org.bip.spec.TwoDataProvider2;
+import org.bip.spec.TwoDataTaker;
+import org.bip.spec.diningphilosophers.DiningPhilosophersGlueBuilder;
+import org.bip.spec.diningphilosophers.Fork;
+import org.bip.spec.diningphilosophers.Philosophers;
 import org.bip.spec.hanoi.HanoiOptimalMonitor;
 import org.junit.After;
 import org.junit.Before;
@@ -186,8 +196,129 @@ public class AkkaExecutorTests {
 
 	}
 	
+	// No asserts yet, just to see if the whole thing does not blow at
+	// initialization time and due to first few cycles.
 	@Test
-	public void bipHannoiWithDataTest() throws JAXBException, BIPException {
+	public void bipRandomLargerHannoiWithDataTest() throws JAXBException,
+			BIPException {
+
+		int size = 3;
+
+		BIPGlue bipGlue4Hanoi = new org.bip.spec.hanoi.HanoiRandomGlueBuilder()
+				.build();
+
+		BIPEngine engine = engineFactory.create("myEngine",	new DataCoordinatorKernel(new BIPCoordinatorImpl()));
+
+		org.bip.spec.hanoi.HanoiPeg leftHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(size, false);
+		Executor lExecutor = factory.create(engine, leftHanoiPeg, "LeftHanoiPeg", false);
+		
+		org.bip.spec.hanoi.HanoiPeg middleHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(size, true);
+		Executor mExecutor = factory.create(engine, middleHanoiPeg, "MiddleHanoiPeg", false);
+		
+		org.bip.spec.hanoi.HanoiPeg rightHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(size, true);
+		Executor rExecutor = factory.create(engine, middleHanoiPeg, "RightHanoiPeg", false);
+				
+		org.bip.spec.hanoi.HanoiPeg rightMiddleHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(size, true);
+		Executor rMExecutor = factory.create(engine, rightMiddleHanoiPeg, "RightMiddleHanoiPeg", false);
+		
+		org.bip.spec.hanoi.HanoiPeg leftMiddleHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(size, false);
+		Executor lMExecutor = factory.create(engine, leftMiddleHanoiPeg, "LeftMiddleHanoiPeg", false);
+		
+		engine.specifyGlue(bipGlue4Hanoi);
+		engine.start();
+		
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		engine.execute();
+
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		boolean destroyed = factory.destroy(rMExecutor);
+		destroyed &= factory.destroy(lMExecutor);
+		destroyed &= factory.destroy(lExecutor);
+		destroyed &= factory.destroy(mExecutor);
+		destroyed &= factory.destroy(rExecutor);
+
+		engine.stop();
+		
+		int noOfAllTransitions = leftHanoiPeg.noOfTransitions + rightHanoiPeg.noOfTransitions + leftMiddleHanoiPeg.noOfTransitions + 
+								 rightMiddleHanoiPeg.noOfTransitions + middleHanoiPeg.noOfTransitions;
+
+		assertTrue("Hanoi tower have seen progress of executing transitions", noOfAllTransitions > 0);
+		
+		assertEquals("Not all BIP actors were terminated.", destroyed, true);
+
+	}
+
+
+	// No asserts yet, just to see if the whole thing does not blow at
+	// initialization time and due to first few cycles.
+	@Test
+	public void bipRandomHannoiWithDataTest() throws JAXBException,
+			BIPException {
+
+		int size = 3;
+
+		// BIP engine.
+		BIPEngine engine = engineFactory.create("myEngine",	new DataCoordinatorKernel(new BIPCoordinatorImpl()));
+		
+		BIPGlue bipGlue4Hanoi = new org.bip.spec.hanoi.HanoiRandomGlueBuilder()
+				.build();
+
+		org.bip.spec.hanoi.HanoiPeg leftHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(size, false);
+		Executor lExecutor = factory.create(engine, leftHanoiPeg, "LeftHanoiPeg", false);
+
+		org.bip.spec.hanoi.HanoiPeg middleHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(size, true);
+		Executor mExecutor = factory.create(engine, middleHanoiPeg, "MiddleHanoiPeg", false);
+		
+		org.bip.spec.hanoi.HanoiPeg rightHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(size, true);
+		Executor rExecutor = factory.create(engine, rightHanoiPeg, "RightHanoiPeg", false);
+		
+		engine.specifyGlue(bipGlue4Hanoi);
+		
+		engine.start();
+
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		engine.execute();
+
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		boolean destroyed = factory.destroy(lExecutor);
+		destroyed &= factory.destroy(mExecutor);
+		destroyed &= factory.destroy(rExecutor);
+
+		
+		engine.stop();
+
+		int noOfAllTransitions = leftHanoiPeg.noOfTransitions + rightHanoiPeg.noOfTransitions + middleHanoiPeg.noOfTransitions;
+
+		assertTrue("Hanoi tower have seen progress of executing transitions", noOfAllTransitions > 0);
+		assertTrue("Number of component transition should sum up to an even number", noOfAllTransitions % 2 == 0);
+				
+		assertEquals("Not all BIP actors were terminated.", destroyed, true);
+
+	}
+
+	
+	@Test
+	public void bipHannoiWithDataTestSize3() throws JAXBException, BIPException {
 
 		BIPEngine engine = engineFactory.create("myEngine",	new DataCoordinatorKernel(new BIPCoordinatorImpl()));
 
@@ -245,7 +376,67 @@ public class AkkaExecutorTests {
 		assertEquals("Not all BIP actors were terminated.", destroyed, true);
 
 	}
-	
+
+	@Test
+	public void bipHannoiWithDataTestSize8() throws JAXBException, BIPException {
+
+		BIPEngine engine = engineFactory.create("myEngine",	new DataCoordinatorKernel(new BIPCoordinatorImpl()));
+
+		int size = 8;
+
+		BIPGlue bipGlue4Hanoi = new org.bip.spec.hanoi.HanoiOptimalGlueBuilder()
+				.build();
+
+		HanoiOptimalMonitor hanoiMonitor = new HanoiOptimalMonitor(size);
+		Executor hanoiExecutor = factory.create(engine, hanoiMonitor, "hanoiMonitor", false);
+
+		org.bip.spec.hanoi.LeftHanoiPeg leftHanoiPeg = new org.bip.spec.hanoi.LeftHanoiPeg(
+				size);
+		
+		Executor lExecutor = factory.create(engine, leftHanoiPeg, "LeftHanoiPeg", false);
+
+		org.bip.spec.hanoi.MiddleHanoiPeg middleHanoiPeg = new org.bip.spec.hanoi.MiddleHanoiPeg(
+				size);
+		Executor mExecutor = factory.create(engine, middleHanoiPeg, "MiddleHanoiPeg", false);
+
+
+		org.bip.spec.hanoi.RightHanoiPeg rightHanoiPeg = new org.bip.spec.hanoi.RightHanoiPeg(
+				size);
+		Executor rExecutor = factory.create(engine, rightHanoiPeg, "RightHanoiPeg", false);
+
+		engine.specifyGlue(bipGlue4Hanoi);
+		engine.start();
+		
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		engine.execute();
+
+		try {
+			Thread.sleep(20000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("Finished test, number of transitions " + hanoiMonitor.getNumberOfMoves());
+		System.out.flush();
+		
+		boolean destroyed = factory.destroy(hanoiExecutor);
+		destroyed &= factory.destroy(lExecutor);
+		destroyed &= factory.destroy(mExecutor);
+		destroyed &= factory.destroy(rExecutor);
+
+		engine.stop();
+
+		assertEquals("Hanoi tower has not reached its final state ", (int) Math.pow(2, size) - 1, hanoiMonitor.getNumberOfMoves());
+		
+		assertEquals("Not all BIP actors were terminated.", destroyed, true);
+
+	}
+
 	// It does not use data transfers but plenty of interactions and more ports.
 	@Test
 	public void akkaExecutorHannoiNoDataTransferswithActorEngineTest() {
@@ -300,7 +491,6 @@ public class AkkaExecutorTests {
 		assertEquals("Some actors where not destroyed succesfully", true, destroyed);
 
 	}	
-
 
 
 	@Test
@@ -520,6 +710,194 @@ public class AkkaExecutorTests {
 		assertEquals("Not all BIP actors were terminated.", destroyed, true);
 		
 }
+	
+	@Test
+	public void bipDataFeederConsumerTest() throws BIPException {
+
+		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl()));
+
+		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueFeederConsumer.xml");
+
+		Feeder feeder = new Feeder();
+		final Executor executorF = factory.create(engine, feeder, "feeder", true);
+		
+		Consumer consumer = new Consumer(350);
+		final Executor executorC = factory.create(engine, consumer, "consumer", true);
+		
+		engine.specifyGlue(bipGlue);
+		engine.start();
+
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		engine.execute();
+		
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		boolean destroyed = factory.destroy(executorF);
+		destroyed &= factory.destroy(executorC);
+		
+		engine.stop();
+			
+		assertTrue("Feeder has not made any transitions", feeder.noOfTransitions > 0);
+		assertTrue("Consumer has not made any transitions", consumer.noOfTransitions > 0);
+		
+		assertEquals("Not all BIP actors were terminated.", destroyed, true);
+
+	}
+
+	@Test
+	public void bipDataAvailabilityTest() throws BIPException {
+		
+		BIPEngine engine = engineFactory.create("myEngine",
+				new DataCoordinatorKernel(new BIPCoordinatorImpl()));		
+
+		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueDataAvailability.xml");
+
+		ComponentA componentA = new ComponentA(250);
+		ComponentB componentB = new ComponentB();
+		ComponentC componentC = new ComponentC();
+		
+		final Executor executorA = factory.create(engine, componentA, "compA", true);
+
+		final Executor executorB = factory.create(engine, componentB, "compB", true);
+
+		final Executor executorC = factory.create(engine, componentC, "compC", true);
+
+
+		engine.specifyGlue(bipGlue);
+		engine.start();
+
+		engine.execute();
+
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		boolean destroyed = factory.destroy(executorA);
+		destroyed &= factory.destroy(executorB);
+		destroyed &= factory.destroy(executorC);
+		
+		assertEquals("Not all BIP actors were terminated.", destroyed, true);
+
+		assertTrue("CompA has not made any transitions", componentA.noOfTransitions > 0);
+		assertTrue("CompB has not made any transitions", componentB.noOfTransitions > 0);
+		assertTrue("CompC has not made any transitions", componentC.noOfTransitions > 0);
+		
+	}
+	
+	
+	@Test
+	public void akkaExecutorPhilosopherwithDataTest() {
+
+		BIPEngine engine = engineFactory.create("myEngine",
+				new DataCoordinatorKernel(new BIPCoordinatorImpl()));
+
+		BIPGlue bipGlue4Philosophers = new DiningPhilosophersGlueBuilder().build();
+
+		Fork f1 = new Fork(1);
+		Fork f2 = new Fork(2);
+		Fork f3 = new Fork(3);
+		
+		Philosophers p1 = new Philosophers(1, 2, true);
+		Philosophers p2 = new Philosophers(2, 3, true);
+		Philosophers p3 = new Philosophers(3, 1, true);
+		
+		
+		Executor f1E = factory.create(engine, f1, "f1E", true);
+		Executor f2E = factory.create(engine, f2, "f2E", true);
+		Executor f3E = factory.create(engine, f3, "f3E", true);
+		
+		Executor p1E = factory.create(engine, p1, "p1E", true);
+		Executor p2E = factory.create(engine, p2, "p2E", true);
+		Executor p3E = factory.create(engine, p3, "p3E", true);
+
+		engine.specifyGlue(bipGlue4Philosophers);
+		engine.start();
+
+		engine.execute();
+
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		int noOfTimesUsed = f1.noOfTimesUsed() + f2.noOfTimesUsed() + f3.noOfTimesUsed();
+		
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		int noOfTimesUsed2 = f1.noOfTimesUsed() + f2.noOfTimesUsed() + f3.noOfTimesUsed();
+
+		boolean destroyed = factory.destroy(f1E);
+		destroyed &= factory.destroy(f2E);
+		destroyed &= factory.destroy(f3E);
+		destroyed &= factory.destroy(p1E);
+		destroyed &= factory.destroy(p2E);
+		destroyed &= factory.destroy(p3E);
+
+		engine.stop();
+		
+		assertEquals("BIP engine could not progress the system.", true,	noOfTimesUsed2 > noOfTimesUsed);
+		
+		assertEquals("Some actors where not destroyed succesfully", true, destroyed);
+
+	}	
+	
+	// TODO, This test is hitting the limitation of BIP engine concerning multiple transfers.
+	// TODO, Explain exactly what is the limitation.
+	@Test
+	@Ignore
+	public void bipTwoDataTest() throws BIPException {
+
+		BIPEngine engine = engineFactory.create("myEngine",
+				new DataCoordinatorKernel(new BIPCoordinatorImpl()));		
+
+		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueTwoData.xml");
+
+		TwoDataTaker componentA = new TwoDataTaker(100);
+		TwoDataProvider1 componentB = new TwoDataProvider1();
+		TwoDataProvider2 componentC = new TwoDataProvider2();
+
+		final Executor executorA = factory.create(engine, componentA, "compA", true);
+		final Executor executorB = factory.create(engine, componentB, "compB", true);
+		final Executor executorC = factory.create(engine, componentC, "compC", true);
+
+		engine.specifyGlue(bipGlue);
+		engine.start();
+
+		engine.execute();
+
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		boolean destroyed = factory.destroy(executorA);
+		destroyed &= factory.destroy(executorB);
+		destroyed &= factory.destroy(executorC);
+		
+		assertEquals("Not all BIP actors were terminated.", destroyed, true);
+
+		assertTrue("CompA has not made any transitions", componentA.noOfTransitions > 0);
+		assertTrue("CompB has not made any transitions", componentB.noOfTransitions > 0);
+		assertTrue("CompC has not made any transitions", componentC.noOfTransitions > 0);
+
+	}
 	
 	private BIPGlue createGlue(String bipGlueFilename) {
 		BIPGlue bipGlue = null;
