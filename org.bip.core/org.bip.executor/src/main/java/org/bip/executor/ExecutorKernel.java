@@ -70,6 +70,15 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 		this.id = id;
 	}
 	
+	// TODO, Proxy can be also obtained using this singleton 
+	// proxy = TypedActor.<OrchestratedExecutor>self();
+	// However, we tight ourselves to TypedActor singleton that can 
+	// be disastrous in OSGi setup. 
+	// However, at the same time any exception thrown from any function 
+	// in this class will cause the TypedActor to die and a new one respawn
+	// making this proxy obsolete thus not being able to progress any further.
+	// Maybe, this is actually is not bad as we may want to have guarantees that
+	// after exception is being thrown no more function calls follow to this object.
 	public void setProxy(OrchestratedExecutor proxy) {
 		this.proxy = proxy;
 	}
