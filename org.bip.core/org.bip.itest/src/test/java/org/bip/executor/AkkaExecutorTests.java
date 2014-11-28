@@ -19,10 +19,8 @@ import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
 import org.bip.api.Executor;
 import org.bip.engine.BIPCoordinatorImpl;
-import org.bip.engine.DataCoordinatorImpl;
 import org.bip.engine.DataCoordinatorKernel;
 import org.bip.engine.api.BIPCoordinator;
-import org.bip.engine.api.DataCoordinator;
 import org.bip.engine.api.EngineFactory;
 import org.bip.exceptions.BIPException;
 import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
@@ -85,7 +83,7 @@ public class AkkaExecutorTests {
 	public void akkaExecutorSimpleTest() {
 
 		// Create BIP engine.
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl());
+		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
 
 		// Create BIP Spec. 
 		HanoiMonitor hanoiMonitor = new HanoiMonitor(3);
@@ -104,7 +102,7 @@ public class AkkaExecutorTests {
 	@Test
 	public void bipDataTransferTest() throws BIPException {
 		
-		BIPEngine engine = engineFactory.create("myEngine",	new DataCoordinatorKernel(new BIPCoordinatorImpl()));
+		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
 
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
@@ -207,7 +205,7 @@ public class AkkaExecutorTests {
 		BIPGlue bipGlue4Hanoi = new org.bip.spec.hanoi.HanoiRandomGlueBuilder()
 				.build();
 
-		BIPEngine engine = engineFactory.create("myEngine",	new DataCoordinatorKernel(new BIPCoordinatorImpl()));
+		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
 
 		org.bip.spec.hanoi.HanoiPeg leftHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(size, false);
 		Executor lExecutor = factory.create(engine, leftHanoiPeg, "LeftHanoiPeg", false);
@@ -268,7 +266,7 @@ public class AkkaExecutorTests {
 		int size = 3;
 
 		// BIP engine.
-		BIPEngine engine = engineFactory.create("myEngine",	new DataCoordinatorKernel(new BIPCoordinatorImpl()));
+		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
 		
 		BIPGlue bipGlue4Hanoi = new org.bip.spec.hanoi.HanoiRandomGlueBuilder()
 				.build();
@@ -320,7 +318,7 @@ public class AkkaExecutorTests {
 	@Test
 	public void bipHannoiWithDataTestSize3() throws JAXBException, BIPException {
 
-		BIPEngine engine = engineFactory.create("myEngine",	new DataCoordinatorKernel(new BIPCoordinatorImpl()));
+		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
 
 		int size = 3;
 
@@ -380,7 +378,7 @@ public class AkkaExecutorTests {
 	@Test
 	public void bipHannoiWithDataTestSize8() throws JAXBException, BIPException {
 
-		BIPEngine engine = engineFactory.create("myEngine",	new DataCoordinatorKernel(new BIPCoordinatorImpl()));
+		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
 
 		int size = 8;
 
@@ -441,7 +439,7 @@ public class AkkaExecutorTests {
 	@Test
 	public void akkaExecutorHannoiNoDataTransferswithActorEngineTest() {
 
-		BIPEngine engine = engineFactory.create("myEngine",	new BIPCoordinatorImpl());
+		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
 
 		int size = 3;
 
@@ -504,7 +502,7 @@ public class AkkaExecutorTests {
 		// from multiple-thread calls against its functions. BIP engine is not guaranteed to be multiple-thread safe right?, so we should
 		// remove this test as there is a similar one that does hanoi testing without data transfers.
 		// BIP engine.
-		BIPCoordinator engine = new BIPCoordinatorImpl();
+		BIPCoordinator engine = new BIPCoordinatorImpl(system);
 
 		HanoiMonitor hanoiMonitor = new HanoiMonitor(size);
 		Executor hanoiExecutor = factory.create(engine, hanoiMonitor, "hanoiMonitor", false);
@@ -568,7 +566,7 @@ public class AkkaExecutorTests {
 
 		}.build();
 
-		BIPEngine engine = engineFactory.create("myEngine",	new DataCoordinatorKernel(new BIPCoordinatorImpl()));
+		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
 
 		PSSComponent pssComponent = new PSSComponent(true);
 
@@ -613,7 +611,7 @@ public class AkkaExecutorTests {
 	@Test
 	public void ServersTest() {
 		
-		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl()));
+		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
 
 		// TODO, PLEASE use BIP glue builders and not XML file.
 		// TODO, BUG? BTW, BIP glue is not using class InitialServer only Server.
@@ -655,7 +653,7 @@ public class AkkaExecutorTests {
 	public void TrackerPeerTest()
 	{		
 				
-		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl()));
+		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
 		
 		// TODO, PLEASE use BIP glue builders and not XML file.
 		BIPGlue bipGlue = createGlue("src/test/resources/trackerPeerGlue.xml");
@@ -714,7 +712,7 @@ public class AkkaExecutorTests {
 	@Test
 	public void bipDataFeederConsumerTest() throws BIPException {
 
-		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl()));
+		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
 
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueFeederConsumer.xml");
 
@@ -757,7 +755,7 @@ public class AkkaExecutorTests {
 	public void bipDataAvailabilityTest() throws BIPException {
 		
 		BIPEngine engine = engineFactory.create("myEngine",
-				new DataCoordinatorKernel(new BIPCoordinatorImpl()));		
+ new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
 
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueDataAvailability.xml");
 
@@ -800,7 +798,7 @@ public class AkkaExecutorTests {
 	public void akkaExecutorPhilosopherwithDataTest() {
 
 		BIPEngine engine = engineFactory.create("myEngine",
-				new DataCoordinatorKernel(new BIPCoordinatorImpl()));
+ new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
 
 		BIPGlue bipGlue4Philosophers = new DiningPhilosophersGlueBuilder().build();
 
@@ -864,7 +862,7 @@ public class AkkaExecutorTests {
 	public void bipTwoDataTest() throws BIPException {
 
 		BIPEngine engine = engineFactory.create("myEngine",
-				new DataCoordinatorKernel(new BIPCoordinatorImpl()));		
+ new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
 
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueTwoData.xml");
 

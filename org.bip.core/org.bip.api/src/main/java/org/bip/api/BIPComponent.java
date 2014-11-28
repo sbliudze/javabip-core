@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * It specifies the functionality of BIP component in BIP framework. 
  */
-public interface BIPComponent extends Identifiable {
+public interface BIPComponent extends Identifiable, BIPActor {
 
 	/**
 	 * It enforces the execution of a given enforceable transition associated to a given port id.
@@ -26,12 +26,6 @@ public interface BIPComponent extends Identifiable {
 	 */
 	void execute(String portID);
 
-	/**
-	 * It informs BIP component that a given spontaneous event associated with a port id has occurred.
-	 *
-	 * @param portID the port id specifying a spontaneous event that has occurred.
-	 */
-	void inform(String portID);
 
 	// TODO EXTENSION make it possible to specify data for execution of spontaneous transitions that requires data.
 	// void inform(String portID, Map<String, ?> data);

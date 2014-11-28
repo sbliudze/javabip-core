@@ -11,11 +11,8 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Random;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -26,24 +23,17 @@ import org.bip.api.Executor;
 import org.bip.api.PortBase;
 import org.bip.api.PortType;
 import org.bip.engine.BIPCoordinatorImpl;
-import org.bip.engine.DataCoordinatorKernel;
-import org.bip.engine.api.BIPCoordinator;
 import org.bip.engine.api.EngineFactory;
 import org.bip.exceptions.BIPException;
 import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
 import org.bip.glue.GlueBuilder;
 import org.bip.glue.TwoSynchronGlueBuilder;
-import org.bip.spec.HanoiGlueBuilder;
-import org.bip.spec.HanoiMonitor;
-import org.bip.spec.LeftHanoiPeg;
 import org.bip.spec.MemoryMonitor;
-import org.bip.spec.MiddleHanoiPeg;
 import org.bip.spec.PComponent;
 import org.bip.spec.PResizableBehaviorComponent;
 import org.bip.spec.PSSComponent;
 import org.bip.spec.QComponent;
 import org.bip.spec.RComponent;
-import org.bip.spec.RightHanoiPeg;
 import org.bip.spec.RouteOnOffMonitor;
 import org.bip.spec.SwitchableRoute;
 import org.bip.spec.SwitchableRouteDataTransfers;
@@ -119,7 +109,7 @@ public class IntegrationTests {
 	@Test
 	public void testBehaviourBuilding() throws BIPException {
 
-		BIPEngine engine = engineFactory.create("myEngine",	new BIPCoordinatorImpl());
+		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
 		
 		// get Glue object from xml file
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueExecutableBehaviour.xml");
@@ -203,7 +193,7 @@ public class IntegrationTests {
 	@Test
 	public void testEnforceableSpontaneous() throws BIPException {
 
-		BIPEngine engine = engineFactory.create("myEngine",	new BIPCoordinatorImpl());
+		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
 		
 		final int noSpontaneousToBeSend = 5;
 		final int noOfMilisecondsBetweenS = 1000;
@@ -283,7 +273,7 @@ public class IntegrationTests {
 	@Test
 	public void testEnforceableSpontaneous2() throws BIPException {
 
-		BIPEngine engine = engineFactory.create("myEngine",	new BIPCoordinatorImpl());
+		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
 		
 		final int noSpontaneousToBeSend = 1;
 		final int noOfMilisecondsBetweenS = 1000;
@@ -390,7 +380,7 @@ public class IntegrationTests {
 		final int noOfMilisecondsBetweenS = 1000;
 		// final int executorLoopDelay = 1000;
 
-		BIPEngine engine = engineFactory.create("myEngine",	new BIPCoordinatorImpl());
+		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
 		
 		BIPGlue bipGlue = new GlueBuilder() {
 			@Override
@@ -510,7 +500,7 @@ public class IntegrationTests {
 		final int noIterations = 5;
 		final int noOfMilisecondsBetweenS = 1000;
 
-		BIPEngine engine = engineFactory.create("myEngine",	new BIPCoordinatorImpl());
+		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
 		
 		BIPGlue bipGlue = new GlueBuilder() {
 			@Override
@@ -630,7 +620,7 @@ public class IntegrationTests {
 		final int noOfMilisecondsBetweenS = 10;
 		final int executorLoopDelay = 1000;
 
-		BIPEngine engine = engineFactory.create("myEngine",	new BIPCoordinatorImpl());
+		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
 		
 		BIPGlue bipGlue = new GlueBuilder() {
 			@Override
@@ -814,7 +804,7 @@ public class IntegrationTests {
 		final int noOfMilisecondsBetweenS = 1000;
 		final int executorLoopDelay = 1000;
 		
-		BIPEngine engine = engineFactory.create("myEngine",	new BIPCoordinatorImpl());
+		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
 
 		BIPGlue bipGlue = new GlueBuilder() {
 			@Override

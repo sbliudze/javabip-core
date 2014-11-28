@@ -29,7 +29,7 @@ public interface BIPEngine {
 	 * @param component the component
 	 * @param behaviour the behaviour
 	 */
-	void register(BIPComponent component, Behaviour behaviour);
+	BIPActor register(Object component, String id, boolean useSpec);
 
 	// It only specifies the disabled ports with no data transfers, some ports with data
 	// transfers may have disabled status but this has to be obtain by querying BIPexecutor with the help
