@@ -1,6 +1,7 @@
 package org.bip.executor;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.FileInputStream;
@@ -15,6 +16,7 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RoutePolicy;
+import org.bip.api.BIPActor;
 import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
 import org.bip.api.Executor;
@@ -60,14 +62,12 @@ import akka.actor.ActorSystem;
 public class AkkaExecutorTests {
 
 	ActorSystem system;
-	OrchestratedExecutorFactory factory;
 	EngineFactory engineFactory;
 	
 	@Before
 	public void initialize() {
 
 		system = ActorSystem.create("MySystem");
-		factory = new OrchestratedExecutorFactory(system);
 		engineFactory = new EngineFactory(system);
 
 	}
@@ -88,15 +88,13 @@ public class AkkaExecutorTests {
 		// Create BIP Spec. 
 		HanoiMonitor hanoiMonitor = new HanoiMonitor(3);
 		
-		// Create executor for hanoiMonitor spec. 
-		Executor executor = factory.create(engine, hanoiMonitor, "hanoiMonitor", false);
-		
-		assertEquals("Actor Typed actor is not working properly", "hanoiMonitor", executor.getId());
-		
-		boolean destroyed = factory.destroy(executor);
-		
-		assertEquals("Not all BIP actors were terminated.", destroyed, true);
+		BIPActor actor = engine.register(hanoiMonitor, "hanoiMonitor", false);
+	
+		assertNotNull("Actor Typed actor is not created properly", actor);
 
+		engine.stop();
+		engineFactory.destroy(engine);
+		
 	}
 
 	@Test
@@ -127,13 +125,13 @@ public class AkkaExecutorTests {
 		SwitchableRouteDataTransfers route2 = new SwitchableRouteDataTransfers("2", camelContext);
 		SwitchableRouteDataTransfers route3 = new SwitchableRouteDataTransfers("3", camelContext);
 
-		final Executor executor1 = factory.create(engine, route1, "1", true);
-		final Executor executor2 = factory.create(engine, route2, "2", true);
-		final Executor executor3 = factory.create(engine, route3, "3", true);
+		BIPActor actor1 = engine.register(route1, "1", true);
+		BIPActor actor2 = engine.register(route2, "2", true);
+		BIPActor actor3 = engine.register(route3, "3", true);
 		
-		final RoutePolicy routePolicy1 = createRoutePolicy(executor1);
-		final RoutePolicy routePolicy2 = createRoutePolicy(executor2);
-		final RoutePolicy routePolicy3 = createRoutePolicy(executor3);
+		final RoutePolicy routePolicy1 = createRoutePolicy(actor1);
+		final RoutePolicy routePolicy2 = createRoutePolicy(actor2);
+		final RoutePolicy routePolicy3 = createRoutePolicy(actor3);
 
 		RouteBuilder builder = new RouteBuilder() {
 
@@ -159,8 +157,7 @@ public class AkkaExecutorTests {
 		}
 
 		MemoryMonitor routeOnOffMonitor = new MemoryMonitor(200);
-		final Executor executorM = factory.create(engine, routeOnOffMonitor,
-				"monitor", true);
+		final BIPActor executorM = engine.register(routeOnOffMonitor, "monitor", true);
 
 		engine.specifyGlue(bipGlue);
 		engine.start();
@@ -179,15 +176,9 @@ public class AkkaExecutorTests {
 			e.printStackTrace();
 		}		
 		
-		boolean destroyed = factory.destroy(executor1);
-		destroyed &= factory.destroy(executor2);
-		destroyed &= factory.destroy(executor3);
-		destroyed &= factory.destroy(executorM);
-
 		engine.stop();
-		
-		assertEquals("Not all BIP actors were terminated.", destroyed, true);
-		
+		engineFactory.destroy(engine);
+				
 		assertTrue("Route 1 has not made any transitions", route1.noOfEnforcedTransitions > 0);
 		assertTrue("Route 2 has not made any transitions", route2.noOfEnforcedTransitions > 0);
 		assertTrue("Route 3 has not made any transitions", route3.noOfEnforcedTransitions > 0);
@@ -208,20 +199,21 @@ public class AkkaExecutorTests {
 		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
 
 		org.bip.spec.hanoi.HanoiPeg leftHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(size, false);
-		Executor lExecutor = factory.create(engine, leftHanoiPeg, "LeftHanoiPeg", false);
+		BIPActor actor1 = engine.register(leftHanoiPeg, "LeftHanoiPeg", false);
 		
 		org.bip.spec.hanoi.HanoiPeg middleHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(size, true);
-		Executor mExecutor = factory.create(engine, middleHanoiPeg, "MiddleHanoiPeg", false);
+		BIPActor actor2 = engine.register(middleHanoiPeg, "MiddleHanoiPeg", false);
 		
 		org.bip.spec.hanoi.HanoiPeg rightHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(size, true);
-		Executor rExecutor = factory.create(engine, middleHanoiPeg, "RightHanoiPeg", false);
+		// TODO, before with executors executor was using rightHanoiPeg.
+		BIPActor actor3 = engine.register(rightHanoiPeg, "RightHanoiPeg", false);
 				
 		org.bip.spec.hanoi.HanoiPeg rightMiddleHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(size, true);
-		Executor rMExecutor = factory.create(engine, rightMiddleHanoiPeg, "RightMiddleHanoiPeg", false);
-		
+		BIPActor actor4 = engine.register(rightMiddleHanoiPeg, "RightMiddleHanoiPeg", false);
+				
 		org.bip.spec.hanoi.HanoiPeg leftMiddleHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(size, false);
-		Executor lMExecutor = factory.create(engine, leftMiddleHanoiPeg, "LeftMiddleHanoiPeg", false);
-		
+		BIPActor actor5 = engine.register(leftMiddleHanoiPeg, "LeftMiddleHanoiPeg", false);				
+				
 		engine.specifyGlue(bipGlue4Hanoi);
 		engine.start();
 		
@@ -239,21 +231,14 @@ public class AkkaExecutorTests {
 			e.printStackTrace();
 		}
 		
-		boolean destroyed = factory.destroy(rMExecutor);
-		destroyed &= factory.destroy(lMExecutor);
-		destroyed &= factory.destroy(lExecutor);
-		destroyed &= factory.destroy(mExecutor);
-		destroyed &= factory.destroy(rExecutor);
-
 		engine.stop();
+		engineFactory.destroy(engine);
 		
 		int noOfAllTransitions = leftHanoiPeg.noOfTransitions + rightHanoiPeg.noOfTransitions + leftMiddleHanoiPeg.noOfTransitions + 
 								 rightMiddleHanoiPeg.noOfTransitions + middleHanoiPeg.noOfTransitions;
 
 		assertTrue("Hanoi tower have seen progress of executing transitions", noOfAllTransitions > 0);
 		
-		assertEquals("Not all BIP actors were terminated.", destroyed, true);
-
 	}
 
 
@@ -272,13 +257,13 @@ public class AkkaExecutorTests {
 				.build();
 
 		org.bip.spec.hanoi.HanoiPeg leftHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(size, false);
-		Executor lExecutor = factory.create(engine, leftHanoiPeg, "LeftHanoiPeg", false);
-
+		BIPActor actor1 = engine.register(leftHanoiPeg, "LeftHanoiPeg", false);
+		
 		org.bip.spec.hanoi.HanoiPeg middleHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(size, true);
-		Executor mExecutor = factory.create(engine, middleHanoiPeg, "MiddleHanoiPeg", false);
+		BIPActor actor2 = engine.register(middleHanoiPeg, "MiddleHanoiPeg", false);
 		
 		org.bip.spec.hanoi.HanoiPeg rightHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(size, true);
-		Executor rExecutor = factory.create(engine, rightHanoiPeg, "RightHanoiPeg", false);
+		BIPActor actor3 = engine.register(rightHanoiPeg, "RightHanoiPeg", false);
 		
 		engine.specifyGlue(bipGlue4Hanoi);
 		
@@ -298,20 +283,14 @@ public class AkkaExecutorTests {
 			e.printStackTrace();
 		}
 		
-		boolean destroyed = factory.destroy(lExecutor);
-		destroyed &= factory.destroy(mExecutor);
-		destroyed &= factory.destroy(rExecutor);
-
-		
 		engine.stop();
-
+		engineFactory.destroy(engine);
+		
 		int noOfAllTransitions = leftHanoiPeg.noOfTransitions + rightHanoiPeg.noOfTransitions + middleHanoiPeg.noOfTransitions;
 
 		assertTrue("Hanoi tower have seen progress of executing transitions", noOfAllTransitions > 0);
 		assertTrue("Number of component transition should sum up to an even number", noOfAllTransitions % 2 == 0);
 				
-		assertEquals("Not all BIP actors were terminated.", destroyed, true);
-
 	}
 
 	
@@ -326,21 +305,20 @@ public class AkkaExecutorTests {
 				.build();
 
 		HanoiOptimalMonitor hanoiMonitor = new HanoiOptimalMonitor(size);
-		Executor hanoiExecutor = factory.create(engine, hanoiMonitor, "hanoiMonitor", false);
-
+		BIPActor actor1 = engine.register(hanoiMonitor, "hanoiMonitor", false);
+		
 		org.bip.spec.hanoi.LeftHanoiPeg leftHanoiPeg = new org.bip.spec.hanoi.LeftHanoiPeg(
 				size);
-		
-		Executor lExecutor = factory.create(engine, leftHanoiPeg, "LeftHanoiPeg", false);
+		BIPActor actor2 = engine.register(leftHanoiPeg, "LeftHanoiPeg", false);
 
 		org.bip.spec.hanoi.MiddleHanoiPeg middleHanoiPeg = new org.bip.spec.hanoi.MiddleHanoiPeg(
 				size);
-		Executor mExecutor = factory.create(engine, middleHanoiPeg, "MiddleHanoiPeg", false);
+		BIPActor actor3 = engine.register(middleHanoiPeg, "MiddleHanoiPeg", false);
 
 
 		org.bip.spec.hanoi.RightHanoiPeg rightHanoiPeg = new org.bip.spec.hanoi.RightHanoiPeg(
 				size);
-		Executor rExecutor = factory.create(engine, rightHanoiPeg, "RightHanoiPeg", false);
+		BIPActor actor4 = engine.register(rightHanoiPeg, "RightHanoiPeg", false);
 
 		engine.specifyGlue(bipGlue4Hanoi);
 		engine.start();
@@ -362,17 +340,11 @@ public class AkkaExecutorTests {
 		System.out.println("Finished test, number of transitions " + hanoiMonitor.getNumberOfMoves());
 		System.out.flush();
 		
-		boolean destroyed = factory.destroy(hanoiExecutor);
-		destroyed &= factory.destroy(lExecutor);
-		destroyed &= factory.destroy(mExecutor);
-		destroyed &= factory.destroy(rExecutor);
-
 		engine.stop();
-
+		engineFactory.destroy(engine);
+		
 		assertEquals("Hanoi tower has not reached its final state ", (int) Math.pow(2, size) - 1, hanoiMonitor.getNumberOfMoves());
 		
-		assertEquals("Not all BIP actors were terminated.", destroyed, true);
-
 	}
 
 	@Test
@@ -386,21 +358,21 @@ public class AkkaExecutorTests {
 				.build();
 
 		HanoiOptimalMonitor hanoiMonitor = new HanoiOptimalMonitor(size);
-		Executor hanoiExecutor = factory.create(engine, hanoiMonitor, "hanoiMonitor", false);
-
+		BIPActor actor1 = engine.register(hanoiMonitor, "hanoiMonitor", false);
+		
+		
 		org.bip.spec.hanoi.LeftHanoiPeg leftHanoiPeg = new org.bip.spec.hanoi.LeftHanoiPeg(
 				size);
-		
-		Executor lExecutor = factory.create(engine, leftHanoiPeg, "LeftHanoiPeg", false);
+		BIPActor actor2 = engine.register(leftHanoiPeg, "LeftHanoiPeg", false);
 
 		org.bip.spec.hanoi.MiddleHanoiPeg middleHanoiPeg = new org.bip.spec.hanoi.MiddleHanoiPeg(
 				size);
-		Executor mExecutor = factory.create(engine, middleHanoiPeg, "MiddleHanoiPeg", false);
+		BIPActor actor3 = engine.register(middleHanoiPeg, "MiddleHanoiPeg", false);
 
 
 		org.bip.spec.hanoi.RightHanoiPeg rightHanoiPeg = new org.bip.spec.hanoi.RightHanoiPeg(
 				size);
-		Executor rExecutor = factory.create(engine, rightHanoiPeg, "RightHanoiPeg", false);
+		BIPActor actor4 = engine.register(rightHanoiPeg, "RightHanoiPeg", false);
 
 		engine.specifyGlue(bipGlue4Hanoi);
 		engine.start();
@@ -422,17 +394,11 @@ public class AkkaExecutorTests {
 		System.out.println("Finished test, number of transitions " + hanoiMonitor.getNumberOfMoves());
 		System.out.flush();
 		
-		boolean destroyed = factory.destroy(hanoiExecutor);
-		destroyed &= factory.destroy(lExecutor);
-		destroyed &= factory.destroy(mExecutor);
-		destroyed &= factory.destroy(rExecutor);
-
 		engine.stop();
-
+		engineFactory.destroy(engine);
+		
 		assertEquals("Hanoi tower has not reached its final state ", (int) Math.pow(2, size) - 1, hanoiMonitor.getNumberOfMoves());
 		
-		assertEquals("Not all BIP actors were terminated.", destroyed, true);
-
 	}
 
 	// It does not use data transfers but plenty of interactions and more ports.
@@ -446,16 +412,16 @@ public class AkkaExecutorTests {
 		BIPGlue bipGlue4Hanoi = new HanoiGlueBuilder(size).build();
 
 		HanoiMonitor hanoiMonitor = new HanoiMonitor(size);
-		Executor hanoiExecutor = factory.create(engine, hanoiMonitor, "hanoiMonitor", false);
+		BIPActor actor1 = engine.register(hanoiMonitor, "hanoiMonitor", false);
 
 		LeftHanoiPeg leftHanoiPeg = new LeftHanoiPeg(size);
-		Executor lExecutor = factory.create(engine, leftHanoiPeg, "leftHanoi", false); 
+		BIPActor actor2 = engine.register(leftHanoiPeg, "leftHanoi", false);
 
 		MiddleHanoiPeg middleHanoiPeg = new MiddleHanoiPeg(size);
-		Executor mExecutor = factory.create(engine, middleHanoiPeg, "middleHanoi", false);
+		BIPActor actor3 = engine.register(middleHanoiPeg, "middleHanoi", false);
 
 		RightHanoiPeg rightHanoiPeg = new RightHanoiPeg(size);
-		Executor rExecutor = factory.create(engine, rightHanoiPeg, "rightHanoi", false);
+		BIPActor actor4 = engine.register(rightHanoiPeg, "rightHanoi", false);
 
 		engine.specifyGlue(bipGlue4Hanoi);
 		engine.start();
@@ -477,16 +443,10 @@ public class AkkaExecutorTests {
 		System.out.println("Finished test, number of transitions " + hanoiMonitor.getNumberOfMoves());
 		System.out.flush();
 		
-		boolean destroyed = factory.destroy(hanoiExecutor);
-		destroyed &= factory.destroy(lExecutor);
-		destroyed &= factory.destroy(mExecutor);
-		destroyed &= factory.destroy(rExecutor);
-
 		engine.stop();
-			
+		engineFactory.destroy(engine);
+		
 		assertEquals("Hanoi tower has not reached its final state ", (int) Math.pow(2, size) - 1, hanoiMonitor.getNumberOfMoves());
-
-		assertEquals("Some actors where not destroyed succesfully", true, destroyed);
 
 	}	
 
@@ -505,16 +465,16 @@ public class AkkaExecutorTests {
 		BIPCoordinator engine = new BIPCoordinatorImpl(system);
 
 		HanoiMonitor hanoiMonitor = new HanoiMonitor(size);
-		Executor hanoiExecutor = factory.create(engine, hanoiMonitor, "hanoiMonitor", false);
+		BIPActor actor1 = engine.register(hanoiMonitor, "hanoiMonitor", false);
 
 		LeftHanoiPeg leftHanoiPeg = new LeftHanoiPeg(size);
-		Executor lExecutor = factory.create(engine, leftHanoiPeg, "leftHanoi", false); 
+		BIPActor actor2 = engine.register(leftHanoiPeg, "leftHanoi", false);
 
 		MiddleHanoiPeg middleHanoiPeg = new MiddleHanoiPeg(size);
-		Executor mExecutor = factory.create(engine, middleHanoiPeg, "middleHanoi", false);
+		BIPActor actor3 = engine.register(middleHanoiPeg, "middleHanoi", false);
 
 		RightHanoiPeg rightHanoiPeg = new RightHanoiPeg(size);
-		Executor rExecutor = factory.create(engine, rightHanoiPeg, "rightHanoi", false);
+		BIPActor actor4 = engine.register(rightHanoiPeg, "rightHanoi", false);
 
 		engine.specifyGlue(bipGlue4Hanoi);
 		engine.start();
@@ -527,18 +487,11 @@ public class AkkaExecutorTests {
 			e.printStackTrace();
 		}
 
-		boolean destroyed = factory.destroy(hanoiExecutor);
-		destroyed &= factory.destroy(lExecutor);
-		destroyed &= factory.destroy(mExecutor);
-		destroyed &= factory.destroy(rExecutor);
-
 		engine.stop();
+		engineFactory.destroy(engine);
 		
 		assertEquals("Hanoi tower has not reached its final state ", (int) Math.pow(2, size) - 1, hanoiMonitor.getNumberOfMoves());
 		
-		assertEquals("Some actors where not destroyed succesfully", true, destroyed);
-
-
 	}	
 
 	
@@ -569,15 +522,13 @@ public class AkkaExecutorTests {
 		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
 
 		PSSComponent pssComponent = new PSSComponent(true);
-
-		Executor pssExecutor = factory.create(engine, pssComponent, "pssCompE", true);
+		BIPActor pssExecutor = engine.register(pssComponent, "pssCompE", true);
 		
 		ComponentB bComponent = new ComponentB();
-		
-		Executor bExecutor = factory.create(engine, bComponent, "bCompE", true);
+		BIPActor bExecutor = engine.register(bComponent, "bCompE", true);
 		
 		Consumer cComponent = new Consumer(100);
-		Executor cExecutor = factory.create(engine, cComponent, "cCompE", true);
+		BIPActor cExecutor = engine.register(cComponent, "cCompE", true);
 		
 		engine.specifyGlue(bipGlue);
 		engine.start();
@@ -596,16 +547,11 @@ public class AkkaExecutorTests {
 			e.printStackTrace();
 		}
 
-		boolean destroyed = factory.destroy(pssExecutor);
-		destroyed &= factory.destroy(bExecutor);
-		destroyed &= factory.destroy(cExecutor);
-
 		engine.stop();
-
+		engineFactory.destroy(engine);
+		
 		assertEquals("Spontaneous wait on one component has blocked all the components", bComponent.counterA > 0, true);
 		
-		assertEquals("Some actors where not destroyed succesfully", true, destroyed);
-
 	}
 
 	@Test
@@ -624,9 +570,10 @@ public class AkkaExecutorTests {
 		Server server2 = new Server(2);
 		Server server3 = new Server(3);
 
-		final Executor executor1 = factory.create(engine, server1, "1", true);		
-		final Executor executor2 = factory.create(engine, server2, "2", true);
-		final Executor executor3 = factory.create(engine, server3, "3", true);
+		
+		final BIPActor executor1 = engine.register(server1, "1", true);		
+		final BIPActor executor2 = engine.register(server2, "2", true);
+		final BIPActor executor3 = engine.register(server3, "3", true);
 
 
 		engine.specifyGlue(bipGlue);
@@ -638,15 +585,10 @@ public class AkkaExecutorTests {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
-		boolean destroyed = factory.destroy(executor1);
-		destroyed &= factory.destroy(executor2);
-		destroyed &= factory.destroy(executor3);
 
 		engine.stop();
-
-		assertEquals("Not all BIP actors were terminated.", destroyed, true);
-
+		engineFactory.destroy(engine);
+		
 	}
 
 	@Test
@@ -665,12 +607,12 @@ public class AkkaExecutorTests {
 		Peer peer2a = new Peer(21);
 		Peer peer2b = new Peer(22);
 
-		final Executor executor1 = factory.create(engine, tracker1, "1", true);
-		final Executor executor1a = factory.create(engine, peer1a, "11", true);
-		final Executor executor1b = factory.create(engine, peer1b, "12", true);
-		final Executor executor2 = factory.create(engine, tracker2, "2", true);
-		final Executor executor2a = factory.create(engine, peer2a, "21", true);
-		final Executor executor2b = factory.create(engine, peer2b, "22", true);
+		final BIPActor executor1 = engine.register(tracker1, "1", true);
+		final BIPActor executor1a = engine.register( peer1a, "11", true);
+		final BIPActor executor1b = engine.register( peer1b, "12", true);
+		final BIPActor executor2 = engine.register( tracker2, "2", true);
+		final BIPActor executor2a = engine.register( peer2a, "21", true);
+		final BIPActor executor2b = engine.register( peer2b, "22", true);
 		
 		engine.specifyGlue(bipGlue);
 		engine.start();
@@ -689,15 +631,9 @@ public class AkkaExecutorTests {
 			e.printStackTrace();
 		}
 		
-		boolean destroyed = factory.destroy(executor1);
-		destroyed &= factory.destroy(executor1a);
-		destroyed &= factory.destroy(executor1b);
-		destroyed &= factory.destroy(executor2);
-		destroyed &= factory.destroy(executor2a);
-		destroyed &= factory.destroy(executor2b);
-		
 		engine.stop();
-			
+		engineFactory.destroy(engine);
+		
 		assertTrue("Tracker 1 has not made any transitions", tracker1.noOfTransitions > 0);
 		assertTrue("Tracker 2 has not made any transitions", tracker2.noOfTransitions > 0);
 		
@@ -705,7 +641,6 @@ public class AkkaExecutorTests {
 		assertTrue("Peer 2a has not made any transitions", peer2a.noOfTransitions > 0);
 		assertTrue("Peer 1b has not made any transitions", peer1b.noOfTransitions > 0);
 		assertTrue("Peer 2b has not made any transitions", peer2b.noOfTransitions > 0);
-		assertEquals("Not all BIP actors were terminated.", destroyed, true);
 		
 }
 	
@@ -717,10 +652,10 @@ public class AkkaExecutorTests {
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueFeederConsumer.xml");
 
 		Feeder feeder = new Feeder();
-		final Executor executorF = factory.create(engine, feeder, "feeder", true);
+		BIPActor actor1 = engine.register(feeder, "feeder", true);
 		
 		Consumer consumer = new Consumer(350);
-		final Executor executorC = factory.create(engine, consumer, "consumer", true);
+		BIPActor actor2 = engine.register(consumer, "consumer", true);
 		
 		engine.specifyGlue(bipGlue);
 		engine.start();
@@ -739,23 +674,18 @@ public class AkkaExecutorTests {
 			e.printStackTrace();
 		}
 
-		boolean destroyed = factory.destroy(executorF);
-		destroyed &= factory.destroy(executorC);
-		
 		engine.stop();
-			
+		engineFactory.destroy(engine);
+		
 		assertTrue("Feeder has not made any transitions", feeder.noOfTransitions > 0);
 		assertTrue("Consumer has not made any transitions", consumer.noOfTransitions > 0);
 		
-		assertEquals("Not all BIP actors were terminated.", destroyed, true);
-
 	}
 
 	@Test
 	public void bipDataAvailabilityTest() throws BIPException {
 		
-		BIPEngine engine = engineFactory.create("myEngine",
- new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
+		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
 
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueDataAvailability.xml");
 
@@ -763,12 +693,12 @@ public class AkkaExecutorTests {
 		ComponentB componentB = new ComponentB();
 		ComponentC componentC = new ComponentC();
 		
-		final Executor executorA = factory.create(engine, componentA, "compA", true);
-
-		final Executor executorB = factory.create(engine, componentB, "compB", true);
-
-		final Executor executorC = factory.create(engine, componentC, "compC", true);
-
+		BIPActor executorA = engine.register(componentA, "compA", true);
+		
+		BIPActor executorB = engine.register(componentB, "compB", true);
+		
+		BIPActor executorC = engine.register(componentC, "compC", true);
+		
 
 		engine.specifyGlue(bipGlue);
 		engine.start();
@@ -781,11 +711,8 @@ public class AkkaExecutorTests {
 			e.printStackTrace();
 		}
 
-		boolean destroyed = factory.destroy(executorA);
-		destroyed &= factory.destroy(executorB);
-		destroyed &= factory.destroy(executorC);
-		
-		assertEquals("Not all BIP actors were terminated.", destroyed, true);
+		engine.stop();
+		engineFactory.destroy(engine);
 
 		assertTrue("CompA has not made any transitions", componentA.noOfTransitions > 0);
 		assertTrue("CompB has not made any transitions", componentB.noOfTransitions > 0);
@@ -811,13 +738,13 @@ public class AkkaExecutorTests {
 		Philosophers p3 = new Philosophers(3, 1, true);
 		
 		
-		Executor f1E = factory.create(engine, f1, "f1E", true);
-		Executor f2E = factory.create(engine, f2, "f2E", true);
-		Executor f3E = factory.create(engine, f3, "f3E", true);
+		BIPActor f1E = engine.register(f1, "f1E", true);
+		BIPActor f2E = engine.register(f2, "f2E", true);
+		BIPActor f3E = engine.register(f3, "f3E", true);
 		
-		Executor p1E = factory.create(engine, p1, "p1E", true);
-		Executor p2E = factory.create(engine, p2, "p2E", true);
-		Executor p3E = factory.create(engine, p3, "p3E", true);
+		BIPActor p1E = engine.register(p1, "p1E", true);
+		BIPActor p2E = engine.register(p2, "p2E", true);
+		BIPActor p3E = engine.register(p3, "p3E", true);
 
 		engine.specifyGlue(bipGlue4Philosophers);
 		engine.start();
@@ -840,19 +767,11 @@ public class AkkaExecutorTests {
 
 		int noOfTimesUsed2 = f1.noOfTimesUsed() + f2.noOfTimesUsed() + f3.noOfTimesUsed();
 
-		boolean destroyed = factory.destroy(f1E);
-		destroyed &= factory.destroy(f2E);
-		destroyed &= factory.destroy(f3E);
-		destroyed &= factory.destroy(p1E);
-		destroyed &= factory.destroy(p2E);
-		destroyed &= factory.destroy(p3E);
-
 		engine.stop();
+		engineFactory.destroy(engine);
 		
 		assertEquals("BIP engine could not progress the system.", true,	noOfTimesUsed2 > noOfTimesUsed);
 		
-		assertEquals("Some actors where not destroyed succesfully", true, destroyed);
-
 	}	
 	
 	// TODO, This test is hitting the limitation of BIP engine concerning multiple transfers.
@@ -870,9 +789,9 @@ public class AkkaExecutorTests {
 		TwoDataProvider1 componentB = new TwoDataProvider1();
 		TwoDataProvider2 componentC = new TwoDataProvider2();
 
-		final Executor executorA = factory.create(engine, componentA, "compA", true);
-		final Executor executorB = factory.create(engine, componentB, "compB", true);
-		final Executor executorC = factory.create(engine, componentC, "compC", true);
+		final BIPActor executorA = engine.register(componentA, "compA", true);
+		final BIPActor executorB = engine.register(componentB, "compB", true);
+		final BIPActor executorC = engine.register(componentC, "compC", true);
 
 		engine.specifyGlue(bipGlue);
 		engine.start();
@@ -885,12 +804,9 @@ public class AkkaExecutorTests {
 			e.printStackTrace();
 		}
 
-		boolean destroyed = factory.destroy(executorA);
-		destroyed &= factory.destroy(executorB);
-		destroyed &= factory.destroy(executorC);
+		engine.stop();
+		engineFactory.destroy(engine);
 		
-		assertEquals("Not all BIP actors were terminated.", destroyed, true);
-
 		assertTrue("CompA has not made any transitions", componentA.noOfTransitions > 0);
 		assertTrue("CompB has not made any transitions", componentB.noOfTransitions > 0);
 		assertTrue("CompC has not made any transitions", componentC.noOfTransitions > 0);
@@ -913,7 +829,7 @@ public class AkkaExecutorTests {
 		return bipGlue;
 	}
 	
-	private RoutePolicy createRoutePolicy(final Executor executor) {
+	private RoutePolicy createRoutePolicy(final BIPActor actor1) {
 		
 		return  new RoutePolicy() {
 
@@ -922,7 +838,7 @@ public class AkkaExecutorTests {
 
 			public void onExchangeDone(Route route, Exchange exchange) {
 
-				executor.inform("end");
+				actor1.inform("end");
 			}
 
 			public void onExchangeBegin(Route route, Exchange exchange) {

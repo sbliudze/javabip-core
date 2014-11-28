@@ -17,6 +17,7 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RoutePolicy;
+import org.bip.api.BIPActor;
 import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
 import org.bip.api.Executor;
@@ -49,14 +50,12 @@ import akka.actor.ActorSystem;
 public class IntegrationTests {
 
 	ActorSystem system;
-	OrchestratedExecutorFactory factory;
 	EngineFactory engineFactory;
 	
 	@Before
 	public void initialize() {
 
 		system = ActorSystem.create("MySystem");
-		factory = new OrchestratedExecutorFactory(system);
 		engineFactory = new EngineFactory(system);
 
 	}
@@ -124,11 +123,11 @@ public class IntegrationTests {
 		route2.setCamelContext(camelContext);
 		route3.setCamelContext(camelContext);
 		
-		final Executor executor1 = factory.create(engine, route1, "1", false);
-		final Executor executor2 = factory.create(engine, route2, "2", false);
-		final Executor executor3 = factory.create(engine, route3, "3", false);
+		final BIPActor executor1 = engine.register(route1, "1", false);
+		final BIPActor executor2 = engine.register(route2, "2", false);
+		final BIPActor executor3 = engine.register(route3, "3", false);
 
-		final Executor executorM = factory.create(engine, routeOnOffMonitor, "monitor", true);
+		final BIPActor executorM = engine.register(routeOnOffMonitor, "monitor", true);
 		
 		final RoutePolicy routePolicy1 = createRoutePolicy(executor1);
 		
@@ -175,15 +174,9 @@ public class IntegrationTests {
 			e.printStackTrace();
 		}
 
-		boolean destroyed = factory.destroy(executor1);
-		destroyed &= factory.destroy(executor2);
-		destroyed &= factory.destroy(executor3);
-		destroyed &= factory.destroy(executorM);
-
 		engine.stop();
-		
-		assertEquals("Not all BIP actors were terminated.", destroyed, true);
-		
+		engineFactory.destroy(engine);
+				
 		assertTrue("Route 1 has not made any transitions", route1.noOfEnforcedTransitions > 0);
 		assertTrue("Route 2 has not made any transitions", route2.noOfEnforcedTransitions > 0);
 		assertTrue("Route 3 has not made any transitions", route3.noOfEnforcedTransitions > 0);
@@ -216,7 +209,7 @@ public class IntegrationTests {
 
 		TestSpecEnforceableSpontaneous component1 = new TestSpecEnforceableSpontaneous();
 
-		final Executor executor1 = factory.create(engine, component1, "comp1", true);
+		final BIPActor executor1 = engine.register(component1, "comp1", true);
 
 		Thread threadSendingSpontaneousEvents = new Thread(new Runnable() {
 
@@ -258,12 +251,9 @@ public class IntegrationTests {
 				fail("Not enough spontaneous events have been executed within a given time frame.");
 		}
 
-		boolean destroyed = factory.destroy(executor1);
-
 		engine.stop();
-		
-		assertEquals("Not all BIP actors were terminated.", destroyed, true);
-		
+		engineFactory.destroy(engine);
+				
 		assertTrue("Component 1 has not made any transitions", component1.pCounter > 0);
 		
 		assertEquals(component1.getsCounter(), noSpontaneousToBeSend);
@@ -296,7 +286,7 @@ public class IntegrationTests {
 		
 		TestSpecEnforceableSpontaneous component1 = new TestSpecEnforceableSpontaneous();
 
-		final Executor executor1 = factory.create(engine, component1, "comp1", true);
+		final BIPActor executor1 = engine.register(component1, "comp1", true);
 		
 
 		Thread t2 = new Thread(new Runnable() {
@@ -345,11 +335,8 @@ public class IntegrationTests {
 						+ component1.getsCounter());
 		}
 
-		boolean destroyed = factory.destroy(executor1);
-
 		engine.stop();
-		
-		assertEquals("Not all BIP actors were terminated.", destroyed, true);
+		engineFactory.destroy(engine);
 		
 		assertTrue("Component 1 has not made any transitions", component1.pCounter > 0);
 		
@@ -418,17 +405,17 @@ public class IntegrationTests {
 		// Component P that does not need enable signals.
 
 		PComponent pComponent = new PComponent(false);
-		final Executor pExecutor = factory.create(engine, pComponent, "pComponent", true);
+		final BIPActor pExecutor = engine.register(pComponent, "pComponent", true);
 
 		// Component Q
 
 		QComponent qComponent = new QComponent();
-		final Executor qExecutor = factory.create(engine, qComponent, "qComponent", true);
+		final BIPActor qExecutor = engine.register(qComponent, "qComponent", true);
 
 		// Component R
 
 		RComponent rComponent = new RComponent();
-		final Executor rExecutor = factory.create(engine, rComponent, "rComponent", true);
+		final BIPActor rExecutor = engine.register(rComponent, "rComponent", true);
 		
 		// BIP engine.
 
@@ -471,14 +458,8 @@ public class IntegrationTests {
 			e.printStackTrace();
 		}
 
-		boolean destroyed = factory.destroy(pExecutor);
-		destroyed &= factory.destroy(qExecutor);
-		destroyed &= factory.destroy(rExecutor);
-
 		engine.stop();
-		
-		assertEquals("Not all BIP actors were terminated.", destroyed, true);
-
+		engineFactory.destroy(engine);
 		
 		assertEquals(noIterations, pComponent.pCounter);
 		assertEquals(noIterations, rComponent.rCounter);
@@ -528,18 +509,18 @@ public class IntegrationTests {
 		// Component P that does not need enable signals.
 
 		PComponent pComponent = new PComponent(false);
-		final Executor pExecutor = factory.create(engine, pComponent, "pComponent", true);
+		final BIPActor pExecutor = engine.register(pComponent, "pComponent", true);
 		
 		// Component Q
 
 		// QComponent qComponent = new QComponent();
 		// MISTAKE on purpose, so the above line can be commented out.
-		final Executor qExecutor = factory.create(engine, pComponent, "qComponent", true);
+		final BIPActor qExecutor = engine.register(pComponent, "qComponent", true);
 
 		// Component R
 
 		RComponent rComponent = new RComponent();
-		final Executor rExecutor = factory.create(engine, rComponent, "rComponent", true);
+		final BIPActor rExecutor = engine.register(rComponent, "rComponent", true);
 		
 		// BIP engine.
 
@@ -580,14 +561,8 @@ public class IntegrationTests {
 			e1.printStackTrace();
 		}
 
-		boolean destroyed = factory.destroy(pExecutor);
-		destroyed &= factory.destroy(qExecutor);
-		destroyed &= factory.destroy(rExecutor);
-
 		engine.stop();
-		
-		assertEquals("Not all BIP actors were terminated.", destroyed, true);
-
+		engineFactory.destroy(engine);
 		
 		assertEquals("No progress for pComponent due to lack of QComponent", 0, pComponent.pCounter);
 		assertEquals("No progress for rComponent due to lack of QComponent", 0, rComponent.rCounter);
@@ -641,13 +616,13 @@ public class IntegrationTests {
 
 		PSSComponent pComponent = new PSSComponent(true);
 		
-		final Executor pExecutor = factory.create(engine, pComponent, "pComponent", true);
+		final BIPActor pExecutor = engine.register(pComponent, "pComponent", true);
 
 		// Component R
 
 		RComponent rComponent = new RComponent();
 		
-		final Executor rExecutor = factory.create(engine, rComponent, "rComponent", true);
+		final BIPActor rExecutor = engine.register(rComponent, "rComponent", true);
 
 		// BIP engine.
 
@@ -762,13 +737,9 @@ public class IntegrationTests {
 				break;
 		}
 
-		boolean destroyed = factory.destroy(pExecutor);
-		destroyed &= factory.destroy(rExecutor);
-
 		engine.stop();
+		engineFactory.destroy(engine);
 		
-		assertEquals("Not all BIP actors were terminated.", destroyed, true);
-
 		assertEquals(noIterations * 2, pComponent.spontaneousEnableCounter);
 		assertEquals(noIterations, pComponent.spontaneousDisableCounter);
 		assertEquals(noIterations, pComponent.pCounter);
@@ -826,20 +797,18 @@ public class IntegrationTests {
 
 		}.build();
 
-		bipGlue.toXML(System.out);
-
 		// Component P that does not need enable signals.
 
 		PResizableBehaviorComponent pComponent = new PResizableBehaviorComponent(
 				true, noIterations);
 
-		final Executor pExecutor = factory.create(engine, pComponent, "pComponent", false);
+		final BIPActor pExecutor = engine.register(pComponent, "pComponent", false);
 		
 		// Component Q
 
 		QComponent qComponent = new QComponent();
 		
-		final Executor qExecutor = factory.create(engine, qComponent, "qComponent", true);
+		final BIPActor qExecutor = engine.register(qComponent, "qComponent", true);
 
 		// We enable noIterations of pq interactions.
 		Thread testDriver = new Thread(new Runnable() {
@@ -914,13 +883,9 @@ public class IntegrationTests {
 			e.printStackTrace();
 		}
 		
-		boolean destroyed = factory.destroy(pExecutor);
-		destroyed &= factory.destroy(qExecutor);
-
 		engine.stop();
+		engineFactory.destroy(engine);
 		
-		assertEquals("Not all BIP actors were terminated.", destroyed, true);
-
 		assertEquals(0, pComponent.pCounter);
 
 		assertEquals(noIterations, qComponent.qCounter);
@@ -960,7 +925,7 @@ public class IntegrationTests {
 
 	}
 
-	private RoutePolicy createRoutePolicy(final Executor executor) {
+	private RoutePolicy createRoutePolicy(final BIPActor executor1) {
 		
 		return  new RoutePolicy() {
 
@@ -969,7 +934,7 @@ public class IntegrationTests {
 
 			public void onExchangeDone(Route route, Exchange exchange) {
 
-				executor.inform("end");
+				executor1.inform("end");
 			}
 
 			public void onExchangeBegin(Route route, Exchange exchange) {
