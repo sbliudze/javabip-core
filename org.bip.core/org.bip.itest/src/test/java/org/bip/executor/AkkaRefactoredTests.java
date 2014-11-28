@@ -90,6 +90,8 @@ public class AkkaRefactoredTests {
 		engine.stop();
 		engineFactory.destroy(engine);
 
+		assertEquals("Number of first transitions", true, noOfTimesUsed > 0);
+		assertEquals("Number of second transitions", true, noOfTimesUsed2 > 0);
 		assertEquals("BIP engine could not progress the system.", true, noOfTimesUsed2 > noOfTimesUsed);
 
 	}
