@@ -3,10 +3,10 @@ package io.xtech.bip;
 import java.util.Map;
 import java.util.Set;
 
+import org.bip.api.BIPActor;
 import org.bip.api.BIPComponent;
 import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
-import org.bip.api.Behaviour;
 import org.bip.api.Port;
 
 import akka.actor.ActorSystem;
@@ -39,8 +39,8 @@ public class BIPEngineActor implements BIPEngine {
 	}
 
 	@Override
-	public void register(BIPComponent component, Behaviour behaviour) {
-		internal.register(component, behaviour);
+	public BIPActor register(Object component, String id, boolean useSpec) {
+		return internal.register(component, id, useSpec);
 	}
 
 	@Override

@@ -572,7 +572,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 	}
 
 	public List<Transition> getAllTransitions() {
-		List<Transition> result = (ArrayList<Transition>) allTransitions.clone();
+		List<Transition> result = new ArrayList<Transition>( allTransitions );
 		return result;
 	}
 

@@ -49,7 +49,7 @@ public class PResizableBehaviorComponent {
 	// @ExecutableBehaviour
 	public BehaviourBuilder initializeBehavior(int size) throws NoSuchMethodException {
 
-		BehaviourBuilder behaviourBuilder = new BehaviourBuilder();
+		BehaviourBuilder behaviourBuilder = new BehaviourBuilder(this);
 		
 		behaviourBuilder.setComponentType(this.getClass().getCanonicalName());
 		
@@ -105,9 +105,6 @@ public class PResizableBehaviorComponent {
 		
 		behaviourBuilder.addGuard("isPEnabled", this.getClass().getMethod("isPEnabled"));
 
-		//BehaviourBuilder behaviourBuilder = new BehaviourBuilder(componentType, currentState, allTransitions, allPorts, states, guards, this);
-
-		behaviourBuilder.setComponent(this);
 		return behaviourBuilder;
 	}
 

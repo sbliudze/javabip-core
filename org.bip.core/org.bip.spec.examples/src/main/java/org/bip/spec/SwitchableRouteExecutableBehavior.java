@@ -42,7 +42,7 @@ public class SwitchableRouteExecutableBehavior implements CamelContextAware, Ini
 	@ExecutableBehaviour
     public BehaviourBuilder getExecutableBehavior() throws NoSuchMethodException {
 
-		BehaviourBuilder behaviourBuilder = new BehaviourBuilder();
+		BehaviourBuilder behaviourBuilder = new BehaviourBuilder(this);
 				
 		behaviourBuilder.setComponentType(this.getClass().getCanonicalName());
 
@@ -70,7 +70,6 @@ public class SwitchableRouteExecutableBehavior implements CamelContextAware, Ini
 
 		behaviourBuilder.addGuard("isFinished", this.getClass().getMethod("isFinished"));
 				
-		behaviourBuilder.setComponent(this);
         return behaviourBuilder;
     }
 

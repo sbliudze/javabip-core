@@ -45,7 +45,8 @@ public class BehaviourBuilder {
 	private Hashtable<String, Method> dataOutName;
 	private ArrayList<DataOutImpl<?>> dataOut;
 
-	public BehaviourBuilder() {
+	public BehaviourBuilder(Object component) {
+		this.component = component;
 		allTransitions = new ArrayList<TransitionImpl>();
 		allPorts = new Hashtable<String, Port>();
 		states = new HashSet<String>();
@@ -122,10 +123,6 @@ public class BehaviourBuilder {
 
 	public void setComponentType(String type) {
 		this.componentType = type;
-	}
-
-	public void setComponent(Object component) {
-		this.component = component;
 	}
 
 	public void setInitialState(String state) {

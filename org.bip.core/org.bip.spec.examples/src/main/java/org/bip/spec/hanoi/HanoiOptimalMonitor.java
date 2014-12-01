@@ -57,7 +57,7 @@ public class HanoiOptimalMonitor {
     @ExecutableBehaviour
     public BehaviourBuilder initializeBehavior() throws NoSuchMethodException {
 
-    	BehaviourBuilder behaviourBuilder = new BehaviourBuilder();
+    	BehaviourBuilder behaviourBuilder = new BehaviourBuilder(this);
 
     	behaviourBuilder.setComponentType( this.getClass().getCanonicalName() );
 
@@ -118,8 +118,6 @@ public class HanoiOptimalMonitor {
 
 
         }
-        
-        behaviourBuilder.setComponent(this);
 
         return behaviourBuilder;
     }

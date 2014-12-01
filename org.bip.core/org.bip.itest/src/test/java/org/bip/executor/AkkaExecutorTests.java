@@ -19,13 +19,11 @@ import org.apache.camel.spi.RoutePolicy;
 import org.bip.api.BIPActor;
 import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
-import org.bip.api.Executor;
 import org.bip.engine.BIPCoordinatorImpl;
 import org.bip.engine.DataCoordinatorKernel;
 import org.bip.engine.api.BIPCoordinator;
 import org.bip.engine.api.EngineFactory;
 import org.bip.exceptions.BIPException;
-import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
 import org.bip.glue.GlueBuilder;
 import org.bip.glue.TwoSynchronGlueBuilder;
 import org.bip.spec.ComponentA;
@@ -360,7 +358,6 @@ public class AkkaExecutorTests {
 		HanoiOptimalMonitor hanoiMonitor = new HanoiOptimalMonitor(size);
 		BIPActor actor1 = engine.register(hanoiMonitor, "hanoiMonitor", false);
 		
-		
 		org.bip.spec.hanoi.LeftHanoiPeg leftHanoiPeg = new org.bip.spec.hanoi.LeftHanoiPeg(
 				size);
 		BIPActor actor2 = engine.register(leftHanoiPeg, "LeftHanoiPeg", false);
@@ -368,7 +365,6 @@ public class AkkaExecutorTests {
 		org.bip.spec.hanoi.MiddleHanoiPeg middleHanoiPeg = new org.bip.spec.hanoi.MiddleHanoiPeg(
 				size);
 		BIPActor actor3 = engine.register(middleHanoiPeg, "MiddleHanoiPeg", false);
-
 
 		org.bip.spec.hanoi.RightHanoiPeg rightHanoiPeg = new org.bip.spec.hanoi.RightHanoiPeg(
 				size);
