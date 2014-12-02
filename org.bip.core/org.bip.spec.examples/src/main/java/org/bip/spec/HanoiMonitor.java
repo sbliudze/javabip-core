@@ -56,7 +56,7 @@ public class HanoiMonitor {
     @ExecutableBehaviour
     public BehaviourBuilder initializeBehavior() throws NoSuchMethodException {
     	
-    	BehaviourBuilder behaviourBuilder = new BehaviourBuilder();
+    	BehaviourBuilder behaviourBuilder = new BehaviourBuilder(this);
 
     	behaviourBuilder.setComponentType( this.getClass().getCanonicalName() );
 
@@ -117,8 +117,6 @@ public class HanoiMonitor {
 
 
         }
-        
-        behaviourBuilder.setComponent(this);
 
         return behaviourBuilder;
     }

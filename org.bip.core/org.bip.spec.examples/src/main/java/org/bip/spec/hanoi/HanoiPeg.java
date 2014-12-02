@@ -47,7 +47,7 @@ public class HanoiPeg {
 	@ExecutableBehaviour
 	public BehaviourBuilder initializeBehavior() throws NoSuchMethodException {
 
-		BehaviourBuilder behaviourBuilder = new BehaviourBuilder();
+		BehaviourBuilder behaviourBuilder = new BehaviourBuilder(this);
 		
 		behaviourBuilder.setComponentType( this.getClass().getCanonicalName() );
 		
@@ -80,9 +80,6 @@ public class HanoiPeg {
 		behaviourBuilder.addDataOut(this.getClass().getMethod("diskSizeOnTop") );
 		//BUILD
 		
-		behaviourBuilder.setComponent(this);
-		
-
 		return behaviourBuilder;
 	}
 	

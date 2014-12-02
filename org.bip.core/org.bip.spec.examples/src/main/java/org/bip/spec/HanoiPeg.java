@@ -46,7 +46,7 @@ public class HanoiPeg {
     @ExecutableBehaviour
     public BehaviourBuilder initializeBehavior() throws NoSuchMethodException {
 
-    	BehaviourBuilder behaviourBuilder = new BehaviourBuilder();
+    	BehaviourBuilder behaviourBuilder = new BehaviourBuilder(this);
     	
     	behaviourBuilder.setComponentType(this.getClass().getCanonicalName());
     	
@@ -65,8 +65,6 @@ public class HanoiPeg {
 			behaviourBuilder.addGuard("isPiece" + (i + 1) + "Addable", this.getClass().getMethod("isPiece" + (i + 1) + "Addable"));
 			behaviourBuilder.addGuard("isPiece" + (i + 1) + "Removable", this.getClass().getMethod("isPiece" + (i + 1) + "Removable"));
         }
-        
-        behaviourBuilder.setComponent(this);
         
         return behaviourBuilder;
     }

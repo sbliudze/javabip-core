@@ -75,9 +75,7 @@ public abstract class SpecificationParser implements ComponentProvider {
 	}
 
 	private BehaviourBuilder parseAnnotations( Class<?> componentClass ) throws BIPException {
-		BehaviourBuilder builder = new BehaviourBuilder();
-		
-		builder.setComponent(bipComponent);
+		BehaviourBuilder builder = new BehaviourBuilder(bipComponent);		
 		
 		String specType = "";
 		// TODO: Add simple test that forgets the componentType annotation to see whether the
