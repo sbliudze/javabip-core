@@ -49,6 +49,9 @@ import org.bip.spec.diningphilosophers.DiningPhilosophersGlueBuilder;
 import org.bip.spec.diningphilosophers.Fork;
 import org.bip.spec.diningphilosophers.Philosophers;
 import org.bip.spec.hanoi.HanoiOptimalMonitor;
+import org.bip.spec.seal.SealableData;
+import org.bip.spec.seal.SealableDataReader;
+import org.bip.spec.seal.SealableDataWriter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -285,7 +288,6 @@ public class AkkaExecutorTests {
 		int noOfAllTransitions = leftHanoiPeg.noOfTransitions + rightHanoiPeg.noOfTransitions + middleHanoiPeg.noOfTransitions;
 		System.out.println("Number of component transitions: " + noOfAllTransitions);
 		assertTrue("Hanoi tower have seen progress of executing transitions", noOfAllTransitions > 0);
-		assertTrue("Number of component transition should sum up to an even number", noOfAllTransitions % 2 == 0);
 				
 	}
 
@@ -803,6 +805,7 @@ public class AkkaExecutorTests {
 		assertTrue("CompC has not made any transitions", componentC.noOfTransitions > 0);
 
 	}
+	
 	
 	private BIPGlue createGlue(String bipGlueFilename) {
 		BIPGlue bipGlue = null;
