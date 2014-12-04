@@ -30,8 +30,7 @@ public class Client {
 	final List<Message> messages;
 	final List<Subject> messagesSubjects;	
 	
-	boolean connected;
-	
+	boolean connected;	
 	boolean connecting;
 	
 	final List<Message> messageToBePublished;
@@ -63,10 +62,8 @@ public class Client {
 		return status;
 	}
 	
-	private void act() {
-		
-		actuator.act( messagesSubjects.remove(0), messages.remove(0) );
-		
+	private void act() {		
+		actuator.act( messagesSubjects.remove(0), messages.remove(0) );		
 	}
 	
 	public boolean actRequired() {
@@ -77,8 +74,9 @@ public class Client {
 		return actuator;
 	}
 	
-	// Asynchronous part, outside even BIP control as no data transfers.
-	public void receive(Subject subject, Message message) {
+	// Asynchronous spontaneous event. 
+	public void receiveMessage(@Data(name = "subject") Subject subject, 
+							   @Data(name = "message") Message message) {
 		
 		boolean messageAdded = messages.add(message); 
 		if ( messageAdded ) {
@@ -96,7 +94,7 @@ public class Client {
 		return !connected;
 	}
 	
-	public void connect(String clientId) {
+	public void connect(@Data(name = "clientId") String clientId) {
 		connecting = true;
 		this.clientId = clientId;
 	}
@@ -106,7 +104,7 @@ public class Client {
 		connected = true;
 	}
 	
-	@Data(name = "clientId", accessTypePort = AccessType.any)
+	@Data(name = "clientId", accessTypePort = AccessType.unallowed, ports = { "connect" })
 	public String getClientId() {
 		return clientId;
 	}
@@ -116,8 +114,9 @@ public class Client {
 	public void publish() {
 	}
 	
-	// Asynchronous part, outside even BIP control as no data transfers.
-	public void addMessageToBePublished(Subject subject, Message message) {
+	// Asynchronous spontaneous event. 
+	public void addMessageToBePublished(@Data(name="subject") Subject subject, 
+										@Data(name="message") Message message) {
 		messageToBePublished.add(message);
 		subjectOfMessageToBePublished.add(subject);
 	}
@@ -126,7 +125,7 @@ public class Client {
 		return (! messageToBePublished.isEmpty() && ! subjectOfMessageToBePublished.isEmpty() );
 	}
 
-	@Data(name = "message", accessTypePort = AccessType.allowed, ports = { "subscribe" })
+	@Data(name = "message", accessTypePort = AccessType.allowed, ports = { "publish" })
 	public Message getCurrentMessageBeingPublished() {
 		return messageToBePublished.get(0);
 	}
@@ -141,8 +140,8 @@ public class Client {
 		subjectOfMessageToBePublished.remove(0);
 	}
 	
-	// Asynchronous part, outside even BIP control as no data transfers.
-	public void addSubscriptionInterest(Subject subject) {
+	// Asynchronous spontaneous event. 
+	public void addSubscriptionInterest(@Data(name="subject") Subject subject) {
 		subscriptionInterest.add(subject);			
 	}
 	
@@ -164,6 +163,9 @@ public class Client {
 		
 	}
 	
+	// TODO, is data being collected before guards are called? Is there any fixed relationship that we 
+	// can rely on? Should we allow such a reliance? Please note that isInterestedInSubscription guard is operating on 
+	// subscriptionInterest data structure.
 	@Data(name = "subjectOfSubscription", accessTypePort = AccessType.allowed, ports = { "subscribe" })
 	public Subject getSubjectOfSubscription() {
 		return subscriptionInterest.get(0);
@@ -189,6 +191,7 @@ public class Client {
 		
 		String initialState = "start";
 		String connectingState = "connecting";
+		String connectedState = "connected";
 		String subscribingState = "subscribing";
 		String publishingState = "publishing";
 		
@@ -202,33 +205,48 @@ public class Client {
 		//PORTS
 		
 		behaviourBuilder.addPort("connect", PortType.enforceable, this.getClass());
+		behaviourBuilder.addPort("connectAck", PortType.enforceable, this.getClass());
+		
 		behaviourBuilder.addPort("publish", PortType.enforceable, this.getClass());
+		behaviourBuilder.addPort("publishAck", PortType.enforceable, this.getClass());
+		
 		behaviourBuilder.addPort("subscribe", PortType.enforceable, this.getClass());
-
+		behaviourBuilder.addPort("subscribeAck", PortType.enforceable, this.getClass());
+		
+		behaviourBuilder.addPort("receive", PortType.spontaneous, this.getClass());
+		behaviourBuilder.addPort("addMessage", PortType.spontaneous, this.getClass());
+		behaviourBuilder.addPort("addSubscription", PortType.spontaneous, this.getClass());
+		
 		//TRANSITIONS
 
 		behaviourBuilder.addTransitionAndStates("connect", initialState, connectingState, "requiresConnection", 
 									   this.getClass().getMethod("connect") );
-		behaviourBuilder.addTransitionAndStates("connectAck", connectingState, initialState, "", 
+		behaviourBuilder.addTransitionAndStates("connectAck", connectingState, connectedState, "", 
 									   this.getClass().getMethod("connectAck") );
 		
-
-		behaviourBuilder.addTransitionAndStates("subscribe", initialState, subscribingState, "isInterestedInSubscription && !requiresConnection", 
+		behaviourBuilder.addTransitionAndStates("subscribe", connectedState, subscribingState, "isInterestedInSubscription", 
 				   this.getClass().getMethod("subsribe") );
-		behaviourBuilder.addTransitionAndStates("subscribeAck", subscribingState, initialState, "", 
+		behaviourBuilder.addTransitionAndStates("subscribeAck", subscribingState, connectedState, "", 
 				   this.getClass().getMethod("subsribeAck") );
-		
-		
-		behaviourBuilder.addTransitionAndStates("publish", initialState, publishingState, "isInterestedInPublishing && !requiresConnection", 
+				
+		behaviourBuilder.addTransitionAndStates("publish", connectedState, publishingState, "isInterestedInPublishing", 
 				   this.getClass().getMethod("publish") );
-		behaviourBuilder.addTransitionAndStates("publishAck", publishingState, initialState, "", 
+		behaviourBuilder.addTransitionAndStates("publishAck", publishingState, connectedState, "", 
 				   this.getClass().getMethod("publishAck") );
+						
+		behaviourBuilder.addTransitionAndStates("receive", connectedState, connectedState, "", 
+				   this.getClass().getMethod("receiveMessage") );
+		
+		behaviourBuilder.addTransitionAndStates("addMessage", connectedState, connectedState, "", 
+				   this.getClass().getMethod("addMessageToBePublished") );
+		
+		behaviourBuilder.addTransitionAndStates("addSubscription", connectedState, connectedState, "", 
+				   this.getClass().getMethod("addSubscriptionInterest") );
 		
 
 		// internal one.
-		behaviourBuilder.addTransitionAndStates("act", initialState, initialState, "actRequired", 
+		behaviourBuilder.addTransitionAndStates("act", connectedState, connectedState, "actRequired", 
 				   this.getClass().getMethod("act") );
-
 		
 		//GUARDS
 		
@@ -236,8 +254,7 @@ public class Client {
 		behaviourBuilder.addGuard(this.getClass().getMethod("isInterestedInSubscription"));
 		behaviourBuilder.addGuard(this.getClass().getMethod("requiresConnection"));
 		behaviourBuilder.addGuard(this.getClass().getMethod("actRequired"));
-		
-		
+				
 		//DATA OUT
 				
 		behaviourBuilder.addDataOut(this.getClass().getMethod("getSubjectOfSubscription") );
@@ -246,7 +263,7 @@ public class Client {
 		behaviourBuilder.addDataOut(this.getClass().getMethod("getClientId") );
 		//BUILD
 		
-		
+
 
 		return behaviourBuilder;
 	}
