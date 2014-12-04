@@ -49,9 +49,6 @@ import org.bip.spec.diningphilosophers.DiningPhilosophersGlueBuilder;
 import org.bip.spec.diningphilosophers.Fork;
 import org.bip.spec.diningphilosophers.Philosophers;
 import org.bip.spec.hanoi.HanoiOptimalMonitor;
-import org.bip.spec.seal.SealableData;
-import org.bip.spec.seal.SealableDataReader;
-import org.bip.spec.seal.SealableDataWriter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -161,12 +158,6 @@ public class AkkaExecutorTests {
 
 		engine.specifyGlue(bipGlue);
 		engine.start();
-
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 		
 		engine.execute();
 		
@@ -215,12 +206,6 @@ public class AkkaExecutorTests {
 				
 		engine.specifyGlue(bipGlue4Hanoi);
 		engine.start();
-		
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 
 		engine.execute();
 
@@ -267,12 +252,6 @@ public class AkkaExecutorTests {
 		engine.specifyGlue(bipGlue4Hanoi);
 		
 		engine.start();
-
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 		
 		engine.execute();
 
@@ -320,13 +299,6 @@ public class AkkaExecutorTests {
 
 		engine.specifyGlue(bipGlue4Hanoi);
 		engine.start();
-
-		
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 
 		engine.execute();
 
@@ -416,12 +388,6 @@ public class AkkaExecutorTests {
 
 		engine.specifyGlue(bipGlue4Hanoi);
 		engine.start();
-
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 
 		engine.execute();
 
@@ -524,11 +490,6 @@ public class AkkaExecutorTests {
 		engine.specifyGlue(bipGlue);
 		engine.start();
 
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 		
 		engine.execute();
 
@@ -609,12 +570,6 @@ public class AkkaExecutorTests {
 		
 		engine.specifyGlue(bipGlue);
 		engine.start();
-
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 		
 		engine.execute();
 		
@@ -652,12 +607,6 @@ public class AkkaExecutorTests {
 		
 		engine.specifyGlue(bipGlue);
 		engine.start();
-
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 
 		engine.execute();
 		
