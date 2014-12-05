@@ -136,8 +136,6 @@ public class Client {
 	public void addUnsubscriptionInterest(@Data(name="topic") String topic) {
 		unsubscriptionInterest.add(topic);			
 	}
-
-	
 	
 	public boolean isInterestedInSubscription() {
 		

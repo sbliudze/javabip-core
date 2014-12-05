@@ -53,7 +53,7 @@ public class Topic
     	publishingClient.publishAck(message);
         for(Client currentClient : clients) {
         	try {
-        		currentClient.receiveMessage(name, message);
+        		currentClient.receiveMessage(message);
         	}
         	catch(Exception ex) {}
         }        
