@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.bip.api.BIPActorAware;
 import org.bip.api.BIPComponent;
 import org.bip.api.BIPEngine;
 import org.bip.api.Behaviour;
@@ -81,6 +82,9 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 	// after exception is being thrown no more function calls follow to this object.
 	public void setProxy(OrchestratedExecutor proxy) {
 		this.proxy = proxy;
+		if (bipComponent instanceof BIPActorAware) {
+			((BIPActorAware) bipComponent).setBIPActor(proxy);
+		}
 	}
 
 	/**
