@@ -103,4 +103,5 @@ public class ExecutorOSGiImpl implements BundleContextAware, Publishable, Execut
 		executor.inform(portID, data);
 
 	}
+
 }
