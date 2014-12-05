@@ -9,9 +9,9 @@
 package org.bip.spec.pubsub;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import org.bip.annotations.Data;
 import org.bip.annotations.ExecutableBehaviour;
@@ -28,17 +28,17 @@ public class Client {
 	final private MessageActuator actuator;
 
 	final List<Message> messages;
-	final List<Subject> messagesSubjects;	
 	
 	boolean connected;	
 	boolean connecting;
 	
-	final List<Message> messageToBePublished;
-	final List<Subject> subjectOfMessageToBePublished;
+	final LinkedHashSet<Message> messageToBePublished;
 	
-	final List<Subject> subscriptionInterest;
+	final List<String> subscriptionInterest;
 	
-	final Set<Subject> currentSubscriptions;
+	final List<String> unsubscriptionInterest;
+	
+	final HashSet<String> currentSubscriptions;
 
 	private boolean status;
 	
@@ -48,13 +48,12 @@ public class Client {
 
 		this.actuator = actuator;
 		this.messages = new LinkedList<Message>();
-		this.messagesSubjects = new LinkedList<Subject>();
 		this.connected = false;
 		this.connecting = false;
-		this.currentSubscriptions = new HashSet<Subject>();
-		this.subscriptionInterest = new LinkedList<Subject>();
-		messageToBePublished = new LinkedList<Message>();
-		subjectOfMessageToBePublished = new LinkedList<Subject>();
+		this.currentSubscriptions = new HashSet<String>();
+		this.subscriptionInterest = new LinkedList<String>();
+		this.unsubscriptionInterest = new LinkedList<String>();
+		messageToBePublished = new LinkedHashSet<Message>();
 		this.status = true;
 	}
 
@@ -63,11 +62,11 @@ public class Client {
 	}
 	
 	private void act() {		
-		actuator.act( messagesSubjects.remove(0), messages.remove(0) );		
+		actuator.act( messages.remove(0) );		
 	}
 	
 	public boolean actRequired() {
-		return ! messagesSubjects.isEmpty() && ! messages.isEmpty();
+		return ! messages.isEmpty();
 	}
 	
 	public MessageActuator getMessageActuator() {
@@ -75,19 +74,10 @@ public class Client {
 	}
 	
 	// Asynchronous spontaneous event. 
-	public void receiveMessage(@Data(name = "subject") Subject subject, 
-							   @Data(name = "message") Message message) {
+	public void receiveMessage(@Data(name = "message") Message message) {
 		
-		boolean messageAdded = messages.add(message); 
-		if ( messageAdded ) {
-			
-			boolean subjectAdded = messagesSubjects.add(subject);			
-			
-			if (!subjectAdded) {
-				messages.remove( messages.size() - 1 );
-			}
-										
-		};
+		messages.add(message); 
+		
 	}
 	
 	public boolean requiresConnection() {
@@ -115,35 +105,39 @@ public class Client {
 	}
 	
 	// Asynchronous spontaneous event. 
-	public void addMessageToBePublished(@Data(name="subject") Subject subject, 
-										@Data(name="message") Message message) {
+	public void addMessageToBePublished(@Data(name="message") Message message) {
 		messageToBePublished.add(message);
-		subjectOfMessageToBePublished.add(subject);
 	}
 		
 	public boolean isInterestedInPublishing() {
-		return (! messageToBePublished.isEmpty() && ! subjectOfMessageToBePublished.isEmpty() );
+		return (! messageToBePublished.isEmpty() );
 	}
 
 	@Data(name = "message", accessTypePort = AccessType.allowed, ports = { "publish" })
 	public Message getCurrentMessageBeingPublished() {
-		return messageToBePublished.get(0);
+		return messageToBePublished.iterator().next();
 	}
 
 	@Data(name = "subjectOfMessage", accessTypePort = AccessType.allowed, ports = { "publish" })
-	public Subject getSubjectOfCurrentMessageBeingPublished() {
-		return subjectOfMessageToBePublished.get(0);
+	public String getSubjectOfCurrentMessageBeingPublished() {
+		return messageToBePublished.iterator().next().getTopic();
 	}
 
-	public void publishAck() {
-		messageToBePublished.remove(0);
-		subjectOfMessageToBePublished.remove(0);
+	public void publishAck(Message message) {
+		messageToBePublished.remove(message);
 	}
 	
 	// Asynchronous spontaneous event. 
-	public void addSubscriptionInterest(@Data(name="subject") Subject subject) {
-		subscriptionInterest.add(subject);			
+	public void addSubscriptionInterest(@Data(name="topic") String topic) {
+		subscriptionInterest.add(topic);			
 	}
+
+	// Asynchronous spontaneous event. 
+	public void addUnsubscriptionInterest(@Data(name="topic") String topic) {
+		unsubscriptionInterest.add(topic);			
+	}
+
+	
 	
 	public boolean isInterestedInSubscription() {
 		
@@ -163,21 +157,51 @@ public class Client {
 		
 	}
 	
+	public boolean isInterestedInUnsubscription() {
+		
+		while (true) {
+			
+			if ( unsubscriptionInterest.isEmpty() )
+				return false;
+			
+			if ( ! currentSubscriptions.contains( unsubscriptionInterest.get(0) ) ) {
+				unsubscriptionInterest.remove(0);
+				continue;
+			}
+			
+			return true;
+			
+		}
+		
+	}
+	
 	// TODO, is data being collected before guards are called? Is there any fixed relationship that we 
 	// can rely on? Should we allow such a reliance? Please note that isInterestedInSubscription guard is operating on 
 	// subscriptionInterest data structure.
-	@Data(name = "subjectOfSubscription", accessTypePort = AccessType.allowed, ports = { "subscribe" })
-	public Subject getSubjectOfSubscription() {
+	@Data(name = "nameOfSubscription", accessTypePort = AccessType.allowed, ports = { "subscribe" })
+	public String getNameOfSubscription() {
 		return subscriptionInterest.get(0);
 	}
 	
 	public void subsribe() {
 	}
 	
-	public void subscribeAck() {
-		currentSubscriptions.add(subscriptionInterest.remove(0));
+	public void unsubscribe() {
+		
 	}
 	
+	public void subscribeAck(String name) {
+		if (subscriptionInterest.remove(name)) {
+			currentSubscriptions.add(name);
+		}
+	}
+
+	public void unSubscribeAck(String name) {
+		if (unsubscriptionInterest.remove(name)) {
+			currentSubscriptions.remove(name);
+		}		
+	}
+
 	public void setStatus(boolean status) {
 		this.status = status;
 	}
@@ -262,10 +286,9 @@ public class Client {
 		behaviourBuilder.addDataOut(this.getClass().getMethod("getCurrentMessageBeingPublished") );
 		behaviourBuilder.addDataOut(this.getClass().getMethod("getClientId") );
 		//BUILD
-		
-
 
 		return behaviourBuilder;
 	}
+
 	
 }
