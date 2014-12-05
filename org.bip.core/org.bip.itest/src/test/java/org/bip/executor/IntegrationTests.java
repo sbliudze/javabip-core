@@ -913,7 +913,6 @@ public class IntegrationTests {
 
 		}.build();
 
-		glue.toXML(System.out);
 		assertEquals("Incorrect number of accepts ", 5, glue
 				.getAcceptConstraints().size());
 		assertEquals("Incorrect number of requires ", 5, glue
