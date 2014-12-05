@@ -8,14 +8,12 @@ public class Command
 	}
 	
     private ID id;
-    private String topic;
     private Message message;
     private Client client;
    
-    public Command(Client client, ID id, String topic, Message message) {
+	public Command(Client client, ID id, Message message) {
         this.client = client;
         this.id = id;
-        this.topic = topic;
         this.message = message;
     }
 
@@ -28,7 +26,7 @@ public class Command
     }
 
     public String getTopic() {
-        return topic;
+		return message.getTopic();
     }
    
     public Message getMessage() {

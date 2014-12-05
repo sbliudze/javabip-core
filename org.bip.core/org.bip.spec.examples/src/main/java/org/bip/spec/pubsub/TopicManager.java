@@ -2,6 +2,8 @@ package org.bip.spec.pubsub;
 
 import java.util.HashMap;
 
+import org.bip.annotations.Data;
+
 public class TopicManager {
 	
     private HashMap<String, Topic> topics;
@@ -11,7 +13,7 @@ public class TopicManager {
     }
     
 	// Transition for port execute.
-	public void executeCommand(Command command) {
+	public void executeCommand(@Data(name = "value") Command command) {
 
         switch(command.getId()){
         case SUBSCRIBE:

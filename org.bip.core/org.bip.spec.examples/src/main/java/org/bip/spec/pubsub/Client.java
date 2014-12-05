@@ -15,13 +15,15 @@ import java.util.List;
 
 import org.bip.annotations.Data;
 import org.bip.annotations.ExecutableBehaviour;
+import org.bip.api.BIPActor;
+import org.bip.api.BIPActorAware;
 import org.bip.api.DataOut.AccessType;
 import org.bip.api.PortType;
 import org.bip.executor.BehaviourBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Client {
+public class Client implements BIPActorAware {
 
 	Logger logger = LoggerFactory.getLogger(Client.class);
 
@@ -43,6 +45,8 @@ public class Client {
 	private boolean status;
 	
 	private String clientId;
+
+	private BIPActor bipActor;
 	
 	public Client(MessageActuator actuator) {
 
@@ -288,5 +292,10 @@ public class Client {
 		return behaviourBuilder;
 	}
 
+	@Override
+	public void setBIPActor(BIPActor actor) {
+		this.bipActor = actor;
+
+	}
 	
 }
