@@ -1,4 +1,4 @@
-package org.bip.spec.pubsub;
+package org.bip.spec.pubsubtwoproxies;
 
 public class Command
 {
