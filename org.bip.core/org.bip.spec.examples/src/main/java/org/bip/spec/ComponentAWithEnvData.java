@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 @Ports({ @Port(name = "a", type = PortType.enforceable), 
 		 @Port(name = "b", type = PortType.spontaneous) })
 @ComponentType(initial = "zero", name = "org.bip.spec.ComponentA")
-public class ComponentAWithEnvData {
+public class ComponentAWithEnvData implements ComponentAWithEnvDataInterface {
 	Logger logger = LoggerFactory.getLogger(ComponentAWithEnvData.class);
 	public int memoryLimit;
 
