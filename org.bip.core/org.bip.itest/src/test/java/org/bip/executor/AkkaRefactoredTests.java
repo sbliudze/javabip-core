@@ -11,6 +11,7 @@ import java.util.Map;
 import org.bip.api.BIPActor;
 import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
+import org.bip.api.OrchestratedExecutor;
 import org.bip.engine.BIPCoordinatorImpl;
 import org.bip.engine.DataCoordinatorKernel;
 import org.bip.engine.api.EngineFactory;
@@ -31,6 +32,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import akka.actor.ActorSystem;
+import akka.actor.TypedActor;
+import akka.actor.TypedProps;
+import akka.japi.Creator;
 
 public class AkkaRefactoredTests {
 
@@ -161,7 +165,44 @@ public class AkkaRefactoredTests {
 
 	}
 
+	public static Object create(ActorSystem actorSystem, ClassLoader classLoader, OrchestratedExecutor executor, Object bipSpec) {
+		
+		final Object proxy = ExecutorHandler.newProxyInstance(classLoader, executor, bipSpec);
+		
+		Object executorActor = TypedActor.get(actorSystem).typedActorOf(
+                new TypedProps<Object>((Class<? super Object>) proxy.getClass(), new Creator<Object>() {
+                    public Object create() {
+                        return proxy;
+                    }
+                }), executor.getId());
+		
+		return executorActor;
+
+	}
+	
 	@Test
+	public void simpleProxyTest() {
+		
+		ComponentAWithEnvData componentA = new ComponentAWithEnvData(250);
+		
+		ExecutorKernel executor = new ExecutorKernel(componentA, "compA", true);
+		
+		ComponentAWithEnvDataInterface proxy1 = (ComponentAWithEnvDataInterface)AkkaRefactoredTests.create(system, OrchestratedExecutor.class.getClassLoader(), executor, componentA);
+		
+		proxy1.spontaneousOfA(500);
+		
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		assertEquals("New environment based memory limit is not set", componentA.memoryLimit, 500);
+		
+	}
+	
+	@Test
+	@Ignore
 	public void bipProxyTest() throws BIPException {
 
 		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));

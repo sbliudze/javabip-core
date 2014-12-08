@@ -49,9 +49,6 @@ public class ExecutorHandler implements InvocationHandler {
 		System.arraycopy(interfaces, 0, completeInterfaces, 0, interfaces.length);
 		completeInterfaces[interfaces.length] = OrchestratedExecutor.class;
 
-		for (Class inter : completeInterfaces)
-			System.out.println("NewProxy Instance interfaces: " + inter);
-
 		return Proxy.newProxyInstance(classLoader, completeInterfaces, handler);
                      
 	}
