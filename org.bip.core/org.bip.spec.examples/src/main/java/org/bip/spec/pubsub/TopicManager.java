@@ -2,8 +2,10 @@ package org.bip.spec.pubsub;
 
 import java.util.HashMap;
 
+import org.bip.annotations.ComponentType;
 import org.bip.annotations.Data;
 
+@ComponentType(initial = "0", name = "org.bip.spec.TopicManager")
 public class TopicManager {
 	
     private HashMap<String, Topic> topics;

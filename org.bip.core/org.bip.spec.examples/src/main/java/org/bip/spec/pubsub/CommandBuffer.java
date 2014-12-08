@@ -11,7 +11,7 @@ import org.bip.api.PortType;
 
 @Ports({ @Port(name = "putCommand", type = PortType.enforceable),
 		@Port(name = "getCommand", type = PortType.enforceable) })
-@ComponentType(initial = "0", name = "org.bip.spec.Buffer")
+@ComponentType(initial = "0", name = "org.bip.spec.CommandBuffer")
 public class CommandBuffer {
 	
 	private LinkedList<Command> commandList;

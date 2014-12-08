@@ -2,6 +2,15 @@ package org.bip.spec.pubsub;
 
 import java.util.HashSet;
 
+import org.bip.annotations.ComponentType;
+import org.bip.annotations.Port;
+import org.bip.annotations.Ports;
+import org.bip.annotations.Transition;
+import org.bip.api.PortType;
+
+@Ports({ @Port(name = "getName", type = PortType.spontaneous), @Port(name = "addClient", type = PortType.spontaneous),
+		@Port(name = "removeClient", type = PortType.spontaneous), @Port(name = "publish", type = PortType.spontaneous) })
+@ComponentType(initial = "0", name = "org.bip.spec.Topic")
 public class Topic
 {
     private String name;
@@ -11,13 +20,14 @@ public class Topic
 
     	this.name = name;
         this.clients = new HashSet<Client>();
-
     }
 
+	@Transition(name = "getName", source = "0", target = "0")
     public String getName() {
         return name;
     }
 
+	@Transition(name = "addClient", source = "0", target = "0")
     public void addClient(Client client) {
     	
         if(! clients.contains(client)){
@@ -30,9 +40,9 @@ public class Topic
         	catch(Exception ex) {}
 
         }
-  
     }
-    
+
+	@Transition(name = "removeClient", source = "0", target = "0")
     public void removeClient(Client client) {
 
         if( clients.contains(client) ){
@@ -42,12 +52,12 @@ public class Topic
             try {
             	client.unSubscribeAck(name);
             }
-            catch(Exception ex) {}
-            
+            catch (Exception ex) {
+			}
        	}
-
     }
 
+	@Transition(name = "publish", source = "0", target = "0")
     public void publish(Client publishingClient, Message message) {
     	
     	publishingClient.publishAck(message);
@@ -57,7 +67,6 @@ public class Topic
         	}
         	catch(Exception ex) {}
         }        
-        
     }
     
 }
