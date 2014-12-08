@@ -33,21 +33,21 @@ public class TopicManager {
         
     }
 	
-    private void subscribe(Client client, String topicName) {
+    private void subscribe(TCPReader client, String topicName) {
     	
         Topic topic = topics.get(topicName);
-        topic.addClient(client);
+		// topic.addClient(client);
         
     }
     
-    private void unsubscribe(Client client, String topicName) {
+    private void unsubscribe(TCPReader client, String topicName) {
 
         Topic topic = topics.get(topicName);
-    	topic.removeClient(client);
+		// topic.removeClient(client);
 
     }
          
-    private void publish(Client client, String topicName, Message message) {
+    private void publish(TCPReader client, String topicName, Message message) {
 
         Topic topic = topics.get(topicName);
         topic.publish(client, message);

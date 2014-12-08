@@ -37,6 +37,7 @@ public class CommandHandler {
 		data.put("value", currentCommand);
 		topicManager.inform("execute", data);
 		currentCommand = null;
+		System.out.println("Handling command internally");
 	}
 	
 	// // transition from initial state to work state.

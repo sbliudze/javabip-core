@@ -14,12 +14,12 @@ import org.bip.api.PortType;
 public class Topic
 {
     private String name;
-    private HashSet<Client> clients; 
+    private HashSet<ClientProxy> clients; 
     
     public Topic(String name) {
 
     	this.name = name;
-        this.clients = new HashSet<Client>();
+        this.clients = new HashSet<ClientProxy>();
     }
 
 	@Transition(name = "getName", source = "0", target = "0")
@@ -28,14 +28,15 @@ public class Topic
     }
 
 	@Transition(name = "addClient", source = "0", target = "0")
-    public void addClient(Client client) {
+    public void addClient(ClientProxy client) {
     	
         if(! clients.contains(client)){
         		
         	clients.add(client);
         	
         	try {
-        		client.subscribeAck(name);
+				client.addTopic(this);
+				// client.subscribeAck(name);
         	}
         	catch(Exception ex) {}
 
@@ -43,14 +44,15 @@ public class Topic
     }
 
 	@Transition(name = "removeClient", source = "0", target = "0")
-    public void removeClient(Client client) {
+	public void removeClient(ClientProxy client) {
 
         if( clients.contains(client) ){
   
             this.clients.remove(client);
             
             try {
-            	client.unSubscribeAck(name);
+				client.removeTopic(this);
+				// client.unSubscribeAck(name);
             }
             catch (Exception ex) {
 			}
@@ -58,12 +60,12 @@ public class Topic
     }
 
 	@Transition(name = "publish", source = "0", target = "0")
-    public void publish(Client publishingClient, Message message) {
+    public void publish(TCPReader publishingClient, Message message) {
     	
-    	publishingClient.publishAck(message);
-        for(Client currentClient : clients) {
+		// publishingClient.publishAck(message);
+		for (ClientProxy currentClient : clients) {
         	try {
-        		currentClient.receiveMessage(message);
+				// currentClient.receiveMessage(message);
         	}
         	catch(Exception ex) {}
         }        

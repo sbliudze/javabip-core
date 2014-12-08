@@ -9,15 +9,15 @@ public class Command
 	
     private ID id;
     private Message message;
-    private Client client;
+    private TCPReader client;
    
-	public Command(Client client, ID id, Message message) {
+	public Command(TCPReader client, ID id, Message message) {
         this.client = client;
         this.id = id;
         this.message = message;
     }
 
-    public Client getClient() {
+    public TCPReader getClient() {
         return client;
     }
 
