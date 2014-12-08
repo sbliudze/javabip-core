@@ -23,6 +23,7 @@ import org.bip.spec.ComponentAWithEnvData;
 import org.bip.spec.ComponentAWithEnvDataInterface;
 import org.bip.spec.ComponentB;
 import org.bip.spec.ComponentC;
+import org.bip.spec.ProperComponentAWithEnvData;
 import org.bip.spec.seal.SealableData;
 import org.bip.spec.seal.SealableDataReader;
 import org.bip.spec.seal.SealableDataWriter;
@@ -202,14 +203,13 @@ public class AkkaRefactoredTests {
 	}
 	
 	@Test
-	@Ignore
 	public void bipProxyTest() throws BIPException {
 
 		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
 
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueDataAvailability.xml");
 
-		ComponentAWithEnvData componentA = new ComponentAWithEnvData(250);
+		ProperComponentAWithEnvData componentA = new ProperComponentAWithEnvData(250);
 		
 		ComponentAWithEnvDataInterface proxy1 = (ComponentAWithEnvDataInterface) engine.register(componentA, "compA",
 				true);
@@ -234,7 +234,7 @@ public class AkkaRefactoredTests {
 		proxy1.spontaneousOfA(500);
 
 		try {
-			Thread.sleep(5000);
+			Thread.sleep(2000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
