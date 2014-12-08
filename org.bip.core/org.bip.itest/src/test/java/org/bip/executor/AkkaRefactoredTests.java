@@ -19,6 +19,7 @@ import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
 import org.bip.glue.GlueBuilder;
 import org.bip.glue.TwoSynchronGlueBuilder;
 import org.bip.spec.ComponentAWithEnvData;
+import org.bip.spec.ComponentAWithEnvDataInterface;
 import org.bip.spec.ComponentB;
 import org.bip.spec.ComponentC;
 import org.bip.spec.seal.SealableData;
@@ -161,7 +162,6 @@ public class AkkaRefactoredTests {
 	}
 
 	@Test
-	@Ignore
 	public void bipProxyTest() throws BIPException {
 
 		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
@@ -170,7 +170,8 @@ public class AkkaRefactoredTests {
 
 		ComponentAWithEnvData componentA = new ComponentAWithEnvData(250);
 		
-		ComponentAWithEnvData proxy1 = (ComponentAWithEnvData) engine.register(componentA, "compA", true);
+		ComponentAWithEnvDataInterface proxy1 = (ComponentAWithEnvDataInterface) engine.register(componentA, "compA",
+				true);
 
 		ComponentB componentB = new ComponentB();
 		BIPActor actor2 = engine.register(componentB, "compB", true);
