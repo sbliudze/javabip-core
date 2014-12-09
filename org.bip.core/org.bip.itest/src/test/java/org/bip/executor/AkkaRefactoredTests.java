@@ -166,7 +166,7 @@ public class AkkaRefactoredTests {
 
 	}
 
-	public static Object create(ActorSystem actorSystem, ClassLoader classLoader, OrchestratedExecutor executor, Object bipSpec) {
+	public static Object createSimpleProxy(ActorSystem actorSystem, ClassLoader classLoader, OrchestratedExecutor executor, Object bipSpec) {
 		
 		final Object proxy = ExecutorHandler.newProxyInstance(classLoader, executor, bipSpec);
 		
@@ -180,6 +180,22 @@ public class AkkaRefactoredTests {
 		return executorActor;
 
 	}
+
+	public static Object createTunellingProxy(ActorSystem actorSystem, ClassLoader classLoader, OrchestratedExecutor executor, Object bipSpec) {
+		
+		final Object proxy = TunellingExecutorHandler.newProxyInstance(classLoader, executor, bipSpec);
+		
+		Object executorActor = TypedActor.get(actorSystem).typedActorOf(
+                new TypedProps<Object>((Class<? super Object>) proxy.getClass(), new Creator<Object>() {
+                    public Object create() {
+                        return proxy;
+                    }
+                }), executor.getId());
+		
+		return executorActor;
+
+	}
+
 	
 	@Test
 	public void simpleProxyTest() {
@@ -188,7 +204,7 @@ public class AkkaRefactoredTests {
 		
 		ExecutorKernel executor = new ExecutorKernel(componentA, "compA", true);
 		
-		ComponentAWithEnvDataInterface proxy1 = (ComponentAWithEnvDataInterface)AkkaRefactoredTests.create(system, OrchestratedExecutor.class.getClassLoader(), executor, componentA);
+		ComponentAWithEnvDataInterface proxy1 = (ComponentAWithEnvDataInterface)AkkaRefactoredTests.createSimpleProxy(system, OrchestratedExecutor.class.getClassLoader(), executor, componentA);
 		
 		proxy1.spontaneousOfA(500);
 		
@@ -201,6 +217,28 @@ public class AkkaRefactoredTests {
 		assertEquals("New environment based memory limit is not set", componentA.memoryLimit, 500);
 		
 	}
+
+	@Test
+	public void simpleTunnelingProxyTest() {
+		
+		ComponentAWithEnvData componentA = new ComponentAWithEnvData(250);
+		
+		ExecutorKernel executor = new ExecutorKernel(componentA, "compA", true);
+		
+		ComponentAWithEnvDataInterface proxy1 = (ComponentAWithEnvDataInterface)AkkaRefactoredTests.createTunellingProxy(system, OrchestratedExecutor.class.getClassLoader(), executor, componentA);
+		
+		proxy1.spontaneousOfA(500);
+		
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		// TODO, figure out the assert or use the bipProxyTest below after Engine is updated.
+		
+	}
+
 	
 	@Test
 	public void bipProxyTest() throws BIPException {
