@@ -1,4 +1,4 @@
-package org.bip.spec.pubsubtwoproxies;
+package org.bip.spec.pubsub.untyped;
 
 public interface MessageActuator {
 

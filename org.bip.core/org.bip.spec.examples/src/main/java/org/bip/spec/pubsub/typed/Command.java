@@ -1,10 +1,9 @@
-package org.bip.spec.pubsubtwoproxies;
+package org.bip.spec.pubsub.typed;
 
 public class Command
 {
-
 	public enum CommandID {
-		SUBSCRIBE, UNSUBSCRIBE, PUBLISH
+		SUBSCRIBE, UNSUBSCRIBE, PUBLISH, ENDOFCLIENT
 	}
 	
     private CommandID id;

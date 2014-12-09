@@ -6,7 +6,7 @@
  * Date: 15/07/2013
  */
 
-package org.bip.spec.pubsub;
+package org.bip.spec.pubsub.untyped;
 
 import org.bip.annotations.ComponentType;
 import org.bip.annotations.Port;

@@ -1,4 +1,4 @@
-package org.bip.spec.pubsub;
+package org.bip.spec.pubsub.typed;
 
 import java.util.HashSet;
 
@@ -22,10 +22,10 @@ public class Topic
         this.clients = new HashSet<ClientProxy>();
     }
 
-	@Transition(name = "getName", source = "0", target = "0")
-    public String getName() {
-        return name;
-    }
+	// @Transition(name = "getName", source = "0", target = "0")
+	// public String getName() {
+	// return name;
+	// }
 
 	@Transition(name = "addClient", source = "0", target = "0")
     public void addClient(ClientProxy client) {
@@ -36,7 +36,7 @@ public class Topic
         	
         	try {
 				client.addTopic(this);
-				// client.subscribeAck(name);
+				client.write(name);
         	}
         	catch(Exception ex) {}
 
@@ -52,7 +52,7 @@ public class Topic
             
             try {
 				client.removeTopic(this);
-				// client.unSubscribeAck(name);
+				client.write(name);
             }
             catch (Exception ex) {
 			}
@@ -62,10 +62,9 @@ public class Topic
 	@Transition(name = "publish", source = "0", target = "0")
 	public void publish(ClientProxy publishingClient, String message) {
     	
-		// publishingClient.publishAck(message);
 		for (ClientProxy currentClient : clients) {
         	try {
-				// currentClient.receiveMessage(message);
+				currentClient.write(message);
         	}
         	catch(Exception ex) {}
         }        

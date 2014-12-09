@@ -1,13 +1,15 @@
-package org.bip.spec.pubsubtwoproxies;
+package org.bip.spec.pubsub.untyped;
 
 import java.util.LinkedList;
 
 import org.bip.annotations.ComponentType;
+import org.bip.annotations.Data;
 import org.bip.annotations.Guard;
 import org.bip.annotations.Port;
 import org.bip.annotations.Ports;
 import org.bip.annotations.Transition;
 import org.bip.api.PortType;
+import org.bip.spec.pubsub.typed.Command;
 
 @Ports({ @Port(name = "putCommand", type = PortType.enforceable),
 		@Port(name = "getCommand", type = PortType.enforceable) })
@@ -34,7 +36,7 @@ public class CommandBuffer {
 	}
 	
 	@Transition(name = "putCommand", source = "0", target = "0", guard = "isBufferNotFull")
-	public void putCommand(Command command){
+	public void putCommand(@Data(name = "input") Command command) {
 		commandList.add(command);
 	}
 	

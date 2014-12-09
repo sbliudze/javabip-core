@@ -1,4 +1,4 @@
-package org.bip.spec.pubsub;
+package org.bip.spec.pubsub.untyped;
 
 public class Command
 {

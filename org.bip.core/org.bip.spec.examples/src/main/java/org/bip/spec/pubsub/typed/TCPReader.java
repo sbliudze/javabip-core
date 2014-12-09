@@ -6,23 +6,58 @@
  * Date: 15/07/2013
  */
 
-package org.bip.spec.pubsubtwoproxies;
+package org.bip.spec.pubsub.typed;
 
 import org.bip.annotations.ComponentType;
+import org.bip.annotations.Data;
+import org.bip.annotations.Guard;
 import org.bip.annotations.Port;
 import org.bip.annotations.Ports;
+import org.bip.annotations.Transition;
 import org.bip.api.PortType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Ports({ @Port(name = "getCommand", type = PortType.enforceable) })
+@Ports({ @Port(name = "receiveCommand", type = PortType.spontaneous),
+		@Port(name = "giveCommandToBuffer", type = PortType.enforceable) })
 @ComponentType(initial = "0", name = "org.bip.spec.Client")
 public class TCPReader {
 
 	Logger logger = LoggerFactory.getLogger(TCPReader.class);
 	
-	private boolean connected;	
+	private boolean connected;
+	private ClientProxy cproxy;
+	private CommandBuffer command_buff;
+	private InputReader reader;
+	private Command currentCommand;
+
+	private boolean stillHasCommands;
 	
+	public TCPReader(CommandBuffer buff, long id) {
+		this.cproxy = new ClientProxy(id);
+		this.command_buff = buff;
+		this.reader = new InputReader();
+		this.stillHasCommands = true;
+
+	}
+
+	@Transition(name = "giveCommandToBuffer", source = "0", target = "0", guard = "commandExists")
+	public void giveCommandtoBuffer() {
+		if (currentCommand.getCommandId() == CommandID.ENDOFCLIENT)
+			stillHasCommands = false;
+	}
+
+	@Data(name = "command")
+	public Command getNextCommand() {
+		reader.readCommand();
+		currentCommand = new Command(cproxy, reader.getCommandId(), reader.getTopic(), reader.getMessage());
+		return currentCommand;
+	}
+
+	@Guard(name = "commandExists")
+	public boolean commandExists() {
+		return stillHasCommands;
+	}
 
 	//final private MessageActuator actuator;
 
@@ -31,7 +66,7 @@ public class TCPReader {
 
 	// boolean connecting;
 	
-	// final LinkedHashSet<Message> messageToBePublished;
+	// final LinkedHashSet<String> messageToBePublished;
 	//
 	// final List<String> subscriptionInterest;
 	//
@@ -45,7 +80,6 @@ public class TCPReader {
 
 //	private BIPActor bipActor;
 	
-	public TCPReader() {
 //	public Client(MessageActuator actuator) {
 
 		// this.actuator = actuator;
@@ -57,7 +91,7 @@ public class TCPReader {
 		// this.unsubscriptionInterest = new LinkedList<String>();
 		// messageToBePublished = new LinkedHashSet<Message>();
 		// this.status = true;
-	}
+	// }
 
 	// public boolean getStatus() {
 	// return status;
@@ -125,7 +159,7 @@ public class TCPReader {
 	// return messageToBePublished.iterator().next().getTopic();
 	// }
 	//
-	// public void publishAck(Message message) {
+	// public void publishAck(String message) {
 	// messageToBePublished.remove(message);
 	// }
 	//
