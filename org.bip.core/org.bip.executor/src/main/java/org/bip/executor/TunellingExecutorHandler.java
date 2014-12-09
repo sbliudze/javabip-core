@@ -129,6 +129,7 @@ public class TunellingExecutorHandler implements InvocationHandler {
 					parseTransition(method, (org.bip.annotations.Transition) annotation, namesOfSpontaneousPorts);
 
 				} else if (annotation instanceof Transitions) {
+					// TODO: only one spontaneous port can be associated with the same method
 					Transitions transitionsAnnotation = (Transitions) annotation;
 					Annotation[] transitionAnnotations = transitionsAnnotation.value();
 					for (Annotation bipTransitionAnnotation : transitionAnnotations) {

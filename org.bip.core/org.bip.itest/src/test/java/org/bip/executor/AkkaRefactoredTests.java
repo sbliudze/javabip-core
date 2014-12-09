@@ -221,21 +221,44 @@ public class AkkaRefactoredTests {
 	@Test
 	public void simpleTunnelingProxyTest() {
 		
+		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
+
+		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueDataAvailability.xml");
+
 		ComponentAWithEnvData componentA = new ComponentAWithEnvData(250);
 		
-		ExecutorKernel executor = new ExecutorKernel(componentA, "compA", true);
-		
-		ComponentAWithEnvDataInterface proxy1 = (ComponentAWithEnvDataInterface)AkkaRefactoredTests.createTunellingProxy(system, OrchestratedExecutor.class.getClassLoader(), executor, componentA);
-		
-		proxy1.spontaneousOfA(500);
-		
+		ComponentAWithEnvDataInterface proxy1 = (ComponentAWithEnvDataInterface) engine.register(componentA, "compA",
+				true);
+
+		ComponentB componentB = new ComponentB();
+		BIPActor actor2 = engine.register(componentB, "compB", true);
+
+		ComponentC componentC = new ComponentC();
+		BIPActor actor3 = engine.register(componentC, "compC", true);
+
+		engine.specifyGlue(bipGlue);
+		engine.start();
+
+		engine.execute();
+
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
-		// TODO, figure out the assert or use the bipProxyTest below after Engine is updated.
+
+		proxy1.spontaneousOfA(500);
+
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		engine.stop();
+		engineFactory.destroy(engine);
+
+		assertEquals("New environment based memory limit is not set", componentA.memoryLimit, 500);
 		
 	}
 
