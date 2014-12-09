@@ -113,7 +113,6 @@
    						<include>**/org/bip/executor/IntegrationTests.class</include>
  						<include>**/org/bip/executor/AkkaExecutorTests.class</include>						
 		 				<include>**/org/bip/executor/AkkaRefactoredTests.class</include>	
-		 				<include>**/org/bip/executor/DataSpontaneousTests.class</include>
  					</includes>
 
 					<systemPropertyVariables>
