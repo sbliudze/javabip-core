@@ -10,7 +10,7 @@ import org.bip.annotations.Transition;
 import org.bip.api.BIPActor;
 import org.bip.api.PortType;
 
-@Ports({ @Port(name = "execute", type = PortType.spontaneous) })
+@Ports({ @Port(name = "executeCommand", type = PortType.spontaneous) })
 @ComponentType(initial = "0", name = "org.bip.spec.TopicManager")
 public class TopicManager {
 	
@@ -20,9 +20,9 @@ public class TopicManager {
     	this.topics = topics;
     }
     
-	// Transition for port execute.
-    @Transition(name = "execute", source = "0", target = "0")
-	public void executeCommand(@Data(name = "value") Command command) {
+    
+    @Transition(name = "executeCommand", source = "0", target = "0")
+	public void executeCommand(@Data(name = "command") Command command) {
 
         switch(command.getId()){
         case SUBSCRIBE:
@@ -43,21 +43,31 @@ public class TopicManager {
 	private void subscribe(BIPActor client, String topicName) {
     	
         BIPActor topic = topics.get(topicName);
-		topic.addClient(client);
+        
+        HashMap<String, Object> data = new HashMap<String, Object>();
+		data.put("client", client);
+		topic.inform("addClient", data);
         
     }
     
 	private void unsubscribe(BIPActor client, String topicName) {
 
 		BIPActor topic = topics.get(topicName);
-		topic.removeClient(client);
+
+        HashMap<String, Object> data = new HashMap<String, Object>();
+		data.put("client", client);
+		topic.inform("removeClient", data);
 
     }
          
 	private void publish(BIPActor client, String topicName, String message) {
 
 		BIPActor topic = topics.get(topicName);
-        topic.publish(client, message);
+		
+        HashMap<String, Object> data = new HashMap<String, Object>();
+		data.put("client", client);
+		data.put("msg", message);
+		topic.inform("publish", data);
 
     }
 

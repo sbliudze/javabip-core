@@ -9,11 +9,10 @@ import org.bip.annotations.Port;
 import org.bip.annotations.Ports;
 import org.bip.annotations.Transition;
 import org.bip.api.PortType;
-import org.bip.spec.pubsub.typed.Command;
 
 @Ports({ @Port(name = "putCommand", type = PortType.enforceable),
 		@Port(name = "getCommand", type = PortType.enforceable) })
-@ComponentType(initial = "0", name = "org.bip.spec.CommandBuffer")
+@ComponentType(initial = "0", name = "org.bip.spec.pubsub.untyped.CommandBuffer")
 public class CommandBuffer {
 	
 	private LinkedList<Command> commandList;
@@ -25,24 +24,31 @@ public class CommandBuffer {
 		this.commandList = new LinkedList<Command>();
 	}
 
+
 	@Transition(name = "getCommand", source = "0", target = "0", guard = "isBufferNotEmpty")
-	public Command getCommand(){
-		return commandList.remove();
+	public void getCommandToHandler() {
+		commandList.remove();
 	}
 
 	@Guard(name = "isBufferNotEmpty")
-	public boolean isBufferEmpty() {
+	public boolean isBufferNotEmpty() {
 		return !commandList.isEmpty();
 	}
 	
 	@Transition(name = "putCommand", source = "0", target = "0", guard = "isBufferNotFull")
-	public void putCommand(@Data(name = "input") Command command) {
+	public void putCommandFromReader(@Data(name = "input") Command command) {
 		commandList.add(command);
 	}
 	
 	@Guard(name = "isBufferNotFull")
-	public boolean isBufferFull() {
+	public boolean isBufferNotFull() {
 		return commandList.size() != bufferSize;
 	}
 	
+	@Data(name = "command")
+	public Command getNextCommand() {
+		return commandList.get(0);
+	}
+
 }
+

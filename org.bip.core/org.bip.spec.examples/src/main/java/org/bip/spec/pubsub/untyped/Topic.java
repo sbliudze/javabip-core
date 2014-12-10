@@ -1,5 +1,6 @@
 package org.bip.spec.pubsub.untyped;
 
+import java.util.HashMap;
 import java.util.HashSet;
 
 import org.bip.annotations.ComponentType;
@@ -12,7 +13,7 @@ import org.bip.api.PortType;
 
 @Ports({ @Port(name = "getName", type = PortType.spontaneous), @Port(name = "addClient", type = PortType.spontaneous),
 		@Port(name = "removeClient", type = PortType.spontaneous), @Port(name = "publish", type = PortType.spontaneous) })
-@ComponentType(initial = "0", name = "org.bip.spec.Topic")
+@ComponentType(initial = "0", name = "org.bip.spec.pubsub.untyped.Topic")
 public class Topic
 {
     private String name;
@@ -24,11 +25,6 @@ public class Topic
         this.clients = new HashSet<BIPActor>();
     }
 
-	@Transition(name = "getName", source = "0", target = "0")
-    public String getName() {
-        return name;
-    }
-
 	@Transition(name = "addClient", source = "0", target = "0")
     public void addClient(@Data(name="client") BIPActor client) {
     	
@@ -37,7 +33,11 @@ public class Topic
         	clients.add(client);
         	
         	try {
-				client.addTopic(name);
+        		
+        		HashMap<String, Object> data = new HashMap<String, Object>();
+        		data.put("topic", name);
+        		client.inform("addTopic", data);
+        		
         	}
         	catch(Exception ex) {}
 
@@ -52,8 +52,9 @@ public class Topic
             this.clients.remove(client);
             
             try {
-				client.removeTopic(name);
-				// client.unSubscribeAck(name);
+        		HashMap<String, Object> data = new HashMap<String, Object>();
+        		data.put("topic", name);
+        		client.inform("removeTopic", data);
             }
             catch (Exception ex) {
 			}
@@ -61,15 +62,20 @@ public class Topic
     }
 
 	@Transition(name = "publish", source = "0", target = "0")
-	public void publish(@Data(name="client") BIPActor publishingClient, String message) {
-    	
-		// publishingClient.publishAck(message);
+	public void publish(@Data(name="client") BIPActor publishingClient, @Data(name="msg") String message) {
+
+		HashMap<String, Object> data = new HashMap<String, Object>();
+		data.put("msg", message);
+
 		for (BIPActor currentClient : clients) {
         	try {
-				currentClient.publish(message);
+        		
+        		currentClient.inform("write", data);
+
         	}
         	catch(Exception ex) {}
-        }        
+        }
+		
     }
     
 }
