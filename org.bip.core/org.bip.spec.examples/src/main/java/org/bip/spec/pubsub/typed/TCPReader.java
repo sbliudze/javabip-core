@@ -40,7 +40,7 @@ public class TCPReader {
 
 	private boolean stillHasCommands;
 	
-	public TCPReader(Socket sock, CommandBuffer buff, long id) throws IOException {
+	public TCPReader(Socket sock, long id, CommandBuffer buff) throws IOException {
 		this.cproxy = new ClientProxy(id);
 		this.command_buff = buff;
 		this.reader = new InputReader(this.client_sock.getInputStream());

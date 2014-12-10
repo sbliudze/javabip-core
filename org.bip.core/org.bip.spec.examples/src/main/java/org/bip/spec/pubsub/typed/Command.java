@@ -2,13 +2,8 @@ package org.bip.spec.pubsub.typed;
 
 import lsr.concurrence.provided.server.CommandID;
 
-
 public class Command
 {
-	// public enum CommandID {
-	// SUBSCRIBE, UNSUBSCRIBE, PUBLISH, ENDOFCLIENT
-	// }
-	
     private CommandID id;
 	private String topic;
     private String message;
