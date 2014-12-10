@@ -11,7 +11,7 @@ import org.bip.api.PortType;
 
 @Ports({ @Port(name = "executeCommand", type = PortType.spontaneous) })
 @ComponentType(initial = "0", name = "org.bip.spec.TopicManager")
-public class TopicManager {
+public class TopicManager implements TopicManagerInterface {
 	
 	private static final HashMap<String, Topic> topics = new HashMap<String, Topic>();;
 

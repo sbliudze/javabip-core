@@ -1,19 +1,22 @@
 package org.bip.spec.pubsub.typed;
 
+import lsr.concurrence.provided.server.CommandID;
+
+
 public class Command
 {
-	public enum CommandID {
-		SUBSCRIBE, UNSUBSCRIBE, PUBLISH, ENDOFCLIENT
-	}
+	// public enum CommandID {
+	// SUBSCRIBE, UNSUBSCRIBE, PUBLISH, ENDOFCLIENT
+	// }
 	
     private CommandID id;
 	private String topic;
     private String message;
-    private ClientProxy client;
+	private ClientProxy client;
    
-	public Command(ClientProxy client, CommandID id, String topic, String message) {
+	public Command(ClientProxy client, CommandID commandID, String topic, String message) {
         this.client = client;
-        this.id = id;
+        this.id = commandID;
 		this.topic = topic;
         this.message = message;
     }

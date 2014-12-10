@@ -8,5 +8,4 @@ public interface TopicInterface {
 
 	void publish(ClientProxy publishingClient, String message);
 	
-	String getName();
 }

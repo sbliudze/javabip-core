@@ -11,8 +11,7 @@ import org.bip.api.PortType;
 @Ports({ @Port(name = "getName", type = PortType.spontaneous), @Port(name = "addClient", type = PortType.spontaneous),
 		@Port(name = "removeClient", type = PortType.spontaneous), @Port(name = "publish", type = PortType.spontaneous) })
 @ComponentType(initial = "0", name = "org.bip.spec.Topic")
-public class Topic
-{
+public class Topic implements TopicInterface {
     private String name;
     private HashSet<ClientProxy> clients; 
     
@@ -21,11 +20,6 @@ public class Topic
     	this.name = name;
         this.clients = new HashSet<ClientProxy>();
     }
-
-	// @Transition(name = "getName", source = "0", target = "0")
-	// public String getName() {
-	// return name;
-	// }
 
 	@Transition(name = "addClient", source = "0", target = "0")
     public void addClient(ClientProxy client) {
