@@ -1,5 +1,7 @@
 package org.bip.spec.pubsub.untyped;
 
+import org.bip.api.BIPActor;
+
 public class Command
 {
 
@@ -10,16 +12,16 @@ public class Command
     private CommandID id;
 	private String topic;
     private String message;
-    private ClientProxy client;
+    private BIPActor client; // BIP Actor representing client issuing the command.
    
-	public Command(ClientProxy client, CommandID id, String topic, String message) {
+	public Command(BIPActor client, CommandID id, String topic, String message) {
         this.client = client;
         this.id = id;
 		this.topic = topic;
         this.message = message;
     }
 
-    public ClientProxy getClient() {
+    public BIPActor getClient() {
 		return this.client;
     }
 

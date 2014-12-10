@@ -3,9 +3,11 @@ package org.bip.spec.pubsub.untyped;
 import java.util.HashSet;
 
 import org.bip.annotations.ComponentType;
+import org.bip.annotations.Data;
 import org.bip.annotations.Port;
 import org.bip.annotations.Ports;
 import org.bip.annotations.Transition;
+import org.bip.api.BIPActor;
 import org.bip.api.PortType;
 
 @Ports({ @Port(name = "getName", type = PortType.spontaneous), @Port(name = "addClient", type = PortType.spontaneous),
@@ -14,12 +16,12 @@ import org.bip.api.PortType;
 public class Topic
 {
     private String name;
-    private HashSet<ClientProxy> clients; 
+    private HashSet<BIPActor> clients; 
     
     public Topic(String name) {
 
     	this.name = name;
-        this.clients = new HashSet<ClientProxy>();
+        this.clients = new HashSet<BIPActor>();
     }
 
 	@Transition(name = "getName", source = "0", target = "0")
@@ -28,15 +30,14 @@ public class Topic
     }
 
 	@Transition(name = "addClient", source = "0", target = "0")
-    public void addClient(ClientProxy client) {
+    public void addClient(@Data(name="client") BIPActor client) {
     	
         if(! clients.contains(client)){
         		
         	clients.add(client);
         	
         	try {
-				client.addTopic(this);
-				// client.subscribeAck(name);
+				client.addTopic(name);
         	}
         	catch(Exception ex) {}
 
@@ -44,14 +45,14 @@ public class Topic
     }
 
 	@Transition(name = "removeClient", source = "0", target = "0")
-	public void removeClient(ClientProxy client) {
+	public void removeClient(@Data(name="client") BIPActor client) {
 
         if( clients.contains(client) ){
   
             this.clients.remove(client);
             
             try {
-				client.removeTopic(this);
+				client.removeTopic(name);
 				// client.unSubscribeAck(name);
             }
             catch (Exception ex) {
@@ -60,12 +61,12 @@ public class Topic
     }
 
 	@Transition(name = "publish", source = "0", target = "0")
-	public void publish(ClientProxy publishingClient, String message) {
+	public void publish(@Data(name="client") BIPActor publishingClient, String message) {
     	
 		// publishingClient.publishAck(message);
-		for (ClientProxy currentClient : clients) {
+		for (BIPActor currentClient : clients) {
         	try {
-				// currentClient.receiveMessage(message);
+				currentClient.publish(message);
         	}
         	catch(Exception ex) {}
         }        

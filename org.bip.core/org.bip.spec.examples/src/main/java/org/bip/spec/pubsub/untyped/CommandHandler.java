@@ -33,6 +33,8 @@ public class CommandHandler {
 		return currentCommand != null;
 	}
 	
+	// TODO, it can be further simplified as the code of this function can be moved directly 
+	// to getCommand transition and there will be no need for guard and currentCommand attribute.
 	@Transition(name = "", source = "0", target = "0", guard = "hasCommandToHandle")
 	public void internalHandleCommand() {
 		HashMap<String, Object> data = new HashMap<String, Object>();

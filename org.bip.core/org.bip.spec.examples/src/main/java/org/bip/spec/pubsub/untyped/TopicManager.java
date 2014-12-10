@@ -4,17 +4,24 @@ import java.util.HashMap;
 
 import org.bip.annotations.ComponentType;
 import org.bip.annotations.Data;
+import org.bip.annotations.Port;
+import org.bip.annotations.Ports;
+import org.bip.annotations.Transition;
+import org.bip.api.BIPActor;
+import org.bip.api.PortType;
 
+@Ports({ @Port(name = "execute", type = PortType.spontaneous) })
 @ComponentType(initial = "0", name = "org.bip.spec.TopicManager")
 public class TopicManager {
 	
-    private HashMap<String, Topic> topics;
+    private HashMap<String, BIPActor> topics;
 
-    public TopicManager() {
-    	this.topics = new HashMap<String, Topic>();
+    public TopicManager(HashMap<String, BIPActor> topics) {
+    	this.topics = topics;
     }
     
 	// Transition for port execute.
+    @Transition(name = "execute", source = "0", target = "0")
 	public void executeCommand(@Data(name = "value") Command command) {
 
         switch(command.getId()){
@@ -33,23 +40,23 @@ public class TopicManager {
         
     }
 	
-	private void subscribe(ClientProxy client, String topicName) {
+	private void subscribe(BIPActor client, String topicName) {
     	
-        Topic topic = topics.get(topicName);
-		// topic.addClient(client);
+        BIPActor topic = topics.get(topicName);
+		topic.addClient(client);
         
     }
     
-	private void unsubscribe(ClientProxy client, String topicName) {
+	private void unsubscribe(BIPActor client, String topicName) {
 
-        Topic topic = topics.get(topicName);
-		// topic.removeClient(client);
+		BIPActor topic = topics.get(topicName);
+		topic.removeClient(client);
 
     }
          
-	private void publish(ClientProxy client, String topicName, String message) {
+	private void publish(BIPActor client, String topicName, String message) {
 
-        Topic topic = topics.get(topicName);
+		BIPActor topic = topics.get(topicName);
         topic.publish(client, message);
 
     }
