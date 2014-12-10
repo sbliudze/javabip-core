@@ -71,7 +71,13 @@
 			<artifactId>org.bip.api</artifactId>
 			<version>${org.bip.api.version}</version>
 		</dependency>
-
+		
+		<dependency>
+			<groupId>org.bip</groupId>
+			<artifactId>org.bip.lsr</artifactId>
+			<version>${org.bip.lsr.version}</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>org.bip</groupId>
 			<artifactId>org.bip.glue</artifactId>

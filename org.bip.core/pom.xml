@@ -33,6 +33,7 @@
  		<org.osgi.core.version>4.2.0</org.osgi.core.version> 		
  		<camel-core.version>2.10.0.redhat-60024</camel-core.version> 
  		<org.bip.engine.version>0.1.0-SNAPSHOT</org.bip.engine.version>
+ 		<org.bip.lsr.version>0.1.0-SNAPSHOT</org.bip.lsr.version>
  		<org.bip.executor.impl.version>0.1.0-SNAPSHOT</org.bip.executor.impl.version>
 		<org.bip.api.version>0.1.0-SNAPSHOT</org.bip.api.version>
 		<org.bip.executor.version>0.1.0-SNAPSHOT</org.bip.executor.version>
@@ -55,6 +56,7 @@
 			<modules>
 				<module>bip_javabdd</module>
 				<module>bip_engine</module>
+				<module>lsr</module>
 				<module>org.bip.api</module>
 				<module>org.bip.jmx</module>
 				<module>org.bip.glue</module>
@@ -69,6 +71,7 @@
 			<modules>
 				<module>bip_javabdd</module>
 				<module>org.bip.api</module>
+				<module>lsr</module>
 				<module>org.bip.jmx</module>
 				<module>org.bip.glue</module>
 				<module>org.bip.executor</module>
