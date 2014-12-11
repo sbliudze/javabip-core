@@ -1,5 +1,6 @@
 package org.bip.spec.pubsub.typed;
 
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
@@ -12,36 +13,40 @@ import org.bip.api.PortType;
 
 @Ports({ @Port(name = "write", type = PortType.spontaneous), @Port(name = "addTopic", type = PortType.spontaneous),
 		@Port(name = "removeTopic", type = PortType.spontaneous) })
-@ComponentType(initial = "0", name = "org.bip.spec.ClientProxy")
+@ComponentType(initial = "0", name = "org.bip.spec.pubsub.typed.ClientProxy")
 public class ClientProxy {
 
-	private PrintWriter output;
 	private ArrayList<Topic> topics;
 	private long id;
+	private PrintWriter output;
 
-	public ClientProxy(long id) {
+	public ClientProxy(long id, OutputStream out) {
 		this.topics = new ArrayList<Topic>(0);
+		this.output = new PrintWriter(out, true);
 		this.id = id;
 	}
 
 	@Transition(name = "write", source = "0", target = "0")
-	public void write(@Data(name = "message") String msg) {
+	public synchronized void write(@Data(name = "message") String msg) {
 		output.println(msg);
 	}
 	
 	@Transition(name = "getName", source = "0", target = "0")
-	public void addTopic(@Data(name = "topicToAdd") Topic topic) {
+	public synchronized void addTopic(@Data(name = "topicToAdd") Topic topic) {
 		// TODO: make this a guard
 		if (!this.topics.contains(topic)) {
 			this.topics.add(topic);
 		}
+		System.err.println("Client proxy adding topic " + topic.toString());
 	}
 
 	@Transition(name = "removeTopic", source = "0", target = "0")
-	public void removeTopic(@Data(name = "topicToRemove") Topic topic) {
+	public synchronized void removeTopic(@Data(name = "topicToRemove") Topic topic) {
 		// TODO: make this a guard
 		if (this.topics.contains(topic)) {
 			this.topics.remove(topic);
 		}
+		System.err.println("Client proxy removing topic " + topic.toString());
+
 	}
 }

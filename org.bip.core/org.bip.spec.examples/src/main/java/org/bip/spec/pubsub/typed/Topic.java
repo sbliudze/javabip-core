@@ -10,7 +10,7 @@ import org.bip.api.PortType;
 
 @Ports({ @Port(name = "getName", type = PortType.spontaneous), @Port(name = "addClient", type = PortType.spontaneous),
 		@Port(name = "removeClient", type = PortType.spontaneous), @Port(name = "publish", type = PortType.spontaneous) })
-@ComponentType(initial = "0", name = "org.bip.spec.Topic")
+@ComponentType(initial = "0", name = "org.bip.spec.pubsub.typed.Topic")
 public class Topic implements TopicInterface {
     private String name;
     private HashSet<ClientProxy> clients; 
@@ -30,7 +30,7 @@ public class Topic implements TopicInterface {
         	
         	try {
 				client.addTopic(this);
-				client.write(name);
+				client.write("subscribe_ack " + this.name);
         	}
         	catch(Exception ex) {}
 
@@ -46,7 +46,7 @@ public class Topic implements TopicInterface {
             
             try {
 				client.removeTopic(this);
-				client.write(name);
+				client.write("unsubscribe_ack " + this.name);
             }
             catch (Exception ex) {
 			}
@@ -55,13 +55,14 @@ public class Topic implements TopicInterface {
 
 	@Transition(name = "publish", source = "0", target = "0")
 	public void publish(ClientProxy publishingClient, String message) {
-    	
+		String outputMsg = this.name + " " + message;
 		for (ClientProxy currentClient : clients) {
         	try {
 				currentClient.write(message);
         	}
         	catch(Exception ex) {}
         }        
+
     }
     
 }
