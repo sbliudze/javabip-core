@@ -191,6 +191,8 @@ public class TunellingExecutorHandler implements InvocationHandler {
 					return informNoParameters.invoke(internalExecutor, tunneledArguments);
 				}
 				else {
+					logger.debug("TunellingPortNames {}", tunellingPortName.get(globalWrapper));
+					logger.debug("TunnelingArgsNames {}", tunellingArgsNames.get(globalWrapper));
 					Object[] tunneledArguments = new Object[2];
 					tunneledArguments[0] = tunellingPortName.get(globalWrapper);
 					HashMap<String, Object> map = new HashMap<String, Object>();
