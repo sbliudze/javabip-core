@@ -2,10 +2,10 @@ package org.bip.spec.pubsub.typed;
 
 public interface TopicInterface {
 
-	void addClient(ClientProxy client);
+	void addClient(ClientProxyInterface clientProxy);
 
-	void removeClient(ClientProxy client);
+	void removeClient(ClientProxyInterface clientProxy);
 
-	void publish(ClientProxy publishingClient, String message);
+	void publish(ClientProxyInterface clientProxy, String message);
 	
 }

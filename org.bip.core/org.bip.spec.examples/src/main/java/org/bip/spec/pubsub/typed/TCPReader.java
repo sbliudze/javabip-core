@@ -32,7 +32,7 @@ public class TCPReader {
 	Logger logger = LoggerFactory.getLogger(TCPReader.class);
 	
 	private boolean connected;
-	private ClientProxy cproxy;
+	private ClientProxyInterface cproxy;
 	private Socket client_sock;
 	private CommandBuffer command_buff;
 	private InputReader reader;
@@ -41,9 +41,9 @@ public class TCPReader {
 
 	private boolean stillHasCommands;
 	
-	public TCPReader(Socket sock, long id, CommandBuffer buff) throws IOException {
+	public TCPReader(Socket sock, long id, CommandBuffer buff, ClientProxyInterface proxyForClient1) throws IOException {
 		System.out.println("TCPReader initializing");
-		this.cproxy = new ClientProxy(id, sock.getOutputStream());
+		this.cproxy = proxyForClient1;
 		this.id = id;
 		this.command_buff = buff;
 		this.client_sock = sock;
