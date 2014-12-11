@@ -9,7 +9,6 @@ import org.bip.annotations.Ports;
 import org.bip.annotations.Transition;
 import org.bip.api.BIPActor;
 import org.bip.api.PortType;
-import org.bip.spec.pubsub.typed.Command;
 
 @Ports({ @Port(name = "handleCommand", type = PortType.enforceable) })
 @ComponentType(initial = "0", name = "org.bip.spec.pubsub.untyped.CommandHandler")

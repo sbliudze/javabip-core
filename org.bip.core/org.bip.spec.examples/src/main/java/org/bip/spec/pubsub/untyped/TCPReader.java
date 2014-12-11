@@ -40,10 +40,15 @@ public class TCPReader {
 	private Command currentCommand;
 
 	private boolean stillHasCommands;
+
+	private long id;
 	
-	public TCPReader(BIPActor client, Socket sock, long id, CommandBuffer buff) throws IOException {
-		this.client = client;
-		this.command_buff = buff;
+	public TCPReader(Socket socket, int i, CommandBuffer buffer, BIPActor proxyForClient1) throws IOException {
+
+		this.client = proxyForClient1;
+		this.id = id;
+		this.command_buff = buffer;
+		this.client_sock = socket;
 		this.reader = new InputReader(this.client_sock.getInputStream());
 		this.stillHasCommands = true;
 
@@ -55,7 +60,7 @@ public class TCPReader {
 			stillHasCommands = false;
 	}
 
-	@Data(name = "command")
+	@Data(name = "readerInput")
 	public Command getNextCommand() throws InputFormatException, IOException {
 		reader.readCommand();
 		currentCommand = new Command(client, reader.getCommandId(), reader.getTopic(), reader.getMessage());

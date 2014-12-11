@@ -24,6 +24,7 @@ public class TopicManager {
     @Transition(name = "executeCommand", source = "0", target = "0")
 	public void executeCommand(@Data(name = "command") Command command) {
 
+		System.out.printf("Execute command %s: ", command.getId());
         switch(command.getId()){
         case SUBSCRIBE:
             subscribe(command.getClient(),command.getTopic());
