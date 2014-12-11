@@ -542,6 +542,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 				Object value = data.get(trData.name());
 				// TODO, CHECK, value can be null if the map is not properly constructed. Throw more informative exception.
 				args[i] = value;
+				i++;
 			}
 			logger.info("Invocation: " + transition.name() + " with args " + data);
 			componentMethod.invoke(bipComponent, args);

@@ -7,16 +7,16 @@ public class Command
     private CommandID id;
 	private String topic;
     private String message;
-	private ClientProxy client;
+	private ClientProxyInterface client;
    
-	public Command(ClientProxy client, CommandID commandID, String topic, String message) {
-        this.client = client;
+	public Command(ClientProxyInterface cproxy, CommandID commandID, String topic, String message) {
+		this.client = cproxy;
         this.id = commandID;
 		this.topic = topic;
         this.message = message;
     }
 
-    public ClientProxy getClient() {
+	public ClientProxyInterface getClient() {
 		return this.client;
     }
 

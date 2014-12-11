@@ -12,7 +12,7 @@ import org.bip.api.PortType;
 
 @Ports({ @Port(name = "putCommand", type = PortType.enforceable),
 		@Port(name = "getCommand", type = PortType.enforceable) })
-@ComponentType(initial = "0", name = "org.bip.spec.CommandBuffer")
+@ComponentType(initial = "0", name = "org.bip.spec.pubsub.typed.CommandBuffer")
 public class CommandBuffer {
 	
 	private LinkedList<Command> commandList;
@@ -27,6 +27,7 @@ public class CommandBuffer {
 
 	@Transition(name = "getCommand", source = "0", target = "0", guard = "isBufferNotEmpty")
 	public void getCommandToHandler() {
+		System.out.println("CommandBuffer giving command to Handler");
 		commandList.remove();
 	}
 
@@ -37,12 +38,14 @@ public class CommandBuffer {
 	
 	@Transition(name = "putCommand", source = "0", target = "0", guard = "isBufferNotFull")
 	public void putCommandFromReader(@Data(name = "input") Command command) {
+		System.out.println("CommandBuffer accepting command");
 		commandList.add(command);
 	}
 	
 	@Guard(name = "isBufferNotFull")
 	public boolean isBufferNotFull() {
-		return commandList.size() != bufferSize;
+		return commandList.size() < bufferSize;
+
 	}
 	
 	@Data(name = "command")

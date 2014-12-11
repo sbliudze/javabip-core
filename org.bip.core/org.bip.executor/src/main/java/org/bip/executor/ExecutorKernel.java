@@ -194,9 +194,9 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 			return;
 		}
 		
-		throw new BIPException("No transition of known type from state "
-					+ behaviour.getCurrentState() + " in component "
-					+ this.getId());
+		// throw new BIPException("No transition of known type from state "
+		// + behaviour.getCurrentState() + " in component "
+		// + this.getId());
 
 	}
 
@@ -228,8 +228,6 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 
 				try {
 					if (!behaviour.checkEnabledness(portID, parameter).get(0)) {
-						System.out.println(dataEvaluation);
-						System.out.flush();
 						throw new BIPException("Port with " + portID
 								+ " that requires data is not enabled for the received data");
 					}
