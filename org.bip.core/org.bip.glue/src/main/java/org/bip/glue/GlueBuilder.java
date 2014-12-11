@@ -10,6 +10,7 @@ package org.bip.glue;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.bip.annotations.ComponentType;
 import org.bip.api.BIPGlue;
 import org.bip.api.PortBase;
 
@@ -105,7 +107,7 @@ public abstract class GlueBuilder {
 
 			List<List<PortBase>> causesOptions = new ArrayList<List<PortBase>>();
 			causesOptions.add(causes);
-			requires = new RequireImpl(new PortBaseImpl(portId, spec.getCanonicalName()),
+			requires = new RequireImpl(new PortBaseImpl(portId, getComponentType(spec)),
 					causesOptions);
 
 			RequireImpl req = glue.addRequire(requires);
@@ -113,6 +115,19 @@ public abstract class GlueBuilder {
 		}
 	}
 
+	private String getComponentType(Class<?> spec) {
+		
+		Annotation classAnnotation = spec.getAnnotation(ComponentType.class);
+		// get component type
+		if (classAnnotation instanceof ComponentType) {
+			ComponentType componentTypeAnnotation = (ComponentType) classAnnotation;
+			return componentTypeAnnotation.name();
+		}
+		
+		return spec.getCanonicalName();
+		
+		
+	}
 	private void addAccept(Class<?> spec, String portId, Collection<PortBase> causes) {
 
 		AcceptImpl accepts;
@@ -129,7 +144,7 @@ public abstract class GlueBuilder {
 
 			Set<PortBase> setOfCauses = new LinkedHashSet<PortBase>(causes);
 
-			accepts = new AcceptImpl(new PortBaseImpl(portId, spec.getCanonicalName()), setOfCauses);
+			accepts = new AcceptImpl(new PortBaseImpl(portId, getComponentType(spec)), setOfCauses);
 
 			AcceptImpl acc = glue.addAccept(accepts);
 			acceptsMap.put(key, acc);
@@ -231,7 +246,7 @@ public abstract class GlueBuilder {
 
 			if (o instanceof String) {
 				String effectPortId = (String) o;
-				result.add(new PortBaseImpl(effectPortId, currentSpec.getCanonicalName()));
+				result.add(new PortBaseImpl(effectPortId, getComponentType(currentSpec)));
 				continue;
 			}
 
@@ -245,7 +260,7 @@ public abstract class GlueBuilder {
 	}
 
 	private String computeKey(Class<?> clazz, String portId) {
-		return clazz.getCanonicalName() + "#" + portId;
+		return getComponentType(clazz) + "#" + portId;
 	}
 
 	public DataWireBuilder data(Class<?> spec, String dataId) {
@@ -258,7 +273,7 @@ public abstract class GlueBuilder {
 			throw new IllegalArgumentException(
 					"DataId can not be an empty string.");
 
-		return new DataWireBuilder(new PortBaseImpl(dataId, spec.getCanonicalName()));
+		return new DataWireBuilder(new PortBaseImpl(dataId, getComponentType(spec)));
 
 	}
 
@@ -280,7 +295,7 @@ public abstract class GlueBuilder {
 				throw new IllegalArgumentException(
 						"DataId can not be an empty string.");
 
-			glue.addDataWire(new DataWireImpl(from, new PortBaseImpl(dataId, spec.getCanonicalName())));
+			glue.addDataWire(new DataWireImpl(from, new PortBaseImpl(dataId, getComponentType(spec))));
 
 		}
 

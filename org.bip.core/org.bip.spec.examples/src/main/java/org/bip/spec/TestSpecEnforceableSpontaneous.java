@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Ports({ @Port(name = "s", type = PortType.spontaneous), @Port(name = "p", type = PortType.enforceable) })
-@ComponentType(initial = "start", name = "org.bip.spec.TestSpecEnforceableSpontaneous")
+@ComponentType(initial = "start", name = "TestSpecEnforceableSpontaneous")
 public class TestSpecEnforceableSpontaneous {
 
     Logger logger = LoggerFactory.getLogger(SwitchableRoute.class);
