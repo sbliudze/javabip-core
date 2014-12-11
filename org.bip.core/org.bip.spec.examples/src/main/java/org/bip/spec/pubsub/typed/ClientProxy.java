@@ -16,12 +16,12 @@ import org.bip.api.PortType;
 @ComponentType(initial = "0", name = "org.bip.spec.pubsub.typed.ClientProxy")
 public class ClientProxy implements ClientProxyInterface {
 
-	private ArrayList<Topic> topics;
+	private ArrayList<String> topics;
 	private long id;
 	private PrintWriter output;
 
 	public ClientProxy(long id, OutputStream out) {
-		this.topics = new ArrayList<Topic>(0);
+		this.topics = new ArrayList<String>(0);
 		this.output = new PrintWriter(out, true);
 		this.id = id;
 	}
@@ -32,7 +32,7 @@ public class ClientProxy implements ClientProxyInterface {
 	}
 	
 	@Transition(name = "addTopic", source = "0", target = "0")
-	public synchronized void addTopic(@Data(name = "topicToAdd") Topic topic) {
+	public synchronized void addTopic(@Data(name = "topicToAdd") String topic) {
 		// TODO: make this a guard
 		if (!this.topics.contains(topic)) {
 			this.topics.add(topic);
@@ -41,7 +41,7 @@ public class ClientProxy implements ClientProxyInterface {
 	}
 
 	@Transition(name = "removeTopic", source = "0", target = "0")
-	public synchronized void removeTopic(@Data(name = "topicToRemove") Topic topic) {
+	public synchronized void removeTopic(@Data(name = "topicToRemove") String topic) {
 		// TODO: make this a guard
 		if (this.topics.contains(topic)) {
 			this.topics.remove(topic);

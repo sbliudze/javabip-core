@@ -96,19 +96,19 @@ public class TCPAcceptor {
 			TopicManagerInterface proxyForManager = (TopicManagerInterface) engine.register(top_manager,
 					"topicManager", true);
 
-			CommandHandler handler1 = new CommandHandler(top_manager);
+			CommandHandler handler1 = new CommandHandler(proxyForManager);
 			BIPActor commandHandler1 = engine.register(handler1, "commandHandler1", true);
 
-			CommandHandler handler2 = new CommandHandler(top_manager);
+			CommandHandler handler2 = new CommandHandler(proxyForManager);
 			BIPActor commandHandler2 = engine.register(handler2, "commandHandler2", true);
 
-			CommandHandler handler3 = new CommandHandler(top_manager);
+			CommandHandler handler3 = new CommandHandler(proxyForManager);
 			BIPActor commandHandler3 = engine.register(handler3, "commandHandler3", true);
 
-			CommandHandler handler4 = new CommandHandler(top_manager);
+			CommandHandler handler4 = new CommandHandler(proxyForManager);
 			BIPActor commandHandler4 = engine.register(handler4, "commandHandler4", true);
 
-			CommandHandler handler5 = new CommandHandler(top_manager);
+			CommandHandler handler5 = new CommandHandler(proxyForManager);
 			BIPActor commandHandler5 = engine.register(handler5, "commandHandler5", true);
 
 			Socket socket1 = tcpacceptor.accept();

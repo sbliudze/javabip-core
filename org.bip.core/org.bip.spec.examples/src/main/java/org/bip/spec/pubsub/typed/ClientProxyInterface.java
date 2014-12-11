@@ -5,7 +5,7 @@ public interface ClientProxyInterface {
 
 	void write(String msg);
 
-	void addTopic(Topic topic);
+	void addTopic(String topic);
 
-	void removeTopic(Topic topic);
+	void removeTopic(String topic);
 }

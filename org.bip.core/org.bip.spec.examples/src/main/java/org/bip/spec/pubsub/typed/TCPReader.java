@@ -42,14 +42,12 @@ public class TCPReader {
 	private boolean stillHasCommands;
 	
 	public TCPReader(Socket sock, long id, CommandBuffer buff, ClientProxyInterface proxyForClient1) throws IOException {
-		System.out.println("TCPReader initializing");
 		this.cproxy = proxyForClient1;
 		this.id = id;
 		this.command_buff = buff;
 		this.client_sock = sock;
 		this.reader = new InputReader(this.client_sock.getInputStream());
 		this.stillHasCommands = true;
-		System.out.println("TCPReader initialized");
 
 	}
 

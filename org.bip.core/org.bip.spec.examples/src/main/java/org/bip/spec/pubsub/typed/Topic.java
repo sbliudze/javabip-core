@@ -15,6 +15,7 @@ import org.bip.api.PortType;
 public class Topic implements TopicInterface {
     private String name;
 	private HashSet<ClientProxyInterface> clients;
+
     
     public Topic(String name) {
 
@@ -30,7 +31,7 @@ public class Topic implements TopicInterface {
         	clients.add(client);
         	
         	try {
-				client.addTopic(this);
+				client.addTopic(name);
 				client.write("subscribe_ack " + this.name);
         	}
         	catch(Exception ex) {}
@@ -46,7 +47,7 @@ public class Topic implements TopicInterface {
             this.clients.remove(client);
             
             try {
-				client.removeTopic(this);
+				client.removeTopic(name);
 				client.write("unsubscribe_ack " + this.name);
             }
             catch (Exception ex) {

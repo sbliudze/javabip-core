@@ -11,10 +11,10 @@ import org.bip.api.PortType;
 @ComponentType(initial = "0", name = "org.bip.spec.pubsub.typed.CommandHandler")
 public class CommandHandler {
 	
-	private TopicManager topicManager;
+	private TopicManagerInterface topicManager;
 
-	public CommandHandler(TopicManager topicManager) {
-		this.topicManager = topicManager;
+	public CommandHandler(TopicManagerInterface proxyForManager) {
+		this.topicManager = proxyForManager;
 	}
 
 	@Transition(name = "handleCommand", source = "0", target = "0")
