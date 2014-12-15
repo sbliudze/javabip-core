@@ -19,8 +19,8 @@ public class CommandHandler {
 
 	@Transition(name = "handleCommand", source = "0", target = "0")
 	public void handleCommand(@Data(name = "command") Command command) {
-		System.out.println("Command Handler handling command " + command.getId() + " of topic "
-				+ command.getTopic());
+		// System.out.println("Command Handler handling command " + command.getId() + " of topic "
+		// + command.getTopic());
 		topicManager.executeCommand(command);
 	}
 		

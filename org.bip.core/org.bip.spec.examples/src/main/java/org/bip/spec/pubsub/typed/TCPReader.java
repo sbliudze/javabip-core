@@ -31,7 +31,6 @@ public class TCPReader {
 
 	Logger logger = LoggerFactory.getLogger(TCPReader.class);
 	
-	private boolean connected;
 	private ClientProxyInterface cproxy;
 	private Socket client_sock;
 	private CommandBuffer command_buff;
@@ -39,7 +38,7 @@ public class TCPReader {
 	private Command currentCommand;
 	private long id;
 
-	private boolean stillHasCommands;
+	private boolean connected;
 	
 	public TCPReader(Socket sock, long id, CommandBuffer buff, ClientProxyInterface proxyForClient1) throws IOException {
 		this.cproxy = proxyForClient1;
@@ -47,31 +46,33 @@ public class TCPReader {
 		this.command_buff = buff;
 		this.client_sock = sock;
 		this.reader = new InputReader(this.client_sock.getInputStream());
-		this.stillHasCommands = true;
+		this.connected = true;
 
 	}
 
 	@Transition(name = "giveCommandToBuffer", source = "0", target = "0", guard = "commandExists")
 	public void giveCommandtoBuffer() {
-		System.out.println("TCPReader giving command to buffer");
-		if (reader.getCommandId() == CommandID.ENDOFCLIENT){
-			System.err.println("Client with id " + id + "is terminating");
-			stillHasCommands = false;
-		}
+		// System.out.println("TCPReader giving command to buffer");
+		 if (reader.getCommandId() == CommandID.ENDOFCLIENT){
+			// System.err.println("Client with id " + id + "is terminating");
+			connected = false;
+		 }
 	}
 
 	@Data(name = "readerInput")
 	public Command getNextCommand() throws InputFormatException, IOException {
 		reader.readCommand();
 		currentCommand = new Command(cproxy, reader.getCommandId(), reader.getTopic(), reader.getMessage());
-		System.out.println(currentCommand.getMessage());
+		// System.err.println("Client with id " + id + "received command: " +
+		// currentCommand.getId());
 		return currentCommand;
 	}
 
 	@Guard(name = "commandExists")
 	public boolean commandExists() {
-		System.out.println("Evaluation of guard commandExists: " + stillHasCommands);
-		return stillHasCommands;
+		// System.out.println("Evaluation of guard commandExists: " + stillHasCommands +
+		// " in client " + id);
+		return connected;
 	}
 
 	
