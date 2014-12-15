@@ -58,13 +58,13 @@ public class TCPAcceptor {
 			ServerSocket tcpacceptor = new ServerSocket(7676);
 
 
-			Thread tr = new Thread(new TestPubSub());
+			Thread tr = new Thread(new TestPubSub(false));
 			tr.start();
 
-			Thread tr2 = new Thread(new TestPubSub());
+			Thread tr2 = new Thread(new TestPubSub(false));
 			tr2.start();
 
-			Thread tr3 = new Thread(new TestPubSub());
+			Thread tr3 = new Thread(new TestPubSub(true));
 			tr3.start();
 		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
 
@@ -112,10 +112,10 @@ public class TCPAcceptor {
 			BIPActor commandHandler5 = engine.register(handler5, "commandHandler5", true);
 
 			Socket socket1 = tcpacceptor.accept();
-			System.out.println("First accept");
 			Socket socket2 = tcpacceptor.accept();
-			System.out.println("Second accept");
 			Socket socket3 = tcpacceptor.accept();
+
+
 
 			ClientProxy client1 = new ClientProxy(1, socket1.getOutputStream());
 			ClientProxyInterface proxyForClient1 = (ClientProxyInterface) engine.register(client1, "client1", true);
@@ -162,7 +162,7 @@ public class TCPAcceptor {
 			// bComponent.counterA > 0, true);
 
 		try {
-				Thread.sleep(10000);
+				Thread.sleep(3000);
 		} catch (InterruptedException e3) {
 			e3.printStackTrace();
 		}

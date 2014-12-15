@@ -2,7 +2,6 @@ package org.bip.executor;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.HashMap;
 
 import org.bip.api.BIPActor;
 import org.bip.api.BIPEngine;
@@ -12,12 +11,15 @@ import org.bip.engine.DataCoordinatorKernel;
 import org.bip.engine.api.EngineFactory;
 import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
 import org.bip.glue.TwoSynchronGlueBuilder;
-import org.bip.spec.pubsub.untyped.ClientProxy;
-import org.bip.spec.pubsub.untyped.CommandBuffer;
-import org.bip.spec.pubsub.untyped.CommandHandler;
-import org.bip.spec.pubsub.untyped.TCPReader;
-import org.bip.spec.pubsub.untyped.Topic;
-import org.bip.spec.pubsub.untyped.TopicManager;
+import org.bip.spec.pubsub.typed.ClientProxy;
+import org.bip.spec.pubsub.typed.ClientProxyInterface;
+import org.bip.spec.pubsub.typed.CommandBuffer;
+import org.bip.spec.pubsub.typed.CommandHandler;
+import org.bip.spec.pubsub.typed.TCPReader;
+import org.bip.spec.pubsub.typed.Topic;
+import org.bip.spec.pubsub.typed.TopicInterface;
+import org.bip.spec.pubsub.typed.TopicManager;
+import org.bip.spec.pubsub.typed.TopicManagerInterface;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +28,7 @@ import akka.actor.ActorSystem;
 
 import com.typesafe.config.ConfigFactory;
 
-public class UntypedTCPAcceptor {
+public class NewTCPAcceptor {
 	
 	ActorSystem system;
 	OrchestratedExecutorFactory factory;
@@ -56,17 +58,17 @@ public class UntypedTCPAcceptor {
 
 
 
-			BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(
-					new BIPCoordinatorImpl(system)));
+		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
 
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
 			public void configure() {
 
-				synchron(TCPReader.class, "giveCommandToBuffer").to(CommandBuffer.class, "putCommand");
+					 synchron(TCPReader.class, "giveCommandToBuffer").to(CommandBuffer.class,
+					 "putCommand");
 					synchron(CommandBuffer.class, "getCommand").to(CommandHandler.class, "handleCommand");
 
-					data(TCPReader.class, "readerInput").to(CommandBuffer.class, "input");
+					 data(TCPReader.class, "readerInput").to(CommandBuffer.class, "input");
 					data(CommandBuffer.class, "command").to(CommandHandler.class, "command");
 			}
 
@@ -78,16 +80,13 @@ public class UntypedTCPAcceptor {
 			BIPActor actorBuffer = engine.register(buffer, "buffer", true);
 
 			Topic topic1 = new Topic("epfl");
-			BIPActor proxyForTopic1 = engine.register(topic1, "topic1", true);
+			TopicInterface proxyForTopic1 = (TopicInterface) engine.register(topic1, "topic1", true);
 
 			Topic topic2 = new Topic("concurrence");
-			BIPActor proxyForTopic2 = engine.register(topic2, "topic2", true);
-			HashMap<String, BIPActor> topics = new HashMap<String, BIPActor>();
-			topics.put("epfl", proxyForTopic1);
-			topics.put("epfl", proxyForTopic2);
+			TopicInterface proxyForTopic2 = (TopicInterface) engine.register(topic2, "topic2", true);
 
-			TopicManager top_manager = new TopicManager(topics);
-			BIPActor proxyForManager = engine.register(top_manager,
+			TopicManager top_manager = new TopicManager(proxyForTopic1, proxyForTopic2);
+			TopicManagerInterface proxyForManager = (TopicManagerInterface) engine.register(top_manager,
 					"topicManager", true);
 
 			CommandHandler handler1 = new CommandHandler(proxyForManager);
@@ -105,23 +104,25 @@ public class UntypedTCPAcceptor {
 			CommandHandler handler5 = new CommandHandler(proxyForManager);
 			BIPActor commandHandler5 = engine.register(handler5, "commandHandler5", true);
 
-			Thread tr = new Thread(new UntypedTestPubSub());
+			Thread tr = new Thread(new TestPubSub(true));
 			tr.start();
 
-			// Thread tr2 = new Thread(new UntypedTestPubSub());
+			// Thread tr2 = new Thread(new TestPubSub(true));
 			// tr2.start();
 			//
-			// Thread tr3 = new Thread(new UntypedTestPubSub());
+			// Thread tr3 = new Thread(new TestPubSub(true));
 			// tr3.start();
 
 			ClientProxy client1 = new ClientProxy(1, tcpacceptor);
-			BIPActor proxyForClient1 = engine.register(client1, "client1", true);
+			ClientProxyInterface proxyForClient1 = (ClientProxyInterface) engine.register(client1, "client1", true);
 
 			// ClientProxy client2 = new ClientProxy(2, tcpacceptor);
-			// BIPActor proxyForClient2 = engine.register(client2, "client2", true);
+			// ClientProxyInterface proxyForClient2 = (ClientProxyInterface)
+			// engine.register(client2, "client2", true);
 			//
 			// ClientProxy client3 = new ClientProxy(3, tcpacceptor);
-			// BIPActor proxyForClient3 = engine.register(client3, "client3", true);
+			// ClientProxyInterface proxyForClient3 = (ClientProxyInterface)
+			// engine.register(client3, "client3", true);
 
 			TCPReader reader1;
 			try {
@@ -148,20 +149,23 @@ public class UntypedTCPAcceptor {
 			// }
 
 
+
 		engine.specifyGlue(bipGlue);
 		engine.start();
 
 		engine.execute();
-			try {
-				Thread.sleep(2500);
-			} catch (InterruptedException e3) {
-				e3.printStackTrace();
-			}
+
+		try {
+				Thread.sleep(3000);
+		} catch (InterruptedException e3) {
+			e3.printStackTrace();
+		}
 
 			// int transitions = client1.noOfTransitions + client2.noOfTransitions +
 			// client3.noOfTransitions;
 			// // System.out.println("Number of transitions: " + transitions);
-			// assertTrue("Correct number of transitions for client proxys", transitions == 12);
+			// assertTrue("Correct number of transitions for client proxys", client1.noOfTransitions
+			// == 12);
 
 		engine.stop();
 		engineFactory.destroy(engine);
