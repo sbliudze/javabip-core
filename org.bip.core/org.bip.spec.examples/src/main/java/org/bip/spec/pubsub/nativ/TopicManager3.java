@@ -2,6 +2,7 @@ package org.bip.spec.pubsub.nativ;
 
 import java.util.ArrayList;
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 
@@ -9,6 +10,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class TopicManager3 {
 	
+	private final Lock mutex = new ReentrantLock();
 	private final ReentrantReadWriteLock topics_rwlock= new ReentrantReadWriteLock();
 	private final Lock topics_read_lock=topics_rwlock.readLock();
 	private final Lock topics_write_lock=topics_rwlock.writeLock();
@@ -58,6 +60,7 @@ public class TopicManager3 {
 	
     private void subscribe(ClientProxy3 client, String topic_name)
     {
+		this.mutex.lock();
     	this.topics_read_lock.lock();
         Topic3 topic = getTopic(topic_name);
     	this.topics_read_lock.unlock();
@@ -73,6 +76,7 @@ public class TopicManager3 {
         }
         
         topic.addClient(client);
+		this.mutex.unlock();
         
         
         
@@ -80,19 +84,21 @@ public class TopicManager3 {
     
     private void unsubscribe(ClientProxy3 client, String topic_name)
     {
+		this.mutex.lock();
     	this.topics_read_lock.lock();
         Topic3 topic = getTopic(topic_name);
         this.topics_read_lock.unlock();
         if(topic !=null){
         		topic.removeClient(client);
         }
-        
+		this.mutex.unlock();
         
 
     }
     
     private void publish(String topic_name, String message)
     {
+		this.mutex.lock();
     	this.topics_read_lock.lock();
         Topic3 topic = getTopic(topic_name);
     	this.topics_read_lock.unlock();
@@ -100,6 +106,7 @@ public class TopicManager3 {
         if(topic != null){
             topic.publish(message);
         }
+		this.mutex.unlock();
     }
 
 

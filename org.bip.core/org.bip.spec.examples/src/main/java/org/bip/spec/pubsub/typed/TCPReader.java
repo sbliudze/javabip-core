@@ -52,9 +52,7 @@ public class TCPReader {
 
 	@Transition(name = "giveCommandToBuffer", source = "0", target = "0", guard = "commandExists")
 	public void giveCommandtoBuffer() {
-		// System.out.println("TCPReader giving command to buffer");
 		 if (reader.getCommandId() == CommandID.ENDOFCLIENT){
-			// System.err.println("Client with id " + id + "is terminating");
 			connected = false;
 		 }
 	}
@@ -63,15 +61,11 @@ public class TCPReader {
 	public Command getNextCommand() throws InputFormatException, IOException {
 		reader.readCommand();
 		currentCommand = new Command(cproxy, reader.getCommandId(), reader.getTopic(), reader.getMessage());
-		// System.err.println("Client with id " + id + "received command: " +
-		// currentCommand.getId());
 		return currentCommand;
 	}
 
 	@Guard(name = "commandExists")
 	public boolean commandExists() {
-		// System.out.println("Evaluation of guard commandExists: " + stillHasCommands +
-		// " in client " + id);
 		return connected;
 	}
 

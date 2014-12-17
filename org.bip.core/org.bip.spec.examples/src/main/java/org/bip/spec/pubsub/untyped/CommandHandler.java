@@ -22,8 +22,10 @@ public class CommandHandler {
 
 	@Transition(name = "handleCommand", source = "0", target = "0")
 	public void handleCommand(@Data(name = "command") Command command) {
+		// System.out.println("Handling command: " + command.getId());
 		HashMap<String, Object> data = new HashMap<String, Object>();
-		data.put("command", command);
-		topicManager.inform("executeCommand", data);	}
+		data.put("value", command);
+		topicManager.inform("executeCommand", data);
+	}
 
 }

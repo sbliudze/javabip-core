@@ -33,11 +33,9 @@ public class Topic
         	clients.add(client);
         	
         	try {
-        		
         		HashMap<String, Object> data = new HashMap<String, Object>();
         		data.put("topic", name);
         		client.inform("addTopic", data);
-        		
         	}
         	catch(Exception ex) {}
 

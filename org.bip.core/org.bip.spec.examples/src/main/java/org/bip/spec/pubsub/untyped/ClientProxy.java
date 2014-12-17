@@ -29,6 +29,7 @@ public class ClientProxy implements BIPActorAware {
 	private long id;
 	private Socket socket;
 	public int noOfTransitions;
+	private long bgtime;
 
 	public Socket getSocket() {
 		return socket;
@@ -51,25 +52,34 @@ public class ClientProxy implements BIPActorAware {
 	@Transition(name="write", source="0", target="0")
 	public void write(@Data(name="msg") String msg) {
 		output.println(msg);
-		// System.out.printf("Client proxy %s receives messages %s", bipActor, msg);
+		noOfTransitions++;
 	}
 	
 	@Transition(name="addTopic", source="0", target="0")
 	public void addTopic(@Data(name="topic") String topic) {
 		if (!this.topics.contains(topic)) {
 			this.topics.add(topic);
-			this.write("subscribe_ack epfl");
+
+			if (noOfTransitions == 0) {
+				bgtime = System.currentTimeMillis();
+			}
+			this.write("subscribe_ack " + topic);
+			noOfTransitions++;
 		}
-		// System.out.printf("Client proxy %s subscribes to topic %s", bipActor, topic);
 	}
 
 	@Transition(name="removeTopic", source="0", target="0")
 	public void removeTopic(@Data(name="topic") String topic) {
 		if (this.topics.contains(topic)) {
 			this.topics.remove(topic);
-			this.write("unsubscribe_ack epfl");
+			this.write("unsubscribe_ack " + topic);
+			if (noOfTransitions > 1000) {
+				System.out.println("Transitions: " + noOfTransitions);
+				System.out.printf("In the time of cholera: %s", System.currentTimeMillis() - bgtime);
+				System.exit(-1);
+			}
+			noOfTransitions++;
 		}
-		// System.out.printf("Client proxy %s unsubscribes from topic %s", bipActor, topic);
 	}
 
 	@Override

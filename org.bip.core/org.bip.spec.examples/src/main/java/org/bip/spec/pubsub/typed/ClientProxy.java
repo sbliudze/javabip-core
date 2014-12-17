@@ -23,8 +23,9 @@ public class ClientProxy implements ClientProxyInterface {
 	private long id;
 	private PrintWriter output;
 	private Socket socket;
+	private long bgtime;
 
-	// public int noOfTransitions;
+	public int noOfTransitions;
 
 	public Socket getSocket() {
 		return socket;
@@ -34,6 +35,7 @@ public class ClientProxy implements ClientProxyInterface {
 		this.topics = new ArrayList<String>(0);
 		this.output = new PrintWriter(out, true);
 		this.id = id;
+
 	}
 
 	public ClientProxy(int id2, ServerSocket tcpacceptor) throws IOException {
@@ -46,7 +48,7 @@ public class ClientProxy implements ClientProxyInterface {
 	@Transition(name = "write", source = "0", target = "0")
 	public synchronized void write(@Data(name = "message") String msg) {
 		output.println(msg);
-		// noOfTransitions++;
+		noOfTransitions++;
 
 	}
 	
@@ -55,7 +57,10 @@ public class ClientProxy implements ClientProxyInterface {
 		// TODO: make this a guard
 		if (!this.topics.contains(topic)) {
 			this.topics.add(topic);
-			// noOfTransitions++;
+			if (noOfTransitions == 0) {
+				bgtime = System.currentTimeMillis();
+			}
+			noOfTransitions++;
 		}
 		// System.err.println("Client proxy adding topic " + topic.toString());
 	}
@@ -65,7 +70,13 @@ public class ClientProxy implements ClientProxyInterface {
 		// TODO: make this a guard
 		if (this.topics.contains(topic)) {
 			this.topics.remove(topic);
-			// noOfTransitions++;
+			if (noOfTransitions > 1000) {
+			System.out.println("Transitions: " + noOfTransitions);
+			System.out.printf("In the time of cholera: %s", System.currentTimeMillis() - bgtime);
+				System.exit(-1);
+			}
+
+			noOfTransitions++;
 		}
 		// System.err.println("Client proxy removing topic " + topic.toString());
 

@@ -9,7 +9,7 @@ public class CommandBuffer3 {
 	
 	private LinkedList<Command3> commandList;
 	private int max_size;
-	private final Lock lock=new ReentrantLock();
+	private final Lock lock = new ReentrantLock();
 	private final Condition not_full  = lock.newCondition(); 
 	private final Condition not_empty = lock.newCondition(); 
 	
@@ -28,7 +28,6 @@ public class CommandBuffer3 {
 			this.not_full.signal();
 			return c;
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally{
 			this.lock.unlock();
@@ -45,7 +44,6 @@ public class CommandBuffer3 {
 			this.commandList.add(command);
 			this.not_empty.signal();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally{
 			this.lock.unlock();

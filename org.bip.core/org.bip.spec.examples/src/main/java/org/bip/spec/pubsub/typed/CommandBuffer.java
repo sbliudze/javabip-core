@@ -16,7 +16,6 @@ import org.bip.api.PortType;
 public class CommandBuffer {
 	
 	private LinkedList<Command> commandList;
-
 	private int bufferSize;
 	
 	public CommandBuffer(int bufferSize){
@@ -27,7 +26,6 @@ public class CommandBuffer {
 
 	@Transition(name = "getCommand", source = "0", target = "0", guard = "isBufferNotEmpty")
 	public void getCommandToHandler() {
-		// System.out.println("CommandBuffer giving command to Handler");
 		commandList.remove();
 	}
 
@@ -38,7 +36,6 @@ public class CommandBuffer {
 	
 	@Transition(name = "putCommand", source = "0", target = "0", guard = "isBufferNotFull")
 	public void putCommandFromReader(@Data(name = "input") Command command) {
-		// System.out.println("CommandBuffer accepting command");
 		commandList.add(command);
 	}
 	
