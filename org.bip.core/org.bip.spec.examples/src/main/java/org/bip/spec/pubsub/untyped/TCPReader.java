@@ -40,7 +40,6 @@ public class TCPReader {
 	private Command currentCommand;
 
 	private boolean stillHasCommands;
-
 	private long id;
 	
 	public TCPReader(Socket socket, int i, CommandBuffer buffer, BIPActor proxyForClient1) throws IOException {
@@ -54,6 +53,7 @@ public class TCPReader {
 
 	}
 
+
 	@Transition(name = "giveCommandToBuffer", source = "0", target = "0", guard = "commandExists")
 	public void giveCommandtoBuffer() {
 		if (reader.getCommandId() == CommandID.ENDOFCLIENT)
@@ -64,6 +64,8 @@ public class TCPReader {
 	public Command getNextCommand() throws InputFormatException, IOException {
 		reader.readCommand();
 		currentCommand = new Command(client, reader.getCommandId(), reader.getTopic(), reader.getMessage());
+		// System.err.println("Client with id " + id + "received command: " +
+		// currentCommand.getId());
 		return currentCommand;
 	}
 

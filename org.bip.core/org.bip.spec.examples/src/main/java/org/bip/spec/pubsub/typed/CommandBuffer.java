@@ -27,7 +27,7 @@ public class CommandBuffer {
 
 	@Transition(name = "getCommand", source = "0", target = "0", guard = "isBufferNotEmpty")
 	public void getCommandToHandler() {
-		System.out.println("CommandBuffer giving command to Handler");
+		// System.out.println("CommandBuffer giving command to Handler");
 		commandList.remove();
 	}
 
@@ -38,7 +38,7 @@ public class CommandBuffer {
 	
 	@Transition(name = "putCommand", source = "0", target = "0", guard = "isBufferNotFull")
 	public void putCommandFromReader(@Data(name = "input") Command command) {
-		System.out.println("CommandBuffer accepting command");
+		// System.out.println("CommandBuffer accepting command");
 		commandList.add(command);
 	}
 	

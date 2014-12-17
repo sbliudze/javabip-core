@@ -278,7 +278,8 @@ class BehaviourImpl implements ExecutableBehaviour {
 	public boolean existInCurrentStateAndEnforceableWithData() {
 		
 		for (ExecutableTransition transition : stateTransitions.get(currentState)) {
-			if (transition.getType().equals(PortType.enforceable) && transition.hasDataOnGuards()) {
+			if (transition.getType().equals(PortType.enforceable)) {
+				// && transition.hasDataOnGuards()) {
 				return true;
 			}
 		}
