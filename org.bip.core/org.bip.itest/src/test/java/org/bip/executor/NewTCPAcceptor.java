@@ -95,14 +95,14 @@ public class NewTCPAcceptor {
 			CommandHandler handler2 = new CommandHandler(proxyForManager);
 			BIPActor commandHandler2 = engine.register(handler2, "commandHandler2", true);
 
-			CommandHandler handler3 = new CommandHandler(proxyForManager);
-			BIPActor commandHandler3 = engine.register(handler3, "commandHandler3", true);
-
-			CommandHandler handler4 = new CommandHandler(proxyForManager);
-			BIPActor commandHandler4 = engine.register(handler4, "commandHandler4", true);
-
-			CommandHandler handler5 = new CommandHandler(proxyForManager);
-			BIPActor commandHandler5 = engine.register(handler5, "commandHandler5", true);
+			// CommandHandler handler3 = new CommandHandler(proxyForManager);
+			// BIPActor commandHandler3 = engine.register(handler3, "commandHandler3", true);
+			//
+			// CommandHandler handler4 = new CommandHandler(proxyForManager);
+			// BIPActor commandHandler4 = engine.register(handler4, "commandHandler4", true);
+			//
+			// CommandHandler handler5 = new CommandHandler(proxyForManager);
+			// BIPActor commandHandler5 = engine.register(handler5, "commandHandler5", true);
 
 			Thread tr = new Thread(new TestPubSub(true));
 			tr.start();
@@ -156,7 +156,7 @@ public class NewTCPAcceptor {
 		engine.execute();
 
 		try {
-				Thread.sleep(3000);
+				Thread.sleep(50000);
 		} catch (InterruptedException e3) {
 			e3.printStackTrace();
 		}

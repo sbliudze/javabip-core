@@ -13,7 +13,7 @@ import org.junit.Test;
 public class TCPAcceptorNative
 {
 	private static final int BUFFER_SIZE=10;
-	private static final int HANDLER_POOL_SIZE=5;
+	private static final int HANDLER_POOL_SIZE = 2;
 	
 	
 	@Test

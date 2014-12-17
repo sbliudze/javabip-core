@@ -45,50 +45,53 @@ public class TestPubSub implements Runnable {
 			} catch (InterruptedException ex) {
 				Thread.currentThread().interrupt();
 			}
-			long startTime = System.currentTimeMillis();
+			// long startTime = System.currentTimeMillis();
 
-			output.subscribeTo(topics.get(0));
-			error += inputCheck.checkSubscribe(topics.get(0));
-			output.publish(topics.get(0), msgs.get(0));
-			error += inputCheck.checkPublish(topics.get(0), msgs.get(0));
-			output.unsubscribeTo(topics.get(0));
-			error += inputCheck.checkUnsubscribe(topics.get(0));
+			// output.subscribeTo(topics.get(0));
+			// // error += inputCheck.checkSubscribe(topics.get(0));
+			// output.publish(topics.get(0), msgs.get(0));
+			// // error += inputCheck.checkPublish(topics.get(0), msgs.get(0));
+			// output.unsubscribeTo(topics.get(0));
+			// // error += inputCheck.checkUnsubscribe(topics.get(0));
 
-			long endTime1 = System.currentTimeMillis();
-			long duration1 = (endTime1 - startTime);
-			System.err.println("Time for test1: " + duration1);
+			// long endTime1 = System.currentTimeMillis();
+			// long duration1 = (endTime1 - startTime);
+			// System.err.println("Time for test1: " + duration1);
 
 
 
 
 			// with two topics
-			System.out.println("**** TEST 2 ***");
-			error = 0;
+			// System.out.println("**** TEST 2 ***");
+			// error = 0;
+			for (int i = 0; i < 100; i++) {
 			output.subscribeTo(topics.get(0));
-			error += inputCheck.checkSubscribe(topics.get(0));
+			// error += inputCheck.checkSubscribe(topics.get(0));
 			output.subscribeTo(topics.get(1));
-			error += inputCheck.checkSubscribe(topics.get(1));
+			// error += inputCheck.checkSubscribe(topics.get(1));
 
 			output.publish(topics.get(0), msgs.get(0));
-			error += inputCheck.checkPublish(topics.get(0), msgs.get(0));
+			// error += inputCheck.checkPublish(topics.get(0), msgs.get(0));
 			output.publish(topics.get(1), msgs.get(1));
-			error += inputCheck.checkPublish(topics.get(1), msgs.get(1));
+			// error += inputCheck.checkPublish(topics.get(1), msgs.get(1));
 
 			output.unsubscribeTo(topics.get(0));
-			error += inputCheck.checkUnsubscribe(topics.get(0));
+			// error += inputCheck.checkUnsubscribe(topics.get(0));
 
 			output.publish(topics.get(0), msgs.get(1)); // no check as we are not supposed to
 			// receive anything
 			output.publish(topics.get(1), msgs.get(0));
-			error += inputCheck.checkPublish(topics.get(1), msgs.get(0));
+			// error += inputCheck.checkPublish(topics.get(1), msgs.get(0));
 
 			output.unsubscribeTo(topics.get(1));
-			error += inputCheck.checkUnsubscribe(topics.get(1));
-			long endTime = System.currentTimeMillis();
-			long duration = (endTime - startTime);
-			System.err.println("Time for test2: " + duration);
+			// error += inputCheck.checkUnsubscribe(topics.get(1));
+			}
+			// long endTime = System.currentTimeMillis();
+			// long duration = (endTime - startTime);
+			// System.err.println("Time for test2: " + duration);
 
-			System.err.println("Number of errors: " + error);
+
+			// System.err.println("Number of errors: " + error);
 
 		} catch (IOException e) {
 			System.err.println("Fail to accept client connection");

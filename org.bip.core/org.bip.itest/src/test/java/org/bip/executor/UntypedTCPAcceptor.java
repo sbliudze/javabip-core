@@ -54,8 +54,6 @@ public class UntypedTCPAcceptor {
 		try {
 			ServerSocket tcpacceptor = new ServerSocket(7676);
 
-
-
 			BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(
 					new BIPCoordinatorImpl(system)));
 
@@ -84,7 +82,7 @@ public class UntypedTCPAcceptor {
 			BIPActor proxyForTopic2 = engine.register(topic2, "topic2", true);
 			HashMap<String, BIPActor> topics = new HashMap<String, BIPActor>();
 			topics.put("epfl", proxyForTopic1);
-			topics.put("epfl", proxyForTopic2);
+			topics.put("concurrence", proxyForTopic2);
 
 			TopicManager top_manager = new TopicManager(topics);
 			BIPActor proxyForManager = engine.register(top_manager,
@@ -153,7 +151,7 @@ public class UntypedTCPAcceptor {
 
 		engine.execute();
 			try {
-				Thread.sleep(2500);
+				Thread.sleep(25000);
 			} catch (InterruptedException e3) {
 				e3.printStackTrace();
 			}
