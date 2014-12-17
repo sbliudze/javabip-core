@@ -63,7 +63,7 @@ public class VoiceAgregation2 implements ClientCaller {
 	{
 		 System.out.println("VoiceAgregation "+ " is trasferring voice to client "+ dialerId);
 		 HashMap<String, Object> dataMap = new HashMap<String, Object>();
-		 dataMap.put("waiterId", waiterId);
+		 dataMap.put("otherId", dialerId);
 		 clientActors.get(dialerId).inform("voice",dataMap);
 	}
 }

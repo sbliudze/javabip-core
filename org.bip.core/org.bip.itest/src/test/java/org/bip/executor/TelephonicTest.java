@@ -124,7 +124,7 @@ public class TelephonicTest {
 		actor3.inform("notify");
 
 		try {
-			Thread.sleep(60000);
+			Thread.sleep(90000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

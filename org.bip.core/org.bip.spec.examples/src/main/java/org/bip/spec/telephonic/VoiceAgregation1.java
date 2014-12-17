@@ -7,8 +7,6 @@ import org.bip.annotations.ExecutableBehaviour;
 import org.bip.api.BIPActor;
 import org.bip.api.PortType;
 import org.bip.executor.BehaviourBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class VoiceAgregation1 implements ClientCaller {
 	private int n;
@@ -65,7 +63,7 @@ public class VoiceAgregation1 implements ClientCaller {
 	{
 		 System.out.println("VoiceAgregation "+ " is trasferring voice to client "+ dialerId);
 		 HashMap<String, Object> dataMap = new HashMap<String, Object>();
-		 dataMap.put("waiterId", waiterId);
+		 dataMap.put("otherId", waiterId);
 		 clientActors.get(dialerId).inform("voice",dataMap);
 	}
 

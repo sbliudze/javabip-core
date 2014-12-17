@@ -50,20 +50,22 @@ public class DiscAgregation1 implements ClientCaller {
         return behaviourBuilder;
     }
 	
-	public void discUp(@Data(name="dialerId") Integer dialerId, @Data(name="waiterId") Integer waiterId )
+	public void discUp(@Data(name="id1") Integer dialerId, @Data(name="id2") Integer waiterId )
 	{
-	 	 System.out.println("VoiceAgregation "+ " is notified of "+ dialerId+" speaking to " + waiterId);
+	 	 System.out.println("DiscAgregation "+ " is notified of "+ dialerId +" voicing to " + waiterId);
 		 HashMap<String, Object> dataMap = new HashMap<String, Object>();
-		 dataMap.put("dialerId", dialerId);
-		 dataMap.put("waiterId", waiterId);
+		 dataMap.put("id1", dialerId);
+		 dataMap.put("id2", waiterId);
 		 discSync.inform("disc1",dataMap);
 	}
 	
-	public void discDown(@Data(name="dialerId") Integer dialerId, @Data(name="waiterId") Integer waiterId)
+	public void discDown(@Data(name="id1") Integer dialerId, @Data(name="id2") Integer waiterId)
 	{
 		 System.out.println("VoiceAgregation "+ " is trasferring disc to client "+ dialerId);
 		 HashMap<String, Object> dataMap = new HashMap<String, Object>();
-		 dataMap.put("waiterId", waiterId);
+		 dataMap.put("id1", dialerId);
+		 dataMap.put("id2", waiterId);
 		 clientActors.get(dialerId).inform("disc",dataMap);
+		 clientActors.get(waiterId).inform("disc",dataMap);
 	}
 }

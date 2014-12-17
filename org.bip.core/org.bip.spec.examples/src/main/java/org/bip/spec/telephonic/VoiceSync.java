@@ -20,13 +20,13 @@ public class VoiceSync {
 	BIPActor voice2Actor;
 	
 	//array with 1 on the places of those who are waiting for a call
-	AtomicIntegerArray waitersIds;
+	AtomicIntegerArray voice1;
 	//array with the corresponding dealerId on places of those  who the dialers want to talk to
-	AtomicIntegerArray dialerIds;
+	AtomicIntegerArray voice2;
 	
 	public VoiceSync(int n)	{
-		waitersIds = new AtomicIntegerArray(n);
-		dialerIds = new AtomicIntegerArray(n);
+		voice1 = new AtomicIntegerArray(n);
+		voice2 = new AtomicIntegerArray(n);
 	}
 
 	public void setExecutorRefs(BIPActor actorCaller, BIPActor actorCallee) {
@@ -36,27 +36,37 @@ public class VoiceSync {
 	}
 	
 	@Transition(name = "voice1", source = "s0", target = "s0", guard = "")
-	public void dial(@Data(name="dialerId") Integer dialerId, @Data(name="waiterId") Integer waiterId)	{
-		System.err.println("DialWaitSync: "+ dialerId +" wanting to dial " + waiterId
-				+". waiters array is "  + waitersIds);
-		dialerIds.set(waiterId-1, dialerId);
-		if (waitersIds.get(waiterId-1)!=1)
-		{return;}
-			System.err.println("Chosen: "+ dialerId + " for "+ waiterId);
+	public void dial(@Data(name="dialerId") Integer voice1Id, @Data(name="waiterId") Integer voice2Id)	{
+		System.err.println("Voice1: "+ voice1Id +" ready to voice " + voice2Id);
+		
+		if (voice2.get(voice2Id-1)!=1)
+		{voice1.set(voice1Id-1, 1);
+		return;}
+			System.err.println("Voicing: "+ voice1Id + " with "+ voice2Id);
 			//connect the dialer and the waiter
-			dialerIds.set(waiterId-1, 0);
-			waitersIds.set(waiterId-1, 0);
+			voice2.set(voice2Id-1, 0);
 			HashMap<String, Object> dataMap = new HashMap<String, Object>();
-			 dataMap.put("waiterId", waiterId);
-			 dataMap.put("dialerId", dialerId);
+			 dataMap.put("waiterId", voice2Id);
+			 dataMap.put("dialerId", voice1Id);
 			 voice1Actor.inform("voiceDown", dataMap);
 			 voice2Actor.inform("voiceDown", dataMap);
-			System.err.println("Client "+ dialerId + " is being connected with "+ waiterId);
+			System.err.println("Client "+ voice1Id + " is being voiced with "+ voice2Id);
 	}
 	
 	@Transition(name = "voice2", source = "s0", target = "s0", guard = "")
-	public void waitCall(@Data(name="waiterId") Integer waiterId){
-		waitersIds.set(waiterId-1, 1);
-		System.err.println("DialWaitSync: "+ waiterId+" is ready to talk. dialer array is "  + dialerIds);
+	public void waitCall(@Data(name="dialerId") Integer voice1Id, @Data(name="waiterId") Integer voice2Id){
+		System.err.println("Voice2: "+ voice1Id +" ready to voice " + voice2Id);
+		if (voice1.get(voice1Id-1)!=1)
+		{voice2.set(voice2Id-1, 1);
+		return;}
+			System.err.println("Voicing: "+ voice1Id + " with "+ voice2Id);
+			//connect the dialer and the waiter
+			voice1.set(voice1Id-1, 0);
+			HashMap<String, Object> dataMap = new HashMap<String, Object>();
+			 dataMap.put("waiterId", voice2Id);
+			 dataMap.put("dialerId", voice1Id);
+			 voice1Actor.inform("voiceDown", dataMap);
+			 voice2Actor.inform("voiceDown", dataMap);
+			System.err.println("Client "+ voice1Id + " is being voiced with "+ voice2Id);
 	}
 }

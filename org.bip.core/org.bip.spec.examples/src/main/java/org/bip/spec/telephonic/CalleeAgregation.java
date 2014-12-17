@@ -48,7 +48,7 @@ public class CalleeAgregation implements ClientCaller {
         behaviourBuilder.addPort("waitDown", PortType.spontaneous, this.getClass());
         
         behaviourBuilder.addTransitionAndStates("waitUp","s0", "s0",  "", this.getClass().getMethod("waitUp",Integer.class));
-        behaviourBuilder.addTransitionAndStates("waitDown","s0", "s0",  "", this.getClass().getMethod("waitDown",Integer.class));
+        behaviourBuilder.addTransitionAndStates("waitDown","s0", "s0",  "", this.getClass().getMethod("waitDown",Integer.class, Integer.class));
         
         return behaviourBuilder;
     }
@@ -63,12 +63,11 @@ public class CalleeAgregation implements ClientCaller {
 		dialWaitExecutor.inform("wait",dataMap);
 	}
 	
-	public void waitDown(@Data(name="waiterId") Integer waiterId)
+	public void waitDown(@Data(name="waiterId") Integer waiterId, @Data(name="dialerId") Integer dialerId)
 	{
 		System.out.println("CalleeAgregation "+ " is transfering wait call for "+ waiterId);
 		 HashMap<String, Object> dataMap = new HashMap<String, Object>();
-		 dataMap.put("waiterId", waiterId);
-		 logger.info("Callee received wait request from " +waiterId);
+		 dataMap.put("dialerId", dialerId);
 		 clientActors.get(waiterId).inform("wait",dataMap);
 	}
 }

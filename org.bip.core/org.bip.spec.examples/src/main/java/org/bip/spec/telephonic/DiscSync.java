@@ -19,13 +19,13 @@ public class DiscSync {
 	BIPActor disc2Actor;
 	
 	//array with 1 on the places of those who are waiting for a call
-	AtomicIntegerArray waitersIds;
+	AtomicIntegerArray first;
 	//array with the corresponding dealerId on places of those  who the dialers want to talk to
-	AtomicIntegerArray dialerIds;
+	AtomicIntegerArray second;
 	
 	public DiscSync(int n)	{
-		waitersIds = new AtomicIntegerArray(n);
-		dialerIds = new AtomicIntegerArray(n);
+		first = new AtomicIntegerArray(n);
+		second = new AtomicIntegerArray(n);
 	}
 	
 	public void setExecutorRefs(BIPActor actorCaller, BIPActor actorCallee) {
@@ -35,27 +35,26 @@ public class DiscSync {
 	}
 	
 	@Transition(name = "disc1", source = "s0", target = "s0", guard = "")
-	public void dial(@Data(name="dialerId") Integer dialerId, @Data(name="waiterId") Integer waiterId)	{
-		System.err.println("DialWaitSync: "+ dialerId +" wanting to dial " + waiterId
-				+". waiters array is "  + waitersIds);
-		dialerIds.set(waiterId-1, dialerId);
-		if (waitersIds.get(waiterId-1)!=1)
-		{return;}
-			System.err.println("Chosen: "+ dialerId + " for "+ waiterId);
-			//connect the dialer and the waiter
-			dialerIds.set(waiterId-1, 0);
-			waitersIds.set(waiterId-1, 0);
+	public void dial(@Data(name="id1") Integer id1, @Data(name="id2") Integer id2)	{
+		System.err.println("Disc: "+ id1 +" wanting to disconnect " + id2);
+		
+		if (first.get(id2-1)!=1)
+		{first.set(id1-1, id1);
+			return;}
+			System.err.println("Disconnecting: "+ id1 + " from "+ id2);
+			//second.set(id2-1, 0);
+			first.set(id2-1, 0);
 			HashMap<String, Object> dataMap = new HashMap<String, Object>();
-			 dataMap.put("waiterId", waiterId);
-			 dataMap.put("dialerId", dialerId);
+			 dataMap.put("id2", id2);
+			 dataMap.put("id1", id1);
 			 disc1Actor.inform("discDown", dataMap);
-			 disc2Actor.inform("discDown", dataMap);
-			System.err.println("Client "+ dialerId + " is being connected with "+ waiterId);
+			 //disc2Actor.inform("discDown", dataMap);
+			System.err.println("Client "+ id1 + " is being disconnected with "+ id2);
 	}
 	
 	@Transition(name = "disc2", source = "s0", target = "s0", guard = "")
 	public void waitCall(@Data(name="waiterId") Integer waiterId){
-		waitersIds.set(waiterId-1, 1);
-		System.err.println("DialWaitSync: "+ waiterId+" is ready to talk. dialer array is "  + dialerIds);
+		first.set(waiterId-1, 1);
+		System.err.println("Disc: "+ waiterId+" is ready to disconnect. dialer array is "  + second);
 	}
 }

@@ -76,7 +76,7 @@ public class Client {
 		 HashMap<String, Object> dataMap = new HashMap<String, Object>();
 		 dataMap.put("dialerId", id);
 		 dataMap.put("waiterId", waiterId);
-		 voiceAgregator1.inform("voice",dataMap);
+		 voiceAgregator1.inform("voiceUp",dataMap);
 	}
 	
 	@Transition(name = "wait", source = "s0", target = "s1", guard = "")
@@ -85,18 +85,22 @@ public class Client {
 		 HashMap<String, Object> dataMap = new HashMap<String, Object>();
 		 dataMap.put("dialerId", dialerId);
 		 dataMap.put("waiterId", id);
-		voiceAgregator2.inform("voice",dataMap);
+		voiceAgregator2.inform("voiceUp",dataMap);
 	}
 	
 	@Transition(name = "voice", source = "s1", target = "s2", guard = "")
-	public void talk(){
-		logger.info("Client "+ this.id + "is talking with "+0 );
-		discAgregator1.inform("disconnect");
+	public void talk(@Data(name="otherId") Integer otherId){
+		System.out.println("Client "+ this.id + " is voicing with "+ otherId );
+		 HashMap<String, Object> dataMap = new HashMap<String, Object>();
+		 dataMap.put("id1", id);
+		 dataMap.put("id2", otherId);
+		discAgregator1.inform("discUp", dataMap);
 	}
 	
 	@Transition(name = "disc", source = "s2", target = "s0", guard = "")
-	public void disconnect(){
-		logger.info("Client "+ this.id + "is disconnected from "+0 );
+	public void disconnect(@Data(name="id1") Integer id1, @Data(name="id2") Integer id2){
+		int otherId = (id1==id)?id2:id1;
+		System.out.println("Client "+ this.id + " is disconnected from "+otherId );
 		myself.inform("notify");
 	}
 	
