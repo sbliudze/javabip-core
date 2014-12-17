@@ -10,7 +10,7 @@ import org.bip.executor.BehaviourBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CalleeAgregation {
+public class CalleeAgregation implements ClientCaller {
 
 	private int n;
 	BIPActor dialWaitExecutor;
@@ -23,7 +23,7 @@ public class CalleeAgregation {
 		clientActors = new HashMap<Integer, BIPActor>(n);
 	}
 	
-	public void setExecutorRefs(BIPActor dialWait)
+	public void setSyncRefs(BIPActor dialWait)
 	{
 		dialWaitExecutor = dialWait;
 	}

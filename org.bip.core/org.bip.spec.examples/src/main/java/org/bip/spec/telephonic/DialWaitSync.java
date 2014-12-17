@@ -23,7 +23,9 @@ public class DialWaitSync {
 	BIPActor callerAgregationExecutor;
 	BIPActor calleeAgregationExecutor;
 	
+	//array with 1 on the places of those who are waiting for a call
 	AtomicIntegerArray waitersIds;
+	//array with the corresponding dealerId on places of those  who the dialers want to talk to
 	AtomicIntegerArray dialerIds;
 	
 	public DialWaitSync(int n)	{
@@ -37,41 +39,44 @@ public class DialWaitSync {
 		calleeAgregationExecutor = callee;
 	}
 	
-	@Transition(name = "dial", source = "s0", target = "s1", guard = "")
+	@Transition(name = "dial", source = "s0", target = "s0", guard = "")
 	public void dial(@Data(name="dialerId") Integer dialerId, @Data(name="waiterId") Integer waiterId)	{
-		System.out.println("DialWaitSync "+ " is notified of "+ dialerId +" wanting to speak with " + waiterId
-				+" with waitersIds "  + waitersIds);
-		dialerIds.set(waiterId-1, 1);
-		System.out.println("set d ok");
-		if (waitersIds.get(waiterId)!=dialerId)
-		return;
-			System.out.println("Chosen: "+ dialerId + " for "+ waiterId);
+		System.err.println("DialWaitSync: "+ dialerId +" wanting to dial " + waiterId
+				+". waiters array is "  + waitersIds);
+		dialerIds.set(waiterId-1, dialerId);
+		if (waitersIds.get(waiterId-1)!=1)
+		{return;}
+			System.err.println("Chosen: "+ dialerId + " for "+ waiterId);
 			//connect the dialer and the waiter
+			dialerIds.set(waiterId-1, 0);
+			waitersIds.set(waiterId-1, 0);
 			HashMap<String, Object> dataMap = new HashMap<String, Object>();
 			 dataMap.put("waiterId", waiterId);
 			 dataMap.put("dialerId", dialerId);
 			callerAgregationExecutor.inform("dialDown", dataMap);
-			callerAgregationExecutor.inform("waitDown", dataMap);
-			System.out.println("Client "+ dialerId + " is being connected with "+ waiterId);
-			
-		
-		
+			calleeAgregationExecutor.inform("waitDown", dataMap);
+			System.err.println("Client "+ dialerId + " is being connected with "+ waiterId);
 	}
 	
-	@Transition(name = "wait", source = "s0", target = "s1", guard = "")
+	@Transition(name = "wait", source = "s0", target = "s0", guard = "")
 	public void waitCall(@Data(name="waiterId") Integer waiterId){
 		waitersIds.set(waiterId-1, 1);
-		System.out.println("set w ok");
-		System.out.println("DialWaitSync "+ " is notified of waiting of "+ waiterId+" with dialerIds "  + dialerIds);
-		if (dialerIds.get(waiterId)>0)
-		{
-			System.out.println("Chosen: "+ dialerIds.get(waiterId) + " for "+ waiterId);
-			//connect the dialer and the waiter
-			callerAgregationExecutor.inform("dial"+dialerIds.get(waiterId));
-			callerAgregationExecutor.inform("wait"+waiterId);
-			System.out.println("Client "+ dialerIds.get(waiterId) + " is being connected with "+ waiterId);
-		}
-		logger.info("Client "+ waiterId + " is waiting for a call from "+0 );
-		
+		System.err.println("DialWaitSync: "+ waiterId+" is ready to talk. dialer array is "  + dialerIds);
+//		if (dialerIds.get(waiterId-1)<=0)
+//		{return;}
+//		int dialer = dialerIds.get(waiterId-1);
+//		dialerIds.set(waiterId-1, 0);
+//		waitersIds.set(waiterId-1, 0);
+//			System.err.println("Chosen: "+ dialer + " for "+ waiterId);
+//			//connect the dialer and the waiter
+//			HashMap<String, Object> dataMap = new HashMap<String, Object>();
+//			 dataMap.put("waiterId", waiterId);
+//			 dataMap.put("dialerId", dialer);
+//			callerAgregationExecutor.inform("dialDown", dataMap);
+//			calleeAgregationExecutor.inform("waitDown", dataMap);
+//			System.err.println("Client "+ dialer + " is being connected with "+ waiterId);
+//		
+//		logger.info("Client "+ waiterId + " is waiting for a call from "+0 );
+//		
 	}
 }
