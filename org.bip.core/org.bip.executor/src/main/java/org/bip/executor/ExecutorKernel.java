@@ -124,7 +124,7 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 		
 		dataEvaluation.clear();
 
-		guardToValue = behaviour.computeGuardsWithoutData();
+		guardToValue = behaviour.computeGuardsWithoutData(behaviour.getCurrentState());
 
 		// we have to compute this in order to be able to raise an exception
 		boolean existInternalTransition = behaviour.existEnabledInternal(guardToValue);
@@ -189,7 +189,8 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 		// the inform)
 		if (existSpontaneousTransition) {
 			logger.debug("Finishing current step for component {} doing nothing due no spontaneous events.", id);
-			waitingForSpontaneous = true;
+			// waitingForSpontaneous = true;
+			engine.inform(proxy, behaviour.getCurrentState(), globallyDisabledPorts);
 			// Next step will be invoked upon receiving a spontaneous event. 
 			return;
 		}

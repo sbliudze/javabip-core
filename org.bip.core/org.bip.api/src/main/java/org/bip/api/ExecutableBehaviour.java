@@ -125,8 +125,10 @@ public interface ExecutableBehaviour extends Behaviour {
 	
 	/**
 	 * Compute guards.
-	 *
+	 * 
+	 * @param currentState
+	 * 
 	 * @return the hashtable
 	 */
-	public Map<String, Boolean> computeGuardsWithoutData();
+	public Map<String, Boolean> computeGuardsWithoutData(String currentState);
 }

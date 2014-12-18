@@ -378,21 +378,28 @@ class BehaviourImpl implements ExecutableBehaviour {
 		return result;
 	}
 
-	public Map<String, Boolean> computeGuardsWithoutData() {
+	public Map<String, Boolean> computeGuardsWithoutData(String currentState) {
 		
 		// TODO BUG DESIGN compute only guards needed for this current state, as other 
 		// guards not guaranteed to compute properly if executed in the wrong state.
 
 		Hashtable<String, Boolean> guardToValue = new Hashtable<String, Boolean>();
-		for (Guard guard : this.guardsWithoutData) {
-			try {
-				guardToValue.put(guard.name(), guard.evaluateGuard(bipComponent));
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+		ArrayList<ExecutableTransition> transitionsFromState = stateTransitions.get(currentState);
+		for (ExecutableTransition transition : transitionsFromState) {
+			if (transition.hasGuard()) {
+				for (Guard guard : transition.transitionGuards()) {
+					if (this.guardsWithoutData.contains(guard)) {
+						try {
+							guardToValue.put(guard.name(), guard.evaluateGuard(bipComponent));
+						} catch (IllegalAccessException e) {
+							e.printStackTrace();
+						} catch (IllegalArgumentException e) {
+							e.printStackTrace();
+						} catch (InvocationTargetException e) {
+							e.printStackTrace();
+						}
+					}
+				}
 			}
 		}
 		return guardToValue;
