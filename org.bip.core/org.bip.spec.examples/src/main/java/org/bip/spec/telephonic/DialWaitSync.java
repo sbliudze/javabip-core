@@ -41,8 +41,7 @@ public class DialWaitSync {
 	
 	@Transition(name = "dial", source = "s0", target = "s0", guard = "")
 	public void dial(@Data(name="dialerId") Integer dialerId, @Data(name="waiterId") Integer waiterId)	{
-		System.err.println("DialWait: "+ dialerId +" wanting to dial " + waiterId
-				+". waiters array is "  + waitersIds);
+		System.err.println("DialWait: "+ dialerId +" wanting to dial " + waiterId);
 		dialerIds.set(waiterId-1, dialerId);
 		if (waitersIds.get(waiterId-1)!=1)
 		{return;}
@@ -61,7 +60,7 @@ public class DialWaitSync {
 	@Transition(name = "wait", source = "s0", target = "s0", guard = "")
 	public void waitCall(@Data(name="waiterId") Integer waiterId){
 		waitersIds.set(waiterId-1, 1);
-		System.err.println("DialWait: "+ waiterId+" is ready to talk. dialer array is "  + dialerIds);
+		System.err.println("DialWait: "+ waiterId+" is ready to talk.");
 //		if (dialerIds.get(waiterId-1)<=0)
 //		{return;}
 //		int dialer = dialerIds.get(waiterId-1);

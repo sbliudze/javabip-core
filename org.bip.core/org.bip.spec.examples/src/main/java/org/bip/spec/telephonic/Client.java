@@ -60,7 +60,7 @@ public class Client {
 		return randomInt;
 	}
 
-	@Transition(name = "notify", source = "init", target = "s0", guard = "")
+	@Transition(name = "notify", source = "init", target = "s0")
 	public void notifyAgregatorInternal()	{
 		System.out.println(" Client "+ this.id + " is notifying");
 		 HashMap<String, Object> dataMap = new HashMap<String, Object>();
@@ -70,7 +70,7 @@ public class Client {
 		calleeAgregationExecutor.inform("waitUp",dataMap);
 	}
 	
-	@Transition(name = "dial", source = "s0", target = "s1", guard = "")
+	@Transition(name = "dial", source = "s0", target = "s1")
 	public void dial(@Data(name="waiterId") Integer waiterId)	{
 		System.out.println("Client "+ id + " dialed client " + waiterId);
 		 HashMap<String, Object> dataMap = new HashMap<String, Object>();
@@ -79,7 +79,7 @@ public class Client {
 		 voiceAgregator1.inform("voiceUp",dataMap);
 	}
 	
-	@Transition(name = "wait", source = "s0", target = "s1", guard = "")
+	@Transition(name = "wait", source = "s0", target = "s1")
 	public void waitCall(@Data(name="dialerId") Integer dialerId){
 		System.out.println("Client "+ id + " received a call from " + dialerId);
 		 HashMap<String, Object> dataMap = new HashMap<String, Object>();
@@ -88,7 +88,7 @@ public class Client {
 		voiceAgregator2.inform("voiceUp",dataMap);
 	}
 	
-	@Transition(name = "voice", source = "s1", target = "s2", guard = "")
+	@Transition(name = "voice", source = "s1", target = "s2")
 	public void talk(@Data(name="otherId") Integer otherId){
 		System.out.println("Client "+ this.id + " is voicing with "+ otherId );
 		 HashMap<String, Object> dataMap = new HashMap<String, Object>();
@@ -97,7 +97,7 @@ public class Client {
 		discAgregator1.inform("discUp", dataMap);
 	}
 	
-	@Transition(name = "disc", source = "s2", target = "s0", guard = "")
+	@Transition(name = "disc", source = "s2", target = "init")
 	public void disconnect(@Data(name="id1") Integer id1, @Data(name="id2") Integer id2){
 		int otherId = (id1==id)?id2:id1;
 		System.out.println("Client "+ this.id + " is disconnected from "+otherId );
