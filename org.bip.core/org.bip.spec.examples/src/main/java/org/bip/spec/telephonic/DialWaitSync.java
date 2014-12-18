@@ -81,7 +81,7 @@ public class DialWaitSync {
 			 dataMap.put("dialerId", x);
 			callerAgregationExecutor.inform("dialDown", dataMap);
 			calleeAgregationExecutor.inform("waitDown", dataMap);
-			System.err.println("Client "+ x + " is being connected with "+ y);
+			//System.err.println("Client "+ x + " is being connected with "+ y);
 		}
 		else // y hasn't notified, store that y wants to be talked to by x
 		{
@@ -119,7 +119,7 @@ public class DialWaitSync {
 					 dataMap.put("dialerId", dialer);
 					callerAgregationExecutor.inform("dialDown", dataMap);
 					calleeAgregationExecutor.inform("waitDown", dataMap);
-					System.err.println("Client "+ dialer + " is being connected with "+ y);
+					//System.err.println("Client "+ dialer + " is being connected with "+ y);
 				}
 				else // y hasn't notified, store that y wants to talk
 				{
