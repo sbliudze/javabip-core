@@ -56,7 +56,6 @@ public class CalleeAgregation implements ClientCaller {
 	//dialer can also wait - here we are saying that is is ready to do so as well
 	public void waitUp(@Data(name="dialerId") Integer waiterId)
 	{
-		System.out.println("CalleeAgregation "+ " is notified of "+ waiterId);
 		 HashMap<String, Object> dataMap = new HashMap<String, Object>();
 		 dataMap.put("waiterId", waiterId);
 		 logger.info("Callee received wait request from " +waiterId);
@@ -65,7 +64,6 @@ public class CalleeAgregation implements ClientCaller {
 	
 	public void waitDown(@Data(name="waiterId") Integer waiterId, @Data(name="dialerId") Integer dialerId)
 	{
-		System.out.println("CalleeAgregation "+ " is transfering wait call for "+ waiterId);
 		 HashMap<String, Object> dataMap = new HashMap<String, Object>();
 		 dataMap.put("dialerId", dialerId);
 		 clientActors.get(waiterId).inform("wait",dataMap);

@@ -51,7 +51,6 @@ public class VoiceAgregation1 implements ClientCaller {
 	
 	public void voiceUp(@Data(name="dialerId") Integer dialerId, @Data(name="waiterId") Integer waiterId )
 	{
-	 	 System.out.println("VoiceAgregation "+ " is notified of "+ dialerId+" speaking to " + waiterId);
 		 HashMap<String, Object> dataMap = new HashMap<String, Object>();
 		 dataMap.put("dialerId", dialerId);
 		 dataMap.put("waiterId", waiterId);

@@ -27,9 +27,7 @@ public class Client {
 	BIPActor callerAgregationExecutor;
 	BIPActor calleeAgregationExecutor;
 	BIPActor voiceAgregator1;
-	BIPActor voiceAgregator2;
 	BIPActor discAgregator1;
-	BIPActor discAgregator2;
 	BIPActor myself;
 	
 	private Logger logger = LoggerFactory.getLogger(Client.class);
@@ -46,9 +44,7 @@ public class Client {
 		callerAgregationExecutor = caller;
 		calleeAgregationExecutor = callee;
 		voiceAgregator1 = voice1;
-		voiceAgregator2 = voice2;
 		discAgregator1 = disc1;
-		//discAgregator2 = disc2;
 		myself = client;
 	}
 	

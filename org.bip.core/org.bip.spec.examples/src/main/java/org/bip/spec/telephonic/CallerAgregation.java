@@ -56,7 +56,6 @@ public class CallerAgregation implements ClientCaller {
 	
 	public void dialUp(@Data(name="dialerId") Integer dialerId, @Data(name="waiterId") Integer waiterId )
 	{
-		System.out.println("CallerAgregation "+ " is notified of "+ dialerId+" wanting to speak with " + waiterId);
 		 HashMap<String, Object> dataMap = new HashMap<String, Object>();
 		 dataMap.put("dialerId", dialerId);
 		 dataMap.put("waiterId", waiterId);
@@ -65,7 +64,6 @@ public class CallerAgregation implements ClientCaller {
 	
 	public void dialDown(@Data(name="dialerId") Integer dialerId, @Data(name="waiterId") Integer waiterId)
 	{
-		System.out.println("CallerAgregation "+ " is trasferring dial call to client "+ dialerId);
 		 HashMap<String, Object> dataMap = new HashMap<String, Object>();
 		 dataMap.put("waiterId", waiterId);
 		clientActors.get(dialerId).inform("dial",dataMap);
