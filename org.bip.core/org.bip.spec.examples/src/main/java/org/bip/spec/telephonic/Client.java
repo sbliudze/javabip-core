@@ -23,6 +23,7 @@ public class Client {
 	
 	private int id=0;
 	private int n=1;
+	private int i=0;
 	BIPActor callerAgregationExecutor;
 	BIPActor calleeAgregationExecutor;
 	BIPActor voiceAgregator1;
@@ -40,14 +41,14 @@ public class Client {
 	}
 	
 	public void setExecutorRefs(BIPActor caller, BIPActor callee, BIPActor voice1, BIPActor voice2,
-			BIPActor disc1, BIPActor disc2, BIPActor client)
+			BIPActor disc1, BIPActor client)
 	{
 		callerAgregationExecutor = caller;
 		calleeAgregationExecutor = callee;
 		voiceAgregator1 = voice1;
 		voiceAgregator2 = voice2;
 		discAgregator1 = disc1;
-		discAgregator2 = disc2;
+		//discAgregator2 = disc2;
 		myself = client;
 	}
 	
@@ -62,7 +63,8 @@ public class Client {
 
 	@Transition(name = "notify", source = "init", target = "s0")
 	public void notifyAgregatorInternal()	{
-		System.out.println(" Client "+ this.id + " is notifying");
+		System.err.println(i + " Client "+ this.id + " is notifying");
+		i++;
 		 HashMap<String, Object> dataMap = new HashMap<String, Object>();
 		 dataMap.put("dialerId", id);
 		 dataMap.put("waiterId", randomID());
@@ -72,7 +74,8 @@ public class Client {
 	
 	@Transition(name = "dial", source = "s0", target = "s1")
 	public void dial(@Data(name="waiterId") Integer waiterId)	{
-		System.out.println("Client "+ id + " dialed client " + waiterId);
+		System.err.println(i+" Client "+ id + " dialed client " + waiterId);
+		i++;
 		 HashMap<String, Object> dataMap = new HashMap<String, Object>();
 		 dataMap.put("dialerId", id);
 		 dataMap.put("waiterId", waiterId);
@@ -81,17 +84,17 @@ public class Client {
 	
 	@Transition(name = "wait", source = "s0", target = "s1")
 	public void waitCall(@Data(name="dialerId") Integer dialerId){
-		System.out.println("Client "+ id + " received a call from " + dialerId);
-		 HashMap<String, Object> dataMap = new HashMap<String, Object>();
+		System.err.println(i+" Client "+ id + " received a call from " + dialerId);
+		 i++;HashMap<String, Object> dataMap = new HashMap<String, Object>();
 		 dataMap.put("dialerId", dialerId);
 		 dataMap.put("waiterId", id);
-		voiceAgregator2.inform("voiceUp",dataMap);
+		voiceAgregator1.inform("voiceUp",dataMap);
 	}
 	
 	@Transition(name = "voice", source = "s1", target = "s2")
-	public void talk(@Data(name="otherId") Integer otherId){
-		System.out.println("Client "+ this.id + " is voicing with "+ otherId );
-		 HashMap<String, Object> dataMap = new HashMap<String, Object>();
+	public void voice(@Data(name="otherId") Integer otherId){
+		System.err.println(i+" Client "+ this.id + " is voicing with "+ otherId );
+		i++; HashMap<String, Object> dataMap = new HashMap<String, Object>();
 		 dataMap.put("id1", id);
 		 dataMap.put("id2", otherId);
 		discAgregator1.inform("discUp", dataMap);
@@ -100,8 +103,8 @@ public class Client {
 	@Transition(name = "disc", source = "s2", target = "init")
 	public void disconnect(@Data(name="id1") Integer id1, @Data(name="id2") Integer id2){
 		int otherId = (id1==id)?id2:id1;
-		System.out.println("Client "+ this.id + " is disconnected from "+otherId );
-		myself.inform("notify");
+		System.err.println(i+ " Client "+ this.id + " is disconnected from "+otherId );
+	i++;	myself.inform("notify");
 	}
 	
 }

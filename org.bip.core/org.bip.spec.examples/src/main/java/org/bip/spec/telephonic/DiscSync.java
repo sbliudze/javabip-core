@@ -16,7 +16,7 @@ import org.bip.api.PortType;
 @ComponentType(initial = "s0", name = "org.bip.spec.telephonic.DiscSync")
 public class DiscSync {
 	BIPActor disc1Actor;
-	BIPActor disc2Actor;
+	//BIPActor disc2Actor;
 	
 	//array with 1 on the places of those who are waiting for a call
 	AtomicIntegerArray first;
@@ -30,17 +30,18 @@ public class DiscSync {
 	
 	public void setExecutorRefs(BIPActor actorCaller, BIPActor actorCallee) {
 		disc1Actor = actorCaller;
-		disc2Actor = actorCallee;
+		//disc2Actor = actorCallee;
 		
 	}
 	
 	@Transition(name = "disc1", source = "s0", target = "s0", guard = "")
 	public void dial(@Data(name="id1") Integer id1, @Data(name="id2") Integer id2)	{
-		System.err.println("Disc: "+ id1 +" wanting to disconnect " + id2);
+		//System.err.println("Disc: "+ id1 +" wanting to disconnect " + id2);
 		
-		if (first.get(id2-1)!=id1)
-		{first.set(id1-1, id2);
-			return;}
+		if (first.get(id2-1)!=id1){
+			first.set(id1-1, id2);
+			return;
+			}
 			System.err.println("Disconnecting: "+ id1 + " from "+ id2);
 			//second.set(id2-1, 0);
 			first.set(id2-1, 0);
@@ -52,9 +53,4 @@ public class DiscSync {
 			System.err.println("Client "+ id1 + " is being disconnected with "+ id2);
 	}
 	
-//	@Transition(name = "disc2", source = "s0", target = "s0", guard = "")
-//	public void waitCall(@Data(name="waiterId") Integer waiterId){
-//		first.set(waiterId-1, 1);
-//		System.err.println("Disc: "+ waiterId+" is ready to disconnect. dialer array is "  + second);
-//	}
 }
