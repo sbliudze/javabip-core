@@ -8,12 +8,12 @@ import org.bip.api.BIPActor;
 import org.bip.api.PortType;
 import org.bip.executor.BehaviourBuilder;
 
-public class VoiceAgregation1 implements ClientCaller {
+public class VoiceAgregation implements ClientCaller {
 	
 	BIPActor voiceSync;
 	HashMap<Integer, BIPActor> clientActors;
 	
-	public VoiceAgregation1(int n)
+	public VoiceAgregation(int n)
 	{
 		clientActors = new HashMap<Integer, BIPActor>(n);
 	}
@@ -56,11 +56,9 @@ public class VoiceAgregation1 implements ClientCaller {
 		 dataMap.put("waiterId", waiterId);
 		 voiceSync.inform("voice",dataMap);
 	}
-	private int i =0;
+	
 	public void voiceDown(@Data(name="dialerId") Integer dialerId, @Data(name="waiterId") Integer waiterId)
 	{
-		 System.out.println(i+" VoiceAgregation "+ " is trasferring voice to dialer "+ dialerId + " and waiter "+ waiterId);
-		 i++;
 		 HashMap<String, Object> dataMap = new HashMap<String, Object>();
 		 dataMap.put("otherId", waiterId);
 		 clientActors.get(dialerId).inform("voice",dataMap);

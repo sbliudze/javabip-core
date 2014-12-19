@@ -15,20 +15,18 @@ import org.bip.api.PortType;
 	 @Port(name = "disc2", type = PortType.spontaneous) })
 @ComponentType(initial = "s0", name = "org.bip.spec.telephonic.DiscSync")
 public class DiscSync {
-	BIPActor disc1Actor;
+	BIPActor discActor;
 	
 	//array with 1 on the places of those who are waiting for a call
 	AtomicIntegerArray first;
 	//array with the corresponding dealerId on places of those  who the dialers want to talk to
-	AtomicIntegerArray second;
 	
 	public DiscSync(int n)	{
 		first = new AtomicIntegerArray(n);
-		second = new AtomicIntegerArray(n);
 	}
 	
 	public void setExecutorRefs(BIPActor actorCaller, BIPActor actorCallee) {
-		disc1Actor = actorCaller;
+		discActor = actorCaller;
 		
 	}
 	
@@ -43,7 +41,7 @@ public class DiscSync {
 			HashMap<String, Object> dataMap = new HashMap<String, Object>();
 			 dataMap.put("id2", id2);
 			 dataMap.put("id1", id1);
-			 disc1Actor.inform("discDown", dataMap);
+			 discActor.inform("discDown", dataMap);
 	}
 	
 }
