@@ -24,7 +24,7 @@ public class DialWaitSync {
 	
 	//array with 1 on the places of those who are waiting for a call
 	AtomicIntegerArray waitersIds;
-	//array with the corresponding dealerId on places of those  who the dialers want to talk to
+	//array with the waiters on position of dialers wanting them
 	AtomicIntegerArray dialerIds;
 	AtomicIntegerArray talkShouldBeDeleted;
 	
@@ -44,20 +44,15 @@ public class DialWaitSync {
 		calleeAgregationExecutor = callee;
 	}
 	
-	private boolean resetDealerInWaiters(int dialerId)
-	{
-		for (int i=0; i<dialerIds.length(); i++)
-		{
-			if (dialerIds.compareAndSet(i, dialerId, 0)) return true;
-		}
-		return false;
-	}
+
+	private int i=0;
 	
 	@Transition(name = "dial", source = "s0", target = "s0", guard = "")
 	public void dial(@Data(name="dialerId") Integer x, @Data(name="waiterId") Integer y)	{
 		//if x has been discarded because it is already been called, return
-		if (talkShouldBeDeleted.get(x-1) == 1) {
-			talkShouldBeDeleted.set(x-1,0); 
+		//System.out.println(i+" waiters = "+waitersIds+", dialers = "+ dialerIds);
+		
+		if (talkShouldBeDeleted.compareAndSet(x-1, 1, 0)) {
 			return;
 			}
 		//if y has notified, remove y talking, x talking and y dialing
@@ -70,7 +65,8 @@ public class DialWaitSync {
 			}
 			waitersIds.set(y-1, 0);
 			waitersIds.set(x-1, 0);
-			if (!resetDealerInWaiters(y))
+			dialerIds.set(x-1, 0);
+			if (dialerIds.getAndSet(y-1, 0)==0)
 			{
 				talkShouldBeDeleted.set(y-1, 1);
 			}
@@ -81,26 +77,35 @@ public class DialWaitSync {
 			 dataMap.put("dialerId", x);
 			callerAgregationExecutor.inform("dialDown", dataMap);
 			calleeAgregationExecutor.inform("waitDown", dataMap);
-			//System.err.println("Client "+ x + " is being connected with "+ y);
+			i++;
 		}
 		else // y hasn't notified, store that y wants to be talked to by x
 		{
-			dialerIds.set(y-1, x);
+			dialerIds.set(x-1, y);
 		}
+	}
+	
+	private int findDialerWantingWater(int waiter)
+	{
+		for (int i=0;i<dialerIds.length(); i++){
+			if (dialerIds.get(i)==waiter)
+				return i+1;
+		}
+		return -1;
 	}
 	
 	
 	@Transition(name = "wait", source = "s0", target = "s0", guard = "")
 	public void waitCall(@Data(name="waiterId") Integer y){
+		//System.out.println(i+" waiters = "+ waitersIds + ", dialers = "+ dialerIds);
 		//if y has been discarded because it is already calling, return
-				if (talkShouldBeDeleted.get(y-1)== 1) {
-					talkShouldBeDeleted.set(y-1,0); 
+				if (talkShouldBeDeleted.compareAndSet(y-1, 1, 0)) {
 					return;
 					}
-				//if someone has called y, remove y talking, dialer talking and y dialing
-				if (dialerIds.get(y-1)!=0)
+				//is there someone wanting to talk to me?
+				int dialer = findDialerWantingWater(y);
+				if (dialer>0) //need to send informs
 				{
-					int dialer = dialerIds.get(y-1);
 					// if dialer hasn't notified of talking yet, we need to discard its future notification
 					if (waitersIds.get(dialer-1)==0)
 					{
@@ -108,7 +113,8 @@ public class DialWaitSync {
 					}
 					waitersIds.set(y-1, 0);
 					waitersIds.set(dialer-1, 0);
-					if (!resetDealerInWaiters(y))
+					dialerIds.set(dialer-1, 0);
+					if (dialerIds.getAndSet(y-1, 0)==0)
 					{
 						talkShouldBeDeleted.set(y-1, 1);
 					}
@@ -119,7 +125,7 @@ public class DialWaitSync {
 					 dataMap.put("dialerId", dialer);
 					callerAgregationExecutor.inform("dialDown", dataMap);
 					calleeAgregationExecutor.inform("waitDown", dataMap);
-					//System.err.println("Client "+ dialer + " is being connected with "+ y);
+					i++;
 				}
 				else // y hasn't notified, store that y wants to talk
 				{

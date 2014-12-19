@@ -8,14 +8,13 @@ import org.bip.api.BIPActor;
 import org.bip.api.PortType;
 import org.bip.executor.BehaviourBuilder;
 
-public class DiscAgregation1 implements ClientCaller {
-	private int n;
+public class DiscAgregation implements ClientCaller {
+	 
 	BIPActor discSync;
 	HashMap<Integer, BIPActor> clientActors;
 	
-	public DiscAgregation1(int n)
+	public DiscAgregation(int n)
 	{
-		this.n=n;
 		clientActors = new HashMap<Integer, BIPActor>(n);
 	}
 	
