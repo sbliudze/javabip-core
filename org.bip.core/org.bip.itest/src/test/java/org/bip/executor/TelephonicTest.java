@@ -74,7 +74,7 @@ public class TelephonicTest {
 	public void test5()
 	{
 		
-		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
+		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
 
 		//BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
@@ -173,7 +173,7 @@ public class TelephonicTest {
 	public void test50()
 	{
 		
-		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
+		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
 
 		BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
 		engine.specifyGlue(bipGlue);
