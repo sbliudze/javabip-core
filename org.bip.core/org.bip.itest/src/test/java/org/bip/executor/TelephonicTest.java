@@ -1,5 +1,7 @@
 package org.bip.executor;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -18,6 +20,7 @@ import org.bip.spec.MemoryMonitor;
 import org.bip.spec.SwitchableRouteDataTransfers;
 import org.bip.spec.telephonic.CalleeAgregation;
 import org.bip.spec.telephonic.CallerAgregation;
+import org.bip.spec.telephonic.Checker;
 import org.bip.spec.telephonic.Client;
 import org.bip.spec.telephonic.ClientCaller;
 import org.bip.spec.telephonic.DialWaitSync;
@@ -88,11 +91,17 @@ public class TelephonicTest {
 
 		}.build();
 		engine.specifyGlue(bipGlue);
+
+		int n=5; 
 		
 		DummyComponent dummy = new DummyComponent();
 		BIPActor dummyActor = engine.register(dummy, "dummy", true); 
 		
-		int n=5; 
+		
+		Checker checker = new Checker(n);
+		BIPActor checkerActor = engine.register(checker, "checker", true); 
+		
+
 		Client client1 = new Client(1,n);
 		Client client2 = new Client(2,n);
 		Client client3 = new Client(3,n);
@@ -127,11 +136,11 @@ public class TelephonicTest {
 		BIPActor actorVoice = engine.register(voice, "voice", true);
 		BIPActor actorDisc = engine.register(disc, "disc", true);
 		
-		client1.setExecutorRefs(actorCaller, actorCallee, actorVoice1,actorDisc1,  actor1);
-		client2.setExecutorRefs(actorCaller, actorCallee, actorVoice1,  actorDisc1,  actor2);
-		client3.setExecutorRefs(actorCaller, actorCallee, actorVoice1,  actorDisc1,  actor3);
-		client4.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor4);
-		client5.setExecutorRefs(actorCaller, actorCallee, actorVoice1,  actorDisc1,  actor5);
+		client1.setExecutorRefs(actorCaller, actorCallee, actorVoice1,actorDisc1,  actor1, checkerActor);
+		client2.setExecutorRefs(actorCaller, actorCallee, actorVoice1,  actorDisc1,  actor2, checkerActor);
+		client3.setExecutorRefs(actorCaller, actorCallee, actorVoice1,  actorDisc1,  actor3, checkerActor);
+		client4.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor4, checkerActor);
+		client5.setExecutorRefs(actorCaller, actorCallee, actorVoice1,  actorDisc1,  actor5, checkerActor);
 		
 		
 		callerAgregation.setSyncRefs(actorDialWait);
@@ -160,11 +169,15 @@ public class TelephonicTest {
 		actor5.inform("notify");
 
 		try {
-			Thread.sleep(90000);
+			Thread.sleep(10000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		
+		//assertTrue("Some client was communicating with several other clients at the same time.", checker.talkingToOne());
+		assertTrue("Some clients are not communicating with each other after making a call.", checker.talkingToEachOther());
 
+		
 		engine.stop();
 		engineFactory.destroy(engine);
 	}
@@ -179,6 +192,14 @@ public class TelephonicTest {
 		engine.specifyGlue(bipGlue);
 		
 		int n=50; 
+		
+		DummyComponent dummy = new DummyComponent();
+		BIPActor dummyActor = engine.register(dummy, "dummy", true); 
+		
+		
+		Checker checker = new Checker(n);
+		BIPActor checkerActor = engine.register(checker, "checker", true); 
+		
 		Client client1 = new Client(1,n);
 		Client client2 = new Client(2,n);
 		Client client3 = new Client(3,n);
@@ -304,56 +325,56 @@ public class TelephonicTest {
 		BIPActor actorVoice = engine.register(voice, "voice", true);
 		BIPActor actorDisc = engine.register(disc, "disc", true);
 		
-		client1.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor1);
-		client2.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor2);
-		client3.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor3);
-		client4.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor4);
-		client5.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor5);
-		client6.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor6);
-		client7.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor7);
-		client8.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor8);
-		client9.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor9);
-		client10.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor10);
-		client11.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor11);
-		client12.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor12);
-		client13.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor13);
-		client14.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor14);
-		client15.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor15);
-		client16.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor16);
-		client17.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor17);
-		client18.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor18);
-		client19.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor19);
-		client20.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor20);
-		client21.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor21);
-		client22.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor22);
-		client23.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor23);
-		client24.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor24);
-		client25.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor25);
-		client26.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor26);
-		client27.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor27);
-		client28.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor28);
-		client29.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor29);
-		client30.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor30);
-		client31.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor31);
-		client32.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor32);
-		client33.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor33);
-		client34.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor34);
-		client35.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor35);
-		client36.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor36);
-		client37.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor37);
-		client38.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor38);
-		client39.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor39);
-		client40.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor40);
-		client41.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor41);
-		client42.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor42);
-		client43.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor43);
-		client44.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor44);
-		client45.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor45);
-		client46.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor46);
-		client47.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor47);
-		client48.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor48);
-		client49.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor49);
-		client50.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor50);
+		client1.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor1, checkerActor);
+		client2.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor2, checkerActor);
+		client3.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor3, checkerActor);
+		client4.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor4, checkerActor);
+		client5.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor5, checkerActor);
+		client6.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor6, checkerActor);
+		client7.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor7, checkerActor);
+		client8.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor8, checkerActor);
+		client9.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor9, checkerActor);
+		client10.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor10, checkerActor);
+		client11.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor11, checkerActor);
+		client12.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor12, checkerActor);
+		client13.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor13, checkerActor);
+		client14.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor14, checkerActor);
+		client15.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor15, checkerActor);
+		client16.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor16, checkerActor);
+		client17.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor17, checkerActor);
+		client18.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor18, checkerActor);
+		client19.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor19, checkerActor);
+		client20.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor20, checkerActor);
+		client21.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor21, checkerActor);
+		client22.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor22, checkerActor);
+		client23.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor23, checkerActor);
+		client24.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor24, checkerActor);
+		client25.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor25, checkerActor);
+		client26.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor26, checkerActor);
+		client27.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor27, checkerActor);
+		client28.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor28, checkerActor);
+		client29.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor29, checkerActor);
+		client30.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor30, checkerActor);
+		client31.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor31, checkerActor);
+		client32.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor32, checkerActor);
+		client33.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor33, checkerActor);
+		client34.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor34, checkerActor);
+		client35.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor35, checkerActor);
+		client36.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor36, checkerActor);
+		client37.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor37, checkerActor);
+		client38.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor38, checkerActor);
+		client39.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor39, checkerActor);
+		client40.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor40, checkerActor);
+		client41.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor41, checkerActor);
+		client42.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor42, checkerActor);
+		client43.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor43, checkerActor);
+		client44.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor44, checkerActor);
+		client45.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor45, checkerActor);
+		client46.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor46, checkerActor);
+		client47.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor47, checkerActor);
+		client48.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor48, checkerActor);
+		client49.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor49, checkerActor);
+		client50.setExecutorRefs(actorCaller, actorCallee, actorVoice1, actorDisc1,  actor50, checkerActor);
 		
 		
 		callerAgregation.setSyncRefs(actorDialWait);
@@ -427,10 +448,13 @@ public class TelephonicTest {
 		actor50.inform("notify");
 		
 		try {
-			Thread.sleep(90000);
+			Thread.sleep(10000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+
+		assertTrue("Some client was communicating with several other clients at the same time.", checker.talkingToOne());
+
 
 		engine.stop();
 		engineFactory.destroy(engine);

@@ -29,6 +29,7 @@ public class Client {
 	BIPActor voiceAgregator;
 	BIPActor discAgregator;
 	BIPActor myself;
+	BIPActor checker;
 	
 	private Logger logger = LoggerFactory.getLogger(Client.class);
 	
@@ -39,13 +40,14 @@ public class Client {
 	}
 	
 	public void setExecutorRefs(BIPActor caller, BIPActor callee, BIPActor voice,
-			BIPActor disc, BIPActor client)
+			BIPActor disc, BIPActor client, BIPActor checker)
 	{
 		callerAgregationExecutor = caller;
 		calleeAgregationExecutor = callee;
 		voiceAgregator = voice;
 		discAgregator = disc;
 		myself = client;
+		this.checker = checker;
 	}
 	
 	public int randomID()
@@ -67,6 +69,8 @@ public class Client {
 		 dataMap.put("waiterId", calleeID);
 		callerAgregationExecutor.inform("dialUp",dataMap);
 		calleeAgregationExecutor.inform("waitUp",dataMap);
+		checker.inform("notify", dataMap);
+		
 	}
 	
 	@Transition(name = "dial", source = "s0", target = "s1")
@@ -77,6 +81,7 @@ public class Client {
 		 dataMap.put("dialerId", id);
 		 dataMap.put("waiterId", waiterId);
 		 voiceAgregator.inform("voiceUp",dataMap);
+		 checker.inform("dial", dataMap);
 	}
 	
 	@Transition(name = "wait", source = "s0", target = "s1")
@@ -86,6 +91,7 @@ public class Client {
 		 dataMap.put("dialerId", dialerId);
 		 dataMap.put("waiterId", id);
 		voiceAgregator.inform("voiceUp",dataMap);
+		checker.inform("wait", dataMap);
 	}
 	
 	@Transition(name = "voice", source = "s1", target = "s2")
@@ -95,6 +101,7 @@ public class Client {
 		 dataMap.put("id1", id);
 		 dataMap.put("id2", otherId);
 		discAgregator.inform("discUp", dataMap);
+		checker.inform("voice", dataMap);
 	}
 	
 	@Transition(name = "disc", source = "s2", target = "init")
@@ -102,6 +109,11 @@ public class Client {
 		int otherId = (id1==id)?id2:id1;
 		System.err.println(i+ " Client "+ this.id + " is disconnected from "+otherId );
 		i++;myself.inform("notify");
+		HashMap<String, Object> dataMap = new HashMap<String, Object>();
+		 dataMap.put("dialerId", this.id);
+		 dataMap.put("waiterId", otherId);
+		checker.inform("disc", dataMap);
+		//if (i>=10) System.exit(0);
 	}
 	
 }
