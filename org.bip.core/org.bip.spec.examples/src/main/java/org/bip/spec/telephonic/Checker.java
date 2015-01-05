@@ -1,5 +1,6 @@
 package org.bip.spec.telephonic;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
 import org.bip.annotations.ComponentType;
@@ -13,7 +14,7 @@ import org.bip.api.PortType;
 	 @Port(name = "wait", type = PortType.spontaneous), 
 	 @Port(name = "voice", type = PortType.spontaneous), 
 	 @Port(name = "disc", type = PortType.spontaneous),
-	 @Port(name = "notify", type = PortType.spontaneous)})
+	 @Port(name = "error", type = PortType.spontaneous)})
 @ComponentType(initial = "s0", name = "org.bip.spec.telephonic.Checker")
 public class Checker {
 	
@@ -40,6 +41,7 @@ public class Checker {
 	}
 	
 	private int n;
+	private AtomicInteger errorCounter;
 	AtomicIntegerArray dials;
 	AtomicIntegerArray dialwaitsNotified;
 	AtomicIntegerArray waits;
@@ -51,6 +53,7 @@ public class Checker {
 	public Checker(int n) {
 		this.n = n;
 		dials = new AtomicIntegerArray(n);
+		errorCounter = new AtomicInteger(0);
 		dialwaitsNotified = new AtomicIntegerArray(n);
 		waits = new AtomicIntegerArray(n);
 		voiceNotified = new AtomicIntegerArray(n);
@@ -198,8 +201,13 @@ public class Checker {
 
 	}
 	
-	// here the component informing has the dialerId
-	@Transition(name = "notify", source = "s0", target = "s0")
-	public void notify(@Data(name = "dialerId") Integer dialerId) {
+	@Transition(name = "error", source = "s0", target = "s0")
+	public void notifyError() {
+		errorCounter.incrementAndGet();
+	}
+	
+	public boolean hasNoErrors()
+	{
+		return errorCounter.get()==0;
 	}
 }

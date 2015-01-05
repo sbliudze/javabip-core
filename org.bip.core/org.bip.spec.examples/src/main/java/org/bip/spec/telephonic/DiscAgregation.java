@@ -13,18 +13,15 @@ public class DiscAgregation implements ClientCaller {
 	BIPActor discSync;
 	HashMap<Integer, BIPActor> clientActors;
 	
-	public DiscAgregation(int n)
-	{
+	public DiscAgregation(int n) {
 		clientActors = new HashMap<Integer, BIPActor>(n);
 	}
-	
-	public void setSyncRefs(BIPActor discSync)
-	{
+
+	public void setSyncRefs(BIPActor discSync) {
 		this.discSync = discSync;
 	}
-	
-	public void setClientRefs(BIPActor client, int id)
-	{
+
+	public void setClientRefs(BIPActor client, int id) {
 		clientActors.put(id, client);
 	}
 

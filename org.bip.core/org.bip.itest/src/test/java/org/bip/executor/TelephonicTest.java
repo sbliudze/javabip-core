@@ -18,6 +18,7 @@ import org.bip.glue.GlueBuilder;
 import org.bip.glue.TwoSynchronGlueBuilder;
 import org.bip.spec.MemoryMonitor;
 import org.bip.spec.SwitchableRouteDataTransfers;
+import org.bip.spec.telephonic.AgregatorClient;
 import org.bip.spec.telephonic.CalleeAgregation;
 import org.bip.spec.telephonic.CallerAgregation;
 import org.bip.spec.telephonic.Checker;
@@ -102,11 +103,11 @@ public class TelephonicTest {
 		BIPActor checkerActor = engine.register(checker, "checker", true); 
 		
 
-		Client client1 = new Client(1,n);
-		Client client2 = new Client(2,n);
-		Client client3 = new Client(3,n);
-		Client client4 = new Client(4,n);
-		Client client5 = new Client(5,n);
+		AgregatorClient client1 = new Client(1,n);
+		AgregatorClient client2 = new Client(2,n);
+		AgregatorClient client3 = new Client(3,n);
+		AgregatorClient client4 = new Client(4,n);
+		AgregatorClient client5 = new Client(5,n);
 		
 		ClientCaller callerAgregation = new CallerAgregation(n);
 		ClientCaller calleeAgregation = new CalleeAgregation(n); 
@@ -158,6 +159,11 @@ public class TelephonicTest {
 		voiceAgregation1 =  setClientRefs(clients, voiceAgregation1);
 		discAgregation1 =  setClientRefs(clients, discAgregation1);
 		
+		client1 =  setClientRefs(clients, client1);
+		client2 =  setClientRefs(clients, client2);
+		client3 =  setClientRefs(clients, client3);
+		client4 =  setClientRefs(clients, client4);
+		client5 =  setClientRefs(clients, client5);
 		
 		engine.start();
 		engine.execute();
@@ -178,7 +184,7 @@ public class TelephonicTest {
 		assertTrue("Some clients are not communicating with each other after making a call.", checker.connectingToEachOther());
 		assertTrue("Some clients are not communicating with each other at voicing.", checker.voicingToEachOther());
 		assertTrue("Some clients are not communicating with each other at disconnecting.", checker.discToEachOther());
-
+		assertTrue("A client was communicating with not someone it expected", checker.hasNoErrors());
 		
 		engine.stop();
 		engineFactory.destroy(engine);
@@ -202,16 +208,16 @@ public class TelephonicTest {
 		Checker checker = new Checker(n);
 		BIPActor checkerActor = engine.register(checker, "checker", true); 
 		
-		Client client1 = new Client(1,n);
-		Client client2 = new Client(2,n);
-		Client client3 = new Client(3,n);
-		Client client4 = new Client(4,n);
-		Client client5 = new Client(5,n);
-		Client client6 = new Client(6,n);
-		Client client7 = new Client(7,n);
-		Client client8 = new Client(8,n);
-		Client client9 = new Client(9,n);
-		Client client10 = new Client(10,n);	
+		AgregatorClient client1 = new Client(1,n);
+		AgregatorClient client2 = new Client(2,n);
+		AgregatorClient client3 = new Client(3,n);
+		AgregatorClient client4 = new Client(4,n);
+		AgregatorClient client5 = new Client(5,n);
+		AgregatorClient client6 = new Client(6,n);
+		AgregatorClient client7 = new Client(7,n);
+		AgregatorClient client8 = new Client(8,n);
+		AgregatorClient client9 = new Client(9,n);
+		AgregatorClient client10 = new Client(10,n);	
 		
 		ClientCaller callerAgregation = new CallerAgregation(n);
 		ClientCaller calleeAgregation = new CalleeAgregation(n); 
@@ -273,6 +279,17 @@ public class TelephonicTest {
 		voiceAgregation =  setClientRefs(clients, voiceAgregation);
 		discAgregation =  setClientRefs(clients, discAgregation);
 		
+		client1 = setClientRefs(clients, client1);
+		client2 = setClientRefs(clients, client2);
+		client3 = setClientRefs(clients, client3);
+		client4 = setClientRefs(clients, client4);
+		client5 = setClientRefs(clients, client5);
+		client6 = setClientRefs(clients, client6);
+		client7 = setClientRefs(clients, client7);
+		client8 = setClientRefs(clients, client8);
+		client9 = setClientRefs(clients, client9);
+		client10 = setClientRefs(clients, client10);
+		
 		engine.start();
 		engine.execute();
 
@@ -298,7 +315,7 @@ public class TelephonicTest {
 		assertTrue("Some clients are not communicating with each other after making a call.", checker.connectingToEachOther());
 		assertTrue("Some clients are not communicating with each other at voicing.", checker.voicingToEachOther());
 		assertTrue("Some clients are not communicating with each other at disconnecting.", checker.discToEachOther());
-
+		assertTrue("A client was communicating with not someone it expected", checker.hasNoErrors());
 
 		engine.stop();
 		engineFactory.destroy(engine);
@@ -322,21 +339,21 @@ public class TelephonicTest {
 		Checker checker = new Checker(n);
 		BIPActor checkerActor = engine.register(checker, "checker", true); 
 		
-		Client client1 = new Client(1,n);
-		Client client2 = new Client(2,n);
-		Client client3 = new Client(3,n);
-		Client client4 = new Client(4,n);
-		Client client5 = new Client(5,n);
-		Client client6 = new Client(6,n);
-		Client client7 = new Client(7,n);
-		Client client8 = new Client(8,n);
-		Client client9 = new Client(9,n);
-		Client client10 = new Client(10,n);
-		Client client11 = new Client(11,n);
-		Client client12 = new Client(12,n);
-		Client client13 = new Client(13,n);
-		Client client14 = new Client(14,n);
-		Client client15 = new Client(15,n);
+		AgregatorClient client1 = new Client(1,n);
+		AgregatorClient client2 = new Client(2,n);
+		AgregatorClient client3 = new Client(3,n);
+		AgregatorClient client4 = new Client(4,n);
+		AgregatorClient client5 = new Client(5,n);
+		AgregatorClient client6 = new Client(6,n);
+		AgregatorClient client7 = new Client(7,n);
+		AgregatorClient client8 = new Client(8,n);
+		AgregatorClient client9 = new Client(9,n);
+		AgregatorClient client10 = new Client(10,n);
+		AgregatorClient client11 = new Client(11,n);
+		AgregatorClient client12 = new Client(12,n);
+		AgregatorClient client13 = new Client(13,n);
+		AgregatorClient client14 = new Client(14,n);
+		AgregatorClient client15 = new Client(15,n);
 		
 		ClientCaller callerAgregation = new CallerAgregation(n);
 		ClientCaller calleeAgregation = new CalleeAgregation(n); 
@@ -408,6 +425,22 @@ public class TelephonicTest {
 		voiceAgregation =  setClientRefs(clients, voiceAgregation);
 		discAgregation =  setClientRefs(clients, discAgregation);
 		
+		client1 = setClientRefs(clients, client1);
+		client2 = setClientRefs(clients, client2);
+		client3 = setClientRefs(clients, client3);
+		client4 = setClientRefs(clients, client4);
+		client5 = setClientRefs(clients, client5);
+		client6 = setClientRefs(clients, client6);
+		client7 = setClientRefs(clients, client7);
+		client8 = setClientRefs(clients, client8);
+		client9 = setClientRefs(clients, client9);
+		client10 = setClientRefs(clients, client10);
+		client11 = setClientRefs(clients, client11);
+		client12 = setClientRefs(clients, client12);
+		client13 = setClientRefs(clients, client13);
+		client14 = setClientRefs(clients, client14);
+		client15 = setClientRefs(clients, client15);
+		
 		engine.start();
 		engine.execute();
 
@@ -437,7 +470,7 @@ public class TelephonicTest {
 		assertTrue("Some clients are not communicating with each other after making a call.", checker.connectingToEachOther());
 		assertTrue("Some clients are not communicating with each other at voicing.", checker.voicingToEachOther());
 		assertTrue("Some clients are not communicating with each other at disconnecting.", checker.discToEachOther());
-
+		assertTrue("A client was communicating with not someone it expected", checker.hasNoErrors());
 
 		engine.stop();
 		engineFactory.destroy(engine);
@@ -461,26 +494,26 @@ public class TelephonicTest {
 		Checker checker = new Checker(n);
 		BIPActor checkerActor = engine.register(checker, "checker", true); 
 		
-		Client client1 = new Client(1,n);
-		Client client2 = new Client(2,n);
-		Client client3 = new Client(3,n);
-		Client client4 = new Client(4,n);
-		Client client5 = new Client(5,n);
-		Client client6 = new Client(6,n);
-		Client client7 = new Client(7,n);
-		Client client8 = new Client(8,n);
-		Client client9 = new Client(9,n);
-		Client client10 = new Client(10,n);
-		Client client11 = new Client(11,n);
-		Client client12 = new Client(12,n);
-		Client client13 = new Client(13,n);
-		Client client14 = new Client(14,n);
-		Client client15 = new Client(15,n);
-		Client client16 = new Client(16,n);
-		Client client17 = new Client(17,n);
-		Client client18 = new Client(18,n);
-		Client client19 = new Client(19,n);
-		Client client20 = new Client(20,n);		
+		AgregatorClient client1 = new Client(1,n);
+		AgregatorClient client2 = new Client(2,n);
+		AgregatorClient client3 = new Client(3,n);
+		AgregatorClient client4 = new Client(4,n);
+		AgregatorClient client5 = new Client(5,n);
+		AgregatorClient client6 = new Client(6,n);
+		AgregatorClient client7 = new Client(7,n);
+		AgregatorClient client8 = new Client(8,n);
+		AgregatorClient client9 = new Client(9,n);
+		AgregatorClient client10 = new Client(10,n);
+		AgregatorClient client11 = new Client(11,n);
+		AgregatorClient client12 = new Client(12,n);
+		AgregatorClient client13 = new Client(13,n);
+		AgregatorClient client14 = new Client(14,n);
+		AgregatorClient client15 = new Client(15,n);
+		AgregatorClient client16 = new Client(16,n);
+		AgregatorClient client17 = new Client(17,n);
+		AgregatorClient client18 = new Client(18,n);
+		AgregatorClient client19 = new Client(19,n);
+		AgregatorClient client20 = new Client(20,n);		
 		
 		ClientCaller callerAgregation = new CallerAgregation(n);
 		ClientCaller calleeAgregation = new CalleeAgregation(n); 
@@ -562,6 +595,27 @@ public class TelephonicTest {
 		voiceAgregation =  setClientRefs(clients, voiceAgregation);
 		discAgregation =  setClientRefs(clients, discAgregation);
 		
+		client1 = setClientRefs(clients, client1);
+		client2 = setClientRefs(clients, client2);
+		client3 = setClientRefs(clients, client3);
+		client4 = setClientRefs(clients, client4);
+		client5 = setClientRefs(clients, client5);
+		client6 = setClientRefs(clients, client6);
+		client7 = setClientRefs(clients, client7);
+		client8 = setClientRefs(clients, client8);
+		client9 = setClientRefs(clients, client9);
+		client10 = setClientRefs(clients, client10);
+		client11 = setClientRefs(clients, client11);
+		client12 = setClientRefs(clients, client12);
+		client13 = setClientRefs(clients, client13);
+		client14 = setClientRefs(clients, client14);
+		client15 = setClientRefs(clients, client15);
+		client16 = setClientRefs(clients, client16);
+		client17 = setClientRefs(clients, client17);
+		client18 = setClientRefs(clients, client18);
+		client19 = setClientRefs(clients, client19);
+		client20 = setClientRefs(clients, client20);
+		
 		engine.start();
 		engine.execute();
 
@@ -596,7 +650,7 @@ public class TelephonicTest {
 		assertTrue("Some clients are not communicating with each other after making a call.", checker.connectingToEachOther());
 		assertTrue("Some clients are not communicating with each other at voicing.", checker.voicingToEachOther());
 		assertTrue("Some clients are not communicating with each other at disconnecting.", checker.discToEachOther());
-
+		assertTrue("A client was communicating with not someone it expected", checker.hasNoErrors());
 
 		engine.stop();
 		engineFactory.destroy(engine);
@@ -620,31 +674,31 @@ public class TelephonicTest {
 		Checker checker = new Checker(n);
 		BIPActor checkerActor = engine.register(checker, "checker", true); 
 		
-		Client client1 = new Client(1,n);
-		Client client2 = new Client(2,n);
-		Client client3 = new Client(3,n);
-		Client client4 = new Client(4,n);
-		Client client5 = new Client(5,n);
-		Client client6 = new Client(6,n);
-		Client client7 = new Client(7,n);
-		Client client8 = new Client(8,n);
-		Client client9 = new Client(9,n);
-		Client client10 = new Client(10,n);
-		Client client11 = new Client(11,n);
-		Client client12 = new Client(12,n);
-		Client client13 = new Client(13,n);
-		Client client14 = new Client(14,n);
-		Client client15 = new Client(15,n);
-		Client client16 = new Client(16,n);
-		Client client17 = new Client(17,n);
-		Client client18 = new Client(18,n);
-		Client client19 = new Client(19,n);
-		Client client20 = new Client(20,n);		
-		Client client21 = new Client(21,n);
-		Client client22 = new Client(22,n);
-		Client client23 = new Client(23,n);
-		Client client24 = new Client(24,n);
-		Client client25 = new Client(25,n);
+		AgregatorClient client1 = new Client(1,n);
+		AgregatorClient client2 = new Client(2,n);
+		AgregatorClient client3 = new Client(3,n);
+		AgregatorClient client4 = new Client(4,n);
+		AgregatorClient client5 = new Client(5,n);
+		AgregatorClient client6 = new Client(6,n);
+		AgregatorClient client7 = new Client(7,n);
+		AgregatorClient client8 = new Client(8,n);
+		AgregatorClient client9 = new Client(9,n);
+		AgregatorClient client10 = new Client(10,n);
+		AgregatorClient client11 = new Client(11,n);
+		AgregatorClient client12 = new Client(12,n);
+		AgregatorClient client13 = new Client(13,n);
+		AgregatorClient client14 = new Client(14,n);
+		AgregatorClient client15 = new Client(15,n);
+		AgregatorClient client16 = new Client(16,n);
+		AgregatorClient client17 = new Client(17,n);
+		AgregatorClient client18 = new Client(18,n);
+		AgregatorClient client19 = new Client(19,n);
+		AgregatorClient client20 = new Client(20,n);		
+		AgregatorClient client21 = new Client(21,n);
+		AgregatorClient client22 = new Client(22,n);
+		AgregatorClient client23 = new Client(23,n);
+		AgregatorClient client24 = new Client(24,n);
+		AgregatorClient client25 = new Client(25,n);
 		
 		ClientCaller callerAgregation = new CallerAgregation(n);
 		ClientCaller calleeAgregation = new CalleeAgregation(n); 
@@ -736,6 +790,32 @@ public class TelephonicTest {
 		voiceAgregation =  setClientRefs(clients, voiceAgregation);
 		discAgregation =  setClientRefs(clients, discAgregation);
 		
+		client1 = setClientRefs(clients, client1);
+		client2 = setClientRefs(clients, client2);
+		client3 = setClientRefs(clients, client3);
+		client4 = setClientRefs(clients, client4);
+		client5 = setClientRefs(clients, client5);
+		client6 = setClientRefs(clients, client6);
+		client7 = setClientRefs(clients, client7);
+		client8 = setClientRefs(clients, client8);
+		client9 = setClientRefs(clients, client9);
+		client10 = setClientRefs(clients, client10);
+		client11 = setClientRefs(clients, client11);
+		client12 = setClientRefs(clients, client12);
+		client13 = setClientRefs(clients, client13);
+		client14 = setClientRefs(clients, client14);
+		client15 = setClientRefs(clients, client15);
+		client16 = setClientRefs(clients, client16);
+		client17 = setClientRefs(clients, client17);
+		client18 = setClientRefs(clients, client18);
+		client19 = setClientRefs(clients, client19);
+		client20 = setClientRefs(clients, client20);
+		client21 = setClientRefs(clients, client21);
+		client22 = setClientRefs(clients, client22);
+		client23 = setClientRefs(clients, client23);
+		client24 = setClientRefs(clients, client24);
+		client25 = setClientRefs(clients, client25);
+		
 		engine.start();
 		engine.execute();
 
@@ -775,7 +855,7 @@ public class TelephonicTest {
 		assertTrue("Some clients are not communicating with each other after making a call.", checker.connectingToEachOther());
 		assertTrue("Some clients are not communicating with each other at voicing.", checker.voicingToEachOther());
 		assertTrue("Some clients are not communicating with each other at disconnecting.", checker.discToEachOther());
-
+		assertTrue("A client was communicating with not someone it expected", checker.hasNoErrors());
 
 		engine.stop();
 		engineFactory.destroy(engine);
@@ -799,36 +879,36 @@ public class TelephonicTest {
 		Checker checker = new Checker(n);
 		BIPActor checkerActor = engine.register(checker, "checker", true); 
 		
-		Client client1 = new Client(1,n);
-		Client client2 = new Client(2,n);
-		Client client3 = new Client(3,n);
-		Client client4 = new Client(4,n);
-		Client client5 = new Client(5,n);
-		Client client6 = new Client(6,n);
-		Client client7 = new Client(7,n);
-		Client client8 = new Client(8,n);
-		Client client9 = new Client(9,n);
-		Client client10 = new Client(10,n);
-		Client client11 = new Client(11,n);
-		Client client12 = new Client(12,n);
-		Client client13 = new Client(13,n);
-		Client client14 = new Client(14,n);
-		Client client15 = new Client(15,n);
-		Client client16 = new Client(16,n);
-		Client client17 = new Client(17,n);
-		Client client18 = new Client(18,n);
-		Client client19 = new Client(19,n);
-		Client client20 = new Client(20,n);		
-		Client client21 = new Client(21,n);
-		Client client22 = new Client(22,n);
-		Client client23 = new Client(23,n);
-		Client client24 = new Client(24,n);
-		Client client25 = new Client(25,n);
-		Client client26 = new Client(26,n);
-		Client client27 = new Client(27,n);
-		Client client28 = new Client(28,n);
-		Client client29 = new Client(29,n);
-		Client client30 = new Client(30,n);
+		AgregatorClient client1 = new Client(1,n);
+		AgregatorClient client2 = new Client(2,n);
+		AgregatorClient client3 = new Client(3,n);
+		AgregatorClient client4 = new Client(4,n);
+		AgregatorClient client5 = new Client(5,n);
+		AgregatorClient client6 = new Client(6,n);
+		AgregatorClient client7 = new Client(7,n);
+		AgregatorClient client8 = new Client(8,n);
+		AgregatorClient client9 = new Client(9,n);
+		AgregatorClient client10 = new Client(10,n);
+		AgregatorClient client11 = new Client(11,n);
+		AgregatorClient client12 = new Client(12,n);
+		AgregatorClient client13 = new Client(13,n);
+		AgregatorClient client14 = new Client(14,n);
+		AgregatorClient client15 = new Client(15,n);
+		AgregatorClient client16 = new Client(16,n);
+		AgregatorClient client17 = new Client(17,n);
+		AgregatorClient client18 = new Client(18,n);
+		AgregatorClient client19 = new Client(19,n);
+		AgregatorClient client20 = new Client(20,n);		
+		AgregatorClient client21 = new Client(21,n);
+		AgregatorClient client22 = new Client(22,n);
+		AgregatorClient client23 = new Client(23,n);
+		AgregatorClient client24 = new Client(24,n);
+		AgregatorClient client25 = new Client(25,n);
+		AgregatorClient client26 = new Client(26,n);
+		AgregatorClient client27 = new Client(27,n);
+		AgregatorClient client28 = new Client(28,n);
+		AgregatorClient client29 = new Client(29,n);
+		AgregatorClient client30 = new Client(30,n);
 		
 		ClientCaller callerAgregation = new CallerAgregation(n);
 		ClientCaller calleeAgregation = new CalleeAgregation(n); 
@@ -930,6 +1010,37 @@ public class TelephonicTest {
 		voiceAgregation =  setClientRefs(clients, voiceAgregation);
 		discAgregation =  setClientRefs(clients, discAgregation);
 		
+		client1 = setClientRefs(clients, client1);
+		client2 = setClientRefs(clients, client2);
+		client3 = setClientRefs(clients, client3);
+		client4 = setClientRefs(clients, client4);
+		client5 = setClientRefs(clients, client5);
+		client6 = setClientRefs(clients, client6);
+		client7 = setClientRefs(clients, client7);
+		client8 = setClientRefs(clients, client8);
+		client9 = setClientRefs(clients, client9);
+		client10 = setClientRefs(clients, client10);
+		client11 = setClientRefs(clients, client11);
+		client12 = setClientRefs(clients, client12);
+		client13 = setClientRefs(clients, client13);
+		client14 = setClientRefs(clients, client14);
+		client15 = setClientRefs(clients, client15);
+		client16 = setClientRefs(clients, client16);
+		client17 = setClientRefs(clients, client17);
+		client18 = setClientRefs(clients, client18);
+		client19 = setClientRefs(clients, client19);
+		client20 = setClientRefs(clients, client20);
+		client21 = setClientRefs(clients, client21);
+		client22 = setClientRefs(clients, client22);
+		client23 = setClientRefs(clients, client23);
+		client24 = setClientRefs(clients, client24);
+		client25 = setClientRefs(clients, client25);
+		client26 = setClientRefs(clients, client26);
+		client27 = setClientRefs(clients, client27);
+		client28 = setClientRefs(clients, client28);
+		client29 = setClientRefs(clients, client29);
+		client30 = setClientRefs(clients, client30);
+		
 		engine.start();
 		engine.execute();
 
@@ -974,7 +1085,7 @@ public class TelephonicTest {
 		assertTrue("Some clients are not communicating with each other after making a call.", checker.connectingToEachOther());
 		assertTrue("Some clients are not communicating with each other at voicing.", checker.voicingToEachOther());
 		assertTrue("Some clients are not communicating with each other at disconnecting.", checker.discToEachOther());
-
+		assertTrue("A client was communicating with not someone it expected", checker.hasNoErrors());
 
 		engine.stop();
 		engineFactory.destroy(engine);
@@ -998,41 +1109,41 @@ public class TelephonicTest {
 		Checker checker = new Checker(n);
 		BIPActor checkerActor = engine.register(checker, "checker", true); 
 		
-		Client client1 = new Client(1,n);
-		Client client2 = new Client(2,n);
-		Client client3 = new Client(3,n);
-		Client client4 = new Client(4,n);
-		Client client5 = new Client(5,n);
-		Client client6 = new Client(6,n);
-		Client client7 = new Client(7,n);
-		Client client8 = new Client(8,n);
-		Client client9 = new Client(9,n);
-		Client client10 = new Client(10,n);
-		Client client11 = new Client(11,n);
-		Client client12 = new Client(12,n);
-		Client client13 = new Client(13,n);
-		Client client14 = new Client(14,n);
-		Client client15 = new Client(15,n);
-		Client client16 = new Client(16,n);
-		Client client17 = new Client(17,n);
-		Client client18 = new Client(18,n);
-		Client client19 = new Client(19,n);
-		Client client20 = new Client(20,n);		
-		Client client21 = new Client(21,n);
-		Client client22 = new Client(22,n);
-		Client client23 = new Client(23,n);
-		Client client24 = new Client(24,n);
-		Client client25 = new Client(25,n);
-		Client client26 = new Client(26,n);
-		Client client27 = new Client(27,n);
-		Client client28 = new Client(28,n);
-		Client client29 = new Client(29,n);
-		Client client30 = new Client(30,n);
-		Client client31 = new Client(31,n);
-		Client client32 = new Client(32,n);
-		Client client33 = new Client(33,n);
-		Client client34 = new Client(34,n);
-		Client client35 = new Client(35,n);
+		AgregatorClient client1 = new Client(1,n);
+		AgregatorClient client2 = new Client(2,n);
+		AgregatorClient client3 = new Client(3,n);
+		AgregatorClient client4 = new Client(4,n);
+		AgregatorClient client5 = new Client(5,n);
+		AgregatorClient client6 = new Client(6,n);
+		AgregatorClient client7 = new Client(7,n);
+		AgregatorClient client8 = new Client(8,n);
+		AgregatorClient client9 = new Client(9,n);
+		AgregatorClient client10 = new Client(10,n);
+		AgregatorClient client11 = new Client(11,n);
+		AgregatorClient client12 = new Client(12,n);
+		AgregatorClient client13 = new Client(13,n);
+		AgregatorClient client14 = new Client(14,n);
+		AgregatorClient client15 = new Client(15,n);
+		AgregatorClient client16 = new Client(16,n);
+		AgregatorClient client17 = new Client(17,n);
+		AgregatorClient client18 = new Client(18,n);
+		AgregatorClient client19 = new Client(19,n);
+		AgregatorClient client20 = new Client(20,n);		
+		AgregatorClient client21 = new Client(21,n);
+		AgregatorClient client22 = new Client(22,n);
+		AgregatorClient client23 = new Client(23,n);
+		AgregatorClient client24 = new Client(24,n);
+		AgregatorClient client25 = new Client(25,n);
+		AgregatorClient client26 = new Client(26,n);
+		AgregatorClient client27 = new Client(27,n);
+		AgregatorClient client28 = new Client(28,n);
+		AgregatorClient client29 = new Client(29,n);
+		AgregatorClient client30 = new Client(30,n);
+		AgregatorClient client31 = new Client(31,n);
+		AgregatorClient client32 = new Client(32,n);
+		AgregatorClient client33 = new Client(33,n);
+		AgregatorClient client34 = new Client(34,n);
+		AgregatorClient client35 = new Client(35,n);
 
 		ClientCaller callerAgregation = new CallerAgregation(n);
 		ClientCaller calleeAgregation = new CalleeAgregation(n); 
@@ -1144,6 +1255,42 @@ public class TelephonicTest {
 		voiceAgregation =  setClientRefs(clients, voiceAgregation);
 		discAgregation =  setClientRefs(clients, discAgregation);
 		
+		client1 = setClientRefs(clients, client1);
+		client2 = setClientRefs(clients, client2);
+		client3 = setClientRefs(clients, client3);
+		client4 = setClientRefs(clients, client4);
+		client5 = setClientRefs(clients, client5);
+		client6 = setClientRefs(clients, client6);
+		client7 = setClientRefs(clients, client7);
+		client8 = setClientRefs(clients, client8);
+		client9 = setClientRefs(clients, client9);
+		client10 = setClientRefs(clients, client10);
+		client11 = setClientRefs(clients, client11);
+		client12 = setClientRefs(clients, client12);
+		client13 = setClientRefs(clients, client13);
+		client14 = setClientRefs(clients, client14);
+		client15 = setClientRefs(clients, client15);
+		client16 = setClientRefs(clients, client16);
+		client17 = setClientRefs(clients, client17);
+		client18 = setClientRefs(clients, client18);
+		client19 = setClientRefs(clients, client19);
+		client20 = setClientRefs(clients, client20);
+		client21 = setClientRefs(clients, client21);
+		client22 = setClientRefs(clients, client22);
+		client23 = setClientRefs(clients, client23);
+		client24 = setClientRefs(clients, client24);
+		client25 = setClientRefs(clients, client25);
+		client26 = setClientRefs(clients, client26);
+		client27 = setClientRefs(clients, client27);
+		client28 = setClientRefs(clients, client28);
+		client29 = setClientRefs(clients, client29);
+		client30 = setClientRefs(clients, client30);
+		client31 = setClientRefs(clients, client31);
+		client32 = setClientRefs(clients, client32);
+		client33 = setClientRefs(clients, client33);
+		client34 = setClientRefs(clients, client34);
+		client35 = setClientRefs(clients, client35);
+		
 		engine.start();
 		engine.execute();
 
@@ -1193,7 +1340,7 @@ public class TelephonicTest {
 		assertTrue("Some clients are not communicating with each other after making a call.", checker.connectingToEachOther());
 		assertTrue("Some clients are not communicating with each other at voicing.", checker.voicingToEachOther());
 		assertTrue("Some clients are not communicating with each other at disconnecting.", checker.discToEachOther());
-
+		assertTrue("A client was communicating with not someone it expected", checker.hasNoErrors());
 
 		engine.stop();
 		engineFactory.destroy(engine);
@@ -1217,46 +1364,46 @@ public class TelephonicTest {
 		Checker checker = new Checker(n);
 		BIPActor checkerActor = engine.register(checker, "checker", true); 
 		
-		Client client1 = new Client(1,n);
-		Client client2 = new Client(2,n);
-		Client client3 = new Client(3,n);
-		Client client4 = new Client(4,n);
-		Client client5 = new Client(5,n);
-		Client client6 = new Client(6,n);
-		Client client7 = new Client(7,n);
-		Client client8 = new Client(8,n);
-		Client client9 = new Client(9,n);
-		Client client10 = new Client(10,n);
-		Client client11 = new Client(11,n);
-		Client client12 = new Client(12,n);
-		Client client13 = new Client(13,n);
-		Client client14 = new Client(14,n);
-		Client client15 = new Client(15,n);
-		Client client16 = new Client(16,n);
-		Client client17 = new Client(17,n);
-		Client client18 = new Client(18,n);
-		Client client19 = new Client(19,n);
-		Client client20 = new Client(20,n);		
-		Client client21 = new Client(21,n);
-		Client client22 = new Client(22,n);
-		Client client23 = new Client(23,n);
-		Client client24 = new Client(24,n);
-		Client client25 = new Client(25,n);
-		Client client26 = new Client(26,n);
-		Client client27 = new Client(27,n);
-		Client client28 = new Client(28,n);
-		Client client29 = new Client(29,n);
-		Client client30 = new Client(30,n);
-		Client client31 = new Client(31,n);
-		Client client32 = new Client(32,n);
-		Client client33 = new Client(33,n);
-		Client client34 = new Client(34,n);
-		Client client35 = new Client(35,n);
-		Client client36 = new Client(36,n);
-		Client client37 = new Client(37,n);
-		Client client38 = new Client(38,n);
-		Client client39 = new Client(39,n);
-		Client client40 = new Client(40,n);
+		AgregatorClient client1 = new Client(1,n);
+		AgregatorClient client2 = new Client(2,n);
+		AgregatorClient client3 = new Client(3,n);
+		AgregatorClient client4 = new Client(4,n);
+		AgregatorClient client5 = new Client(5,n);
+		AgregatorClient client6 = new Client(6,n);
+		AgregatorClient client7 = new Client(7,n);
+		AgregatorClient client8 = new Client(8,n);
+		AgregatorClient client9 = new Client(9,n);
+		AgregatorClient client10 = new Client(10,n);
+		AgregatorClient client11 = new Client(11,n);
+		AgregatorClient client12 = new Client(12,n);
+		AgregatorClient client13 = new Client(13,n);
+		AgregatorClient client14 = new Client(14,n);
+		AgregatorClient client15 = new Client(15,n);
+		AgregatorClient client16 = new Client(16,n);
+		AgregatorClient client17 = new Client(17,n);
+		AgregatorClient client18 = new Client(18,n);
+		AgregatorClient client19 = new Client(19,n);
+		AgregatorClient client20 = new Client(20,n);		
+		AgregatorClient client21 = new Client(21,n);
+		AgregatorClient client22 = new Client(22,n);
+		AgregatorClient client23 = new Client(23,n);
+		AgregatorClient client24 = new Client(24,n);
+		AgregatorClient client25 = new Client(25,n);
+		AgregatorClient client26 = new Client(26,n);
+		AgregatorClient client27 = new Client(27,n);
+		AgregatorClient client28 = new Client(28,n);
+		AgregatorClient client29 = new Client(29,n);
+		AgregatorClient client30 = new Client(30,n);
+		AgregatorClient client31 = new Client(31,n);
+		AgregatorClient client32 = new Client(32,n);
+		AgregatorClient client33 = new Client(33,n);
+		AgregatorClient client34 = new Client(34,n);
+		AgregatorClient client35 = new Client(35,n);
+		AgregatorClient client36 = new Client(36,n);
+		AgregatorClient client37 = new Client(37,n);
+		AgregatorClient client38 = new Client(38,n);
+		AgregatorClient client39 = new Client(39,n);
+		AgregatorClient client40 = new Client(40,n);
 		
 		ClientCaller callerAgregation = new CallerAgregation(n);
 		ClientCaller calleeAgregation = new CalleeAgregation(n); 
@@ -1378,6 +1525,47 @@ public class TelephonicTest {
 		voiceAgregation =  setClientRefs(clients, voiceAgregation);
 		discAgregation =  setClientRefs(clients, discAgregation);
 		
+		client1 = setClientRefs(clients, client1);
+		client2 = setClientRefs(clients, client2);
+		client3 = setClientRefs(clients, client3);
+		client4 = setClientRefs(clients, client4);
+		client5 = setClientRefs(clients, client5);
+		client6 = setClientRefs(clients, client6);
+		client7 = setClientRefs(clients, client7);
+		client8 = setClientRefs(clients, client8);
+		client9 = setClientRefs(clients, client9);
+		client10 = setClientRefs(clients, client10);
+		client11 = setClientRefs(clients, client11);
+		client12 = setClientRefs(clients, client12);
+		client13 = setClientRefs(clients, client13);
+		client14 = setClientRefs(clients, client14);
+		client15 = setClientRefs(clients, client15);
+		client16 = setClientRefs(clients, client16);
+		client17 = setClientRefs(clients, client17);
+		client18 = setClientRefs(clients, client18);
+		client19 = setClientRefs(clients, client19);
+		client20 = setClientRefs(clients, client20);
+		client21 = setClientRefs(clients, client21);
+		client22 = setClientRefs(clients, client22);
+		client23 = setClientRefs(clients, client23);
+		client24 = setClientRefs(clients, client24);
+		client25 = setClientRefs(clients, client25);
+		client26 = setClientRefs(clients, client26);
+		client27 = setClientRefs(clients, client27);
+		client28 = setClientRefs(clients, client28);
+		client29 = setClientRefs(clients, client29);
+		client30 = setClientRefs(clients, client30);
+		client31 = setClientRefs(clients, client31);
+		client32 = setClientRefs(clients, client32);
+		client33 = setClientRefs(clients, client33);
+		client34 = setClientRefs(clients, client34);
+		client35 = setClientRefs(clients, client35);
+		client36 = setClientRefs(clients, client36);
+		client37 = setClientRefs(clients, client37);
+		client38 = setClientRefs(clients, client38);
+		client39 = setClientRefs(clients, client39);
+		client40 = setClientRefs(clients, client40);
+		
 		engine.start();
 		engine.execute();
 
@@ -1432,7 +1620,7 @@ public class TelephonicTest {
 		assertTrue("Some clients are not communicating with each other after making a call.", checker.connectingToEachOther());
 		assertTrue("Some clients are not communicating with each other at voicing.", checker.voicingToEachOther());
 		assertTrue("Some clients are not communicating with each other at disconnecting.", checker.discToEachOther());
-
+		assertTrue("A client was communicating with not someone it expected", checker.hasNoErrors());
 
 		engine.stop();
 		engineFactory.destroy(engine);
@@ -1456,51 +1644,51 @@ public class TelephonicTest {
 		Checker checker = new Checker(n);
 		BIPActor checkerActor = engine.register(checker, "checker", true); 
 		
-		Client client1 = new Client(1,n);
-		Client client2 = new Client(2,n);
-		Client client3 = new Client(3,n);
-		Client client4 = new Client(4,n);
-		Client client5 = new Client(5,n);
-		Client client6 = new Client(6,n);
-		Client client7 = new Client(7,n);
-		Client client8 = new Client(8,n);
-		Client client9 = new Client(9,n);
-		Client client10 = new Client(10,n);
-		Client client11 = new Client(11,n);
-		Client client12 = new Client(12,n);
-		Client client13 = new Client(13,n);
-		Client client14 = new Client(14,n);
-		Client client15 = new Client(15,n);
-		Client client16 = new Client(16,n);
-		Client client17 = new Client(17,n);
-		Client client18 = new Client(18,n);
-		Client client19 = new Client(19,n);
-		Client client20 = new Client(20,n);		
-		Client client21 = new Client(21,n);
-		Client client22 = new Client(22,n);
-		Client client23 = new Client(23,n);
-		Client client24 = new Client(24,n);
-		Client client25 = new Client(25,n);
-		Client client26 = new Client(26,n);
-		Client client27 = new Client(27,n);
-		Client client28 = new Client(28,n);
-		Client client29 = new Client(29,n);
-		Client client30 = new Client(30,n);
-		Client client31 = new Client(31,n);
-		Client client32 = new Client(32,n);
-		Client client33 = new Client(33,n);
-		Client client34 = new Client(34,n);
-		Client client35 = new Client(35,n);
-		Client client36 = new Client(36,n);
-		Client client37 = new Client(37,n);
-		Client client38 = new Client(38,n);
-		Client client39 = new Client(39,n);
-		Client client40 = new Client(40,n);
-		Client client41 = new Client(41,n);
-		Client client42 = new Client(42,n);
-		Client client43 = new Client(43,n);
-		Client client44 = new Client(44,n);
-		Client client45 = new Client(45,n);
+		AgregatorClient client1 = new Client(1,n);
+		AgregatorClient client2 = new Client(2,n);
+		AgregatorClient client3 = new Client(3,n);
+		AgregatorClient client4 = new Client(4,n);
+		AgregatorClient client5 = new Client(5,n);
+		AgregatorClient client6 = new Client(6,n);
+		AgregatorClient client7 = new Client(7,n);
+		AgregatorClient client8 = new Client(8,n);
+		AgregatorClient client9 = new Client(9,n);
+		AgregatorClient client10 = new Client(10,n);
+		AgregatorClient client11 = new Client(11,n);
+		AgregatorClient client12 = new Client(12,n);
+		AgregatorClient client13 = new Client(13,n);
+		AgregatorClient client14 = new Client(14,n);
+		AgregatorClient client15 = new Client(15,n);
+		AgregatorClient client16 = new Client(16,n);
+		AgregatorClient client17 = new Client(17,n);
+		AgregatorClient client18 = new Client(18,n);
+		AgregatorClient client19 = new Client(19,n);
+		AgregatorClient client20 = new Client(20,n);		
+		AgregatorClient client21 = new Client(21,n);
+		AgregatorClient client22 = new Client(22,n);
+		AgregatorClient client23 = new Client(23,n);
+		AgregatorClient client24 = new Client(24,n);
+		AgregatorClient client25 = new Client(25,n);
+		AgregatorClient client26 = new Client(26,n);
+		AgregatorClient client27 = new Client(27,n);
+		AgregatorClient client28 = new Client(28,n);
+		AgregatorClient client29 = new Client(29,n);
+		AgregatorClient client30 = new Client(30,n);
+		AgregatorClient client31 = new Client(31,n);
+		AgregatorClient client32 = new Client(32,n);
+		AgregatorClient client33 = new Client(33,n);
+		AgregatorClient client34 = new Client(34,n);
+		AgregatorClient client35 = new Client(35,n);
+		AgregatorClient client36 = new Client(36,n);
+		AgregatorClient client37 = new Client(37,n);
+		AgregatorClient client38 = new Client(38,n);
+		AgregatorClient client39 = new Client(39,n);
+		AgregatorClient client40 = new Client(40,n);
+		AgregatorClient client41 = new Client(41,n);
+		AgregatorClient client42 = new Client(42,n);
+		AgregatorClient client43 = new Client(43,n);
+		AgregatorClient client44 = new Client(44,n);
+		AgregatorClient client45 = new Client(45,n);
 		
 		ClientCaller callerAgregation = new CallerAgregation(n);
 		ClientCaller calleeAgregation = new CalleeAgregation(n); 
@@ -1632,6 +1820,52 @@ public class TelephonicTest {
 		voiceAgregation =  setClientRefs(clients, voiceAgregation);
 		discAgregation =  setClientRefs(clients, discAgregation);
 		
+		client1 = setClientRefs(clients, client1);
+		client2 = setClientRefs(clients, client2);
+		client3 = setClientRefs(clients, client3);
+		client4 = setClientRefs(clients, client4);
+		client5 = setClientRefs(clients, client5);
+		client6 = setClientRefs(clients, client6);
+		client7 = setClientRefs(clients, client7);
+		client8 = setClientRefs(clients, client8);
+		client9 = setClientRefs(clients, client9);
+		client10 = setClientRefs(clients, client10);
+		client11 = setClientRefs(clients, client11);
+		client12 = setClientRefs(clients, client12);
+		client13 = setClientRefs(clients, client13);
+		client14 = setClientRefs(clients, client14);
+		client15 = setClientRefs(clients, client15);
+		client16 = setClientRefs(clients, client16);
+		client17 = setClientRefs(clients, client17);
+		client18 = setClientRefs(clients, client18);
+		client19 = setClientRefs(clients, client19);
+		client20 = setClientRefs(clients, client20);
+		client21 = setClientRefs(clients, client21);
+		client22 = setClientRefs(clients, client22);
+		client23 = setClientRefs(clients, client23);
+		client24 = setClientRefs(clients, client24);
+		client25 = setClientRefs(clients, client25);
+		client26 = setClientRefs(clients, client26);
+		client27 = setClientRefs(clients, client27);
+		client28 = setClientRefs(clients, client28);
+		client29 = setClientRefs(clients, client29);
+		client30 = setClientRefs(clients, client30);
+		client31 = setClientRefs(clients, client31);
+		client32 = setClientRefs(clients, client32);
+		client33 = setClientRefs(clients, client33);
+		client34 = setClientRefs(clients, client34);
+		client35 = setClientRefs(clients, client35);
+		client36 = setClientRefs(clients, client36);
+		client37 = setClientRefs(clients, client37);
+		client38 = setClientRefs(clients, client38);
+		client39 = setClientRefs(clients, client39);
+		client40 = setClientRefs(clients, client40);
+		client41 = setClientRefs(clients, client41);
+		client42 = setClientRefs(clients, client42);
+		client43 = setClientRefs(clients, client34);
+		client44 = setClientRefs(clients, client44);
+		client45 = setClientRefs(clients, client45);
+		
 		engine.start();
 		engine.execute();
 
@@ -1691,7 +1925,7 @@ public class TelephonicTest {
 		assertTrue("Some clients are not communicating with each other after making a call.", checker.connectingToEachOther());
 		assertTrue("Some clients are not communicating with each other at voicing.", checker.voicingToEachOther());
 		assertTrue("Some clients are not communicating with each other at disconnecting.", checker.discToEachOther());
-
+		assertTrue("A client was communicating with not someone it expected", checker.hasNoErrors());
 
 		engine.stop();
 		engineFactory.destroy(engine);
@@ -1716,56 +1950,56 @@ public class TelephonicTest {
 		Checker checker = new Checker(n);
 		BIPActor checkerActor = engine.register(checker, "checker", true); 
 		
-		Client client1 = new Client(1,n);
-		Client client2 = new Client(2,n);
-		Client client3 = new Client(3,n);
-		Client client4 = new Client(4,n);
-		Client client5 = new Client(5,n);
-		Client client6 = new Client(6,n);
-		Client client7 = new Client(7,n);
-		Client client8 = new Client(8,n);
-		Client client9 = new Client(9,n);
-		Client client10 = new Client(10,n);
-		Client client11 = new Client(11,n);
-		Client client12 = new Client(12,n);
-		Client client13 = new Client(13,n);
-		Client client14 = new Client(14,n);
-		Client client15 = new Client(15,n);
-		Client client16 = new Client(16,n);
-		Client client17 = new Client(17,n);
-		Client client18 = new Client(18,n);
-		Client client19 = new Client(19,n);
-		Client client20 = new Client(20,n);		
-		Client client21 = new Client(21,n);
-		Client client22 = new Client(22,n);
-		Client client23 = new Client(23,n);
-		Client client24 = new Client(24,n);
-		Client client25 = new Client(25,n);
-		Client client26 = new Client(26,n);
-		Client client27 = new Client(27,n);
-		Client client28 = new Client(28,n);
-		Client client29 = new Client(29,n);
-		Client client30 = new Client(30,n);
-		Client client31 = new Client(31,n);
-		Client client32 = new Client(32,n);
-		Client client33 = new Client(33,n);
-		Client client34 = new Client(34,n);
-		Client client35 = new Client(35,n);
-		Client client36 = new Client(36,n);
-		Client client37 = new Client(37,n);
-		Client client38 = new Client(38,n);
-		Client client39 = new Client(39,n);
-		Client client40 = new Client(40,n);
-		Client client41 = new Client(41,n);
-		Client client42 = new Client(42,n);
-		Client client43 = new Client(43,n);
-		Client client44 = new Client(44,n);
-		Client client45 = new Client(45,n);
-		Client client46 = new Client(46,n);
-		Client client47 = new Client(47,n);
-		Client client48 = new Client(48,n);
-		Client client49 = new Client(49,n);
-		Client client50 = new Client(50,n);
+		AgregatorClient client1 = new Client(1,n);
+		AgregatorClient client2 = new Client(2,n);
+		AgregatorClient client3 = new Client(3,n);
+		AgregatorClient client4 = new Client(4,n);
+		AgregatorClient client5 = new Client(5,n);
+		AgregatorClient client6 = new Client(6,n);
+		AgregatorClient client7 = new Client(7,n);
+		AgregatorClient client8 = new Client(8,n);
+		AgregatorClient client9 = new Client(9,n);
+		AgregatorClient client10 = new Client(10,n);
+		AgregatorClient client11 = new Client(11,n);
+		AgregatorClient client12 = new Client(12,n);
+		AgregatorClient client13 = new Client(13,n);
+		AgregatorClient client14 = new Client(14,n);
+		AgregatorClient client15 = new Client(15,n);
+		AgregatorClient client16 = new Client(16,n);
+		AgregatorClient client17 = new Client(17,n);
+		AgregatorClient client18 = new Client(18,n);
+		AgregatorClient client19 = new Client(19,n);
+		AgregatorClient client20 = new Client(20,n);		
+		AgregatorClient client21 = new Client(21,n);
+		AgregatorClient client22 = new Client(22,n);
+		AgregatorClient client23 = new Client(23,n);
+		AgregatorClient client24 = new Client(24,n);
+		AgregatorClient client25 = new Client(25,n);
+		AgregatorClient client26 = new Client(26,n);
+		AgregatorClient client27 = new Client(27,n);
+		AgregatorClient client28 = new Client(28,n);
+		AgregatorClient client29 = new Client(29,n);
+		AgregatorClient client30 = new Client(30,n);
+		AgregatorClient client31 = new Client(31,n);
+		AgregatorClient client32 = new Client(32,n);
+		AgregatorClient client33 = new Client(33,n);
+		AgregatorClient client34 = new Client(34,n);
+		AgregatorClient client35 = new Client(35,n);
+		AgregatorClient client36 = new Client(36,n);
+		AgregatorClient client37 = new Client(37,n);
+		AgregatorClient client38 = new Client(38,n);
+		AgregatorClient client39 = new Client(39,n);
+		AgregatorClient client40 = new Client(40,n);
+		AgregatorClient client41 = new Client(41,n);
+		AgregatorClient client42 = new Client(42,n);
+		AgregatorClient client43 = new Client(43,n);
+		AgregatorClient client44 = new Client(44,n);
+		AgregatorClient client45 = new Client(45,n);
+		AgregatorClient client46 = new Client(46,n);
+		AgregatorClient client47 = new Client(47,n);
+		AgregatorClient client48 = new Client(48,n);
+		AgregatorClient client49 = new Client(49,n);
+		AgregatorClient client50 = new Client(50,n);
 		
 		ClientCaller callerAgregation = new CallerAgregation(n);
 		ClientCaller calleeAgregation = new CalleeAgregation(n); 
@@ -1909,6 +2143,58 @@ public class TelephonicTest {
 		voiceAgregation =  setClientRefs(clients, voiceAgregation);
 		discAgregation =  setClientRefs(clients, discAgregation);
 		
+		client1 = setClientRefs(clients, client1);
+		client2 = setClientRefs(clients, client2);
+		client3 = setClientRefs(clients, client3);
+		client4 = setClientRefs(clients, client4);
+		client5 = setClientRefs(clients, client5);
+		client6 = setClientRefs(clients, client6);
+		client7 = setClientRefs(clients, client7);
+		client8 = setClientRefs(clients, client8);
+		client9 = setClientRefs(clients, client9);
+		client10 = setClientRefs(clients, client10);
+		client11 = setClientRefs(clients, client11);
+		client12 = setClientRefs(clients, client12);
+		client13 = setClientRefs(clients, client13);
+		client14 = setClientRefs(clients, client14);
+		client15 = setClientRefs(clients, client15);
+		client16 = setClientRefs(clients, client16);
+		client17 = setClientRefs(clients, client17);
+		client18 = setClientRefs(clients, client18);
+		client19 = setClientRefs(clients, client19);
+		client20 = setClientRefs(clients, client20);
+		client21 = setClientRefs(clients, client21);
+		client22 = setClientRefs(clients, client22);
+		client23 = setClientRefs(clients, client23);
+		client24 = setClientRefs(clients, client24);
+		client25 = setClientRefs(clients, client25);
+		client26 = setClientRefs(clients, client26);
+		client27 = setClientRefs(clients, client27);
+		client28 = setClientRefs(clients, client28);
+		client29 = setClientRefs(clients, client29);
+		client30 = setClientRefs(clients, client30);
+		client31 = setClientRefs(clients, client31);
+		client32 = setClientRefs(clients, client32);
+		client33 = setClientRefs(clients, client33);
+		client34 = setClientRefs(clients, client34);
+		client35 = setClientRefs(clients, client35);
+		client36 = setClientRefs(clients, client36);
+		client37 = setClientRefs(clients, client37);
+		client38 = setClientRefs(clients, client38);
+		client39 = setClientRefs(clients, client39);
+		client40 = setClientRefs(clients, client40);
+		client41 = setClientRefs(clients, client41);
+		client42 = setClientRefs(clients, client42);
+		client43 = setClientRefs(clients, client34);
+		client44 = setClientRefs(clients, client44);
+		client45 = setClientRefs(clients, client45);
+		client46 = setClientRefs(clients, client46);
+		client47 = setClientRefs(clients, client47);
+		client48 = setClientRefs(clients, client48);
+		client49 = setClientRefs(clients, client49);
+		client50 = setClientRefs(clients, client50);
+				
+		
 		engine.start();
 		engine.execute();
 
@@ -1973,13 +2259,22 @@ public class TelephonicTest {
 		assertTrue("Some clients are not communicating with each other after making a call.", checker.connectingToEachOther());
 		assertTrue("Some clients are not communicating with each other at voicing.", checker.voicingToEachOther());
 		assertTrue("Some clients are not communicating with each other at disconnecting.", checker.discToEachOther());
-
+		assertTrue("A client was communicating with not someone it expected", checker.hasNoErrors());
 
 		engine.stop();
 		engineFactory.destroy(engine);
 	}
 
 	private ClientCaller setClientRefs(ArrayList<BIPActor> clients, ClientCaller object) {
+		for (int i=0; i<clients.size(); i++)
+		{
+			object.setClientRefs(clients.get(i), i+1);
+		}
+		return object;
+	}
+	
+	
+	private AgregatorClient setClientRefs(ArrayList<BIPActor> clients, AgregatorClient object) {
 		for (int i=0; i<clients.size(); i++)
 		{
 			object.setClientRefs(clients.get(i), i+1);
