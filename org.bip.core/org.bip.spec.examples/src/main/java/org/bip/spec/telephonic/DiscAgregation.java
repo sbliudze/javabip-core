@@ -42,26 +42,30 @@ public class DiscAgregation implements ClientCaller {
         behaviourBuilder.addPort("discUp", PortType.spontaneous, this.getClass());
         behaviourBuilder.addPort("discDown", PortType.spontaneous, this.getClass());     
       		
-        behaviourBuilder.addTransitionAndStates("discUp","s0", "s0",  "", this.getClass().getMethod("discUp",Integer.class, Integer.class));
-        behaviourBuilder.addTransitionAndStates("discDown","s0", "s0",  "", this.getClass().getMethod("discDown",Integer.class, Integer.class));
+        behaviourBuilder.addTransitionAndStates("discUp","s0", "s0",  "", this.getClass().getMethod("discUp",Integer.class, Integer.class, Integer.class));
+        behaviourBuilder.addTransitionAndStates("discDown","s0", "s0",  "", this.getClass().getMethod("discDown",Integer.class, Integer.class, Integer.class));
      
 
         return behaviourBuilder;
     }
 	
-	public void discUp(@Data(name="id1") Integer dialerId, @Data(name="id2") Integer waiterId )
+	public void discUp(@Data(name="id1") Integer dialerId, @Data(name="id2") Integer waiterId , 
+			@Data(name="callId") Integer callNumber)
 	{
 		 HashMap<String, Object> dataMap = new HashMap<String, Object>();
 		 dataMap.put("id1", dialerId);
 		 dataMap.put("id2", waiterId);
+		 dataMap.put("callId", callNumber);
 		 discSync.inform("disc1",dataMap);
 	}
 	
-	public void discDown(@Data(name="id1") Integer dialerId, @Data(name="id2") Integer waiterId)
+	public void discDown(@Data(name="id1") Integer dialerId, @Data(name="id2") Integer waiterId, 
+			@Data(name="callId") Integer callNumber)
 	{
 		 HashMap<String, Object> dataMap = new HashMap<String, Object>();
 		 dataMap.put("id1", dialerId);
 		 dataMap.put("id2", waiterId);
+		 dataMap.put("callId", callNumber);
 		 clientActors.get(dialerId).inform("disc",dataMap);
 		 clientActors.get(waiterId).inform("disc",dataMap);
 	}

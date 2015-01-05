@@ -174,8 +174,10 @@ public class TelephonicTest {
 			e.printStackTrace();
 		}
 		
-		//assertTrue("Some client was communicating with several other clients at the same time.", checker.talkingToOne());
-		assertTrue("Some clients are not communicating with each other after making a call.", checker.talkingToEachOther());
+		assertTrue("Some client was communicating with several other clients at the same time.", checker.talkingToOne());
+		assertTrue("Some clients are not communicating with each other after making a call.", checker.connectingToEachOther());
+		assertTrue("Some clients are not communicating with each other at voicing.", checker.voicingToEachOther());
+		assertTrue("Some clients are not communicating with each other at disconnecting.", checker.discToEachOther());
 
 		
 		engine.stop();
@@ -454,6 +456,9 @@ public class TelephonicTest {
 		}
 
 		assertTrue("Some client was communicating with several other clients at the same time.", checker.talkingToOne());
+		assertTrue("Some clients are not communicating with each other after making a call.", checker.connectingToEachOther());
+		assertTrue("Some clients are not communicating with each other at voicing.", checker.voicingToEachOther());
+		assertTrue("Some clients are not communicating with each other at disconnecting.", checker.discToEachOther());
 
 
 		engine.stop();

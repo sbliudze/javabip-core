@@ -1,6 +1,7 @@
 package org.bip.spec.telephonic;
 
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
 import org.bip.annotations.ComponentType;
@@ -28,6 +29,8 @@ public class DialWaitSync {
 	AtomicIntegerArray dialerIds;
 	AtomicIntegerArray talkShouldBeDeleted;
 	
+	AtomicInteger callNumber;
+	
 	public DialWaitSync(int n)	{
 		waitersIds = new AtomicIntegerArray(n);
 		dialerIds = new AtomicIntegerArray(n);
@@ -36,6 +39,7 @@ public class DialWaitSync {
 		{
 			talkShouldBeDeleted.set(i, 0);
 		}
+		callNumber = new AtomicInteger(1);
 	}
 	
 	public void setExecutorRefs(BIPActor caller, BIPActor callee)
@@ -50,7 +54,6 @@ public class DialWaitSync {
 	@Transition(name = "dial", source = "s0", target = "s0", guard = "")
 	public void dial(@Data(name="dialerId") Integer x, @Data(name="waiterId") Integer y)	{
 		//if x has been discarded because it is already been called, return
-		//System.out.println(i+" waiters = "+waitersIds+", dialers = "+ dialerIds);
 		
 		if (talkShouldBeDeleted.compareAndSet(x-1, 1, 0)) {
 			return;
@@ -75,6 +78,7 @@ public class DialWaitSync {
 			HashMap<String, Object> dataMap = new HashMap<String, Object>();
 			 dataMap.put("waiterId", y);
 			 dataMap.put("dialerId", x);
+			 dataMap.put("callId", callNumber.getAndIncrement());
 			callerAgregationExecutor.inform("dialDown", dataMap);
 			calleeAgregationExecutor.inform("waitDown", dataMap);
 			i++;
@@ -97,7 +101,6 @@ public class DialWaitSync {
 	
 	@Transition(name = "wait", source = "s0", target = "s0", guard = "")
 	public void waitCall(@Data(name="waiterId") Integer y){
-		//System.out.println(i+" waiters = "+ waitersIds + ", dialers = "+ dialerIds);
 		//if y has been discarded because it is already calling, return
 				if (talkShouldBeDeleted.compareAndSet(y-1, 1, 0)) {
 					return;
@@ -123,6 +126,7 @@ public class DialWaitSync {
 					HashMap<String, Object> dataMap = new HashMap<String, Object>();
 					 dataMap.put("waiterId", y);
 					 dataMap.put("dialerId", dialer);
+					 dataMap.put("callId", callNumber.getAndIncrement());
 					callerAgregationExecutor.inform("dialDown", dataMap);
 					calleeAgregationExecutor.inform("waitDown", dataMap);
 					i++;

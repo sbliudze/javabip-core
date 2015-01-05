@@ -31,7 +31,8 @@ public class VoiceSync {
 	}
 	
 	@Transition(name = "voice", source = "s0", target = "s0", guard = "")
-	public void voice(@Data(name="dialerId") Integer voice1Id, @Data(name="waiterId") Integer voice2Id)	{
+	public void voice(@Data(name="dialerId") Integer voice1Id, @Data(name="waiterId") Integer voice2Id, 
+			@Data(name="callId") Integer callNumber)	{
 		if (voice1.get(voice1Id-1)!=voice2Id)		{
 			voice1.set(voice1Id-1, voice2Id);
 			return;
@@ -42,6 +43,7 @@ public class VoiceSync {
 			HashMap<String, Object> dataMap = new HashMap<String, Object>();
 			 dataMap.put("waiterId", voice2Id);
 			 dataMap.put("dialerId", voice1Id);
+			 dataMap.put("callId", callNumber);
 			 voice1Actor.inform("voiceDown", dataMap);
 	}
 }
