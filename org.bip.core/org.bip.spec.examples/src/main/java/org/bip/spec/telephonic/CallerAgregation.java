@@ -48,7 +48,7 @@ public class CallerAgregation implements ClientCaller {
         behaviourBuilder.addPort("dialDown", PortType.spontaneous, this.getClass());     
       		
         behaviourBuilder.addTransitionAndStates("dialUp","s0", "s0",  "", this.getClass().getMethod("dialUp",Integer.class, Integer.class));
-        behaviourBuilder.addTransitionAndStates("dialDown","s0", "s0",  "", this.getClass().getMethod("dialDown",Integer.class, Integer.class));
+        behaviourBuilder.addTransitionAndStates("dialDown","s0", "s0",  "", this.getClass().getMethod("dialDown",Integer.class, Integer.class, Integer.class));
      
 
         return behaviourBuilder;
@@ -56,18 +56,18 @@ public class CallerAgregation implements ClientCaller {
 	
 	public void dialUp(@Data(name="dialerId") Integer dialerId, @Data(name="waiterId") Integer waiterId )
 	{
-		System.out.println("CallerAgregation "+ " is notified of "+ dialerId+" wanting to speak with " + waiterId);
 		 HashMap<String, Object> dataMap = new HashMap<String, Object>();
 		 dataMap.put("dialerId", dialerId);
 		 dataMap.put("waiterId", waiterId);
 		dialWaitExecutor.inform("dial",dataMap);
 	}
 	
-	public void dialDown(@Data(name="dialerId") Integer dialerId, @Data(name="waiterId") Integer waiterId)
+	public void dialDown(@Data(name="dialerId") Integer dialerId, @Data(name="waiterId") Integer waiterId,
+			@Data(name="callId") Integer callNumber)
 	{
-		System.out.println("CallerAgregation "+ " is trasferring dial call to client "+ dialerId);
 		 HashMap<String, Object> dataMap = new HashMap<String, Object>();
 		 dataMap.put("waiterId", waiterId);
+		 dataMap.put("callId", callNumber);
 		clientActors.get(dialerId).inform("dial",dataMap);
 	}
 

@@ -8,24 +8,20 @@ import org.bip.api.BIPActor;
 import org.bip.api.PortType;
 import org.bip.executor.BehaviourBuilder;
 
-public class DiscAgregation2 implements ClientCaller {
-	private int n;
+public class DiscAgregation implements ClientCaller {
+	 
 	BIPActor discSync;
 	HashMap<Integer, BIPActor> clientActors;
 	
-	public DiscAgregation2(int n)
-	{
-		this.n=n;
+	public DiscAgregation(int n) {
 		clientActors = new HashMap<Integer, BIPActor>(n);
 	}
-	
-	public void setSyncRefs(BIPActor discSync)
-	{
+
+	public void setSyncRefs(BIPActor discSync) {
 		this.discSync = discSync;
 	}
-	
-	public void setClientRefs(BIPActor client, int id)
-	{
+
+	public void setClientRefs(BIPActor client, int id) {
 		clientActors.put(id, client);
 	}
 
@@ -43,27 +39,31 @@ public class DiscAgregation2 implements ClientCaller {
         behaviourBuilder.addPort("discUp", PortType.spontaneous, this.getClass());
         behaviourBuilder.addPort("discDown", PortType.spontaneous, this.getClass());     
       		
-        behaviourBuilder.addTransitionAndStates("discUp","s0", "s0",  "", this.getClass().getMethod("discUp",Integer.class, Integer.class));
-        behaviourBuilder.addTransitionAndStates("discDown","s0", "s0",  "", this.getClass().getMethod("discDown",Integer.class, Integer.class));
+        behaviourBuilder.addTransitionAndStates("discUp","s0", "s0",  "", this.getClass().getMethod("discUp",Integer.class, Integer.class, Integer.class));
+        behaviourBuilder.addTransitionAndStates("discDown","s0", "s0",  "", this.getClass().getMethod("discDown",Integer.class, Integer.class, Integer.class));
      
 
         return behaviourBuilder;
     }
 	
-	public void discUp(@Data(name="dialerId") Integer dialerId, @Data(name="waiterId") Integer waiterId )
+	public void discUp(@Data(name="id1") Integer dialerId, @Data(name="id2") Integer waiterId , 
+			@Data(name="callId") Integer callNumber)
 	{
-	 	 System.out.println("VoiceAgregation "+ " is notified of "+ dialerId+" speaking to " + waiterId);
 		 HashMap<String, Object> dataMap = new HashMap<String, Object>();
-		 dataMap.put("dialerId", dialerId);
-		 dataMap.put("waiterId", waiterId);
-		 discSync.inform("disc2",dataMap);
+		 dataMap.put("id1", dialerId);
+		 dataMap.put("id2", waiterId);
+		 dataMap.put("callId", callNumber);
+		 discSync.inform("disc1",dataMap);
 	}
 	
-	public void discDown(@Data(name="dialerId") Integer dialerId, @Data(name="waiterId") Integer waiterId)
+	public void discDown(@Data(name="id1") Integer dialerId, @Data(name="id2") Integer waiterId, 
+			@Data(name="callId") Integer callNumber)
 	{
-		 System.out.println("VoiceAgregation "+ " is trasferring disc to client "+ dialerId);
 		 HashMap<String, Object> dataMap = new HashMap<String, Object>();
-		 dataMap.put("waiterId", waiterId);
+		 dataMap.put("id1", dialerId);
+		 dataMap.put("id2", waiterId);
+		 dataMap.put("callId", callNumber);
 		 clientActors.get(dialerId).inform("disc",dataMap);
+		 clientActors.get(waiterId).inform("disc",dataMap);
 	}
 }

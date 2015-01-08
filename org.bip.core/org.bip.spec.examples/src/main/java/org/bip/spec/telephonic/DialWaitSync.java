@@ -1,7 +1,7 @@
 package org.bip.spec.telephonic;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
 import org.bip.annotations.ComponentType;
@@ -19,18 +19,27 @@ import org.slf4j.LoggerFactory;
 @ComponentType(initial = "s0", name = "org.bip.spec.telephonic.DialWaitSync")
 public class DialWaitSync {
 
-	private Logger logger = LoggerFactory.getLogger(Client.class);
+	private Logger logger = LoggerFactory.getLogger(DialWaitSync.class);
 	BIPActor callerAgregationExecutor;
 	BIPActor calleeAgregationExecutor;
 	
 	//array with 1 on the places of those who are waiting for a call
 	AtomicIntegerArray waitersIds;
-	//array with the corresponding dealerId on places of those  who the dialers want to talk to
+	//array with the waiters on position of dialers wanting them
 	AtomicIntegerArray dialerIds;
+	AtomicIntegerArray talkShouldBeDeleted;
+	
+	AtomicInteger callNumber;
 	
 	public DialWaitSync(int n)	{
 		waitersIds = new AtomicIntegerArray(n);
 		dialerIds = new AtomicIntegerArray(n);
+		talkShouldBeDeleted = new AtomicIntegerArray(n);
+		for (int i=0; i<n; i++)
+		{
+			talkShouldBeDeleted.set(i, 0);
+		}
+		callNumber = new AtomicInteger(1);
 	}
 	
 	public void setExecutorRefs(BIPActor caller, BIPActor callee)
@@ -39,43 +48,93 @@ public class DialWaitSync {
 		calleeAgregationExecutor = callee;
 	}
 	
+
+	private int i=0;
+	
 	@Transition(name = "dial", source = "s0", target = "s0", guard = "")
-	public void dial(@Data(name="dialerId") Integer dialerId, @Data(name="waiterId") Integer waiterId)	{
-		System.err.println("DialWait: "+ dialerId +" wanting to dial " + waiterId);
-		dialerIds.set(waiterId-1, dialerId);
-		if (waitersIds.get(waiterId-1)!=1)
-		{return;}
-			System.err.println("Chosen: "+ dialerId + " for "+ waiterId);
-			//connect the dialer and the waiter
-			dialerIds.set(waiterId-1, 0);
-			waitersIds.set(waiterId-1, 0);
+	public void dial(@Data(name="dialerId") Integer x, @Data(name="waiterId") Integer y)	{
+		//if x has been discarded because it is already been called, return
+		
+		if (talkShouldBeDeleted.compareAndSet(x-1, 1, 0)) {
+			return;
+			}
+		//if y has notified, remove y talking, x talking and y dialing
+		if (waitersIds.get(y-1)!=0)
+		{
+			// if x hasn't notified of talking yet, we need to discard its future notification
+			if (waitersIds.get(x-1)==0)
+			{
+				talkShouldBeDeleted.set(x-1, 1);
+			}
+			waitersIds.set(y-1, 0);
+			waitersIds.set(x-1, 0);
+			dialerIds.set(x-1, 0);
+			if (dialerIds.getAndSet(y-1, 0)==0)
+			{
+				talkShouldBeDeleted.set(y-1, 1);
+			}
+			
+			//do the informing
 			HashMap<String, Object> dataMap = new HashMap<String, Object>();
-			 dataMap.put("waiterId", waiterId);
-			 dataMap.put("dialerId", dialerId);
+			 dataMap.put("waiterId", y);
+			 dataMap.put("dialerId", x);
+			 dataMap.put("callId", callNumber.getAndIncrement());
 			callerAgregationExecutor.inform("dialDown", dataMap);
 			calleeAgregationExecutor.inform("waitDown", dataMap);
-			System.err.println("Client "+ dialerId + " is being connected with "+ waiterId);
+			i++;
+		}
+		else // y hasn't notified, store that y wants to be talked to by x
+		{
+			dialerIds.set(x-1, y);
+		}
 	}
 	
-	@Transition(name = "wait", source = "s0", target = "s0", guard = "")
-	public void waitCall(@Data(name="waiterId") Integer waiterId){
-		waitersIds.set(waiterId-1, 1);
-		System.err.println("DialWait: "+ waiterId+" is ready to talk.");
-//		if (dialerIds.get(waiterId-1)<=0)
-//		{return;}
-//		int dialer = dialerIds.get(waiterId-1);
-//		dialerIds.set(waiterId-1, 0);
-//		waitersIds.set(waiterId-1, 0);
-//			System.err.println("Chosen: "+ dialer + " for "+ waiterId);
-//			//connect the dialer and the waiter
-//			HashMap<String, Object> dataMap = new HashMap<String, Object>();
-//			 dataMap.put("waiterId", waiterId);
-//			 dataMap.put("dialerId", dialer);
-//			callerAgregationExecutor.inform("dialDown", dataMap);
-//			calleeAgregationExecutor.inform("waitDown", dataMap);
-//			System.err.println("Client "+ dialer + " is being connected with "+ waiterId);
-//		
-//		logger.info("Client "+ waiterId + " is waiting for a call from "+0 );
-//		
+	private int findDialerWantingWater(int waiter)
+	{
+		for (int i=0;i<dialerIds.length(); i++){
+			if (dialerIds.get(i)==waiter)
+				return i+1;
+		}
+		return -1;
 	}
+	
+	
+	@Transition(name = "wait", source = "s0", target = "s0", guard = "")
+	public void waitCall(@Data(name="waiterId") Integer y){
+		//if y has been discarded because it is already calling, return
+				if (talkShouldBeDeleted.compareAndSet(y-1, 1, 0)) {
+					return;
+					}
+				//is there someone wanting to talk to me?
+				int dialer = findDialerWantingWater(y);
+				if (dialer>0) //need to send informs
+				{
+					// if dialer hasn't notified of talking yet, we need to discard its future notification
+					if (waitersIds.get(dialer-1)==0)
+					{
+						talkShouldBeDeleted.set(dialer-1, 1);
+					}
+					waitersIds.set(y-1, 0);
+					waitersIds.set(dialer-1, 0);
+					dialerIds.set(dialer-1, 0);
+					if (dialerIds.getAndSet(y-1, 0)==0)
+					{
+						talkShouldBeDeleted.set(y-1, 1);
+					}
+					
+					//do the informing
+					HashMap<String, Object> dataMap = new HashMap<String, Object>();
+					 dataMap.put("waiterId", y);
+					 dataMap.put("dialerId", dialer);
+					 dataMap.put("callId", callNumber.getAndIncrement());
+					callerAgregationExecutor.inform("dialDown", dataMap);
+					calleeAgregationExecutor.inform("waitDown", dataMap);
+					i++;
+				}
+				else // y hasn't notified, store that y wants to talk
+				{
+					waitersIds.set(y-1, 1);
+				}
+	}
+	
 }

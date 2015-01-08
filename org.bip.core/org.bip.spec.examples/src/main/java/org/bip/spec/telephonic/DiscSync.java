@@ -15,46 +15,35 @@ import org.bip.api.PortType;
 	 @Port(name = "disc2", type = PortType.spontaneous) })
 @ComponentType(initial = "s0", name = "org.bip.spec.telephonic.DiscSync")
 public class DiscSync {
-	BIPActor disc1Actor;
-	BIPActor disc2Actor;
+	BIPActor discActor;
 	
 	//array with 1 on the places of those who are waiting for a call
 	AtomicIntegerArray first;
 	//array with the corresponding dealerId on places of those  who the dialers want to talk to
-	AtomicIntegerArray second;
 	
 	public DiscSync(int n)	{
 		first = new AtomicIntegerArray(n);
-		second = new AtomicIntegerArray(n);
 	}
 	
 	public void setExecutorRefs(BIPActor actorCaller, BIPActor actorCallee) {
-		disc1Actor = actorCaller;
-		disc2Actor = actorCallee;
+		discActor = actorCaller;
 		
 	}
 	
 	@Transition(name = "disc1", source = "s0", target = "s0", guard = "")
-	public void dial(@Data(name="id1") Integer id1, @Data(name="id2") Integer id2)	{
-		System.err.println("Disc: "+ id1 +" wanting to disconnect " + id2);
+	public void dial(@Data(name="id1") Integer id1, @Data(name="id2") Integer id2, 
+			@Data(name="callId") Integer callNumber)	{
 		
-		if (first.get(id2-1)!=id1)
-		{first.set(id1-1, id2);
-			return;}
-			System.err.println("Disconnecting: "+ id1 + " from "+ id2);
-			//second.set(id2-1, 0);
+		if (first.get(id2-1)!=id1){
+			first.set(id1-1, id2);
+			return;
+			}
 			first.set(id2-1, 0);
 			HashMap<String, Object> dataMap = new HashMap<String, Object>();
 			 dataMap.put("id2", id2);
 			 dataMap.put("id1", id1);
-			 disc1Actor.inform("discDown", dataMap);
-			 //disc2Actor.inform("discDown", dataMap);
-			System.err.println("Client "+ id1 + " is being disconnected with "+ id2);
+			 dataMap.put("callId", callNumber);
+			 discActor.inform("discDown", dataMap);
 	}
 	
-//	@Transition(name = "disc2", source = "s0", target = "s0", guard = "")
-//	public void waitCall(@Data(name="waiterId") Integer waiterId){
-//		first.set(waiterId-1, 1);
-//		System.err.println("Disc: "+ waiterId+" is ready to disconnect. dialer array is "  + second);
-//	}
 }

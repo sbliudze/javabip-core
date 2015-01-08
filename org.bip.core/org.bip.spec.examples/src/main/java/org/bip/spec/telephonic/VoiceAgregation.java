@@ -8,14 +8,13 @@ import org.bip.api.BIPActor;
 import org.bip.api.PortType;
 import org.bip.executor.BehaviourBuilder;
 
-public class VoiceAgregation1 implements ClientCaller {
-	private int n;
+public class VoiceAgregation implements ClientCaller {
+	
 	BIPActor voiceSync;
 	HashMap<Integer, BIPActor> clientActors;
 	
-	public VoiceAgregation1(int n)
+	public VoiceAgregation(int n)
 	{
-		this.n=n;
 		clientActors = new HashMap<Integer, BIPActor>(n);
 	}
 	
@@ -43,28 +42,35 @@ public class VoiceAgregation1 implements ClientCaller {
         behaviourBuilder.addPort("voiceUp", PortType.spontaneous, this.getClass());
         behaviourBuilder.addPort("voiceDown", PortType.spontaneous, this.getClass());     
       		
-        behaviourBuilder.addTransitionAndStates("voiceUp","s0", "s0",  "", this.getClass().getMethod("voiceUp",Integer.class, Integer.class));
-        behaviourBuilder.addTransitionAndStates("voiceDown","s0", "s0",  "", this.getClass().getMethod("voiceDown",Integer.class, Integer.class));
+        behaviourBuilder.addTransitionAndStates("voiceUp","s0", "s0",  "", this.getClass().getMethod("voiceUp",Integer.class, Integer.class, Integer.class));
+        behaviourBuilder.addTransitionAndStates("voiceDown","s0", "s0",  "", this.getClass().getMethod("voiceDown",Integer.class, Integer.class, Integer.class));
      
 
         return behaviourBuilder;
     }
 	
-	public void voiceUp(@Data(name="dialerId") Integer dialerId, @Data(name="waiterId") Integer waiterId )
+	public void voiceUp(@Data(name="dialerId") Integer dialerId, @Data(name="waiterId") Integer waiterId, 
+			@Data(name="callId") Integer callNumber )
 	{
-	 	 System.out.println("VoiceAgregation "+ " is notified of "+ dialerId+" speaking to " + waiterId);
 		 HashMap<String, Object> dataMap = new HashMap<String, Object>();
 		 dataMap.put("dialerId", dialerId);
 		 dataMap.put("waiterId", waiterId);
-		 voiceSync.inform("voice1",dataMap);
+		 dataMap.put("callId", callNumber);
+		 voiceSync.inform("voice",dataMap);
 	}
 	
-	public void voiceDown(@Data(name="dialerId") Integer dialerId, @Data(name="waiterId") Integer waiterId)
+	public void voiceDown(@Data(name="dialerId") Integer dialerId, @Data(name="waiterId") Integer waiterId, 
+			@Data(name="callId") Integer callNumber)
 	{
-		 System.out.println("VoiceAgregation "+ " is trasferring voice to client "+ dialerId);
 		 HashMap<String, Object> dataMap = new HashMap<String, Object>();
 		 dataMap.put("otherId", waiterId);
+		 dataMap.put("callId", callNumber);
 		 clientActors.get(dialerId).inform("voice",dataMap);
+		 
+		 HashMap<String, Object> dataMapW = new HashMap<String, Object>();
+		 dataMapW.put("otherId", dialerId);
+		 dataMapW.put("callId", callNumber);
+		 clientActors.get(waiterId).inform("voice",dataMapW);
 	}
 
 }
