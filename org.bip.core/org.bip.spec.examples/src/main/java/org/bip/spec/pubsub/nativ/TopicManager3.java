@@ -34,11 +34,8 @@ public class TopicManager3 {
 	
 	public void executeCommand(Command3 command)
     {
-		// System.out.println("command "+ command.getId()+" to execute for client "+
-		// command.getClientProxy().getId());
         switch(command.getId()){
         case NEWCLIENT:
-        	// nothing to do
             break;
         case ENDOFCLIENT:
             command.getClientProxy().closeConnection();
