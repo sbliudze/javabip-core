@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 	 @Port(name = "notify", type = PortType.spontaneous), 
 @Port(name = "disc", type = PortType.spontaneous) })
 @ComponentType(initial = "init", name = "org.bip.spec.telephonic.Client")
-public class Client implements AgregatorClient {
+public class ClientNoChecker implements AgregatorClient {
 	
 	private int id = 0;
 	private int n = 1;
@@ -33,12 +33,11 @@ public class Client implements AgregatorClient {
 	BIPActor voiceAgregator;
 	BIPActor discAgregator;
 	BIPActor myself;
-	BIPActor checker;
 	HashMap<Integer, BIPActor> clientActors;
 	
-	private Logger logger = LoggerFactory.getLogger(Client.class);
+	private Logger logger = LoggerFactory.getLogger(ClientNoChecker.class);
 	
-	public Client(int id, int n) {
+	public ClientNoChecker(int id, int n) {
 		this.id = id;
 		this.n = n;
 		clientActors = new HashMap<Integer, BIPActor>(n);
@@ -55,7 +54,6 @@ public class Client implements AgregatorClient {
 		voiceAgregator = voice;
 		discAgregator = disc;
 		myself = client;
-		this.checker = checker;
 	}
 	
 	public int randomID() {
@@ -92,7 +90,6 @@ public class Client implements AgregatorClient {
 		dataMap.put("waiterId", waiterId);
 		dataMap.put("callId", callNumber);
 		voiceAgregator.inform("voiceUp", dataMap);
-		checker.inform("dial", dataMap);
 	}
 	
 	@Transition(name = "wait", source = "s0", target = "s1")
@@ -107,7 +104,6 @@ public class Client implements AgregatorClient {
 		dataMap.put("waiterId", this.id);
 		dataMap.put("callId", callNumber);
 		voiceAgregator.inform("voiceUp", dataMap);
-		checker.inform("wait", dataMap);
 	}
 	
 	@Transition(name = "voice", source = "s1", target = "s2")
@@ -122,7 +118,6 @@ public class Client implements AgregatorClient {
 		if (meDialing) {
 			myself.inform("talk", dataMap);
 		}
-		checker.inform("voice", dataMap);
 	}
 	
 	@Transition(name = "talk", source = "s2", target = "s3")
@@ -143,9 +138,6 @@ public class Client implements AgregatorClient {
 	@Transition(name = "listen", source = "s2", target = "s3")
 	public void listen(@Data(name = "message") String message, @Data(name = "sender") Integer senderId,
 			@Data(name="callId") Integer callNumber) {
-		if (currectInterlocutor != senderId) {
-			checker.inform("error");
-		}
 		//System.out.println(message+ " from "+ senderId + " at step "+ callNumber);
 		HashMap<String, Object> dataMap = new HashMap<String, Object>();
 		dataMap.put("id1", this.id);
@@ -165,15 +157,13 @@ public class Client implements AgregatorClient {
 		dataMap.put("dialerId", this.id);
 		dataMap.put("waiterId", otherId);
 		dataMap.put("callId", callNumber);
-		checker.inform("disc", dataMap);
 	}
 	
-
-
 	@Override
 	public void setSyncRefs(BIPActor syncActor) {
 		// TODO Auto-generated method stub
 		
 	}
+
 	
 }
