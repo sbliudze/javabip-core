@@ -69,7 +69,7 @@ public class Client implements AgregatorClient {
 
 	@Transition(name = "notify", source = "init", target = "s0")
 	public void notifyAgregatorInternal()	{
-		System.err.println(step + " Client "+ this.id + " is notifying");
+		// System.err.println(step + " Client "+ this.id + " is notifying");
 		HashMap<String, Object> dataMap = new HashMap<String, Object>();
 		dataMap.put("dialerId", id);
 		int calleeID = randomID();
@@ -84,7 +84,7 @@ public class Client implements AgregatorClient {
 	public void dial(@Data(name="waiterId") Integer waiterId, 
 			@Data(name="callId") Integer callNumber)	{
 		meDialing = true;
-		System.err.println(callNumber+" Client "+ id + " dialed client " + waiterId);
+		// System.err.println(callNumber+" Client "+ id + " dialed client " + waiterId);
 		step = callNumber;
 		currectInterlocutor = waiterId;
 		HashMap<String, Object> dataMap = new HashMap<String, Object>();
@@ -99,7 +99,7 @@ public class Client implements AgregatorClient {
 	public void waitCall(@Data(name="dialerId") Integer dialerId, 
 			@Data(name="callId") Integer callNumber){
 		meDialing = false;
-		System.err.println(callNumber+" Client "+ id + " received a call from " + dialerId);
+		// System.err.println(callNumber+" Client "+ id + " received a call from " + dialerId);
 		step = callNumber;
 		currectInterlocutor = dialerId;
 		HashMap<String, Object> dataMap = new HashMap<String, Object>();
@@ -113,7 +113,7 @@ public class Client implements AgregatorClient {
 	@Transition(name = "voice", source = "s1", target = "s2")
 	public void voice(@Data(name="otherId") Integer otherId, 
 			@Data(name="callId") Integer callNumber){
-		System.err.println(callNumber+" Client "+ this.id + " is voicing with "+ otherId );
+		// System.err.println(callNumber+" Client "+ this.id + " is voicing with "+ otherId );
 		
 		HashMap<String, Object> dataMap = new HashMap<String, Object>();
 		dataMap.put("id1", this.id);
@@ -158,7 +158,7 @@ public class Client implements AgregatorClient {
 	public void disconnect(@Data(name="id1") Integer id1, @Data(name="id2") Integer id2, 
 			@Data(name="callId") Integer callNumber){
 		int otherId = (id1==id)?id2:id1;
-		System.err.println(callNumber+ " Client "+ this.id + " is disconnected from "+otherId );
+		// System.err.println(callNumber+ " Client "+ this.id + " is disconnected from "+otherId );
 		currectInterlocutor = 0;
 		myself.inform("notify");
 		HashMap<String, Object> dataMap = new HashMap<String, Object>();
