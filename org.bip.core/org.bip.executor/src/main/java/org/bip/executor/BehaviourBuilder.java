@@ -167,7 +167,7 @@ public class BehaviourBuilder {
 			if (name == null)
 				throw new BIPException("Transition name can not be null, use empty empty string for internal transitions");
 			if (!name.isEmpty())
-				throw new BIPException("Transition " + name + " does not correspond to any port. Specify ports first and/or make sure the names match. ");
+				throw new BIPException("In component " + this.componentType + " transition " + name + " does not correspond to any port. Specify ports first and/or make sure the names match. ");
 		}
 
 		addState(source);

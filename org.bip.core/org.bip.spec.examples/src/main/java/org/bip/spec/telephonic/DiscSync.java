@@ -31,7 +31,8 @@ public class DiscSync {
 	}
 	
 	@Transition(name = "disc1", source = "s0", target = "s0", guard = "")
-	public void dial(@Data(name="id1") Integer id1, @Data(name="id2") Integer id2)	{
+	public void dial(@Data(name="id1") Integer id1, @Data(name="id2") Integer id2, 
+			@Data(name="callId") Integer callNumber)	{
 		
 		if (first.get(id2-1)!=id1){
 			first.set(id1-1, id2);
@@ -41,6 +42,7 @@ public class DiscSync {
 			HashMap<String, Object> dataMap = new HashMap<String, Object>();
 			 dataMap.put("id2", id2);
 			 dataMap.put("id1", id1);
+			 dataMap.put("callId", callNumber);
 			 discActor.inform("discDown", dataMap);
 	}
 	
