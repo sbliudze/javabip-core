@@ -189,6 +189,12 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 		// the inform)
 		if (existSpontaneousTransition) {
 			logger.debug("Finishing current step for component {} doing nothing due no spontaneous events.", id);
+			// TODO for Natassa: Change the design of the engine to not continuously expect to be
+			// informed by all components
+			// even though there are no spontaneous transitions. So, if the component sends once
+			// that there are no transitions
+			// store this information and use it for the next cycles till you get something
+			// different. When this is done uncomment the next line.
 			// waitingForSpontaneous = true;
 			engine.inform(proxy, behaviour.getCurrentState(), globallyDisabledPorts);
 			// Next step will be invoked upon receiving a spontaneous event. 
