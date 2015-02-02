@@ -11,13 +11,10 @@ import org.bip.api.BIPActor;
 import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
 import org.bip.engine.BIPCoordinatorImpl;
-import org.bip.engine.DataCoordinatorKernel;
 import org.bip.engine.api.EngineFactory;
 import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
 import org.bip.glue.GlueBuilder;
 import org.bip.glue.TwoSynchronGlueBuilder;
-import org.bip.spec.MemoryMonitor;
-import org.bip.spec.SwitchableRouteDataTransfers;
 import org.bip.spec.telephonic.AgregatorClient;
 import org.bip.spec.telephonic.CalleeAgregation;
 import org.bip.spec.telephonic.CallerAgregation;
@@ -196,7 +193,17 @@ public class TelephonicTest {
 		
 		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
 
-		BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
+		// BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
+		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
+			@Override
+			public void configure() {
+
+				port(DummyComponent.class, "aPort").acceptsNothing();
+				port(DummyComponent.class, "aPort").requiresNothing();
+
+			}
+
+		}.build();
 		engine.specifyGlue(bipGlue);
 		
 		int n=10; 
@@ -327,7 +334,17 @@ public class TelephonicTest {
 		
 		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
 
-		BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
+		// BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
+		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
+			@Override
+			public void configure() {
+
+				port(DummyComponent.class, "aPort").acceptsNothing();
+				port(DummyComponent.class, "aPort").requiresNothing();
+
+			}
+
+		}.build();
 		engine.specifyGlue(bipGlue);
 		
 		int n=15; 
@@ -482,7 +499,17 @@ public class TelephonicTest {
 		
 		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
 
-		BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
+		// BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
+		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
+			@Override
+			public void configure() {
+
+				port(DummyComponent.class, "aPort").acceptsNothing();
+				port(DummyComponent.class, "aPort").requiresNothing();
+
+			}
+
+		}.build();
 		engine.specifyGlue(bipGlue);
 		
 		int n=20; 
@@ -662,7 +689,17 @@ public class TelephonicTest {
 		
 		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
 
-		BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
+		// BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
+		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
+			@Override
+			public void configure() {
+
+				port(DummyComponent.class, "aPort").acceptsNothing();
+				port(DummyComponent.class, "aPort").requiresNothing();
+
+			}
+
+		}.build();
 		engine.specifyGlue(bipGlue);
 		
 		int n=25; 
@@ -867,7 +904,17 @@ public class TelephonicTest {
 		
 		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
 
-		BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
+		// BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
+		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
+			@Override
+			public void configure() {
+
+				port(DummyComponent.class, "aPort").acceptsNothing();
+				port(DummyComponent.class, "aPort").requiresNothing();
+
+			}
+
+		}.build();
 		engine.specifyGlue(bipGlue);
 		
 		int n=30; 
@@ -1076,7 +1123,7 @@ public class TelephonicTest {
 		actor30.inform("notify");
 
 		try {
-			Thread.sleep(10000);
+			Thread.sleep(40000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -1097,7 +1144,17 @@ public class TelephonicTest {
 		
 		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
 
-		BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
+		// BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
+		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
+			@Override
+			public void configure() {
+
+				port(DummyComponent.class, "aPort").acceptsNothing();
+				port(DummyComponent.class, "aPort").requiresNothing();
+
+			}
+
+		}.build();
 		engine.specifyGlue(bipGlue);
 		
 		int n=35; 
@@ -1352,7 +1409,17 @@ public class TelephonicTest {
 		
 		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
 
-		BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
+		// BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
+		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
+			@Override
+			public void configure() {
+
+				port(DummyComponent.class, "aPort").acceptsNothing();
+				port(DummyComponent.class, "aPort").requiresNothing();
+
+			}
+
+		}.build();
 		engine.specifyGlue(bipGlue);
 		
 		int n=40; 
@@ -1632,7 +1699,17 @@ public class TelephonicTest {
 		
 		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
 
-		BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
+		// BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
+		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
+			@Override
+			public void configure() {
+
+				port(DummyComponent.class, "aPort").acceptsNothing();
+				port(DummyComponent.class, "aPort").requiresNothing();
+
+			}
+
+		}.build();
 		engine.specifyGlue(bipGlue);
 		
 		int n = 45;
@@ -1916,7 +1993,7 @@ public class TelephonicTest {
 		actor45.inform("notify");
 		
 		try {
-			Thread.sleep(10000);
+			Thread.sleep(100000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -1938,7 +2015,17 @@ public class TelephonicTest {
 		
 		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
 
-		BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
+		// BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
+		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
+			@Override
+			public void configure() {
+
+				port(DummyComponent.class, "aPort").acceptsNothing();
+				port(DummyComponent.class, "aPort").requiresNothing();
+
+			}
+
+		}.build();
 		engine.specifyGlue(bipGlue);
 		
 		int n=50; 
@@ -2250,7 +2337,7 @@ public class TelephonicTest {
 		actor50.inform("notify");
 		
 		try {
-			Thread.sleep(10000);
+			Thread.sleep(100000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
