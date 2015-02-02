@@ -195,8 +195,8 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 			// that there are no transitions
 			// store this information and use it for the next cycles till you get something
 			// different. When this is done uncomment the next line.
-			// waitingForSpontaneous = true;
-			engine.inform(proxy, behaviour.getCurrentState(), globallyDisabledPorts);
+			waitingForSpontaneous = true;
+			// engine.inform(proxy, behaviour.getCurrentState(), globallyDisabledPorts);
 			// Next step will be invoked upon receiving a spontaneous event. 
 			return;
 		}
