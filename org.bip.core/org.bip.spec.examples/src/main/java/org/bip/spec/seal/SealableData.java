@@ -31,8 +31,8 @@ public class SealableData<T> {
 	public SealableData() {
 	}
 	
-	@Transitions( { @Transition(name = "set", source = "set", target = "set", guard = "!isSealed"), 
-				    @Transition(name = "set", source = "initial", target = "set") } )
+	@Transitions( { @Transition(name = "set", source = "set", target = "set", guard = "!isSealed & isSet"), 
+				    @Transition(name = "set", source = "initial", target = "set", guard = "!isSet") } )
 	public void set(@Data(name = "input") T data) {
 		
 		logger.debug("Previous data {}, Current data: {}", this.data, data);

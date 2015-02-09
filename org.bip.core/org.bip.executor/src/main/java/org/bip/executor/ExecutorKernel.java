@@ -295,8 +295,8 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 					behaviour.getComponentType(), name);
 			Object methodResult = behaviour.getDataOutMapping().get(name)
 					.invoke(bipComponent);
-
-			if (!methodResult.getClass().isAssignableFrom(clazz)) {
+			
+			if (!clazz.equals(Object.class) && !methodResult.getClass().isAssignableFrom(clazz)) {
 				result = getPrimitiveData(name, methodResult, clazz);
 			} else
 				result = clazz.cast(methodResult);
