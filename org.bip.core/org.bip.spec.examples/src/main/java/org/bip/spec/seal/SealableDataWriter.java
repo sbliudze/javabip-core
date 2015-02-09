@@ -5,6 +5,7 @@ import org.bip.annotations.Data;
 import org.bip.annotations.Port;
 import org.bip.annotations.Ports;
 import org.bip.annotations.Transition;
+import org.bip.annotations.Transitions;
 import org.bip.api.PortType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +28,14 @@ public class SealableDataWriter<T> {
 		return data;
 	}
 
-	@Transition(name = "write", source = "initial", target = "written")
+	// TODO: change to only one transition when dynamicity is added. And remove component when it
+	// reaches its final state.
+	@Transitions({
+ @Transition(name = "write", source = "written", target = "written"),
+	@Transition(name = "write", source = "initial", target = "written")})
 	public void write() {
 		logger.debug("Writing data {}", this.data);
 		noOfTransitions++;
 	}
-
+	
 }

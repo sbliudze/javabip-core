@@ -47,6 +47,7 @@ public class SealableData<T> {
 	}
 
 	@Transitions({ @Transition(name = "get", source = "initial", target = "sealed", guard = "isSet"),
+			@Transition(name = "get", source = "set", target = "sealed", guard = "isSet"),
 	@Transition(name = "get", source = "sealed", target = "sealed") } )
 	public void getTransition() {
 		if (!sealed) {
@@ -56,7 +57,7 @@ public class SealableData<T> {
 	}
 
 	@Transition(name = "", source = "initial", target="set", guard = "isSet")
-	private void afterPropertiesSet() {
+	public void afterPropertiesSet() {
 		logger.debug("Data has been provided by the constructor so transitioning into set state internally");
 	}
 

@@ -29,7 +29,6 @@ import org.bip.spec.seal.SealableDataReader;
 import org.bip.spec.seal.SealableDataWriter;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import akka.actor.ActorSystem;
@@ -60,7 +59,6 @@ public class AkkaRefactoredTests {
 	}
 
 	@Test
-	@Ignore
 	// TODO, analyse why this test is failing, what is wrong with this spec that it causes a NullPointerException in DataCoordinatorKernel.
 	public void akkaSealableDataTest() {
 
@@ -107,7 +105,7 @@ public class AkkaRefactoredTests {
 		engine.execute();
 
 		try {
-			Thread.sleep(30000);
+			Thread.sleep(20000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
