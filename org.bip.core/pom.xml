@@ -54,9 +54,6 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<modules>
-				<module>bip_javabdd</module>
-				<module>bip_engine</module>
-				<module>lsr</module>
 				<module>org.bip.api</module>
 				<module>org.bip.jmx</module>
 				<module>org.bip.glue</module>
@@ -69,9 +66,7 @@
 		<profile>
 			<id>epfl</id>
 			<modules>
-				<module>bip_javabdd</module>
 				<module>org.bip.api</module>
-				<module>lsr</module>
 				<module>org.bip.jmx</module>
 				<module>org.bip.glue</module>
 				<module>org.bip.executor</module>
