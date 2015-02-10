@@ -32,6 +32,8 @@ class ExecutableTransitionImpl extends TransitionImpl implements ExecutableTrans
 		this.portType = portType;
 		if (hasGuard()) {
 			this.guardTree = parseANTLR(guard);
+            if (this.guardTree == null)
+                throw new BIPException("Guard expression " + guard + " does not have proper syntax.");
 			this.guardTree.createGuardList(guards);
 		}
 	}
