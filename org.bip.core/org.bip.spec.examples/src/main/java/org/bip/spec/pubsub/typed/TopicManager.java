@@ -14,11 +14,15 @@ import org.bip.api.PortType;
 public class TopicManager implements TopicManagerInterface {
 	
 
-	private static final HashMap<String, TopicInterface> topics = new HashMap<String, TopicInterface>();;
+	private static HashMap<String, TopicInterface> topics = new HashMap<String, TopicInterface>();
 
 	public TopicManager(TopicInterface proxyForTopic1, TopicInterface proxyForTopic2) {
 		topics.put("epfl", proxyForTopic1);
 		topics.put("concurrence", proxyForTopic2);
+    }
+	
+	public TopicManager(HashMap<String, TopicInterface> topics) {
+		this.topics=topics;
     }
     
 	@Transition(name = "executeCommand", source = "0", target = "0")

@@ -24,6 +24,7 @@ public class ClientProxy implements ClientProxyInterface {
 	private PrintWriter output;
 	private Socket socket;
 	private long bgtime;
+	private CounterInterface counter;
 
 	public int noOfTransitions;
 
@@ -38,47 +39,51 @@ public class ClientProxy implements ClientProxyInterface {
 
 	}
 
-	public ClientProxy(int id2, ServerSocket tcpacceptor) throws IOException {
+	public ClientProxy(int id2, ServerSocket tcpacceptor, CounterInterface counter) throws IOException {
 		this.topics = new ArrayList<String>(0);
 		this.socket = tcpacceptor.accept();
 		this.output = new PrintWriter(this.socket.getOutputStream(), true);
 		this.id = id;
+		this.counter = counter;
 	}
 
 	@Transition(name = "write", source = "0", target = "0")
 	public synchronized void write(@Data(name = "message") String msg) {
+		// System.err.println("Client proxy writing");
 		output.println(msg);
-		noOfTransitions++;
-
+		//noOfTransitions++;
+		counter.up();
 	}
 	
 	@Transition(name = "addTopic", source = "0", target = "0")
 	public synchronized void addTopic(@Data(name = "topicToAdd") String topic) {
+		// System.err.println("Client proxy adding topic " + topic.toString());
 		// TODO: make this a guard
 		if (!this.topics.contains(topic)) {
 			this.topics.add(topic);
-			if (noOfTransitions == 0) {
-				bgtime = System.currentTimeMillis();
-			}
-			noOfTransitions++;
+//			if (noOfTransitions == 0) {
+//				bgtime = System.currentTimeMillis();
+//			}
+			//noOfTransitions++;
 		}
-		// System.err.println("Client proxy adding topic " + topic.toString());
+		counter.up();
 	}
 
 	@Transition(name = "removeTopic", source = "0", target = "0")
 	public synchronized void removeTopic(@Data(name = "topicToRemove") String topic) {
+		// System.err.println("Client proxy removing topic " + topic.toString());
 		// TODO: make this a guard
 		if (this.topics.contains(topic)) {
 			this.topics.remove(topic);
-			if (noOfTransitions > 1000) {
-			System.out.println("Transitions: " + noOfTransitions);
-			System.out.printf("In the time of cholera: %s", System.currentTimeMillis() - bgtime);
-				System.exit(-1);
-			}
+//			if (noOfTransitions > 1000) {
+//			System.out.println("Transitions: " + noOfTransitions);
+//			System.out.printf("In the time of cholera: %s", System.currentTimeMillis() - bgtime);
+//				System.exit(-1);
+//			}
 
-			noOfTransitions++;
+			//noOfTransitions++;
 		}
-		// System.err.println("Client proxy removing topic " + topic.toString());
+		counter.up();
 
 	}
 }
