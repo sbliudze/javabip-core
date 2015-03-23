@@ -27,6 +27,7 @@ import org.bip.engine.api.EngineFactory;
 import org.bip.exceptions.BIPException;
 import org.bip.glue.GlueBuilder;
 import org.bip.glue.TwoSynchronGlueBuilder;
+import org.bip.spec.CounterInterface;
 import org.bip.spec.MemoryMonitor;
 import org.bip.spec.PComponent;
 import org.bip.spec.PResizableBehaviorComponent;
@@ -34,6 +35,7 @@ import org.bip.spec.PSSComponent;
 import org.bip.spec.QComponent;
 import org.bip.spec.RComponent;
 import org.bip.spec.RouteOnOffMonitor;
+import org.bip.spec.RouteTransitionCounter;
 import org.bip.spec.SwitchableRoute;
 import org.bip.spec.SwitchableRouteDataTransfers;
 import org.bip.spec.SwitchableRouteExecutableBehavior;
@@ -42,6 +44,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import akka.actor.ActorSystem;
 
@@ -104,6 +108,99 @@ public class IntegrationTests {
 	}
 
 	@Test
+	public void testRoutes() throws BIPException {
+
+		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
+		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
+			@Override
+			public void configure() {
+
+				synchron(SwitchableRoute.class, "on").to(RouteOnOffMonitor.class, "add");
+				synchron(SwitchableRoute.class, "finished").to(RouteOnOffMonitor.class, "rm");
+				synchron(RouteOnOffMonitor.class, "add").to(RouteTransitionCounter.class, "up");
+				synchron(RouteOnOffMonitor.class, "rm").to(RouteTransitionCounter.class, "up");
+				
+				port(SwitchableRoute.class, "off").acceptsNothing();
+				port(SwitchableRoute.class, "off")	.requiresNothing();
+
+			}
+
+		}.build();
+		
+		CounterInterface counter = new RouteTransitionCounter();
+		SwitchableRoute route1 = new SwitchableRoute("1");
+		SwitchableRoute route2 = new SwitchableRoute("2");
+		SwitchableRoute route3 = new SwitchableRoute("3");
+		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2, counter);
+
+		CamelContext camelContext = new DefaultCamelContext();
+		route1.setCamelContext(camelContext);
+		route2.setCamelContext(camelContext);
+		route3.setCamelContext(camelContext);
+		
+		final BIPActor executor1 = engine.register(route1, "1", true);
+		final BIPActor executor2 = engine.register(route2, "2", true);
+		final BIPActor executor3 = engine.register(route3, "3", true);
+
+		final BIPActor executorM = engine.register(routeOnOffMonitor, "monitor", true);
+		
+		final BIPActor counterA = engine.register(counter, "counter", true);
+		
+		final RoutePolicy routePolicy1 = createRoutePolicy(executor1);
+		
+		final RoutePolicy routePolicy2 = createRoutePolicy(executor2); 
+				
+		final RoutePolicy routePolicy3 = createRoutePolicy(executor3);
+		
+		RouteBuilder builder = new RouteBuilder() {
+
+			@Override
+			public void configure() throws Exception {
+				from("file:inputfolder1?delete=true").routeId("1")
+						.routePolicy(routePolicy1).to("file:outputfolder1");
+
+				from("file:inputfolder2?delete=true").routeId("2")
+						.routePolicy(routePolicy2).to("file:outputfolder2");
+
+				from("file:inputfolder3?delete=true").routeId("3")
+						.routePolicy(routePolicy3).to("file:outputfolder3");
+			}
+		};
+		camelContext.setAutoStartup(false);
+		try {
+			camelContext.addRoutes(builder);
+			camelContext.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		engine.specifyGlue(bipGlue);
+		engine.start();
+
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		engine.execute();
+		
+		try {
+			Thread.sleep(20000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		engine.stop();
+		engineFactory.destroy(engine);
+				
+//		assertTrue("Route 1 has not made any transitions", route1.noOfEnforcedTransitions > 0);
+//		assertTrue("Route 2 has not made any transitions", route2.noOfEnforcedTransitions > 0);
+//		assertTrue("Route 3 has not made any transitions", route3.noOfEnforcedTransitions > 0);
+		
+	}
+	
+	@Test
 	public void testBehaviourBuilding() throws BIPException {
 
 		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
@@ -111,10 +208,12 @@ public class IntegrationTests {
 		// get Glue object from xml file
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueExecutableBehaviour.xml");
 
+		CounterInterface counter = new RouteTransitionCounter();
+		
 		SwitchableRouteExecutableBehavior route1 = new SwitchableRouteExecutableBehavior("1");
 		SwitchableRouteExecutableBehavior route2 = new SwitchableRouteExecutableBehavior("2");
 		SwitchableRouteExecutableBehavior route3 = new SwitchableRouteExecutableBehavior("3");
-		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
+		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2, counter);
 
 		CamelContext camelContext = new DefaultCamelContext();
 		route1.setCamelContext(camelContext);

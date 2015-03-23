@@ -11,9 +11,11 @@ public class RouteOnOffMonitor {
     final private int routeLimit;
 
     private int routeOnCounter = 0;
+    CounterInterface counter;
 
-    public RouteOnOffMonitor(int routeLimit) {
+    public RouteOnOffMonitor(int routeLimit, CounterInterface counter) {
         this.routeLimit = routeLimit;
+        this.counter=counter;
     }
 
     @Transitions({
@@ -21,6 +23,7 @@ public class RouteOnOffMonitor {
     @Transition(name = "add", source = "1", target = "2", guard = "hasCapacity")})
 	public void addRoute() {
         routeOnCounter++;
+        //counter.up();
 	}
 
 	@Transitions({
@@ -28,6 +31,7 @@ public class RouteOnOffMonitor {
 	@Transition(name = "rm", source = "1", target = "0", guard = "hasRouteRunning")})
 	public void removeRoute() {
         routeOnCounter--;
+        //counter.up();
 	}
 
     @Guard(name = "hasCapacity")
