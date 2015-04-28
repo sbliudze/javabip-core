@@ -61,7 +61,7 @@ public interface ExecutableBehaviour extends Behaviour {
 	public boolean hasEnabledTransitionFromCurrentState(String portID, Map<String, Boolean> guardToValue);
 
 	/**
-	 * Gets the data out mapping.
+	 * Gets the method name to java method mapping for data out.
 	 *
 	 * @return the data out mapping
 	 */

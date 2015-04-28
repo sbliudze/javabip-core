@@ -7,6 +7,9 @@
  */
 package org.bip.executor;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -96,6 +99,47 @@ public class BehaviourBuilder {
 								 componentPorts, states, guards.values(), dataOut, dataOutName, component);
 	}
 	
+//	public ExecutableBehaviour build2(ComponentProvider provider) throws BIPException {
+//		
+//		if (componentType == null || componentType.isEmpty()) {
+//			throw new NullPointerException("Component type for object " + component + " cannot be null or empty.");
+//		}	
+//		if (currentState == null || currentState.isEmpty()) {
+//			throw new NullPointerException("The initial state of the component of type " + componentType + " cannot be null or empty.");
+//		}
+//		if (allTransitions == null || allTransitions.isEmpty()) {
+//			throw new BIPException("List of transitions in component of type " + componentType + " cannot be null or empty.");
+//		}
+//		if (states == null || states.isEmpty()) {
+//			throw new BIPException("List of states in component of type " + componentType + " cannot be null or empty.");
+//		}
+//		if (allPorts == null || allPorts.isEmpty()) {
+//			throw new BIPException("List of states in component of type " + componentType + " cannot be null or empty.");
+//		}
+//		if (component == null) {
+//			throw new NullPointerException("The component object of type " + componentType + " cannot be null.");
+//		}
+//
+//		ArrayList<Port> componentPorts = new ArrayList<Port>();
+//		// We need to create new ports here as there was no provider information available when the specification was parsed.
+//		for (Port port : this.allPorts.values()) {
+//			componentPorts.add(new PortImpl(port.getId(), port.getType(), port.getSpecType(), provider));
+//		}
+//
+//		Map<String, Port> allEnforceablePorts = new HashMap<String, Port>();
+//		for (Port port : componentPorts) {
+//			if (port.getType().equals(PortType.enforceable))
+//				allEnforceablePorts.put(port.getId(), port);
+//		}
+//		
+//		for (DataOutImpl<?> data : dataOut) {
+//			data.computeAllowedPort(allEnforceablePorts);
+//		}
+//		
+//		return new BehaviourImpl(componentType, currentState, transformIntoExecutableTransition(), transformIntoExecutableTransition2(), 
+//								 componentPorts, states, guards.values(), dataOut, dataOutName, component);
+//	}
+	
 	private ArrayList<ExecutableTransition> transformIntoExecutableTransition() {
 
 		HashMap<String, Port> mapIdToPort = new HashMap<String, Port>( );
@@ -120,7 +164,7 @@ public class BehaviourBuilder {
 		return transformedAllTransitions;
 		
 	}
-
+	
 	public void setComponentType(String type) {
 		this.componentType = type;
 	}
@@ -174,8 +218,26 @@ public class BehaviourBuilder {
 		addState(target);
 
 		allTransitions.add( new TransitionImpl(name, source, target, guard, method, data) );
+		//allTransitions2.add( new TransitionImpl2(name, source, target, guard, getMethodHandleForTransition(method), data) );
+	}
+	
+	private MethodHandle getMethodHandleForTransition(Method method) {
+		MethodType methodType;
+		MethodHandle methodHandle = null;
+		MethodHandles.Lookup lookup = MethodHandles.lookup();
+		methodType = MethodType.methodType(method.getReturnType(), method.getParameterTypes());// clazz - type of data being returned, method has no arguments
 
-
+		// lookup the method by its name - we do not need to do it here, we need to do it beforehand and store
+		try {
+			methodHandle = lookup.findVirtual(component.getClass(), method.getName(), methodType);
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return methodHandle;
 	}
 
 	public void addTransition(String name, String source, 
@@ -183,7 +245,6 @@ public class BehaviourBuilder {
 	  		   				  Method method) {			
 
 		addTransition(name, source, target, guard, method, ReflectionHelper.parseDataAnnotations(method));
-
 	}
 
 	public void addTransition(String name, String source, 
@@ -204,8 +265,8 @@ public class BehaviourBuilder {
 			throw new BIPException("Transition " + name + " is specifying target state " + target + " that has not been explicitly stated before.");
 
 		allTransitions.add( new TransitionImpl(name, source, target, guard, method, data) );
-
 	}	
+	
 
 	/**
 	 * It add a guard based on the provided method with the guard name equal to method name.
@@ -214,6 +275,7 @@ public class BehaviourBuilder {
 	public void addGuard(Method method) {
 		addGuard(method.getName(), method);
 	}
+
 	
 	/**
 	 * It adds the guard by providing directly the method parameter. The method 
