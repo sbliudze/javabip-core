@@ -82,7 +82,7 @@ public class TCPAcceptor {
 			BIPEngine engine = engineFactory.create("myEngine", bipGlue);
 
 			bipGlue.toXML(System.out);
-			System.exit(-1);
+			//System.exit(-1);
 
 			CommandBuffer buffer = new CommandBuffer(BUFFER_SIZE);
 			BIPActor actorBuffer = engine.register(buffer, "buffer", true);
