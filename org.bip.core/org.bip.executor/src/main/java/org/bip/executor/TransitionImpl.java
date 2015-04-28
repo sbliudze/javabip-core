@@ -8,6 +8,9 @@
 
 package org.bip.executor;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 
 import org.bip.api.Data;
@@ -20,6 +23,7 @@ class TransitionImpl {
 	// Empty string represents that there is no guard associated to this transition.
 	protected String guard;
 	protected Method method;
+	protected MethodHandle methodHandle;
 	protected Iterable<Data<?>> dataRequired;
 
 	/**
@@ -40,6 +44,7 @@ class TransitionImpl {
 		this.target = target;
 		this.guard = guard;
 		this.method = method;
+		this.methodHandle = getMethodHandleForTransition();
 		this.dataRequired = dataRequired;
 	}
 	
@@ -60,5 +65,23 @@ class TransitionImpl {
 	public String target() {
 		return this.target;
 	}
-			
+		
+	private MethodHandle getMethodHandleForTransition() {
+		MethodType methodType;
+		MethodHandle methodHandle = null;
+		MethodHandles.Lookup lookup = MethodHandles.lookup();
+//		for (Class claxx: method.getParameterTypes()) {
+//		System.err.println(claxx.getCanonicalName());}
+		methodType = MethodType.methodType(method.getReturnType(), method.getParameterTypes());// clazz - type of data being returned, method has no arguments
+		try {
+			methodHandle = lookup.findVirtual(method.getDeclaringClass(), method.getName(), methodType);
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return methodHandle;
+	}
 }

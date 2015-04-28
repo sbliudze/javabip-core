@@ -8,6 +8,8 @@
 
 package org.bip.executor;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -80,6 +82,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 	 * The map between the name of the out variable and the method computing it
 	 */
 	private Hashtable<String, Method> dataOutName;
+	private Hashtable<String, MethodHandle> dataOutName2;
 	
 	private Map<String, List<Port>> dataFromTransitionToPorts;
 	private Map<String, List<Port>> dataFromGuardsToPorts;
@@ -273,12 +276,13 @@ class BehaviourImpl implements ExecutableBehaviour {
 	 */
 	public BehaviourImpl(String type, String currentState, ArrayList<ExecutableTransition> allTransitions, 
 						 ArrayList<Port> allPorts, HashSet<String> states, Collection<Guard> guards,
-						 ArrayList<DataOutImpl<?>> dataOut, Hashtable<String, Method> dataOutName, Object component) throws BIPException {
+						 ArrayList<DataOutImpl<?>> dataOut, Hashtable<String, Method> dataOutName, Hashtable<String, MethodHandle> dataOutName2, Object component) throws BIPException {
 
 		this(type, currentState, allTransitions, allPorts, states, guards, component);
 
 		this.dataOut = dataOut;
 		this.dataOutName = dataOutName;
+		this.dataOutName2 = dataOutName2;
 
 	}
 
@@ -319,6 +323,10 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 	public Map<String, Method> getDataOutMapping() {
 		return dataOutName;
+	}
+	
+	public Map<String, MethodHandle> getDataOutMapping2() {
+		return dataOutName2;
 	}
 	
 	public Iterable<Data<?>> portToDataInForTransition(Port port) {
@@ -501,38 +509,102 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 	public Map<String, Boolean> computeGuardsWithoutData(String currentState) {
 		
+		return computeGuardsWithoutData2(currentState);
+		
 		// TODO BUG DESIGN compute only guards needed for this current state, as other 
 		// guards not guaranteed to compute properly if executed in the wrong state.
 
-		Hashtable<String, Boolean> guardToValue = new Hashtable<String, Boolean>();
-		ArrayList<ExecutableTransition> transitionsFromState = stateTransitions.get(currentState);
-		for (ExecutableTransition transition : transitionsFromState) {
-			if (transition.hasGuard()) {
-				for (Guard guard : transition.transitionGuards()) {
-					if (this.guardsWithoutData.contains(guard)) {
-						try {
-							guardToValue.put(guard.name(), guard.evaluateGuard(bipComponent));
-						} catch (IllegalAccessException e) {
-							e.printStackTrace();
-						} catch (IllegalArgumentException e) {
-							e.printStackTrace();
-						} catch (InvocationTargetException e) {
-							e.printStackTrace();
+//		Hashtable<String, Boolean> guardToValue = new Hashtable<String, Boolean>();
+//		ArrayList<ExecutableTransition> transitionsFromState = stateTransitions.get(currentState);
+//		for (ExecutableTransition transition : transitionsFromState) {
+//			if (transition.hasGuard()) {
+//				for (Guard guard : transition.transitionGuards()) {
+//					if (this.guardsWithoutData.contains(guard)) {
+//						try {
+//							guardToValue.put(guard.name(), guard.evaluateGuard(bipComponent));
+//						} catch (IllegalAccessException e) {
+//							e.printStackTrace();
+//						} catch (IllegalArgumentException e) {
+//							e.printStackTrace();
+//						} catch (InvocationTargetException e) {
+//							e.printStackTrace();
+//						}
+//					}
+//				}
+//			}
+//		}
+//		return guardToValue;
+	}
+	
+		public Map<String, Boolean> computeGuardsWithoutData2(String currentState) {
+			
+			// TODO BUG DESIGN compute only guards needed for this current state, as other 
+			// guards not guaranteed to compute properly if executed in the wrong state.
+
+			Hashtable<String, Boolean> guardToValue = new Hashtable<String, Boolean>();
+			ArrayList<ExecutableTransition> transitionsFromState = stateTransitions.get(currentState);
+			for (ExecutableTransition transition : transitionsFromState) {
+				if (transition.hasGuard()) {
+					for (Guard guard : transition.transitionGuards()) {
+						if (this.guardsWithoutData.contains(guard)) {
+							try {
+								Object[] args = new Object[1];
+								args[0] = bipComponent;
+								guardToValue.put(guard.name(), guard.evaluateGuard2(args));
+							} catch (IllegalArgumentException e) {
+								e.printStackTrace();
+							}
 						}
 					}
 				}
 			}
+			return guardToValue;
 		}
-		return guardToValue;
+		
+	public List<Boolean> checkEnabledness(String port, List<Map<String, Object>> data) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, BIPException {
+
+//		ArrayList<Boolean> result = new ArrayList<Boolean>();
+//		ExecutableTransition transition = getTransition(currentState, port);
+//		// TODO DESIGN, find out why this can happen if the guard is not there, 
+//		// it does not need data, any data is good, no need to do check Enabledness?
+//		// probably this code was added "just in case" - maybe an exception instead? 
+//		if (!transition.hasGuard()) {
+//			for (int i = data.size(); i > 0; i--) {
+//				result.add(true);
+//			}
+//			return result;
+//		}
+//		// for each different row of the data evaluation table
+//		for (Map<String, Object> dataRow : data) {
+//			Map<String, Boolean> guardToValue = new Hashtable<String, Boolean>();
+//			// for each Guard of this transition
+//			for (Guard guard : transition.transitionGuards()) {
+//				if (!guard.hasData()) {
+//					guardToValue.put(guard.name(), guard.evaluateGuard(bipComponent));
+//				} else {
+//					// if it has data,
+//					// then for each data it needs add the corresponding value
+//					// to the array of its arguments
+//					ArrayList<Object> args = new ArrayList<Object>();
+//					for (Data<?> guardData : guard.dataRequired()) {
+//						Object value = dataRow.get(guardData.name());
+//						args.add(value);
+//					}
+//					guardToValue.put(guard.name(), guard.evaluateGuard(bipComponent, args.toArray()));
+//				}
+//			}
+//			result.add(transition.guardIsTrue(guardToValue));
+//		}
+//		return result;
+		return checkEnabledness2(port, data);
 	}
 	
-	public List<Boolean> checkEnabledness(String port, List<Map<String, Object>> data) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, BIPException {
+	public List<Boolean> checkEnabledness2(String port, List<Map<String, Object>> data) throws BIPException {
 
 		ArrayList<Boolean> result = new ArrayList<Boolean>();
 		ExecutableTransition transition = getTransition(currentState, port);
 		// TODO DESIGN, find out why this can happen if the guard is not there, 
 		// it does not need data, any data is good, no need to do check Enabledness?
-		// probably this code was added "just in case" - maybe an exception instead? 
 		if (!transition.hasGuard()) {
 			for (int i = data.size(); i > 0; i--) {
 				result.add(true);
@@ -545,17 +617,20 @@ class BehaviourImpl implements ExecutableBehaviour {
 			// for each Guard of this transition
 			for (Guard guard : transition.transitionGuards()) {
 				if (!guard.hasData()) {
-					guardToValue.put(guard.name(), guard.evaluateGuard(bipComponent));
+					Object[] args = new Object[1];
+					args[0] = bipComponent;
+					guardToValue.put(guard.name(), guard.evaluateGuard2(args));
 				} else {
 					// if it has data,
 					// then for each data it needs add the corresponding value
 					// to the array of its arguments
 					ArrayList<Object> args = new ArrayList<Object>();
+					args.add(bipComponent);
 					for (Data<?> guardData : guard.dataRequired()) {
 						Object value = dataRow.get(guardData.name());
 						args.add(value);
 					}
-					guardToValue.put(guard.name(), guard.evaluateGuard(bipComponent, args.toArray()));
+					guardToValue.put(guard.name(), guard.evaluateGuard2(args.toArray()));
 				}
 			}
 			result.add(transition.guardIsTrue(guardToValue));
@@ -574,7 +649,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 		}
 		//getTransition works correctly with spontaneous as well, as it addresses the list of all transitions
 		ExecutableTransition transition = getTransition(currentState, portID);
-		invokeMethod(transition, data);
+		invokeMethod2(transition, data);
 	}
 	
 	// ExecutorKernel, the owner of BehaviourImpl is checking the correctness of the execution.
@@ -587,7 +662,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 		if (transition == null) { // this shouldn't normally happen
 			throw new BIPException("The spontaneous transition for port " + portID + " cannot be null after inform");
 		}
-		invokeMethod(transition);
+		invokeMethod2(transition);
 	}
 
 	public void executeInternal(Map<String, Boolean> guardToValue) throws BIPException {
@@ -595,7 +670,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 		for (ExecutableTransition transition : stateTransitions.get(currentState)) {
 			if (transition.getType().equals(PortType.internal) && 
 				transition.guardIsTrue(guardToValue)) {
-					invokeMethod(transition);
+					invokeMethod2(transition);
 					return;
 			}
 		}
@@ -619,6 +694,37 @@ class BehaviourImpl implements ExecutableBehaviour {
 						" but not  to the class of the component " + componentClass.getName());
 			}
 			componentMethod.invoke(bipComponent);
+			performTransition(transition);
+
+		} catch (SecurityException e) {
+			ExceptionHelper.printExceptionTrace(logger, e, errorMessage);
+		} catch (IllegalAccessException e) {
+			ExceptionHelper.printExceptionTrace(logger, e, errorMessage);
+		} catch (IllegalArgumentException e) {
+			ExceptionHelper.printExceptionTrace(logger, e, errorMessage);
+		} catch (InvocationTargetException e) {
+			ExceptionHelper.printExceptionTrace(logger, e, errorMessage);
+			ExceptionHelper.printExceptionTrace(logger, e.getCause());
+		} catch (BIPException e) {
+			ExceptionHelper.printExceptionTrace(logger, e, errorMessage);
+		}
+	}
+	
+	private void invokeMethod2(ExecutableTransition transition) {
+		MethodHandle methodHandle;
+		String errorMessage = "The following exception while executing " + transition.name() 
+				+" in component " + this.componentType;
+		try {
+			logger.info("Invocation: " + transition.name() );
+			methodHandle = transition.methodHandle();
+			if (!transition.method().getDeclaringClass().isAssignableFrom(componentClass)) {
+				throw new IllegalArgumentException("The method " + transition.method().getName() + 
+						" belongs to the class " + transition.method().getDeclaringClass().getName() +
+						" but not  to the class of the component " + componentClass.getName());
+			}
+			Object[] args = new Object[1];
+			args[0] = bipComponent;
+			methodHandle.invokeWithArguments(args);
 
 			performTransition(transition);
 
@@ -634,6 +740,8 @@ class BehaviourImpl implements ExecutableBehaviour {
 			ExceptionHelper.printExceptionTrace(logger, e.getCause());
 		} catch (BIPException e) {
 			ExceptionHelper.printExceptionTrace(logger, e, errorMessage);
+		} catch (Throwable e) {
+			ExceptionHelper.printExceptionTrace(logger, e);
 		}
 	}
 
@@ -676,6 +784,52 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 	}
 	
+	private void invokeMethod2(ExecutableTransition transition, Map<String, ?> data) {
+		Method componentMethod;
+		MethodHandle methodHandle;
+		try {
+			componentMethod = transition.method();
+			methodHandle = transition.methodHandle();
+			if (!componentMethod.getDeclaringClass().isAssignableFrom(componentClass)) {
+				throw new IllegalArgumentException("The method " + componentMethod.getName() + " belongs to the class " + componentMethod.getDeclaringClass().getName()
+						+ " but not  to the class of the component " + componentClass.getName());
+			}
+
+			Object[] args = new Object[componentMethod.getParameterTypes().length+1];
+			args[0] = bipComponent;
+			int i = 1;
+			for (Data<?> trData : transition.dataRequired()) {
+				// name parameter can not be null as it is enforced by the constructor.
+				Object value = data.get(trData.name());
+				// TODO, CHECK, value can be null if the map is not properly constructed. Throw more informative exception.
+				args[i] = value;
+				i++;
+			}
+			logger.debug("In component " + this.componentType + " INVOCATION of " + transition.name() + " with args " + data);
+			//if the method is not static, the first param to invokeExact should be treated as instance where to look for the method
+			 methodHandle.invokeWithArguments(args);
+			
+			//componentMethod.invoke(bipComponent, args);
+			performTransition(transition);
+		} catch (SecurityException e) {
+			ExceptionHelper.printExceptionTrace(logger, e);
+		} catch (IllegalAccessException e) {
+			ExceptionHelper.printExceptionTrace(logger, e);
+		} catch (IllegalArgumentException e) {
+			ExceptionHelper.printExceptionTrace(logger, e);
+		} catch (InvocationTargetException e) {
+			ExceptionHelper.printExceptionTrace(logger, e);
+			ExceptionHelper.printExceptionTrace(logger, e.getTargetException());
+		} catch (BIPException e) {
+			ExceptionHelper.printExceptionTrace(logger, e);
+		} catch (Throwable e) {
+			ExceptionHelper.printExceptionTrace(logger, e);
+		}
+
+	}
+	
+
+
 	private void performTransition(ExecutableTransition transition) throws BIPException {
 		if (!currentState.equals(transition.source())) {
 			throw new BIPException("Could not perform transition " + transition.name() + 
