@@ -760,7 +760,6 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 			performTransition(transition);
 
-			
 		} catch (SecurityException e) {
 			ExceptionHelper.printExceptionTrace(logger, e, errorMessage);
 		} catch (IllegalAccessException e) {
@@ -776,6 +775,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 			ExceptionHelper.printExceptionTrace(logger, e);
 		}
 	}
+
 
 	private void invokeMethod(ExecutableTransition transition, Map<String, ?> data) {
 		Method componentMethod;
@@ -826,7 +826,6 @@ class BehaviourImpl implements ExecutableBehaviour {
 				throw new IllegalArgumentException("The method " + componentMethod.getName() + " belongs to the class " + componentMethod.getDeclaringClass().getName()
 						+ " but not  to the class of the component " + componentClass.getName());
 			}
-
 			Object[] args = new Object[componentMethod.getParameterTypes().length+1];
 			args[0] = bipComponent;
 			int i = 1;
@@ -837,7 +836,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 				args[i] = value;
 				i++;
 			}
-			logger.debug("In component " + this.componentType + " INVOCATION of " + transition.name() + " with args " + data);
+			logger.info("Invocation: " + transition.name() + " with args " + data);
 			//if the method is not static, the first param to invokeExact should be treated as instance where to look for the method
 			 methodHandle.invokeWithArguments(args);
 			
@@ -860,8 +859,6 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 	}
 	
-
-
 	private void performTransition(ExecutableTransition transition) throws BIPException {
 		if (!currentState.equals(transition.source())) {
 			throw new BIPException("Could not perform transition " + transition.name() + 

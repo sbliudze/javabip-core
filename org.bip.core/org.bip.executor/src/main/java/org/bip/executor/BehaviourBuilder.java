@@ -257,6 +257,26 @@ public class BehaviourBuilder {
 		//allTransitions2.add( new TransitionImpl2(name, source, target, guard, getMethodHandleForTransition(method), data) );
 	}
 	
+	private MethodHandle getMethodHandleForTransition(Method method) {
+		MethodType methodType;
+		MethodHandle methodHandle = null;
+		MethodHandles.Lookup lookup = MethodHandles.lookup();
+		methodType = MethodType.methodType(method.getReturnType(), method.getParameterTypes());// clazz - type of data being returned, method has no arguments
+
+		// lookup the method by its name - we do not need to do it here, we need to do it beforehand and store
+		try {
+			methodHandle = lookup.findVirtual(component.getClass(), method.getName(), methodType);
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return methodHandle;
+
+	}
+	
 	public void addTransition(String name, String source, 
 	  		   				  String target, String guard, 
 	  		   				  Method method) {			
@@ -286,8 +306,12 @@ public class BehaviourBuilder {
 		methodToTransition.put(method, t);
 		//TODO transition here or execulable transition?
 		
-		allTransitions.add( t);
+		allTransitions.add(t);
+
+		allTransitions.add(new TransitionImpl(name, source, target, guard, method, data));
+
 	}	
+	
 
 
 	/**
