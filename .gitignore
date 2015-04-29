@@ -12,3 +12,5 @@ bin/
 *.html
 *.java~
 RemoteSystemsTempFiles/
+*~
+*outputfolder*
