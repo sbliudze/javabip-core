@@ -198,8 +198,8 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 			// that there are no transitions
 			// store this information and use it for the next cycles till you get something
 			// different. When this is done uncomment the next line.
-			waitingForSpontaneous = true;
-			// engine.inform(proxy, behaviour.getCurrentState(), globallyDisabledPorts);
+			// waitingForSpontaneous = true;
+			 engine.inform(proxy, behaviour.getCurrentState(), globallyDisabledPorts);
 			// Next step will be invoked upon receiving a spontaneous event. 
 			return;
 		}
@@ -284,6 +284,43 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 
 	public <T> T getData(String name, Class<T> clazz) {
 
+//		if (name == null || name.isEmpty()) {
+//			throw new IllegalArgumentException(
+//					"The name of the required data variable from the component "
+//							+ bipComponent.getClass().getName()
+//							+ " cannot be null or empty.");
+//		}
+//
+//		T result = null;
+//
+//		try {
+//			logger.debug("Component {} getting data {}.",
+//					behaviour.getComponentType(), name);
+//			Object methodResult = behaviour.getDataOutMapping().get(name)
+//					.invoke(bipComponent);
+//			
+//			if (!clazz.equals(Object.class) && !methodResult.getClass().isAssignableFrom(clazz)) {
+//				result = getPrimitiveData(name, methodResult, clazz);
+//			} else
+//				result = clazz.cast(methodResult);
+//
+//		} catch (IllegalAccessException e) {
+//			ExceptionHelper.printExceptionTrace(logger, e);
+//			e.printStackTrace();
+//		} catch (IllegalArgumentException e) {
+//			ExceptionHelper.printExceptionTrace(logger, e);
+//			e.printStackTrace();
+//		} catch (InvocationTargetException e) {
+//			ExceptionHelper.printExceptionTrace(logger, e);
+//			ExceptionHelper.printExceptionTrace(logger, e.getTargetException());
+//			e.printStackTrace();
+//		}
+//		return result;
+		return getData2(name, clazz);
+	}
+	
+	public <T> T getData2(String name, Class<T> clazz) {
+
 		if (name == null || name.isEmpty()) {
 			throw new IllegalArgumentException(
 					"The name of the required data variable from the component "
@@ -296,23 +333,18 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 		try {
 			logger.debug("Component {} providing data {}.",
 					behaviour.getComponentType(), name);
-			Object methodResult = behaviour.getDataOutMapping().get(name)
-					.invoke(bipComponent);
+			Object[] args = new Object[1];
+			args[0] = bipComponent;
+			Object methodResult = behaviour.getDataOutMapping2().get(name)
+					.invokeWithArguments(args);
 			
 			if (!clazz.equals(Object.class) && !methodResult.getClass().isAssignableFrom(clazz)) {
 				result = getPrimitiveData(name, methodResult, clazz);
 			} else
 				result = clazz.cast(methodResult);
 
-		} catch (IllegalAccessException e) {
+		} catch (Throwable e) {
 			ExceptionHelper.printExceptionTrace(logger, e);
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			ExceptionHelper.printExceptionTrace(logger, e);
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			ExceptionHelper.printExceptionTrace(logger, e);
-			ExceptionHelper.printExceptionTrace(logger, e.getTargetException());
 			e.printStackTrace();
 		}
 		return result;

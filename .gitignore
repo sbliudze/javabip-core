@@ -13,3 +13,5 @@ bin/
 *.java~
 *.xml~
 RemoteSystemsTempFiles/
+*~
+*outputfolder*

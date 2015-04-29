@@ -52,4 +52,5 @@ public interface Guard {
 	public boolean evaluateGuard(Object component, Object... args) throws IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException;
 
+	public boolean evaluateGuard2(Object... args);
 }
