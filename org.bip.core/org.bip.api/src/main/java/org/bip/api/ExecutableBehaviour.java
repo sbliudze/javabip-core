@@ -8,6 +8,7 @@
 
 package org.bip.api;
 
+import java.lang.invoke.MethodHandle;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -66,6 +67,7 @@ public interface ExecutableBehaviour extends Behaviour {
 	 * @return the data out mapping
 	 */
 	public Map<String, Method> getDataOutMapping();
+	public Map<String, MethodHandle> getDataOutMapping2();
 
 	/**
 	 * Check enabledness.

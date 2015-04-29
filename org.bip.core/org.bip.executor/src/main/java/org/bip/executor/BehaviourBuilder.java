@@ -46,6 +46,7 @@ public class BehaviourBuilder {
 	private Object component;
 
 	private Hashtable<String, Method> dataOutName;
+	private Hashtable<String, MethodHandle> dataOutName2;
 	private ArrayList<DataOutImpl<?>> dataOut;
 
 	public BehaviourBuilder(Object component) {
@@ -55,6 +56,7 @@ public class BehaviourBuilder {
 		states = new HashSet<String>();
 		guards = new Hashtable<String, Guard>();
 		dataOutName = new Hashtable<String, Method>();
+		dataOutName2 = new Hashtable<String, MethodHandle>();
 		dataOut = new ArrayList<DataOutImpl<?>>();
 	}
 
@@ -96,7 +98,7 @@ public class BehaviourBuilder {
 		}
 		
 		return new BehaviourImpl(componentType, currentState, transformIntoExecutableTransition(), 
-								 componentPorts, states, guards.values(), dataOut, dataOutName, component);
+								 componentPorts, states, guards.values(), dataOut, dataOutName, dataOutName2, component);
 	}
 	
 //	public ExecutableBehaviour build2(ComponentProvider provider) throws BIPException {
@@ -221,25 +223,6 @@ public class BehaviourBuilder {
 		//allTransitions2.add( new TransitionImpl2(name, source, target, guard, getMethodHandleForTransition(method), data) );
 	}
 	
-	private MethodHandle getMethodHandleForTransition(Method method) {
-		MethodType methodType;
-		MethodHandle methodHandle = null;
-		MethodHandles.Lookup lookup = MethodHandles.lookup();
-		methodType = MethodType.methodType(method.getReturnType(), method.getParameterTypes());// clazz - type of data being returned, method has no arguments
-
-		// lookup the method by its name - we do not need to do it here, we need to do it beforehand and store
-		try {
-			methodHandle = lookup.findVirtual(component.getClass(), method.getName(), methodType);
-		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return methodHandle;
-	}
-
 	public void addTransition(String name, String source, 
 	  		   				  String target, String guard, 
 	  		   				  Method method) {			
@@ -299,7 +282,7 @@ public class BehaviourBuilder {
 		DataOutImpl<?> data = ReflectionHelper.parseReturnDataAnnotation(method); 
 		dataOut.add( data );
 		dataOutName.put(data.name(), method);
-								
+		dataOutName2.put(data.name(), getMethodHandleFromMethod(method));
 	}
 
 	public void addDataOut(Method method, org.bip.annotations.Data annotation) {		
@@ -307,7 +290,25 @@ public class BehaviourBuilder {
 		DataOutImpl<?> data = ReflectionHelper.parseReturnDataAnnotation(method, annotation); 
 		dataOut.add( data );
 		dataOutName.put(data.name(), method);
+		dataOutName2.put(data.name(), getMethodHandleFromMethod(method));
 								
 	}
 
+	private MethodHandle getMethodHandleFromMethod(Method method) {
+		MethodType methodType;
+		MethodHandle methodHandle = null;
+		MethodHandles.Lookup lookup = MethodHandles.lookup();
+		methodType = MethodType.methodType(method.getReturnType(), method.getParameterTypes());
+		try {
+			methodHandle = lookup.findVirtual(component.getClass(), method.getName(), methodType);
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return methodHandle;
+	}
+	
 }
