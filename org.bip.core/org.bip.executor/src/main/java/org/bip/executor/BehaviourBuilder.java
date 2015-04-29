@@ -257,6 +257,7 @@ public class BehaviourBuilder {
 		//allTransitions2.add( new TransitionImpl2(name, source, target, guard, getMethodHandleForTransition(method), data) );
 	}
 	
+
 	private MethodHandle getMethodHandleForTransition(Method method) {
 		MethodType methodType;
 		MethodHandle methodHandle = null;
@@ -389,5 +390,6 @@ public class BehaviourBuilder {
 	public void addResourceUtility(Method method, String utility) {
 		methodUtility.put(method, utility);
 	}
+
 	
 }

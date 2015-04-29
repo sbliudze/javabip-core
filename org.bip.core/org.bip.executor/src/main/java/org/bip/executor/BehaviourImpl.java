@@ -9,7 +9,6 @@
 package org.bip.executor;
 
 import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -83,7 +82,6 @@ class BehaviourImpl implements ExecutableBehaviour {
 	 */
 	private Hashtable<String, Method> dataOutName;
 	private Hashtable<String, MethodHandle> dataOutName2;
-	
 
 	private Map<String, List<Port>> dataFromTransitionToPorts;
 	private Map<String, List<Port>> dataFromGuardsToPorts;
@@ -288,7 +286,6 @@ class BehaviourImpl implements ExecutableBehaviour {
 		this.dataOut = dataOut;
 		this.dataOutName = dataOutName;
 		this.dataOutName2 = dataOutName2;
-
 	}
 
 	public BehaviourImpl(String type, String currentState,
@@ -313,6 +310,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 		this.transitionResources = transitionResources;
 		this.transitionRequest = transitionRequest;
 		System.err.println(transitionResources + "\n" + transitionRequest);
+
 	}
 
 	//*************************** End of Constructors *******************************************
@@ -539,7 +537,6 @@ class BehaviourImpl implements ExecutableBehaviour {
 	}
 
 	public Map<String, Boolean> computeGuardsWithoutData(String currentState) {
-		
 		return computeGuardsWithoutData2(currentState);
 		
 		// TODO BUG DESIGN compute only guards needed for this current state, as other 
@@ -567,7 +564,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 //		return guardToValue;
 	}
 	
-		public Map<String, Boolean> computeGuardsWithoutData2(String currentState) {
+	public Map<String, Boolean> computeGuardsWithoutData2(String currentState) {
 			
 			// TODO BUG DESIGN compute only guards needed for this current state, as other 
 			// guards not guaranteed to compute properly if executed in the wrong state.
@@ -585,6 +582,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 							} catch (IllegalArgumentException e) {
 								e.printStackTrace();
 							}
+						
 						}
 					}
 				}
