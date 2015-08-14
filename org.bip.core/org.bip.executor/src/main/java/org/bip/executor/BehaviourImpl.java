@@ -77,6 +77,9 @@ class BehaviourImpl implements ExecutableBehaviour {
 	// the map between the name of the out variable and the method computing it
 	private Hashtable<String, Method> dataOutName;
 	private Hashtable<String, MethodHandle> dataOutName2;
+	
+	private ArrayList<ResourceReqImpl> resources;// do we need a method? actually no, but we need a transition name along...
+	
 	private Object bipComponent;
 	private Class<?> componentClass;
 
@@ -228,6 +231,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 		this.dataOutName2 = dataOutName2;
 	}
 
+	
 	public String getCurrentState() {
 		return currentState;
 	}
