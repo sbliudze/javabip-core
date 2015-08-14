@@ -50,6 +50,7 @@ public class BehaviourBuilder {
 	private Hashtable<String, MethodHandle> dataOutName2;
 	private ArrayList<DataOutImpl<?>> dataOut;
 	private ArrayList<ResourceReqImpl> resources;
+
 	private Hashtable<TransitionImpl,  ArrayList<ResourceReqImpl>> transitionResources;
 	private Hashtable<TransitionImpl, String> transitionRequest;
 	//helper map in needed to construct resources to transition map
@@ -59,6 +60,7 @@ public class BehaviourBuilder {
 	//helper map to construct resource to transition map
 	private Hashtable<Method, TransitionImpl> methodToTransition;
 	
+
 	public BehaviourBuilder(Object component) {
 		this.component = component;
 		allTransitions = new ArrayList<TransitionImpl>();
@@ -390,6 +392,5 @@ public class BehaviourBuilder {
 	public void addResourceUtility(Method method, String utility) {
 		methodUtility.put(method, utility);
 	}
-
 	
 }
