@@ -27,7 +27,8 @@ public interface BIPEngine {
 	 * It register a given component with its behavior within the engine to be managed by the engine.
 	 *
 	 * @param component the component
-	 * @param behaviour the behaviour
+	 * @param id the name
+	 * @param useSpec boolean defining whether to use annotations or provide behaviour 
 	 */
 	BIPActor register(Object component, String id, boolean useSpec);
 
