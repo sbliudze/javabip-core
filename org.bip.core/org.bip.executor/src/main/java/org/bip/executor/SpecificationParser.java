@@ -15,6 +15,8 @@ import java.lang.reflect.Method;
 import org.bip.annotations.ComponentType;
 import org.bip.annotations.Data;
 import org.bip.annotations.Ports;
+import org.bip.annotations.ResourceRequired;
+import org.bip.annotations.ResourcesRequired;
 import org.bip.annotations.Transitions;
 import org.bip.api.Behaviour;
 import org.bip.api.ComponentProvider;
@@ -106,7 +108,7 @@ public abstract class SpecificationParser implements ComponentProvider {
 			throw new BIPException("Port information for the BIP component is not specified.");
 		}
 
-		// get transitions & guards & data
+		// get transitions & guards & data & resources
 		Method[] componentMethods = componentClass.getMethods();
 		for (Method method : componentMethods) {
 			Annotation[] annotations = method.getAnnotations();
@@ -147,11 +149,27 @@ public abstract class SpecificationParser implements ComponentProvider {
 					addPort((org.bip.annotations.Port) annotation, componentClass, builder);
 					
 				}
+				else if (annotation instanceof org.bip.annotations.ResourceRequired) {
+					
+					addResource(method, (org.bip.annotations.ResourceRequired) annotation, builder);
 
+				} else if (annotation instanceof ResourcesRequired) {
+					ResourcesRequired transitionsAnnotation = (ResourcesRequired) annotation;
+					Annotation[] resourceAnnotations = transitionsAnnotation.value();
+					for (Annotation bipResourceAnnotation : resourceAnnotations) {
+						
+						addResource(method, (org.bip.annotations.ResourceRequired) bipResourceAnnotation, builder);
+					}
+
+				} 
 			}
 
 		}
 		return builder;
+	}
+
+	private void addResource(Method method, ResourceRequired bipResourceAnnotation, BehaviourBuilder builder) {
+		builder.addResource(bipResourceAnnotation.label(), bipResourceAnnotation.type(), bipResourceAnnotation.utility());
 	}
 
 	private void addGuard(Method method, 

@@ -24,6 +24,7 @@ import org.bip.api.ExecutableBehaviour;
 import org.bip.api.Guard;
 import org.bip.api.Port;
 import org.bip.api.PortType;
+import org.bip.api.ResourceType;
 import org.bip.exceptions.BIPException;
 
 // TODO DESCRIPTION all classes should have a header and description of its purpose for nice looking JavaDoc document.
@@ -48,6 +49,7 @@ public class BehaviourBuilder {
 	private Hashtable<String, Method> dataOutName;
 	private Hashtable<String, MethodHandle> dataOutName2;
 	private ArrayList<DataOutImpl<?>> dataOut;
+	private ArrayList<ResourceReqImpl> resources;
 
 	public BehaviourBuilder(Object component) {
 		this.component = component;
@@ -309,6 +311,10 @@ public class BehaviourBuilder {
 			e.printStackTrace();
 		}
 		return methodHandle;
+	}
+
+	public void addResource(String label, ResourceType type, String utility) {
+		resources.add(new ResourceReqImpl(label, type, utility));
 	}
 	
 }
