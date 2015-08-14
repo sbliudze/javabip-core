@@ -1,0 +1,146 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.bip</groupId>
+		<artifactId>org.bip.core</artifactId>
+		<version>0.1.0-SNAPSHOT</version>
+	</parent>
+
+	<groupId>org.bip</groupId>
+	<artifactId>org.bip.resources</artifactId>
+	<version>${org.bip.resources.version}</version>
+
+
+	<name>BIP :: Core :: Resources</name>
+
+	<description>It contains resources related classes.</description>
+	<packaging>bundle</packaging>
+
+	<properties>
+		<osgi.private>
+			org.bip.resources.grammar
+		</osgi.private>
+		<osgi.import>
+			org.bip.api, *
+		</osgi.import>
+		<osgi.export>
+			org.bip.resources 
+		</osgi.export>
+		<osgi.dynamic.import></osgi.dynamic.import>
+		<osgi.bundles></osgi.bundles>
+		<osgi.embed.depdendencies>antlr4, antlr4-runtime, org.abego.treelayout.core, antlr-runtime, antlr</osgi.embed.depdendencies>
+ 		
+	</properties>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>org.bip</groupId>
+			<artifactId>org.bip.api</artifactId>
+			<version>${org.bip.api.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr4</artifactId>
+			<version>4.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.6</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.5.11</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.5.11</version>
+		</dependency>
+
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.16</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.microsoft</groupId>
+			<artifactId>com.microsoft.z3</artifactId>
+			<version>v4.06</version>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Embed-Transitive>true</Embed-Transitive>
+						<Bundle-Name>${project.name}</Bundle-Name>
+						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+						<Export-Package>${osgi.export}</Export-Package>
+						<Import-Package>${osgi.import}</Import-Package>
+						<DynamicImport-Package>${osgi.dynamic.import}</DynamicImport-Package>
+						<Private-Package>${osgi.private}</Private-Package>
+						<Require-Bundle>${osgi.bundles}</Require-Bundle>
+						<Spring-Context>*;publish-context:=false;create-asynchronously:=true</Spring-Context>
+						<Include-Resource>src/main/resources</Include-Resource>
+					</instructions>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<includes>
+					</includes>
+
+					<systemPropertyVariables>
+						<log4j.configuration>file:${basedir}/src/test/resources/log4j-build.properties</log4j.configuration>
+					</systemPropertyVariables>
+				</configuration>
+			</plugin>
+
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+	
+		<repositories>
+		<repository>
+			<id>maven-repo</id>
+			<name>maven repo</name>
+			<url>http://repo1.maven.org/maven2/</url>
+		</repository>
+
+		<repository>
+			<id>fusesource.releases</id>
+			<name>FuseSource Releases Repository</name>
+			<url>http://repo.fusesource.com/maven2/</url>
+		</repository>
+	</repositories>
+</project>
