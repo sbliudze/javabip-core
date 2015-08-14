@@ -2,7 +2,6 @@ package org.bip.spec.resources;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import org.bip.annotations.ComponentType;
 import org.bip.annotations.Data;
 import org.bip.annotations.Port;

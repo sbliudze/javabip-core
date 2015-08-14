@@ -4,7 +4,6 @@ import org.bip.api.ResourceType;
 import org.bip.exceptions.BIPException;
 
 public class Processor extends Resource {
-
 	private final String name = "p";
 	private String cost = "";
 
@@ -26,6 +25,7 @@ public class Processor extends Resource {
 	public ResourceType type() {
 		return ResourceType.processor;
 	}
+
 	
 //	public void updateCost(String newCost) {
 //		int taken = Integer.parseInt(newCost);
@@ -34,7 +34,6 @@ public class Processor extends Resource {
 //			this.cost = "p=0";
 //		}
 //	}
-
 
 	@Override
 	public void augmentCost(String deltaCost) {

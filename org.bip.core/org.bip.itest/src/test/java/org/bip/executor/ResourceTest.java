@@ -70,12 +70,14 @@ public class ResourceTest {
 	public void test() throws RecognitionException, IOException, DNetException
 	{
 		
+
 		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
 
 		//BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
 			public void configure() {
+
 				 synchron(ComponentNeedingResource.class, "getResource").to(AllocatorImpl.class,
 						 "request");
 				 synchron(ComponentNeedingResource.class, "release").to(AllocatorImpl.class,
@@ -102,6 +104,7 @@ public class ResourceTest {
 		BIPActor allocatorActor = engine.register(alloc, "allocator", true); 
 		aComp.setAllocator(allocatorActor);
 		bComp.setAllocator(allocatorActor);
+
 		ResourceProvider memory = new Memory(256);
 		ResourceProvider processor = new Processor();
 		ResourceProvider bus = new Bus(128);
@@ -110,8 +113,9 @@ public class ResourceTest {
 		alloc.addResource(processor);
 		alloc.addResource(bus);
 
+
 		engine.specifyGlue(bipGlue);
-		
+
 		engine.start();
 		engine.execute();
 
@@ -120,7 +124,6 @@ public class ResourceTest {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-				
 		engine.stop();
 		engineFactory.destroy(engine);
 	}

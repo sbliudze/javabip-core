@@ -5,12 +5,12 @@ grammar dNet;
 package org.bip.resources.grammar;
 import java.util.*;
 import java.util.*;
-import org.bip.resources.ConstraintNode;
-import org.bip.resources.Transition;
-import org.bip.resources.Place;
-import org.bip.resources.DNet;
-import org.bip.resources.InhibitorArc;
-import org.bip.resources.Constraint;
+import org.bip.DNet.core.ConstraintNode;
+import org.bip.DNet.core.Transition;
+import org.bip.DNet.core.Place;
+import org.bip.DNet.core.DNet;
+import org.bip.DNet.core.InhibitorArc;
+import org.bip.DNet.core.Constraint;
 }
 
 @members{

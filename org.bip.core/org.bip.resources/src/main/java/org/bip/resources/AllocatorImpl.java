@@ -19,6 +19,7 @@ import org.bip.api.Allocator;
 import org.bip.api.PortType;
 import org.bip.api.ResourceProvider;
 import org.bip.exceptions.BIPException;
+
 import org.bip.resources.grammar.constraintLexer;
 import org.bip.resources.grammar.constraintParser;
 import org.bip.resources.grammar.dNetLexer;
@@ -317,17 +318,20 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 					placeSum = getContext().mkAdd(placeSum, placeVariables.get(place).get(i));
 				}
 				stringtoConstraintVar.put(place.name(), placeSum);
+
 				logger.debug("For place " + place.name() + " the token variable names are " + stringtoConstraintVar + " and the constraint is "
 						+ resourceToCost);
 				BoolExpr costExpr = resourceToCost.get(place.name()).evaluate(stringtoConstraintVar);
 				solver.add(costExpr);
 			}
 		}
+
 	}
 
 	/**************** End of Transitions *****************/
 
 	/**************** Helper functions *****************/
+
 	private String createVariableName(Place place, String transitionName) {
 		return place.name() + "-" + transitionName;
 	}
@@ -335,6 +339,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 	private IntExpr createIntVariable(Context ctx, String name) {
 		return (IntExpr) ctx.mkConst(ctx.mkSymbol(name), ctx.getIntSort());
 	}
+
 
 	/**************** End of Helper functions *****************/
 
@@ -344,6 +349,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 	public Context getContext() {
 		return context;
 	}
+
 
 	@Override
 	public void request() {
@@ -369,4 +375,5 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		this.specifyCost(resource.name(), resource.cost());
 	}
 	/**************** End of Interface functions *****************/
+
 }

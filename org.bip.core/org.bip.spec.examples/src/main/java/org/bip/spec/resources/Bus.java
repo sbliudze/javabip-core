@@ -1,5 +1,6 @@
 package org.bip.spec.resources;
 
+
 import org.bip.api.ResourceType;
 
 public class Bus extends Resource {

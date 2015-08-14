@@ -12,6 +12,7 @@ import com.microsoft.z3.IntExpr;
 
 public class DNet implements ContextProvider {
 
+
 	public HashMap<ArrayList<String>, ArrayList<String>> resourceDependencies;
 	
 	private ArrayList<Place> places;
@@ -29,15 +30,16 @@ public class DNet implements ContextProvider {
 	/* do something with the context */
 
 	// ctx.dispose();
+
 	
 	/**************** Constructors area *****************/
-
 	public DNet() {
 		places = new ArrayList<Place>();
 		transitions = new ArrayList<Transition>();
 		inhibitors = new ArrayList<InhibitorArc>();
 		nameToPlace = new HashMap<String, Place>();
 		nameToTransition = new HashMap<String, Transition>();
+
 		resourceDependencies = new HashMap<ArrayList<String>, ArrayList<String>>();
 		placeNameToTransitionNames = new HashMap<String, ArrayList<String>>();
 		transitionNameToPostplacesNames = new HashMap<String, ArrayList<String>>();
@@ -63,7 +65,7 @@ public class DNet implements ContextProvider {
 	/************************************************/
 	
 	/**************** Creation area *****************/
-	
+
 	public Place addPlace(String placeName) {
 		if (!nameToPlace.containsKey(placeName)) {
 			Place place = new Place(placeName);
@@ -230,6 +232,7 @@ public class DNet implements ContextProvider {
 
 	/************************************************/
 	
+
 	public void print() {
 		System.out.println("DNet consists of: ");
 		System.out.println(places.size() + " places: ");
