@@ -56,7 +56,13 @@
 		<artifactId>org.bip.glue</artifactId>
 		<scope>test</scope>
 	</dependency>
-
+	
+	<dependency>
+		<groupId>org.bip</groupId>
+		<artifactId>org.bip.resources</artifactId>
+		<version>${org.bip.resources.version}</version>
+		<scope>test</scope>
+	</dependency>
 
 	<dependency>
 		<groupId>org.bip</groupId>

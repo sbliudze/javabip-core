@@ -87,6 +87,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 	private Map<String, List<Port>> dataFromTransitionToPorts;
 	private Map<String, List<Port>> dataFromGuardsToPorts;
 	private Map<String, List<Port>> portsNeedingData;
+	private ArrayList<ResourceReqImpl> resources;// do we need a method? actually no, but we need a transition name along...
 	
 	private Object bipComponent;
 	private Class<?> componentClass;
@@ -286,9 +287,11 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 	}
 
+
 	//*************************** End of Constructors *******************************************
 	
 	//******************************* Getter functions ******************************************
+
 	public String getCurrentState() {
 		return currentState;
 	}
