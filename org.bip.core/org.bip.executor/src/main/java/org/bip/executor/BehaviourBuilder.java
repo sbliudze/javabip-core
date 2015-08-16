@@ -60,6 +60,7 @@ public class BehaviourBuilder {
 		dataOutName = new Hashtable<String, Method>();
 		dataOutName2 = new Hashtable<String, MethodHandle>();
 		dataOut = new ArrayList<DataOutImpl<?>>();
+		resources = new ArrayList<ResourceReqImpl>();
 	}
 
 	public ExecutableBehaviour build(ComponentProvider provider) throws BIPException {
@@ -97,6 +98,13 @@ public class BehaviourBuilder {
 		
 		for (DataOutImpl<?> data : dataOut) {
 			data.computeAllowedPort(allEnforceablePorts);
+		}
+		
+		if (!resources.isEmpty())
+		{
+			return new BehaviourImpl(componentType, currentState, transformIntoExecutableTransition(), 
+					 componentPorts, states, guards.values(), dataOut, dataOutName, dataOutName2, component,
+					 resources);
 		}
 		
 		return new BehaviourImpl(componentType, currentState, transformIntoExecutableTransition(), 

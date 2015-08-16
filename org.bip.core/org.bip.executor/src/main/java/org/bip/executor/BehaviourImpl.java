@@ -287,9 +287,21 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 	}
 
+	public BehaviourImpl(String type, String currentState,
+			ArrayList<ExecutableTransition> allTransitions,
+			ArrayList<Port> componentPorts, HashSet<String> states,
+			Collection<Guard> guards, ArrayList<DataOutImpl<?>> dataOut,
+			Hashtable<String, Method> dataOutName,
+			Hashtable<String, MethodHandle> dataOutName2, Object component,
+			ArrayList<ResourceReqImpl> resources2) {
+		this(type, currentState, allTransitions, 
+				 componentPorts, states, guards, dataOut, dataOutName, dataOutName2, component);
+		this.resources = resources2;
+	}
 
 	//*************************** End of Constructors *******************************************
 	
+
 	//******************************* Getter functions ******************************************
 
 	public String getCurrentState() {
