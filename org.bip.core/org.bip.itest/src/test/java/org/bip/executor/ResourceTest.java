@@ -78,8 +78,8 @@ public class ResourceTest {
 			@Override
 			public void configure() {
 
-				port(DummyComponent.class, "aPort").acceptsNothing();
-				port(DummyComponent.class, "aPort")	.requiresNothing();
+				port(ComponentNeedingResource.class, "a").acceptsNothing();
+				port(ComponentNeedingResource.class, "a")	.requiresNothing();
 				
 			}
 
