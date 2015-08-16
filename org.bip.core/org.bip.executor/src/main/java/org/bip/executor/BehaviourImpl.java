@@ -318,6 +318,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 	//******************************* Getter functions ******************************************
 
+
 	public String getCurrentState() {
 		return currentState;
 	}

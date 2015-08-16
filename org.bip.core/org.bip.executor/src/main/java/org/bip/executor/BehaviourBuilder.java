@@ -76,6 +76,7 @@ public class BehaviourBuilder {
 		methodResources = new Hashtable<Method, ArrayList<ResourceReqImpl>>();
 		methodUtility = new Hashtable<Method, String>();
 		methodToTransition = new Hashtable<Method, TransitionImpl>();
+
 	}
 
 	public ExecutableBehaviour build(ComponentProvider provider) throws BIPException {
@@ -115,6 +116,7 @@ public class BehaviourBuilder {
 			data.computeAllowedPort(allEnforceablePorts);
 		}
 		
+
 		for (Method method : methodResources.keySet()) {
 			transitionResources.put(methodToTransition.get(method), methodResources.get(method));
 			transitionRequest.put(methodToTransition.get(method), methodUtility.get(method));
@@ -128,6 +130,7 @@ public class BehaviourBuilder {
 			return new BehaviourImpl(componentType, currentState, transformIntoExecutableTransition(), 
 					 componentPorts, states, guards.values(), dataOut, dataOutName, dataOutName2, component,
 					 transitionResources, transitionRequest);
+
 		}
 		
 		return new BehaviourImpl(componentType, currentState, transformIntoExecutableTransition(), 
