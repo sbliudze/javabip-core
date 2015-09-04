@@ -168,7 +168,6 @@ public abstract class SpecificationParser implements ComponentProvider {
 					addResourceUtility(method, (org.bip.annotations.ResourceUtility) annotation, builder);
 
 				}
-
 			}
 
 		}

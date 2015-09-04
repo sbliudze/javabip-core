@@ -55,11 +55,11 @@ public class BehaviourBuilder {
 	private Hashtable<TransitionImpl, String> transitionRequest;
 	//helper map in needed to construct resources to transition map
 	private Hashtable<Method, ArrayList<ResourceReqImpl>> methodResources;
+
 	//helper map in needed to construct transition to utility map
 	private Hashtable<Method, String> methodUtility;
 	//helper map to construct resource to transition map
 	private Hashtable<Method, TransitionImpl> methodToTransition;
-	
 
 	public BehaviourBuilder(Object component) {
 		this.component = component;
@@ -115,13 +115,13 @@ public class BehaviourBuilder {
 		for (DataOutImpl<?> data : dataOut) {
 			data.computeAllowedPort(allEnforceablePorts);
 		}
-		
 
 		for (Method method : methodResources.keySet()) {
 			transitionResources.put(methodToTransition.get(method), methodResources.get(method));
 			transitionRequest.put(methodToTransition.get(method), methodUtility.get(method));
 		}
 		if (methodResources.size() != methodUtility.size()) {
+
 			throw new BIPException("There is a transition where either the required resources or the utility function is not specified");
 		}
 		
@@ -130,7 +130,6 @@ public class BehaviourBuilder {
 			return new BehaviourImpl(componentType, currentState, transformIntoExecutableTransition(), 
 					 componentPorts, states, guards.values(), dataOut, dataOutName, dataOutName2, component,
 					 transitionResources, transitionRequest);
-
 		}
 		
 		return new BehaviourImpl(componentType, currentState, transformIntoExecutableTransition(), 

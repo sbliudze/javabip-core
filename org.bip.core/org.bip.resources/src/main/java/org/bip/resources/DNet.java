@@ -140,12 +140,13 @@ public class DNet implements ContextProvider {
 		ArrayList<BoolExpr> dependencyConstraints = new ArrayList<BoolExpr>();
 		
 		ArrayList<Transition> disabled = new ArrayList<Transition>();
+
 		// TODO make terminating run
 		return findEnabledAndFire(placeVariables, placeTokens, dependencyConstraints, disabled);
 		//disabled.clear();
 		//return dependencyConstraints;
 	}
-	
+
 
 	//TODO check it works correctly
 	private ArrayList<BoolExpr> findEnabledAndFire(HashMap<Place, ArrayList<IntExpr>> placeVariables, HashMap<Place, ArrayList<Transition>> placeTokens,
@@ -153,6 +154,7 @@ public class DNet implements ContextProvider {
 		for (Transition transition : transitions) {
 			if (!disabled.contains(transition)) {
 				if (transition.enabled(placeTokens)) {
+
 					transition.disable();
 					disabled.add(transition);
 					Map<String, ArithExpr> stringtoConstraintVar = new HashMap<String, ArithExpr>();
@@ -167,6 +169,7 @@ public class DNet implements ContextProvider {
 
 						IntExpr var = createIntVariable(ctx, variableName);
 						placeVariables.get(place).add(var);
+
 						stringtoConstraintVar.put(place.name(), var);
 
 						// TODO if a postplace is in the preplaces -?

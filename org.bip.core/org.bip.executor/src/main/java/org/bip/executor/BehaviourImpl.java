@@ -309,6 +309,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 		this(type, currentState, allTransitions, componentPorts, states, guards, dataOut, dataOutName, dataOutName2, component);
 		this.transitionResources = transitionResources;
 		this.transitionRequest = transitionRequest;
+
 		System.err.println(transitionResources + "\n" + transitionRequest);
 
 	}
