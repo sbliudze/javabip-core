@@ -88,7 +88,9 @@ class BehaviourImpl implements ExecutableBehaviour {
 	private Map<String, List<Port>> dataFromGuardsToPorts;
 	private Map<String, List<Port>> portsNeedingData;
 	private ArrayList<ResourceReqImpl> resources;// do we need a method? actually no, but we need a transition name along...
-	
+	private Hashtable<TransitionImpl, ResourceReqImpl> transitionResources;
+	private Hashtable<TransitionImpl, String> transitionRequest;
+
 	private Object bipComponent;
 	private Class<?> componentClass;
 
@@ -297,6 +299,14 @@ class BehaviourImpl implements ExecutableBehaviour {
 		this(type, currentState, allTransitions, 
 				 componentPorts, states, guards, dataOut, dataOutName, dataOutName2, component);
 		this.resources = resources2;
+}
+	public BehaviourImpl(String type, String currentState, ArrayList<ExecutableTransition> allTransitions, ArrayList<Port> componentPorts,
+			HashSet<String> states, Collection<Guard> guards, ArrayList<DataOutImpl<?>> dataOut, Hashtable<String, Method> dataOutName,
+			Hashtable<String, MethodHandle> dataOutName2, Object component, Hashtable<TransitionImpl, ResourceReqImpl> transitionResources,
+			Hashtable<TransitionImpl, String> transitionRequest) {
+		this(type, currentState, allTransitions, componentPorts, states, guards, dataOut, dataOutName, dataOutName2, component);
+		this.transitionResources = transitionResources;
+		this.transitionRequest = transitionRequest;
 	}
 
 	//*************************** End of Constructors *******************************************

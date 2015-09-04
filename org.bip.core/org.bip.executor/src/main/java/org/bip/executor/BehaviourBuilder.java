@@ -50,7 +50,15 @@ public class BehaviourBuilder {
 	private Hashtable<String, MethodHandle> dataOutName2;
 	private ArrayList<DataOutImpl<?>> dataOut;
 	private ArrayList<ResourceReqImpl> resources;
-
+	private Hashtable<TransitionImpl, ResourceReqImpl> transitionResources;
+	private Hashtable<TransitionImpl, String> transitionRequest;
+	//helper map in needed to construct resources to transition map
+	private Hashtable<Method, ResourceReqImpl> methodResources;
+	//helper map in needed to construct transition to utility map
+	private Hashtable<Method, String> methodUtility;
+	//helper map to construct resource to transition map
+	private Hashtable<Method, TransitionImpl> methodToTransition;
+	
 	public BehaviourBuilder(Object component) {
 		this.component = component;
 		allTransitions = new ArrayList<TransitionImpl>();
@@ -61,6 +69,11 @@ public class BehaviourBuilder {
 		dataOutName2 = new Hashtable<String, MethodHandle>();
 		dataOut = new ArrayList<DataOutImpl<?>>();
 		resources = new ArrayList<ResourceReqImpl>();
+		transitionResources = new Hashtable<TransitionImpl, ResourceReqImpl>();
+		transitionRequest = new Hashtable<TransitionImpl, String>();
+		methodResources = new Hashtable<Method, ResourceReqImpl>();
+		methodUtility = new Hashtable<Method, String>();
+		methodToTransition = new Hashtable<Method, TransitionImpl>();
 	}
 
 	public ExecutableBehaviour build(ComponentProvider provider) throws BIPException {
@@ -100,11 +113,19 @@ public class BehaviourBuilder {
 			data.computeAllowedPort(allEnforceablePorts);
 		}
 		
+		for (Method method : methodResources.keySet()) {
+			transitionResources.put(methodToTransition.get(method), methodResources.get(method));
+			transitionRequest.put(methodToTransition.get(method), methodUtility.get(method));
+		}
+		if (methodResources.size() != methodUtility.size()) {
+			throw new BIPException("There is a transition where either the required resources or the utility function is specified");
+		}
+		
 		if (!resources.isEmpty())
 		{
 			return new BehaviourImpl(componentType, currentState, transformIntoExecutableTransition(), 
 					 componentPorts, states, guards.values(), dataOut, dataOutName, dataOutName2, component,
-					 resources);
+					 transitionResources, transitionRequest);
 		}
 		
 		return new BehaviourImpl(componentType, currentState, transformIntoExecutableTransition(), 
@@ -171,6 +192,7 @@ public class BehaviourBuilder {
 			PortType transitionPortType = mapIdToPort.get(transition.name()).getType();
 			
 			transformedAllTransitions.add( new ExecutableTransitionImpl(transition, transitionPortType, guards) );
+			
 		}
 		
 		return transformedAllTransitions;
@@ -229,7 +251,9 @@ public class BehaviourBuilder {
 		addState(source);
 		addState(target);
 
-		allTransitions.add( new TransitionImpl(name, source, target, guard, method, data) );
+		TransitionImpl t = new TransitionImpl(name, source, target, guard, method, data) ;
+		methodToTransition.put(method, t);
+		allTransitions.add( t );
 		//allTransitions2.add( new TransitionImpl2(name, source, target, guard, getMethodHandleForTransition(method), data) );
 	}
 	
@@ -257,7 +281,11 @@ public class BehaviourBuilder {
 		if (!states.contains(target))
 			throw new BIPException("Transition " + name + " is specifying target state " + target + " that has not been explicitly stated before.");
 
-		allTransitions.add( new TransitionImpl(name, source, target, guard, method, data) );
+		TransitionImpl t = new TransitionImpl(name, source, target, guard, method, data) ;
+		methodToTransition.put(method, t);
+		//TODO transition here or execulable transition?
+		
+		allTransitions.add( t);
 	}	
 	
 
@@ -321,8 +349,14 @@ public class BehaviourBuilder {
 		return methodHandle;
 	}
 
-	public void addResource(String label, ResourceType type, String utility) {
-		resources.add(new ResourceReqImpl(label, type, utility));
+	public void addResource(Method method, String label, ResourceType type, String utility) {
+		ResourceReqImpl r = new ResourceReqImpl(label, type, utility);
+		resources.add(r);
+		methodResources.put(method, r);
+	}
+
+	public void addResourceUtility(Method method, String utility) {
+		methodUtility.put(method, utility);
 	}
 	
 }

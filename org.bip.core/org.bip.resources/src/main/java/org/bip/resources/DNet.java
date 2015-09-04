@@ -89,46 +89,60 @@ public class DNet implements ContextProvider {
 	public ArrayList<BoolExpr> run(HashMap<Place, ArrayList<IntExpr>> placeVariables, HashMap<Place, ArrayList<Transition>> placeTokens) throws DNetException {
 		ArrayList<BoolExpr> dependencyConstraints = new ArrayList<BoolExpr>();
 		
-		//TODO make terminating run
-		for (Transition transition : transitions) {
-			if (transition.enabled(placeTokens)) {
-				System.out.println("Transition " + transition.name() +" enabled with tokens " + placeTokens);
-				transition.disable();
-				Map<String, ArithExpr> stringtoConstraintVar = new HashMap<String, ArithExpr>();
-				for (Place place : transition.postplaces()) {
-					placeTokens.get(place).add(transition);
-					
-					// add a new token
-					placeTokens.get(place).add(transition);
-					
-					// add a new variable
-					String variableName = createVariableName(place, transition.name());
-					
-					IntExpr var = createIntVariable(ctx, variableName);
-					placeVariables.get(place).add(var);
-					
-					
-					stringtoConstraintVar.put(place.name(), var);
-					
-					//TODO if a postplace is in the preplaces -?
-				}
-				
-				for (Place place : transition.preplaces()) {
-					// if there is only one token variable
-					if (placeVariables.get(place).size() < 1) {
-						throw new DNetException("There are no place variables in place "+ place.name() + ", however, transition " + transition.name() + " has fired.");
-					}
-					ArithExpr placeSum = placeVariables.get(place).get(0);
+		ArrayList<Transition> disabled = new ArrayList<Transition>();
 
-					for (int i = 1; i < placeVariables.get(place).size(); i++) {
-						placeSum = getContext().mkAdd(placeSum, placeVariables.get(place).get(i));
+		// TODO make terminating run
+		return findEnabledAndFire(placeVariables, placeTokens, dependencyConstraints, disabled);
+		//disabled.clear();
+		//return dependencyConstraints;
+	}
+
+	//TODO check it works correctly
+	private ArrayList<BoolExpr> findEnabledAndFire(HashMap<Place, ArrayList<IntExpr>> placeVariables, HashMap<Place, ArrayList<Transition>> placeTokens,
+			ArrayList<BoolExpr> dependencyConstraints, ArrayList<Transition> disabled) throws DNetException {
+		for (Transition transition : transitions) {
+			if (!disabled.contains(transition)) {
+				if (transition.enabled(placeTokens)) {
+					System.out.println("Transition " + transition.name() + " enabled with tokens " + placeTokens);
+					transition.disable();
+					disabled.add(transition);
+					Map<String, ArithExpr> stringtoConstraintVar = new HashMap<String, ArithExpr>();
+					for (Place place : transition.postplaces()) {
+						placeTokens.get(place).add(transition);
+
+						// add a new token
+						placeTokens.get(place).add(transition);
+
+						// add a new variable
+						String variableName = createVariableName(place, transition.name());
+
+						IntExpr var = createIntVariable(ctx, variableName);
+						placeVariables.get(place).add(var);
+
+						stringtoConstraintVar.put(place.name(), var);
+
+						// TODO if a postplace is in the preplaces -?
 					}
-					stringtoConstraintVar.put(place.name(), placeSum);
+
+					for (Place place : transition.preplaces()) {
+						// if there is only one token variable
+						if (placeVariables.get(place).size() < 1) {
+							throw new DNetException("There are no place variables in place " + place.name() + ", however, transition " + transition.name()
+									+ " has fired.");
+						}
+						ArithExpr placeSum = placeVariables.get(place).get(0);
+
+						for (int i = 1; i < placeVariables.get(place).size(); i++) {
+							placeSum = getContext().mkAdd(placeSum, placeVariables.get(place).get(i));
+						}
+						stringtoConstraintVar.put(place.name(), placeSum);
+					}
+
+					BoolExpr expr = transition.constraint(stringtoConstraintVar);
+					dependencyConstraints.add(expr);
+					System.out.println("After firing the tokens are: " + placeTokens);
+					return findEnabledAndFire(placeVariables, placeTokens, dependencyConstraints, disabled);
 				}
-				
-				BoolExpr expr = transition.constraint(stringtoConstraintVar); 
-				dependencyConstraints.add(expr);
-				System.out.println("After firing the tokens are: " + placeTokens);
 			}
 		}
 		return dependencyConstraints;
