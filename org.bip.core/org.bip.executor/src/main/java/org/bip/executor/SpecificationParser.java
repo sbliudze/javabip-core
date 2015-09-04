@@ -16,6 +16,7 @@ import org.bip.annotations.ComponentType;
 import org.bip.annotations.Data;
 import org.bip.annotations.Ports;
 import org.bip.annotations.ResourceRequired;
+import org.bip.annotations.ResourceUtility;
 import org.bip.annotations.ResourcesRequired;
 import org.bip.annotations.Transitions;
 import org.bip.api.Behaviour;
@@ -161,15 +162,25 @@ public abstract class SpecificationParser implements ComponentProvider {
 						addResource(method, (org.bip.annotations.ResourceRequired) bipResourceAnnotation, builder);
 					}
 
-				} 
+				}
+				else if (annotation instanceof org.bip.annotations.ResourceUtility) {
+					
+					addResourceUtility(method, (org.bip.annotations.ResourceUtility) annotation, builder);
+
+				}
 			}
 
 		}
 		return builder;
 	}
 
+	private void addResourceUtility(Method method, ResourceUtility bipUtilityAnnotation, BehaviourBuilder builder) {
+		builder.addResourceUtility(method, bipUtilityAnnotation.utility());
+		
+	}
+
 	private void addResource(Method method, ResourceRequired bipResourceAnnotation, BehaviourBuilder builder) {
-		builder.addResource(bipResourceAnnotation.label(), bipResourceAnnotation.type(), bipResourceAnnotation.utility());
+		builder.addResource(method, bipResourceAnnotation.label(), bipResourceAnnotation.type(), bipResourceAnnotation.utility());
 	}
 
 	private void addGuard(Method method, 
