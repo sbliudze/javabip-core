@@ -14,4 +14,12 @@ public class ResourceReqImpl {
 		this.utility = utility;
 	}
 
+	
+	public String toString() {
+		StringBuilder result = new StringBuilder();
+		result.append("Resource name=" + name);
+		result.append(", type =" + type);
+		result.append(", utility=" + utility);
+		return result.toString();
+	}
 }
