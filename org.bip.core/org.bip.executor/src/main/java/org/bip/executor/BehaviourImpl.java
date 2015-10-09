@@ -301,7 +301,6 @@ class BehaviourImpl implements ExecutableBehaviour {
 }
 
 	//creation of behaviour with a map <transition, resource> and a map <transition, request>
-
 	public BehaviourImpl(String type, String currentState, ArrayList<ExecutableTransition> allTransitions, ArrayList<Port> componentPorts,
 			HashSet<String> states, Collection<Guard> guards, ArrayList<DataOutImpl<?>> dataOut, Hashtable<String, Method> dataOutName,
 			Hashtable<String, MethodHandle> dataOutName2, Object component, Hashtable<TransitionImpl,  ArrayList<ResourceReqImpl>> transitionResources,

@@ -81,6 +81,13 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		resourceNameToGivenValue = new HashMap<String, Expr>();
 		requestToModel = new HashMap<String, Model>();
 	}
+	
+	private void initialiseTokensAndVariables() {
+		for (Place place : dnet.places()) {
+			placeTokens.put(place, new ArrayList<Transition>());
+			placeVariables.put(place, new ArrayList<IntExpr>());
+		}
+	}
 
 	// if an allocator received a dnet and no context, it creates a context and parses the dnet
 	public AllocatorImpl(String dNetPath) throws IOException, RecognitionException, DNetException {

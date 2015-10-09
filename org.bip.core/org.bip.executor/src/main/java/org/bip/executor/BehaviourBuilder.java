@@ -50,12 +50,10 @@ public class BehaviourBuilder {
 	private Hashtable<String, MethodHandle> dataOutName2;
 	private ArrayList<DataOutImpl<?>> dataOut;
 	private ArrayList<ResourceReqImpl> resources;
-
 	private Hashtable<TransitionImpl,  ArrayList<ResourceReqImpl>> transitionResources;
 	private Hashtable<TransitionImpl, String> transitionRequest;
 	//helper map in needed to construct resources to transition map
 	private Hashtable<Method, ArrayList<ResourceReqImpl>> methodResources;
-
 	//helper map in needed to construct transition to utility map
 	private Hashtable<Method, String> methodUtility;
 	//helper map to construct resource to transition map
@@ -121,7 +119,6 @@ public class BehaviourBuilder {
 			transitionRequest.put(methodToTransition.get(method), methodUtility.get(method));
 		}
 		if (methodResources.size() != methodUtility.size()) {
-
 			throw new BIPException("There is a transition where either the required resources or the utility function is not specified");
 		}
 		
