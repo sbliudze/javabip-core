@@ -48,6 +48,13 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		this.context = ctx;
 		solver = context.mkSolver();
 	}
+	
+	private void initialiseTokensAndVariables() {
+		for (Place place : dnet.places()) {
+			placeTokens.put(place, new ArrayList<Transition>());
+			placeVariables.put(place, new ArrayList<IntExpr>());
+		}
+	}
 
 	public AllocatorImpl(String dNetPath) throws IOException, RecognitionException, DNetException {
 		this();
@@ -65,11 +72,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		parser.net();
 		this.dnet = parser.net;
 		this.dnet.addContext(ctx);
-
-		for (Place  place : dnet.places()) {
-			placeTokens.put(place, new ArrayList<Transition>());
-			placeVariables.put(place, new ArrayList<IntExpr>());
-		}
+		initialiseTokensAndVariables();
 	}
 	
 	public AllocatorImpl(Context ctx, String dNetPath) throws IOException, RecognitionException, DNetException {
@@ -83,11 +86,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		parser.net();
 		this.dnet = parser.net;
 		this.dnet.addContext(ctx);
-
-		for (Place  place : dnet.places()) {
-			placeTokens.put(place, new ArrayList<Transition>());
-			placeVariables.put(place, new ArrayList<IntExpr>());
-		}
+		initialiseTokensAndVariables();
 	}
 	
 	public AllocatorImpl(Context ctx, DNet net) {
@@ -95,11 +94,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		setContext(ctx);
 		this.dnet = net;
 		this.dnet.addContext(ctx);
-
-		for (Place  place : dnet.places()) {
-			placeTokens.put(place, new ArrayList<Transition>());
-			placeVariables.put(place, new ArrayList<IntExpr>());
-		}
+		initialiseTokensAndVariables();
 	}
 
 	public void allocate() throws DNetException {

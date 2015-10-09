@@ -79,7 +79,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 	private Hashtable<String, MethodHandle> dataOutName2;
 	
 	private ArrayList<ResourceReqImpl> resources;// do we need a method? actually no, but we need a transition along...
-	private Hashtable<TransitionImpl, ResourceReqImpl> transitionResources;
+	private Hashtable<TransitionImpl,  ArrayList<ResourceReqImpl>> transitionResources;
 	private Hashtable<TransitionImpl, String> transitionRequest;
 	
 	private Object bipComponent;
@@ -233,13 +233,15 @@ class BehaviourImpl implements ExecutableBehaviour {
 		this.dataOutName2 = dataOutName2;
 	}
 
+	//creation of behaviour with a map <transition, resource> and a map <transition, request>
 	public BehaviourImpl(String type, String currentState, ArrayList<ExecutableTransition> allTransitions, ArrayList<Port> componentPorts,
 			HashSet<String> states, Collection<Guard> guards, ArrayList<DataOutImpl<?>> dataOut, Hashtable<String, Method> dataOutName,
-			Hashtable<String, MethodHandle> dataOutName2, Object component, Hashtable<TransitionImpl, ResourceReqImpl> transitionResources,
+			Hashtable<String, MethodHandle> dataOutName2, Object component, Hashtable<TransitionImpl,  ArrayList<ResourceReqImpl>> transitionResources,
 			Hashtable<TransitionImpl, String> transitionRequest) {
 		this(type, currentState, allTransitions, componentPorts, states, guards, dataOut, dataOutName, dataOutName2, component);
 		this.transitionResources = transitionResources;
 		this.transitionRequest = transitionRequest;
+		System.err.println(transitionResources);
 	}
 
 	public String getCurrentState() {

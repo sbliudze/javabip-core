@@ -50,10 +50,10 @@ public class BehaviourBuilder {
 	private Hashtable<String, MethodHandle> dataOutName2;
 	private ArrayList<DataOutImpl<?>> dataOut;
 	private ArrayList<ResourceReqImpl> resources;
-	private Hashtable<TransitionImpl, ResourceReqImpl> transitionResources;
+	private Hashtable<TransitionImpl,  ArrayList<ResourceReqImpl>> transitionResources;
 	private Hashtable<TransitionImpl, String> transitionRequest;
 	//helper map in needed to construct resources to transition map
-	private Hashtable<Method, ResourceReqImpl> methodResources;
+	private Hashtable<Method, ArrayList<ResourceReqImpl>> methodResources;
 	//helper map in needed to construct transition to utility map
 	private Hashtable<Method, String> methodUtility;
 	//helper map to construct resource to transition map
@@ -69,9 +69,9 @@ public class BehaviourBuilder {
 		dataOutName2 = new Hashtable<String, MethodHandle>();
 		dataOut = new ArrayList<DataOutImpl<?>>();
 		resources = new ArrayList<ResourceReqImpl>();
-		transitionResources = new Hashtable<TransitionImpl, ResourceReqImpl>();
+		transitionResources = new Hashtable<TransitionImpl,  ArrayList<ResourceReqImpl>>();
 		transitionRequest = new Hashtable<TransitionImpl, String>();
-		methodResources = new Hashtable<Method, ResourceReqImpl>();
+		methodResources = new Hashtable<Method, ArrayList<ResourceReqImpl>>();
 		methodUtility = new Hashtable<Method, String>();
 		methodToTransition = new Hashtable<Method, TransitionImpl>();
 	}
@@ -118,7 +118,7 @@ public class BehaviourBuilder {
 			transitionRequest.put(methodToTransition.get(method), methodUtility.get(method));
 		}
 		if (methodResources.size() != methodUtility.size()) {
-			throw new BIPException("There is a transition where either the required resources or the utility function is specified");
+			throw new BIPException("There is a transition where either the required resources or the utility function is not specified");
 		}
 		
 		if (!resources.isEmpty())
@@ -350,9 +350,15 @@ public class BehaviourBuilder {
 	}
 
 	public void addResource(Method method, String label, ResourceType type, String utility) {
+		// TODO R remove utility from here?
 		ResourceReqImpl r = new ResourceReqImpl(label, type, utility);
 		resources.add(r);
-		methodResources.put(method, r);
+		ArrayList<ResourceReqImpl> methodReqResources = new ArrayList<ResourceReqImpl>();
+		if (methodResources.containsKey(method)) {
+			methodReqResources = methodResources.get(method);
+		}
+		methodReqResources.add(r);
+		methodResources.put(method, methodReqResources);
 	}
 
 	public void addResourceUtility(Method method, String utility) {

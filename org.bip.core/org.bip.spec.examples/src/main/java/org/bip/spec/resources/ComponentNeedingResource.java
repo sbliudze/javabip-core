@@ -19,7 +19,7 @@ public class ComponentNeedingResource {
 			@ResourceRequired(label = "m1", type = ResourceType.memory, utility = "mFunc") })
 	@ResourceUtility(utility="p1=1 & m1=128")
 	public void aTransition() {
-		System.out.print("Doing transition requiring resources");
+		System.out.println("Doing transition requiring resources");
 	}
 
 }

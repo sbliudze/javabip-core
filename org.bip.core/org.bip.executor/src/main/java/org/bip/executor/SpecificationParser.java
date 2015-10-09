@@ -175,8 +175,7 @@ public abstract class SpecificationParser implements ComponentProvider {
 	}
 
 	private void addResourceUtility(Method method, ResourceUtility bipUtilityAnnotation, BehaviourBuilder builder) {
-		builder.addResourceUtility(method, bipUtilityAnnotation.utility());
-		
+		builder.addResourceUtility(method, bipUtilityAnnotation.utility());		
 	}
 
 	private void addResource(Method method, ResourceRequired bipResourceAnnotation, BehaviourBuilder builder) {
