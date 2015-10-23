@@ -23,28 +23,7 @@ import org.bip.engine.factory.EngineFactory;
 import org.bip.exceptions.BIPException;
 import org.bip.glue.GlueBuilder;
 import org.bip.glue.TwoSynchronGlueBuilder;
-import org.bip.spec.ComponentA;
-import org.bip.spec.ComponentB;
-import org.bip.spec.ComponentC;
-import org.bip.spec.Consumer;
-import org.bip.spec.Feeder;
-import org.bip.spec.HanoiGlueBuilder;
-import org.bip.spec.HanoiMonitor;
-import org.bip.spec.InitialServer;
-import org.bip.spec.LeftHanoiPeg;
-import org.bip.spec.Master;
-import org.bip.spec.MemoryMonitor;
-import org.bip.spec.MiddleHanoiPeg;
-import org.bip.spec.PSSComponent;
-import org.bip.spec.Peer;
-import org.bip.spec.RightHanoiPeg;
-import org.bip.spec.Server;
-import org.bip.spec.Slave;
-import org.bip.spec.SwitchableRouteDataTransfers;
-import org.bip.spec.Tracker;
-import org.bip.spec.TwoDataProvider1;
-import org.bip.spec.TwoDataProvider2;
-import org.bip.spec.TwoDataTaker;
+import org.bip.spec.*;
 import org.bip.spec.diningphilosophers.DiningPhilosophersGlueBuilder;
 import org.bip.spec.diningphilosophers.Fork;
 import org.bip.spec.diningphilosophers.Philosophers;
@@ -105,7 +84,7 @@ public class AkkaExecutorTests {
 				synchron(SwitchableRouteDataTransfers.class, "finished").to(MemoryMonitor.class, "rm");
 				
 				port(SwitchableRouteDataTransfers.class, "off").acceptsNothing();
-				port(SwitchableRouteDataTransfers.class, "off")	.requiresNothing();
+				port(SwitchableRouteDataTransfers.class, "off").requiresNothing();
 				
 				data(SwitchableRouteDataTransfers.class, "deltaMemoryOnTransition").to(MemoryMonitor.class, "memoryUsage");
 
@@ -836,7 +815,124 @@ public class AkkaExecutorTests {
 		assertTrue("CompC has not made any transitions", componentC.noOfTransitions > 0);
 
 	}
-	
+
+
+
+    @Test
+    public void switchableRouteWithErrors() throws BIPException {
+
+        BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
+            @Override
+            public void configure() {
+
+                synchron(SwitchableRouteErrorException.class, "on").to(RouteOnOffMonitor.class, "add");
+                synchron(SwitchableRouteErrorException.class, "finished").to(RouteOnOffMonitor.class, "rm");
+
+                port(SwitchableRouteErrorException.class, "off").acceptsNothing();
+                port(SwitchableRouteErrorException.class, "off").requiresNothing();
+
+            }
+
+        }.build();
+
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
+
+        CamelContext camelContext = new DefaultCamelContext();
+        camelContext.setAutoStartup(false);
+
+        SwitchableRouteErrorException route1 = new SwitchableRouteErrorException("1", camelContext);
+        SwitchableRouteErrorException route2 = new SwitchableRouteErrorException("2", camelContext);
+        SwitchableRouteErrorException route3 = new SwitchableRouteErrorException("3", camelContext);
+
+        BIPActor actor1 = engine.register(route1, "1", true);
+        BIPActor actor2 = engine.register(route2, "2", true);
+        BIPActor actor3 = engine.register(route3, "3", true);
+
+        final RoutePolicy routePolicy1 = createRoutePolicy(actor1);
+        final RoutePolicy routePolicy2 = createRoutePolicy(actor2);
+        final RoutePolicy routePolicy3 = createRoutePolicy(actor3);
+
+        RouteBuilder builder = new RouteBuilder() {
+
+            @Override
+            public void configure() throws Exception {
+                from("file:inputfolder1?delete=true").routeId("1")
+                        .routePolicy(routePolicy1).to("file:outputfolder1");
+
+                from("file:inputfolder2?delete=true").routeId("2")
+                        .routePolicy(routePolicy2).to("file:outputfolder2");
+
+                from("file:inputfolder3?delete=true").routeId("3")
+                        .routePolicy(routePolicy3).to("file:outputfolder3");
+            }
+
+        };
+
+        try {
+            camelContext.addRoutes(builder);
+            camelContext.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
+        final BIPActor executorM = engine.register(routeOnOffMonitor, "monitor", true);
+
+        //engine.specifyGlue(bipGlue);
+        engine.start();
+
+        engine.execute();
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        actor1.inform("error");
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        actor1.inform("functional");
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        actor2.inform("error");
+        actor3.inform("error");
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        actor3.inform("functional");
+        actor2.inform("functional");
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        engine.stop();
+        engineFactory.destroy(engine);
+
+        assertTrue("Routes have not made any transitions", route1.noOfEnforcedTransitions
+                + route2.noOfEnforcedTransitions + route3.noOfEnforcedTransitions > 0);
+
+        assertTrue("Each route has had one error", route1.noOfErrors == 1 &&
+                route2.noOfErrors == 1 && route3.noOfErrors == 1);
+
+    }
 	
 	private BIPGlue createGlue(String bipGlueFilename) {
 		BIPGlue bipGlue = null;
