@@ -3,15 +3,14 @@
 package org.bip.resources.grammar;
 import java.util.*;
 import java.util.*;
-
-import org.bip.resources.Constraint;
 import org.bip.resources.ConstraintNode;
+import org.bip.resources.Constraint;
+
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.*;
 import org.antlr.v4.runtime.tree.*;
-
 import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
@@ -869,7 +868,7 @@ public class constraintParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(155); boolExpr();
+			setState(155); boolExpr(); 
 			}
 		}
 		catch (RecognitionException re) {
