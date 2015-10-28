@@ -261,12 +261,12 @@ public class BehaviourBuilder {
 	  		   				  String target, String guard, 
 	  		   				  Method method) {			
 
-		addTransition(name, source, target, guard, method, ReflectionHelper.parseDataAnnotations(method));
+		addTransition(name, source, target, guard, method, ReflectionHelper.parseDataAnnotations(method), ReflectionHelper.parseResourceAnnotations(method));
 	}
 
 	public void addTransition(String name, String source, 
 			   				  String target, String guard, 
-			   				  Method method, List<Data<?>> data) {			
+			   				  Method method, List<Data<?>> data, List<ResourceReqImpl> resourceReq) {			
 
 		if (!allPorts.containsKey(name)) {
 			if (name == null)
@@ -281,13 +281,14 @@ public class BehaviourBuilder {
 		if (!states.contains(target))
 			throw new BIPException("Transition " + name + " is specifying target state " + target + " that has not been explicitly stated before.");
 
-		TransitionImpl t = new TransitionImpl(name, source, target, guard, method, data) ;
+		//TransitionImpl t = new TransitionImpl(name, source, target, guard, method, data) ;
+		TransitionImpl t = new TransitionImpl(name, source, target, guard, method, data, resourceReq) ;
 		methodToTransition.put(method, t);
 		//TODO transition here or execulable transition?
 		
 		allTransitions.add( t);
 	}	
-	
+
 
 	/**
 	 * It add a guard based on the provided method with the guard name equal to method name.
