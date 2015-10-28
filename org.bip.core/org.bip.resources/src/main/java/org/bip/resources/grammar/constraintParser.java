@@ -867,7 +867,7 @@ public class constraintParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(155); boolExpr();
+			setState(155); boolExpr(); 
 			}
 		}
 		catch (RecognitionException re) {
