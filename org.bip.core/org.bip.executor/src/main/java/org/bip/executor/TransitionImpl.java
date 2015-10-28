@@ -12,6 +12,7 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
+import java.util.List;
 
 import org.bip.api.Data;
 
@@ -25,6 +26,7 @@ class TransitionImpl {
 	protected Method method;
 	protected MethodHandle methodHandle;
 	protected Iterable<Data<?>> dataRequired;
+	protected Iterable<ResourceReqImpl> resourcesRequired;
 
 	/**
 	 * Constructor to be used within a BIP Spec
@@ -53,6 +55,12 @@ class TransitionImpl {
 		this(transition.name, transition.source, transition.target, 
 			 transition.guard, transition.method, transition.dataRequired);
 	}
+
+	public TransitionImpl(String name, String source, String target, String guard, Method method, List<Data<?>> data, List<ResourceReqImpl> resourceReq) {
+		this(name, source, target, guard, method, data);
+		this.resourcesRequired = resourceReq;
+	}
+
 
 	public String name() {
 		return this.name;
