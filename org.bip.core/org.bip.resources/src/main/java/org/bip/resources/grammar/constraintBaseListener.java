@@ -3,9 +3,10 @@
 package org.bip.resources.grammar;
 import java.util.*;
 import java.util.*;
-
-import org.bip.resources.Constraint;
 import org.bip.resources.ConstraintNode;
+import org.bip.resources.Constraint;
+
+
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
