@@ -241,7 +241,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 		this(type, currentState, allTransitions, componentPorts, states, guards, dataOut, dataOutName, dataOutName2, component);
 		this.transitionResources = transitionResources;
 		this.transitionRequest = transitionRequest;
-		System.err.println(transitionResources);
+		System.err.println(transitionResources + "\n" + transitionRequest);
 	}
 
 	public String getCurrentState() {
@@ -511,7 +511,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 	private void invokeMethod2(ExecutableTransition transition) {
 		MethodHandle methodHandle;
 		try {
-			logger.info("Invocation: " + transition.name() );
+			logger.info("Invocation: in component " + this.componentType +" of a port "+ transition.name() );
 			methodHandle = transition.methodHandle();
 			if (!transition.method().getDeclaringClass().isAssignableFrom(componentClass)) {
 				throw new IllegalArgumentException("The method " + transition.method().getName() + 
