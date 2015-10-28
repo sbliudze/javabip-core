@@ -218,6 +218,8 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 		if (portID != null) {
 
 			if (dataEvaluation.isEmpty()) {
+				
+				logger.debug("Execution of {} in component {} without data",portID, id);
 
 				if (behaviour.transitionNoDataGuardData(portID)) //TODO what about checking if is enabled?
 				{
@@ -236,6 +238,8 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 				List<Map<String, Object>> parameter = new ArrayList<Map<String, Object>>();
 				parameter.add(dataEvaluation);
 
+				logger.debug("Execution of "+ portID + " in component " + id + " with data "+ parameter);
+				
 				try {
 					if (!behaviour.checkEnabledness(portID, parameter).get(0)) {
 						throw new BIPException("Port with " + portID
@@ -380,6 +384,7 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 	public List<Boolean> checkEnabledness(PortBase port,
 										  List<Map<String, Object>> data) {
 		try {
+			logger.debug("Checking enabledness for " + id + " at port " + port + " for data " + data);
 			return behaviour.checkEnabledness(port.getId(), data);
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
@@ -401,6 +406,7 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 	}
 
 	public void setData(String dataName, Object data) {
+		logger.debug("Setting data "+ dataName + " in component "+ this.behaviour.getComponentType());
 		this.dataEvaluation.put(dataName, data);
 	}
 
