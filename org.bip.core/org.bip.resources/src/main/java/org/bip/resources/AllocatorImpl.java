@@ -1,7 +1,6 @@
 package org.bip.resources;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,12 +9,19 @@ import java.util.Map;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RecognitionException;
+import org.bip.annotations.ComponentType;
+import org.bip.annotations.Data;
+import org.bip.annotations.Port;
+import org.bip.annotations.Ports;
 import org.bip.api.Allocator;
+import org.bip.api.PortType;
 import org.bip.api.ResourceProvider;
 import org.bip.resources.grammar.constraintLexer;
 import org.bip.resources.grammar.constraintParser;
 import org.bip.resources.grammar.dNetLexer;
 import org.bip.resources.grammar.dNetParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.microsoft.z3.ArithExpr;
 import com.microsoft.z3.BoolExpr;
@@ -24,7 +30,11 @@ import com.microsoft.z3.IntExpr;
 import com.microsoft.z3.Model;
 import com.microsoft.z3.Solver;
 
+@Ports({ @Port(name = "request", type = PortType.enforceable), @Port(name = "release", type = PortType.spontaneous) })
+@ComponentType(initial = "0", name = "org.bip.resources.AllocatorImpl")
 public class AllocatorImpl implements ContextProvider, Allocator {
+	
+	private Logger logger = LoggerFactory.getLogger(AllocatorImpl.class);
 
 	//later change to hashmap for resources of the same type?
 	private ArrayList<ResourceProvider> resources;
@@ -71,8 +81,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		dNetParser parser = new dNetParser(tokens);
 		parser.net();
 		this.dnet = parser.net;
-		this.dnet.addContext(ctx);
-		initialiseTokensAndVariables();
+		initializeDNet(ctx);
 	}
 	
 	public AllocatorImpl(Context ctx, String dNetPath) throws IOException, RecognitionException, DNetException {
@@ -85,14 +94,17 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		dNetParser parser = new dNetParser(tokens);
 		parser.net();
 		this.dnet = parser.net;
-		this.dnet.addContext(ctx);
-		initialiseTokensAndVariables();
+		initializeDNet(ctx);
 	}
 	
 	public AllocatorImpl(Context ctx, DNet net) {
 		this();
 		setContext(ctx);
 		this.dnet = net;
+		initializeDNet(ctx);
+	}
+	
+	private void initializeDNet(Context ctx) {
 		this.dnet.addContext(ctx);
 		initialiseTokensAndVariables();
 	}
@@ -120,15 +132,20 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		}
 	}
 	
-	public void specifyRequest(String requestString) throws DNetException {
+	@org.bip.annotations.Transition(name = "request", source = "0", target = "0", guard = "")
+	public void specifyRequest(@Data(name="request")String requestString) throws DNetException {
+		logger.debug("Allocator specifying request " + requestString);
 		constraintLexer lexer = new constraintLexer(new ANTLRInputStream(requestString));
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		constraintParser parser = new constraintParser(tokens);
+		logger.debug("Parsing constraint");
 		parser.constraint();
+		logger.debug("Parsed constraint");
 		this.request = parser.constraint;
 		this.request.setContextProvider(this);
 
 		ArrayList<String> resourcesRequested = request.resourceInConstraint(request);
+		logger.debug("The resources requested are " + resourcesRequested);
 		Map<String, ArithExpr> stringToConstraintVar = new HashMap<String, ArithExpr>();
 		for (String placeName : resourcesRequested) {
 			if (dnet.nameToPlace.containsKey(placeName)) {
