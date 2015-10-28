@@ -2,11 +2,11 @@ grammar constraint;
 
 @header
 {
-package org.bip.DNet.grammar;
+package org.bip.resources.grammar;
 import java.util.*;
 import java.util.*;
-import org.bip.DNet.core.ConstraintNode;
-import org.bip.DNet.core.Constraint;
+import org.bip.resources.ConstraintNode;
+import org.bip.resources.Constraint;
 }
 
 @members{
