@@ -12,6 +12,7 @@ import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
 import org.bip.api.ResourceProvider;
 import org.bip.engine.BIPCoordinatorImpl;
+import org.bip.engine.DataCoordinatorKernel;
 import org.bip.engine.api.EngineFactory;
 import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
 import org.bip.glue.GlueBuilder;
@@ -22,7 +23,6 @@ import org.bip.spec.resources.Bus;
 import org.bip.spec.resources.ComponentNeedingResource;
 import org.bip.spec.resources.Memory;
 import org.bip.spec.resources.Processor;
-import org.bip.spec.telephonic.DummyComponent;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -71,27 +71,26 @@ public class ResourceTest {
 	public void test() throws RecognitionException, IOException, DNetException
 	{
 		
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
+		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
 
 		//BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
 			public void configure() {
-
-				port(ComponentNeedingResource.class, "a").acceptsNothing();
-				port(ComponentNeedingResource.class, "a")	.requiresNothing();
-				
+				 synchron(ComponentNeedingResource.class, "a").to(AllocatorImpl.class,
+						 "request");
+				 data(ComponentNeedingResource.class, "utility").to(AllocatorImpl.class, "request");
 			}
 
 		}.build();
-		engine.specifyGlue(bipGlue);
 
 		String dnetSpec = "src/test/resources/dnet.txt";
-		Allocator alloc = new AllocatorImpl(dnetSpec); 
+		AllocatorImpl alloc = new AllocatorImpl(dnetSpec); 
 		
 		
 		ComponentNeedingResource aComp = new ComponentNeedingResource();
 		BIPActor actor = engine.register(aComp, "resourceNeeder", true); 
+		BIPActor allocatorActor = engine.register(alloc, "allocator", true); 
 		ResourceProvider memory = new Memory(256);
 		ResourceProvider processor = new Processor();
 		ResourceProvider bus = new Bus(128);
@@ -100,6 +99,8 @@ public class ResourceTest {
 		alloc.addResource(processor);
 		alloc.addResource(bus);
 
+		engine.specifyGlue(bipGlue);
+		
 		engine.start();
 		engine.execute();
 
