@@ -310,7 +310,6 @@ class BehaviourImpl implements ExecutableBehaviour {
 		this.transitionRequest = transitionRequest;
 
 		System.err.println(transitionResources + "\n" + transitionRequest);
-
 	}
 
 	//*************************** End of Constructors *******************************************
@@ -590,7 +589,6 @@ class BehaviourImpl implements ExecutableBehaviour {
 			}
 			return guardToValue;
 		}
-		
 
 	public List<Boolean> checkEnabledness(String port, List<Map<String, Object>> data) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, BIPException {
 
