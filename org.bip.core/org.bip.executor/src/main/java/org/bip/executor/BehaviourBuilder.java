@@ -313,7 +313,7 @@ public class BehaviourBuilder {
 		allTransitions.add(new TransitionImpl(name, source, target, guard, method, data));
 
 	}	
-	
+
 
 
 	/**
