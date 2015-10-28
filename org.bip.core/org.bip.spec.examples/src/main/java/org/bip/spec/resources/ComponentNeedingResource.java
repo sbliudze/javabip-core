@@ -3,6 +3,7 @@ package org.bip.spec.resources;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.bip.annotations.ComponentType;
+import org.bip.annotations.Data;
 import org.bip.annotations.Port;
 import org.bip.annotations.Ports;
 import org.bip.annotations.ResourceUtility;
@@ -81,6 +82,16 @@ public class ComponentNeedingResource implements ResourceAware {
 	public void setAllocator(BIPActor allocatorExecutor) {
 		this.allocatorExecutor = allocatorExecutor;
 
+	}
+
+	@Data(name = "utility", accessTypePort = AccessType.any)
+	public String utility() {
+		return "p1=1 & m1=128";
+	}
+	
+	@Override
+	public void setAllocator(Executor allocatorExecutor) {
+		this.allocatorExecutor = allocatorExecutor;
 	}
 
 }

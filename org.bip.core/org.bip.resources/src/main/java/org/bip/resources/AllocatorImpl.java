@@ -1,7 +1,6 @@
 package org.bip.resources;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +38,8 @@ import com.microsoft.z3.Status;
 @Ports({ @Port(name = "request", type = PortType.enforceable), @Port(name = "release", type = PortType.enforceable) })
 @ComponentType(initial = "0", name = "org.bip.resources.AllocatorImpl")
 public class AllocatorImpl implements ContextProvider, Allocator {
+	
+	private Logger logger = LoggerFactory.getLogger(AllocatorImpl.class);
 
 	private Logger logger = LoggerFactory.getLogger(AllocatorImpl.class);
 
@@ -98,7 +99,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		Context ctx = new Context(cfg);
 		setContext(ctx);
 		parseAndInitializeDNet(dNetPath, ctx);
-	}
+
 
 	public AllocatorImpl(Context ctx, String dNetPath) throws IOException, RecognitionException, DNetException {
 		this();

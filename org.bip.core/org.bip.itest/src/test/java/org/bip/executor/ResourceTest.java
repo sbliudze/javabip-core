@@ -70,7 +70,6 @@ public class ResourceTest {
 	public void test() throws RecognitionException, IOException, DNetException
 	{
 		
-
 		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
 
 		//BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
@@ -95,10 +94,10 @@ public class ResourceTest {
 		String dnetSpec = "src/test/resources/dnet.txt";
 		AllocatorImpl alloc = new AllocatorImpl(dnetSpec); 
 		
-		
 		ComponentNeedingResource aComp = new ComponentNeedingResource(128);
 		ComponentNeedingResource bComp = new ComponentNeedingResource(100);
 		
+
 		BIPActor actor1 = engine.register(aComp, "resourceNeeder1", true); 
 		BIPActor actor2 = engine.register(bComp, "resourceNeeder2", true); 
 		BIPActor allocatorActor = engine.register(alloc, "allocator", true); 
@@ -112,7 +111,6 @@ public class ResourceTest {
 		alloc.addResource(memory);
 		alloc.addResource(processor);
 		alloc.addResource(bus);
-
 
 		engine.specifyGlue(bipGlue);
 
