@@ -79,5 +79,4 @@ public class Memory implements ResourceProvider, ResourceProxy {
 		this.cost = costString();
 		System.err.println("cost is now (-) " + cost);
 	}
-
 }

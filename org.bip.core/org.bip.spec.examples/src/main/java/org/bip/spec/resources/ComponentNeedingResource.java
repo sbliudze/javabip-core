@@ -81,16 +81,15 @@ public class ComponentNeedingResource implements ResourceAware {
 	@Override
 	public void setAllocator(BIPActor allocatorExecutor) {
 		this.allocatorExecutor = allocatorExecutor;
-
 	}
 
 	@Data(name = "utility", accessTypePort = AccessType.any)
 	public String utility() {
-		return "p1=1 & m1=128";
+		return utility;
 	}
 	
 	@Override
-	public void setAllocator(Executor allocatorExecutor) {
+	public void setAllocator(BIPActor allocatorExecutor) {
 		this.allocatorExecutor = allocatorExecutor;
 	}
 

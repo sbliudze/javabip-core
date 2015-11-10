@@ -41,8 +41,6 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 	
 	private Logger logger = LoggerFactory.getLogger(AllocatorImpl.class);
 
-	private Logger logger = LoggerFactory.getLogger(AllocatorImpl.class);
-
 	private DNet dnet;
 	private Context context;
 	private Solver solver;
@@ -81,13 +79,6 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		placeNameToResource = new HashMap<String, ResourceProvider>();
 		resourceNameToGivenValue = new HashMap<String, Expr>();
 		requestToModel = new HashMap<String, Model>();
-	}
-	
-	private void initialiseTokensAndVariables() {
-		for (Place place : dnet.places()) {
-			placeTokens.put(place, new ArrayList<Transition>());
-			placeVariables.put(place, new ArrayList<IntExpr>());
-		}
 	}
 
 	// if an allocator received a dnet and no context, it creates a context and parses the dnet
@@ -318,6 +309,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 	public void addCost() throws DNetException {
 		for (Place place : placeVariables.keySet()) {
 			Map<String, ArithExpr> stringtoConstraintVar = new HashMap<String, ArithExpr>();
+			//if there are already variables, we need to make a sum
 			if (placeVariables.get(place).size() > 0) {
 				ArithExpr placeSum = placeVariables.get(place).get(0);
 				// if there are several variables, we need to make a sum
@@ -330,7 +322,9 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 				logger.debug("For place " + place.name() + " the token variable names are " + stringtoConstraintVar + " and the constraint is "
 						+ resourceToCost);
 				BoolExpr costExpr = resourceToCost.get(place.name()).evaluate(stringtoConstraintVar);
+				System.err.println("COST: "+costExpr);
 				solver.add(costExpr);
+				
 			}
 		}
 
