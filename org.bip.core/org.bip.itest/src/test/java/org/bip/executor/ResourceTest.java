@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.antlr.v4.runtime.RecognitionException;
-import org.bip.api.Allocator;
 import org.bip.api.BIPActor;
 import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
@@ -77,9 +76,14 @@ public class ResourceTest {
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
 			public void configure() {
-				 synchron(ComponentNeedingResource.class, "a").to(AllocatorImpl.class,
+				 synchron(ComponentNeedingResource.class, "getResource").to(AllocatorImpl.class,
 						 "request");
+				 
+					port(ComponentNeedingResource.class, "release").acceptsNothing();
+					port(ComponentNeedingResource.class, "release")	.requiresNothing();
+				 
 				 data(ComponentNeedingResource.class, "utility").to(AllocatorImpl.class, "request");
+
 			}
 
 		}.build();
@@ -89,8 +93,10 @@ public class ResourceTest {
 		
 		
 		ComponentNeedingResource aComp = new ComponentNeedingResource();
+	
 		BIPActor actor = engine.register(aComp, "resourceNeeder", true); 
 		BIPActor allocatorActor = engine.register(alloc, "allocator", true); 
+		aComp.setAllocator(allocatorActor);
 		ResourceProvider memory = new Memory(256);
 		ResourceProvider processor = new Processor();
 		ResourceProvider bus = new Bus(128);
@@ -109,9 +115,7 @@ public class ResourceTest {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
-		//assertTrue("Some client was communicating with several other clients at the same time.", checker.talkingToOne());
-		
+				
 		engine.stop();
 		engineFactory.destroy(engine);
 	}

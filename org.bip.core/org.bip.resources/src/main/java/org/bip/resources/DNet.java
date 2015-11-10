@@ -32,17 +32,16 @@ public class DNet implements ContextProvider {
 		nameToTransition = new HashMap<String, Transition>();
 	}
 
-	public void addContext(Context context) {
+	public void setContext(Context context) {
 		this.ctx = context;
 	}
 	
 	
 	public void checkIntegrity() {
 		// check that for all the places there is a resource with the same name
-		// all inhibitor arcs refer to existing transitions\
+		// all inhibitor arcs refer to existing transitions
 		// conflict-freedom
 	}
-	
 	
 	public Place addPlace(String placeName) {
 		if (!nameToPlace.containsKey(placeName)) {
