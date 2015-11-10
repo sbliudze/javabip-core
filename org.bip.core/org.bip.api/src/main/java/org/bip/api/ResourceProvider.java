@@ -7,5 +7,10 @@ public interface ResourceProvider {
 	String name();
 	
 	ResourceType type();
+	
+//	void updateCost(String newCost);
+	
+	void augmentCost(String deltaCost);
+	void decreaseCost(String deltaCost);
 
 }
