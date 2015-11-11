@@ -5,6 +5,7 @@
     <groupId>org.bip</groupId>
     <artifactId>org.bip.core</artifactId>
     <version>0.1.0-SNAPSHOT</version>
+	<relativePath>../pom.xml</relativePath>
   </parent>
  
   <groupId>org.bip</groupId>
@@ -27,6 +28,7 @@
 		<osgi.dynamic.import></osgi.dynamic.import>
 		<osgi.bundles></osgi.bundles> 		
 <!-- 		<osgi.embed.depdendencies>akka-actor_2.10, akka-osgi_2.10, config, scala-library</osgi.embed.depdendencies> -->
+		<osgi.embed.depdendencies></osgi.embed.depdendencies>
  	</properties>
 	
 	<dependencies>
@@ -34,68 +36,52 @@
  	  	<dependency>
   			<groupId>org.bip</groupId>
   			<artifactId>org.bip.api</artifactId>
-  			<version>${org.bip.api.version}</version>
   		</dependency>
    		
  	 	<dependency>
 			<groupId>org.bip</groupId>
   			<artifactId>org.bip.executor</artifactId>
-  			<version>${org.bip.executor.version}</version>
 		</dependency>
        
  		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j-api.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>${slf4j-api.version}</version>
 		</dependency>
 
 	 	<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-			<version>${log4j.version}</version>
 		</dependency>
- 
-<!--         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
- --> 
+
          <dependency>
             <groupId>org.springframework.osgi</groupId>
             <artifactId>spring-osgi-core</artifactId>
-            <version>${spring-osgi-core.version}</version>
         </dependency>
         
          <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
-            <version>${org.osgi.core.version}</version>
         </dependency>
  
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
 
     	<dependency>
     		<groupId>com.typesafe.akka</groupId>
-    		<artifactId>akka-actor_2.10</artifactId>
-    		<version>${akka.version}</version>
+    		<artifactId>akka-actor_${scala.binary.version}</artifactId>
     	</dependency>
     	
     	<dependency>
     		<groupId>com.typesafe.akka</groupId>
-    		<artifactId>akka-osgi_2.10</artifactId>
-    		<version>${akka.version}</version>
+    		<artifactId>akka-osgi_${scala.binary.version}</artifactId>
     	</dependency>
 
     	

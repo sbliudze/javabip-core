@@ -5,6 +5,7 @@
 		<groupId>org.bip</groupId>
 		<artifactId>org.bip.core</artifactId>
 		<version>0.1.0-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
  
   <groupId>org.bip</groupId>
@@ -30,27 +31,23 @@
 	<dependency>
 		<groupId>org.bip</groupId>
 		<artifactId>org.bip.api</artifactId>
-		<version>${org.bip.api.version}</version>
 		<scope>test</scope>
 	</dependency>
 
 	<dependency>
 		<groupId>org.bip</groupId>
 		<artifactId>org.bip.engine</artifactId>
-		<version>${org.bip.engine.version}</version>
 		<scope>test</scope>
 	</dependency>
 
 	<dependency>
 		<groupId>org.bip</groupId>
   		<artifactId>org.bip.executor.impl</artifactId>
-  		<version>${org.bip.executor.impl.version}</version>
 	</dependency>
 
 	<dependency>
 		<groupId>org.bip</groupId>
 		<artifactId>org.bip.glue</artifactId>
-		<version>${org.bip.glue.version}</version>
 		<scope>test</scope>
 	</dependency>
 
@@ -58,21 +55,18 @@
 	<dependency>
 		<groupId>org.bip</groupId>
 		<artifactId>org.bip.spec.examples</artifactId>
-		<version>${org.bip.spec.examples.version}</version>
 		<scope>test</scope>
 	</dependency>
 
 	<dependency>
 		<groupId>org.apache.camel</groupId>
 		<artifactId>camel-core</artifactId>
-		<version>${camel-core.version}</version>
 		<scope>test</scope>
 	</dependency>
 
 	<dependency>
 		<groupId>junit</groupId>
 		<artifactId>junit</artifactId>
-		<version>${junit.version}</version>
 		<scope>test</scope>
 	</dependency>
       

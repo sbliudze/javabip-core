@@ -5,8 +5,9 @@
 		<groupId>org.bip</groupId>
 		<artifactId>org.bip.core</artifactId>
 		<version>0.1.0-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
-	<groupId>org.bip</groupId>
+
 	<artifactId>org.bip.executor</artifactId>
 	<version>0.1.0-SNAPSHOT</version>
 	<name>BIP :: Core :: Executor</name>
@@ -34,37 +35,31 @@
 		<dependency>
 			<groupId>org.bip</groupId>
 			<artifactId>org.bip.api</artifactId>
-			<version>${org.bip.api.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.antlr</groupId>
 			<artifactId>antlr4</artifactId>
-			<version>${antlr4.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j-api.version}</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>${slf4j-api.version}</version>
 		</dependency>
 
  		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-			<version>${log4j.version}</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
 

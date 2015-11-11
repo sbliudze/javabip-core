@@ -6,6 +6,7 @@
 		<groupId>org.bip</groupId>
 		<artifactId>org.bip.core</artifactId>
 		<version>0.1.0-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<groupId>org.bip</groupId>
@@ -24,7 +25,6 @@
 		<dependency>
 			<groupId>org.bip</groupId>
 			<artifactId>org.bip.api</artifactId>
-			<version>${org.bip.api.version}</version>
 		</dependency>
 
 	</dependencies>

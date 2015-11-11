@@ -6,6 +6,7 @@
 		<groupId>org.bip</groupId>
 		<artifactId>org.bip.core</artifactId>
 		<version>0.1.0-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<groupId>org.bip</groupId>
@@ -25,6 +26,7 @@
 		<osgi.import>*</osgi.import>
 		<osgi.export>org.bip.spec, org.bip.spec.hanoi, org.bip.spec.diningphilosophers, org.bip.spec.seal, org.bip.spec.pubsub.typed, org.bip.spec.pubsub.untyped, org.bip.spec.telephonic</osgi.export>
 		<osgi.dynamic.import></osgi.dynamic.import>
+		<osgi.bundles></osgi.bundles>
 	</properties>
 
 	<dependencies>
@@ -39,55 +41,46 @@
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-core</artifactId>
-			<version>${camel-core.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j-api.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>${slf4j-api.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-			<version>${log4j.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
-			<version>${spring.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.bip</groupId>
 			<artifactId>org.bip.api</artifactId>
-			<version>${org.bip.api.version}</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.bip</groupId>
 			<artifactId>org.bip.lsr</artifactId>
-			<version>${org.bip.lsr.version}</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.bip</groupId>
 			<artifactId>org.bip.glue</artifactId>
-			<version>${org.bip.glue.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.bip</groupId>
 			<artifactId>org.bip.executor</artifactId>
-			<version>${org.bip.executor.version}</version>
 		</dependency>
 
 	</dependencies>
@@ -148,6 +141,7 @@
 		repo</name> <url>http://repo1.maven.org/maven2/</url> </pluginRepository> 
 		</pluginRepositories -->
 
+<!--
 	<repositories>
 		<repository>
 			<id>maven-repo</id>
@@ -161,6 +155,7 @@
 			<url>http://repo.fusesource.com/maven2/</url>
 		</repository>
 	</repositories>
+-->
 
 
 </project>
