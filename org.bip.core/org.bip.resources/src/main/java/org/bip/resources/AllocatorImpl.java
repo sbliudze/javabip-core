@@ -1,6 +1,7 @@
 package org.bip.resources;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,7 +19,6 @@ import org.bip.api.Allocator;
 import org.bip.api.PortType;
 import org.bip.api.ResourceProvider;
 import org.bip.exceptions.BIPException;
-
 import org.bip.resources.grammar.constraintLexer;
 import org.bip.resources.grammar.constraintParser;
 import org.bip.resources.grammar.dNetLexer;
@@ -38,7 +38,7 @@ import com.microsoft.z3.Status;
 @Ports({ @Port(name = "request", type = PortType.enforceable), @Port(name = "release", type = PortType.enforceable) })
 @ComponentType(initial = "0", name = "org.bip.resources.AllocatorImpl")
 public class AllocatorImpl implements ContextProvider, Allocator {
-	
+
 	private Logger logger = LoggerFactory.getLogger(AllocatorImpl.class);
 
 	private DNet dnet;
@@ -82,6 +82,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 	}
 
 	// if an allocator received a dnet and no context, it creates a context and parses the dnet
+
 	public AllocatorImpl(String dNetPath) throws IOException, RecognitionException, DNetException {
 		this();
 
@@ -90,7 +91,6 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		Context ctx = new Context(cfg);
 		setContext(ctx);
 		parseAndInitializeDNet(dNetPath, ctx);
-
 
 	public AllocatorImpl(Context ctx, String dNetPath) throws IOException, RecognitionException, DNetException {
 		this();
@@ -309,7 +309,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 	public void addCost() throws DNetException {
 		for (Place place : placeVariables.keySet()) {
 			Map<String, ArithExpr> stringtoConstraintVar = new HashMap<String, ArithExpr>();
-			//if there are already variables, we need to make a sum
+			// if there are already variables, we need to make a sum
 			if (placeVariables.get(place).size() > 0) {
 				ArithExpr placeSum = placeVariables.get(place).get(0);
 				// if there are several variables, we need to make a sum
@@ -322,9 +322,9 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 				logger.debug("For place " + place.name() + " the token variable names are " + stringtoConstraintVar + " and the constraint is "
 						+ resourceToCost);
 				BoolExpr costExpr = resourceToCost.get(place.name()).evaluate(stringtoConstraintVar);
-				System.err.println("COST: "+costExpr);
+				System.err.println("COST: " + costExpr);
 				solver.add(costExpr);
-				
+
 			}
 		}
 
