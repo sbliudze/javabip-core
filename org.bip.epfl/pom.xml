@@ -1,0 +1,27 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.bip</groupId>
+  <artifactId>org.bip.epfl</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>BIP :: EPFL </name>
+
+  <scm>
+    <developerConnection>scm:git:git@git.xtech.io/academy/bip.git</developerConnection>
+    <url>https://git.xtech.io/academy/bip.git</url>
+    <tag>HEAD</tag>
+  </scm>
+
+
+  <description>It contains functionality of BIP project from EPFL.</description>
+  
+
+  <modules>
+	<module>bip_engine</module>
+	<module>bip_javabdd</module>
+	<module>lsr</module>
+  </modules>
+   
+</project>

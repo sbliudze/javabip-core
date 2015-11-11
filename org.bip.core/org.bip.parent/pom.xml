@@ -242,7 +242,7 @@
       </dependency>
 
       <dependency>
-        <groupId>org.bip</groupId>
+        <groupId>org.bip.epfl</groupId>
         <artifactId>org.bip.lsr</artifactId>
         <version>${org.bip.lsr.version}</version>
       </dependency>

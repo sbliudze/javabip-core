@@ -22,7 +22,7 @@
 	<packaging>bundle</packaging>
 
 	<properties>
-		<osgi.private></osgi.private>
+		<osgi.private>lsr.concurrence.provided.server</osgi.private>
 		<osgi.import>*</osgi.import>
 		<osgi.export>org.bip.spec, org.bip.spec.hanoi, org.bip.spec.diningphilosophers, org.bip.spec.seal, org.bip.spec.pubsub.typed, org.bip.spec.pubsub.untyped, org.bip.spec.telephonic</osgi.export>
 		<osgi.dynamic.import></osgi.dynamic.import>
@@ -69,7 +69,7 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>org.bip</groupId>
+			<groupId>org.bip.epfl</groupId>
 			<artifactId>org.bip.lsr</artifactId>
 		</dependency>
 		
