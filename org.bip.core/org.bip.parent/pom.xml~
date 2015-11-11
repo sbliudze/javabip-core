@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.xtech.cf</groupId>
+    <artifactId>cf-project-parent</artifactId>
+    <version>5.0.0-SNAPSHOT</version>
+  </parent>
+
+  <groupId>io.xtech.cf.examples</groupId>
+  <artifactId>sample-project-parent</artifactId>
+  <version>5.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>Connectivity Factory :: Examples :: Sample :: Parent POM</name>
+
+  <properties>
+
+    <cf.version>5.0.0-SNAPSHOT</cf.version>
+
+    <!-- dependencies -->
+    <commons-io.version>2.4</commons-io.version>
+    <scalatest.version>3.0.0-M1</scalatest.version>
+
+    <!-- plugins -->
+    <maven-scalatest-plugin.version>1.0</maven-scalatest-plugin.version>
+
+    <!-- Config -->
+    <config.file.persistentId>io.xtech.cf.examples.sample_project</config.file.persistentId>
+    <config.file.akka>io.xtech.cf.examples.sample_project_akka.conf</config.file.akka>
+
+  </properties>
+
+  <build>
+
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+      </resource>
+      <resource>
+        <directory>src/main/filtered-resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+
+    <plugins>
+      <plugin>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+
+  </build>
+
+  <dependencyManagement>
+    <dependencies>
+
+      <dependency>
+        <groupId>io.xtech.cf.project.dependencies</groupId>
+        <artifactId>cf-project-dependencies</artifactId>
+        <version>${cf.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>io.xtech.cf.features.dependencies</groupId>
+        <artifactId>cf-features-dependencies</artifactId>
+        <version>${cf.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+    </dependencies>
+  </dependencyManagement>
+
+  <profiles>
+
+    <!--
+      deploy to local CF instance: `mvn clean install -Pdeploy -Ddeploy.dir=<cf-path>`
+    -->
+    <profile>
+      <id>deploy</id>
+      <properties>
+        <deploy.type>kar</deploy.type>
+        <deploy.local>true</deploy.local>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>local</id>
+                <phase>install</phase>
+                <configuration>
+                  <target if="${deploy.local}">
+                    <!--suppress MavenModelInspection -->
+                    <copy todir="${deploy.dir}">
+                      <fileset dir="${project.build.directory}">
+                        <exclude name="*-javadoc.${deploy.type}"/>
+                        <include name="*.${deploy.type}"/>
+                      </fileset>
+                    </copy>
+                  </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+  </profiles>
+
+</project>

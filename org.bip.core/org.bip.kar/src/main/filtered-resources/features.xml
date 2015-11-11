@@ -1,10 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <features xmlns="http://karaf.apache.org/xmlns/features/v1.0.0">
-    <feature name="bip-core" version="0.1">
+    <feature name="bip-core" version="${org.bip.api.version}" description="BIP core feature">
         <bundle>mvn:org.bip/org.bip.api/${org.bip.api.version}</bundle>
         <bundle>mvn:org.bip/org.bip.executor/${org.bip.executor.version}</bundle>
         <bundle>mvn:org.bip/org.bip.executor.impl/${org.bip.executor.impl.version}</bundle>
         <bundle>mvn:org.bip/org.bip.glue/${org.bip.glue.version}</bundle>
-        <bundle>mvn:org.bip/org.bip.spec.examples/${org.bip.spec.version}</bundle>
+        <bundle>mvn:org.bip/org.bip.spec.examples/${org.bip.spec.examples.version}</bundle>
         <bundle>mvn:org.bip/org.bip.jmx/${org.bip.jmx.version}</bundle>
     </feature>
 </features>

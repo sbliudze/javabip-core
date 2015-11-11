@@ -4,9 +4,9 @@
 
 	<parent> 
 		<groupId>org.bip</groupId>
-		<artifactId>org.bip.core</artifactId> 
+		<artifactId>org.bip.parent</artifactId>
 		<version>0.1.0-SNAPSHOT</version>
-		<relativePath>../pom.xml</relativePath>
+		<relativePath>../org.bip.parent/pom.xml</relativePath>
 	</parent>
 
 	<groupId>org.bip</groupId>
