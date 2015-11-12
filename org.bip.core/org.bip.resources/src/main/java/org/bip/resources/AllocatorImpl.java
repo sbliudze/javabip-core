@@ -63,8 +63,11 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 	// a map: resource name <-> value produced by the solver (is used to find out how much we should release upon spontaneous release event)
 	// TODO it won't work this way if we have several components asking for the same resource - even if it is done in several times. or will I erase it? CHECK
 	private HashMap<String, Expr> resourceNameToGivenValue;
-	//a map: request string <-> model provided by the solver. is used in order not to solve the thing twice during the guard evaluation and the actual allocation
+	// a map: request string <-> model provided by the solver. is used in order not to solve the thing twice during the guard evaluation and the actual
+	// allocation
 	private HashMap<String, Model> requestToModel;
+
+	/**************** Constructors *****************/
 
 	public AllocatorImpl() {
 		placeTokens = new HashMap<Place, ArrayList<Transition>>();
@@ -78,12 +81,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		requestToModel = new HashMap<String, Model>();
 	}
 
-	void setContext(Context ctx) {
-		this.context = ctx;
-		solver = context.mkSolver();
-	}
-
-	// if an allocator received a dnet and no context, it created a context, parses the dnet
+	// if an allocator received a dnet and no context, it creates a context and parses the dnet
 	public AllocatorImpl(String dNetPath) throws IOException, RecognitionException, DNetException {
 		this();
 
@@ -91,19 +89,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		cfg.put("model", "true");
 		Context ctx = new Context(cfg);
 		setContext(ctx);
-
 		parseAndInitializeDNet(dNetPath, ctx);
-	}
-
-	private void parseAndInitializeDNet(String dNetPath, Context ctx) throws FileNotFoundException, IOException, DNetException {
-		FileInputStream stream = new FileInputStream(dNetPath);
-
-		dNetLexer lexer = new dNetLexer(new ANTLRInputStream(stream));
-		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		dNetParser parser = new dNetParser(tokens);
-		parser.net();
-		this.dnet = parser.net;
-		initializeDNet(ctx);
 	}
 
 	public AllocatorImpl(Context ctx, String dNetPath) throws IOException, RecognitionException, DNetException {
@@ -119,22 +105,54 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		initializeDNet(ctx);
 	}
 
+	/******************* End of Constructors *****************/
+
+	/**************** Initializing functions *****************/
+
+	void setContext(Context ctx) {
+		this.context = ctx;
+		solver = context.mkSolver();
+	}
+
+	private void parseAndInitializeDNet(String dNetPath, Context ctx) throws FileNotFoundException, IOException, DNetException {
+		FileInputStream stream = new FileInputStream(dNetPath);
+		dNetLexer lexer = new dNetLexer(new ANTLRInputStream(stream));
+		CommonTokenStream tokens = new CommonTokenStream(lexer);
+		dNetParser parser = new dNetParser(tokens);
+		parser.net();
+		this.dnet = parser.net;
+		initializeDNet(ctx);
+	}
+
+	// at the initialization phase of the dnet:
+	// the context of the dnet is specified,
+	// the variables and tokens are cleared and initialized with empty lists
+	// in case of reinitialization (list of resources is not empty), the resource cost is stored in a local map
+	// TODO the cost must be resend by resource, not asked by allocator
+	// however, in this case it might be ok since it is the allocator that reinitialises itself
 	private void initializeDNet(Context ctx) {
 		this.dnet.setContext(ctx);
 		placeVariables.clear();
+		placeTokens.clear();
 		for (Place place : dnet.places()) {
 			placeTokens.put(place, new ArrayList<Transition>());
 			placeVariables.put(place, new ArrayList<IntExpr>());
 		}
 		if (!resources.isEmpty()) {
 			resourceToCost.clear();
-			// TODO this should be done automatically by each resource? a heartbeat?
 			for (ResourceProvider resource : resources) {
 				specifyCost(resource.name(), resource.cost());
 			}
 		}
 	}
+	
+	private void specifyCost(String resource, String costString) {
+		ConstraintNode cost = parseRequest(costString);
+		resourceToCost.put(resource, cost);
+	}
 
+	// new context is created in the dnet
+	// TODO find how to clear context so that not to recreate it every time.
 	private void reContext() {
 		HashMap<String, String> cfg = new HashMap<String, String>();
 		cfg.put("model", "true");
@@ -143,61 +161,23 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		initializeDNet(ctx);
 	}
 
-	@org.bip.annotations.Transition(name = "request", source = "0", target = "1", guard = "canAllocate")
-	public void specifyRequest(@Data(name = "request") String requestString) throws DNetException {
+	/**************** End of Initializing functions *****************/
 
-		if (!requestToModel.containsKey(requestString)) {
-			throw new BIPException("The request given as data parameter for transition has not been accepted before as data given for the guard.");
-		}
-		Model model = requestToModel.get(requestString);
-		for (Place place : placeVariables.keySet()) {
-			if (placeVariables.get(place).size() > 0) {
-				for (int i = 0; i < placeVariables.get(place).size(); i++) {
-					Expr res = model.evaluate(placeVariables.get(place).get(i), false);
-					if (res.isIntNum()) {
-						placeToResource.get(place).decreaseCost(res.toString());
-						// TODO this line makes it possible only for one item of each resource to be allocated which is maybe not what we want
-						resourceNameToGivenValue.put(place.name(), res);
-					}
-
-				}
-			}
-		}
-	}
+	/************************ Transitions ***************************/
 
 	@Guard(name = "canAllocate")
 	public boolean canAllocate(@Data(name = "request") String requestString) throws DNetException {
 		this.reContext();
-		logger.debug("Allocator specifying request " + requestString);
-		constraintLexer lexer = new constraintLexer(new ANTLRInputStream(requestString));
-		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		constraintParser parser = new constraintParser(tokens);
-		parser.constraint();
-		ConstraintNode request = parser.constraint;
-		request.setContextProvider(this);
-
+		logger.debug("Allocator checking resource availabilities for request " + requestString);
+		ConstraintNode request = parseRequest(requestString);
 		ArrayList<String> resourcesRequested = request.resourceInConstraint(request);
 		logger.debug("The resources requested are " + resourcesRequested);
-		Map<String, ArithExpr> stringToConstraintVar = new HashMap<String, ArithExpr>();
-		for (String placeName : resourcesRequested) {
-			if (dnet.nameToPlace.containsKey(placeName)) {
-				Place place = dnet.nameToPlace.get(placeName);
-				place.addToken(new InitialTransition()); // probably we don't need this line
-				// add a new initial token
-				placeTokens.get(place).add(new InitialTransition());
-				// add a new variable
-				String variableName = createVariableName(place, "*");
-				IntExpr var = createIntVariable(context, variableName);
-				placeVariables.get(place).add(var);
-				stringToConstraintVar.put(placeName, var);
-			} else {
-				throw new DNetException("The resource " + placeName + " does not belond to the space of resources described by places of the DNet.");
-			}
-		}
-		solver.add(request.evaluate(stringToConstraintVar));
-		System.err.println("Request: " + resourcesRequested);
-		System.err.println("Tokens: " + placeTokens);
+
+		Map<String, ArithExpr> nameToExpr = createTokenVariables(resourcesRequested);
+		solver.add(request.evaluate(nameToExpr)); // add the request constraint
+		logger.debug("Tokens of the dnet at initialisation are: " + placeTokens);
 		ArrayList<BoolExpr> dNetConstraints = dnet.run(placeVariables, placeTokens);
+		logger.debug("The dnet constraints are: " + dNetConstraints);
 		for (BoolExpr constr : dNetConstraints) {
 			solver.add(constr);
 		}
@@ -206,11 +186,64 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 			return false;
 		}
 		Model model = solver.getModel();
-		// if (!requestToModel.containsKey(requestString)) {
-		// TODO the problem here is that the model is not replaced. i guess it should. what if there is a same request from different components
+		// there is no optimisation in not putting the same model several times, since the context and the Expressions change for each execution,
+		// and they should be coherent with the model
+		// we save the model so that we can use it during the allocation phase
 		requestToModel.put(requestString, model);
-		// }
 		return true;
+	}
+
+	// creates initial tokens in places corresponding to requested resources
+	private Map<String, ArithExpr> createTokenVariables(ArrayList<String> resourcesRequested) throws DNetException {
+		Map<String, ArithExpr> nameToExpr = new HashMap<String, ArithExpr>();
+		for (String requestedResourceName : resourcesRequested) {
+			if (dnet.nameToPlace.containsKey(requestedResourceName)) {
+				Place place = dnet.nameToPlace.get(requestedResourceName);
+				place.addToken(new InitialTransition()); // probably we don't need this line (noone cares for places, we go through the map placeTokens)
+				placeTokens.get(place).add(new InitialTransition());
+				IntExpr var = createIntVariable(context, createVariableName(place, "*"));
+				placeVariables.get(place).add(var);
+				nameToExpr.put(requestedResourceName, var);
+			} else {
+				throw new DNetException("The resource " + requestedResourceName
+						+ " does not belond to the space of resources described by the places of the DNet.");
+			}
+		}
+		return nameToExpr;
+	}
+
+	private ConstraintNode parseRequest(String requestString) {
+		constraintLexer lexer = new constraintLexer(new ANTLRInputStream(requestString));
+		CommonTokenStream tokens = new CommonTokenStream(lexer);
+		constraintParser parser = new constraintParser(tokens);
+		parser.constraint();
+		ConstraintNode request = parser.constraint;
+		request.setContextProvider(this);
+		return request;
+	}
+
+	@org.bip.annotations.Transition(name = "request", source = "0", target = "1", guard = "canAllocate")
+	public void specifyRequest(@Data(name = "request") String requestString) throws DNetException {
+		if (!requestToModel.containsKey(requestString)) {
+			throw new BIPException("The request " + requestString
+					+ " given as data parameter for transition has not been accepted before as data given for the guard.");
+		}
+		Model model = requestToModel.get(requestString);
+		for (Place place : placeVariables.keySet()) {
+			if (placeVariables.get(place).size() > 0) {
+				for (int i = 0; i < placeVariables.get(place).size(); i++) {
+					Expr res = model.evaluate(placeVariables.get(place).get(i), false);
+					if (res.isIntNum()) {
+						// update the cost after allocating the resource!
+						// TODO the resource must be somehow dispatched back to the requesting component
+						placeToResource.get(place).decreaseCost(res.toString());
+						// TODO this line makes it possible only for one item of each resource to be allocated which is maybe not what we want
+						resourceNameToGivenValue.put(place.name(), res);
+					}
+				}
+			}
+		}
+		requestToModel.remove(requestString);
 	}
 
 	@org.bip.annotations.Transition(name = "release", source = "1", target = "0", guard = "")
@@ -218,38 +251,35 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		// get the expression for the allocated amount for this resource
 		Expr res = resourceNameToGivenValue.get(unitName);
 		// update cost with returning the value
-
 		logger.debug("Releasing resource: " + unitName + ", the amount allocated was " + res + ", the resource provider is "
 				+ placeNameToResource.get(unitName));
+		// update the cost after deallocating the resource
 		placeNameToResource.get(unitName).augmentCost(res.toString());
 	}
 
-	// cost: each resource has its cost
-	// cost is updated at every cycle and sent to the allocator
-
+	// for each place which has tokens, add its cost - or should it be for each place in general (the case of !=0) ??
 	public void addCost() throws DNetException {
 		for (Place place : placeVariables.keySet()) {
 			Map<String, ArithExpr> stringtoConstraintVar = new HashMap<String, ArithExpr>();
-			// if there are already variables, we need to make a sum
 			if (placeVariables.get(place).size() > 0) {
-
 				ArithExpr placeSum = placeVariables.get(place).get(0);
-
+				// if there are several variables, we need to make a sum
+				// TODO TEST
 				for (int i = 1; i < placeVariables.get(place).size(); i++) {
 					placeSum = getContext().mkAdd(placeSum, placeVariables.get(place).get(i));
 				}
 				stringtoConstraintVar.put(place.name(), placeSum);
-
-				System.err.println(place.name() + " " + resourceToCost + " " + stringtoConstraintVar);
+				logger.debug("For place " + place.name() + " the token variable names are " + stringtoConstraintVar + " and the constraint is "
+						+ resourceToCost);
 				BoolExpr costExpr = resourceToCost.get(place.name()).evaluate(stringtoConstraintVar);
-				System.err.println("COST: " + costExpr);
 				solver.add(costExpr);
-
 			}
 		}
-
 	}
 
+	/**************** End of Transitions *****************/
+	
+	/**************** Helper functions *****************/
 	private String createVariableName(Place place, String transitionName) {
 		return place.name() + "-" + transitionName;
 	}
@@ -258,19 +288,13 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		return (IntExpr) ctx.mkConst(ctx.mkSymbol(name), ctx.getIntSort());
 	}
 
+	/**************** End of Helper functions *****************/
+	
+	/**************** Interface functions *****************/
+	
 	@Override
 	public Context getContext() {
 		return context;
-	}
-
-	private void specifyCost(String resource, String costString) {
-		constraintLexer lexer = new constraintLexer(new ANTLRInputStream(costString));
-		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		constraintParser parser = new constraintParser(tokens);
-		parser.constraint();
-		ConstraintNode cost = parser.constraint;
-		cost.setContextProvider(this);
-		resourceToCost.put(resource, cost);
 	}
 
 	@Override
@@ -296,4 +320,5 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		}
 		this.specifyCost(resource.name(), resource.cost());
 	}
+	/****************End of  Interface functions *****************/
 }
