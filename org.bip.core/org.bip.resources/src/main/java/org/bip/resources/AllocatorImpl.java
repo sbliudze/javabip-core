@@ -82,7 +82,6 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 	}
 
 	// if an allocator received a dnet and no context, it creates a context and parses the dnet
-
 	public AllocatorImpl(String dNetPath) throws IOException, RecognitionException, DNetException {
 		this();
 
@@ -91,6 +90,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		Context ctx = new Context(cfg);
 		setContext(ctx);
 		parseAndInitializeDNet(dNetPath, ctx);
+	}
 
 	public AllocatorImpl(Context ctx, String dNetPath) throws IOException, RecognitionException, DNetException {
 		this();
@@ -146,7 +146,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 			}
 		}
 	}
-
+	
 	private void specifyCost(String resource, String costString) {
 		ConstraintNode cost = parseRequest(costString);
 		resourceToCost.put(resource, cost);
@@ -303,13 +303,13 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 			}
 		}
 		return true;
+
 	}
 
 	// for each place which has tokens, add its cost - or should it be for each place in general (the case of !=0) ??
 	public void addCost() throws DNetException {
 		for (Place place : placeVariables.keySet()) {
 			Map<String, ArithExpr> stringtoConstraintVar = new HashMap<String, ArithExpr>();
-			// if there are already variables, we need to make a sum
 			if (placeVariables.get(place).size() > 0) {
 				ArithExpr placeSum = placeVariables.get(place).get(0);
 				// if there are several variables, we need to make a sum
@@ -318,22 +318,17 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 					placeSum = getContext().mkAdd(placeSum, placeVariables.get(place).get(i));
 				}
 				stringtoConstraintVar.put(place.name(), placeSum);
-
 				logger.debug("For place " + place.name() + " the token variable names are " + stringtoConstraintVar + " and the constraint is "
 						+ resourceToCost);
 				BoolExpr costExpr = resourceToCost.get(place.name()).evaluate(stringtoConstraintVar);
-				System.err.println("COST: " + costExpr);
 				solver.add(costExpr);
-
 			}
 		}
-
 	}
 
 	/**************** End of Transitions *****************/
 
 	/**************** Helper functions *****************/
-
 	private String createVariableName(Place place, String transitionName) {
 		return place.name() + "-" + transitionName;
 	}
@@ -342,16 +337,15 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		return (IntExpr) ctx.mkConst(ctx.mkSymbol(name), ctx.getIntSort());
 	}
 
-
 	/**************** End of Helper functions *****************/
-
+	
 	/**************** Interface functions *****************/
+	
 
 	@Override
 	public Context getContext() {
 		return context;
 	}
-
 
 	@Override
 	public void request() {
@@ -376,6 +370,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		}
 		this.specifyCost(resource.name(), resource.cost());
 	}
-	/**************** End of Interface functions *****************/
+
+	/****************End of  Interface functions *****************/
 
 }
