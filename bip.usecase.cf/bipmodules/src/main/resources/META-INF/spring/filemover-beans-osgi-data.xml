@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camel-osgi="http://camel.apache.org/schema/osgi"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
 	xmlns:ctx="http://www.springframework.org/schema/context" xmlns:osgi="http://www.springframework.org/schema/osgi"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
-       http://camel.apache.org/schema/osgi http://camel.apache.org/schema/osgi/camel-osgi.xsd
        http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
@@ -23,10 +22,9 @@
 		<prop key="cfa.filemover.outfolder3"></prop>
 	</osgix:cm-properties>
 
-	<camel-osgi:camelContext xmlns="http://camel.apache.org/schema/spring"
-		id="filemover-camelContext" autoStartup="false">
+	<camelContext xmlns="http://camel.apache.org/schema/spring" id="filemover-camelContext" autoStartup="false">
 		<contextScan />
-	</camel-osgi:camelContext>
+	</camelContext>
 
 	<ctx:property-placeholder properties-ref="bundleConfig" />
 

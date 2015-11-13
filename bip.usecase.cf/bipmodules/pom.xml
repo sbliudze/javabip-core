@@ -6,8 +6,9 @@
 
   <parent>
       <groupId>io.xtech.bip</groupId>
-      <artifactId>bip.usecase.switchableroute</artifactId>
+      <artifactId>bip.usecase.switchableroute.parent</artifactId>
       <version>0.1.0-SNAPSHOT</version>
+      <relativePath>../bipparent/pom.xml</relativePath>
   </parent>
 
   <description>
@@ -16,7 +17,7 @@
 
   <groupId>io.xtech.bip</groupId>
   <artifactId>bip.usecase.switchableroute.bipmodules</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>${bipmodules.version}</version>
   
   <packaging>bundle</packaging>
 
@@ -35,58 +36,49 @@
       <dependencies>
 
           <dependency>
+              <groupId>org.bip</groupId>
+              <artifactId>org.bip.spec.examples</artifactId>
+              <version>0.1.0-SNAPSHOT</version>
+          </dependency>
+
+          <dependency>
               <groupId>org.osgi</groupId>
               <artifactId>org.osgi.core</artifactId>
-              <version>${org.osgi.core.version}</version>
           </dependency>
           
           <dependency>
             <groupId>org.bip</groupId>
   		    <artifactId>org.bip.executor.impl</artifactId>
-  			<version>${org.bip.executor.impl.version}</version>          
           </dependency>
 
           <dependency>
               <groupId>org.springframework</groupId>
               <artifactId>spring-beans</artifactId>
-              <version>${spring.version}</version>
           </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
-            <version>${camel-core.version}</version>
         </dependency>
 
-<!--         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>3.0.5.RELEASE</version>
-            <scope>test</scope>
-        </dependency>
- -->
           <dependency>
               <groupId>org.slf4j</groupId>
               <artifactId>slf4j-api</artifactId>
-              <version>${slf4j-api.version}</version>
           </dependency>
 
           <dependency>
               <groupId>org.slf4j</groupId>
               <artifactId>slf4j-log4j12</artifactId>
-              <version>${slf4j-api.version}</version>
           </dependency>
 
           <dependency>
               <groupId>log4j</groupId>
               <artifactId>log4j</artifactId>
-              <version>${log4j.version}</version>
           </dependency>
           
          <dependency>
     		<groupId>com.typesafe.akka</groupId>
-    		<artifactId>akka-actor_2.10</artifactId>
-    		<version>2.1.1</version>
+    		<artifactId>akka-actor_${scala.binary.version}</artifactId>
     	 </dependency>
           
 
@@ -157,6 +149,7 @@
     </pluginRepository>  
   </pluginRepositories-->
   
+<!--
   <repositories>
     <repository>
       <id>maven-repo</id>
@@ -170,5 +163,6 @@
       <url>http://repo.fusesource.com/maven2/</url>
     </repository>
   </repositories>
+-->
 
 </project>

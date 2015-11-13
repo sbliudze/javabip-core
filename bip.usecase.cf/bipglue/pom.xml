@@ -5,9 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-      <groupId>io.xtech.bip</groupId>
-      <artifactId>bip.usecase.switchableroute</artifactId>
-      <version>0.1.0-SNAPSHOT</version>
+        <groupId>io.xtech.bip</groupId>
+        <artifactId>bip.usecase.switchableroute.parent</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+        <relativePath>../bipparent/pom.xml</relativePath>
     </parent>    
 
     <description>
@@ -18,7 +19,7 @@
 
     <groupId>io.xtech.bip</groupId>   
     <artifactId>bip.usecase.switchableroute.bipglue</artifactId>
-
+    <version>${bipglue.version}</version>
 
     <packaging>bundle</packaging>
 

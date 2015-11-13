@@ -1,8 +1,0 @@
-<features xmlns="http://karaf.apache.org/xmlns/features/v1.0.0">
-    <feature name="bip-usecase" version="0.1">
-    	<feature version="0.1">bip-core</feature>
-        <bundle>mvn:io.xtech.bip/bip.usecase.switchableroute.engine/0.1.xtech-bipengine-00001</bundle>
-        <bundle>mvn:io.xtech.bip/bip.usecase.switchableroute.admin/1.0.0-SNAPSHOT</bundle>
-        <bundle>mvn:io.xtech.bip/bip.usecase.switchableroute.bipmodules/1.0.0-SNAPSHOT</bundle>       
-    </feature>
-</features>
