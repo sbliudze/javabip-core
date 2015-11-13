@@ -1,5 +1,6 @@
 package org.bip.spec.resources;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.bip.annotations.ComponentType;
@@ -44,19 +45,14 @@ public class ComponentNeedingResource implements ResourceAware {
 	@Transition(name = "", source = "2", target = "0", guard = "")
 	public void release() {	
 		System.err.println("Releasing resources");
-//		try {
-//			Thread.sleep(10000);
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 		HashMap<String, Object> data = new HashMap<String, Object>();
 		//data.put("resourceUnit", "m");
 		allocatorExecutor.inform("release", data);
 		data.clear();
-		data.put("resourceUnit", "p");
+		ArrayList<String> dataRelease = new  ArrayList<String>();
+		dataRelease.add("p"); dataRelease.add("m");
+		data.put("resourceUnit", dataRelease);
 		allocatorExecutor.inform("release", data);
-		//allocatorExecutor.setData("resourceUnit", "p");
 		//TODO can we release some resources and keep others?
 		//because the problem is, we know nothing about the bus..
 	}
