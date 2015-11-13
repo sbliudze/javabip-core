@@ -146,7 +146,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 			}
 		}
 	}
-	
+
 	private void specifyCost(String resource, String costString) {
 		ConstraintNode cost = parseRequest(costString);
 		resourceToCost.put(resource, cost);
@@ -338,9 +338,8 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 	}
 
 	/**************** End of Helper functions *****************/
-	
+
 	/**************** Interface functions *****************/
-	
 
 	@Override
 	public Context getContext() {
@@ -370,7 +369,6 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		}
 		this.specifyCost(resource.name(), resource.cost());
 	}
-
+	
 	/****************End of  Interface functions *****************/
-
 }
