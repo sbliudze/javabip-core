@@ -145,7 +145,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 			}
 		}
 	}
-	
+
 	private void specifyCost(String resource, String costString) {
 		ConstraintNode cost = parseRequest(costString);
 		resourceToCost.put(resource, cost);
@@ -247,14 +247,15 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 	}
 
 	@org.bip.annotations.Transition(name = "release", source = "1", target = "0", guard = "")
-	public void releaseResource(@Data(name = "resourceUnit") String unitName) throws DNetException {
-		// get the expression for the allocated amount for this resource
-		Expr res = resourceNameToGivenValue.get(unitName);
-		// update cost with returning the value
-		logger.debug("Releasing resource: " + unitName + ", the amount allocated was " + res + ", the resource provider is "
-				+ placeNameToResource.get(unitName));
-		// update the cost after deallocating the resource
-		placeNameToResource.get(unitName).augmentCost(res.toString());
+	public void releaseResource(@Data(name = "resourceUnit") ArrayList<String> unitNames) throws DNetException {
+		for (String unit : unitNames) {
+			// get the expression for the allocated amount for this resource
+			Expr res = resourceNameToGivenValue.get(unit);
+			// update cost with returning the value
+			logger.debug("Releasing resource: " + unit + ", the amount allocated was " + res + ", the resource provider is " + placeNameToResource.get(unit));
+			// update the cost after deallocating the resource
+			placeNameToResource.get(unit).augmentCost(res.toString());
+		}
 	}
 
 	// for each place which has tokens, add its cost - or should it be for each place in general (the case of !=0) ??
@@ -278,7 +279,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 	}
 
 	/**************** End of Transitions *****************/
-	
+
 	/**************** Helper functions *****************/
 	private String createVariableName(Place place, String transitionName) {
 		return place.name() + "-" + transitionName;
@@ -289,9 +290,9 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 	}
 
 	/**************** End of Helper functions *****************/
-	
+
 	/**************** Interface functions *****************/
-	
+
 	@Override
 	public Context getContext() {
 		return context;
@@ -320,5 +321,5 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		}
 		this.specifyCost(resource.name(), resource.cost());
 	}
-	/****************End of  Interface functions *****************/
+	/**************** End of Interface functions *****************/
 }
