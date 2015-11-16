@@ -6,7 +6,6 @@ package io.xtech.bip.activator;
  * Copyright 2012 Crossing-Tech
  */
 
-import akka.actor.ActorSystem;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
@@ -15,15 +14,11 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RoutePolicy;
 import org.bip.api.BIPActor;
 import org.bip.api.BIPEngine;
-import org.bip.api.BIPGlue;
 import org.bip.spec.MemoryMonitor;
 import org.bip.spec.SwitchableRouteDataTransfers;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
-
-import java.util.Hashtable;
 
 public class ServiceActivator implements BundleActivator {
 

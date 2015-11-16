@@ -1,13 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  
-  <parent>
-      <groupId>io.xtech.bip</groupId>
-      <artifactId>bip.usecase.switchableroute.parent</artifactId>
-      <version>0.1.0-SNAPSHOT</version>
-      <relativePath>../bipparent/pom.xml</relativePath>
-  </parent>
-  
+
+    <parent>
+        <groupId>io.xtech.bip</groupId>
+        <artifactId>bip.usecase.switchableroute.parent</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+        <relativePath>../bipparent/pom.xml</relativePath>
+    </parent>
+
   <groupId>io.xtech.bip</groupId>
   
   <artifactId>bip.usecase.switchableroute.engine</artifactId>
@@ -27,11 +27,11 @@
 
     <properties>
         <activator>io.xtech.bip.BIPEngineFactory</activator>
-        <osgi.private>io.xtech.bip.*, org.bip.engine, org.bip.engine.api, net.sf.javabdd</osgi.private>
+        <osgi.private>io.xtech.bip, org.bip.engine, org.bip.engine.api, net.sf.javabdd</osgi.private>
         <osgi.import>!sun.misc, org.bip.api, jdd.bdd; resolution:=optional, jdd.util; resolution:=optional, *</osgi.import>
-<!--         <osgi.export>org.bip.engine, org.bip.engine.api</osgi.export> -->
     </properties>
  		
+
     <dependencies>
 
          <dependency>
@@ -86,7 +86,7 @@
                         <Private-Package>${osgi.private}</Private-Package>
                         <Require-Bundle>${osgi.bundles}</Require-Bundle>
                         <Include-Resource>src/main/resources</Include-Resource>
-<!--                    <Spring-Context>*;publish-context:=false;create-asynchronously:=true</Spring-Context>&gt;-->                        <Include-Resource>src/main/resources</Include-Resource>
+<!--                    <Spring-Context>*;publish-context:=false;create-asynchronously:=true</Spring-Context>&gt;-->
                     </instructions>
                 </configuration>
             </plugin>

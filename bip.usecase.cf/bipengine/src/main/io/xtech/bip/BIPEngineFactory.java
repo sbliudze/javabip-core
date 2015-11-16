@@ -1,22 +1,10 @@
 package io.xtech.bip;
 
-import java.util.*;
-
-import org.bip.api.BIPActor;
-import org.bip.api.BIPComponent;
+import akka.actor.ActorSystem;
 import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
-import org.bip.api.Port;
-
-import org.bip.engine.BIPCoordinatorImpl;
 import org.bip.engine.DataCoordinatorKernel;
 import org.bip.engine.api.EngineFactory;
-
-import akka.actor.ActorSystem;
-import akka.actor.TypedActor;
-import akka.actor.TypedProps;
-import akka.japi.Creator;
-import org.osgi.framework.*;
 
 public class BIPEngineFactory implements BundleActivator {
 
@@ -26,8 +14,6 @@ public class BIPEngineFactory implements BundleActivator {
 	public void start(final BundleContext context) throws Exception {
 
 		System.out.println("Client bundle with robust greeting is starting.");
-
-
 
 		Runnable runnable = new Runnable() {
 			public void run() {

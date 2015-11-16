@@ -15,7 +15,7 @@
   <groupId>org.bip.epfl</groupId>
   <artifactId>org.bip.engine</artifactId>
   <version>0.1.0-SNAPSHOT</version>
-  
+
   <name>BIP Engine</name>
   <description>${project.name}</description>
   <packaging>jar</packaging>
@@ -43,7 +43,7 @@
 	    </goals>
 	    <configuration>
 	      <source>
-		project.artifact.setFile(new File(project.basedir, "org.bip.engine-0.1.0-SNAPSHOT.jar"))
+				project.artifact.setFile(new File(project.basedir, "org.bip.engine-0.1.0-SNAPSHOT.jar"))
 	      </source>
 	    </configuration>
 	  </execution>

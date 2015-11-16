@@ -36,10 +36,6 @@
     <bipmodules.version>0.1.0-SNAPSHOT</bipmodules.version>
     <bip.core.version>0.1.0-SNAPSHOT</bip.core.version>
 
-<!--
-    <org.bip.lsr.version>0.1.0-SNAPSHOT</org.bip.lsr.version>
--->
-
     <org.bip.executor.impl.version>0.1.0-SNAPSHOT</org.bip.executor.impl.version>
     <org.bip.api.version>0.1.0-SNAPSHOT</org.bip.api.version>
     <org.bip.executor.version>0.1.0-SNAPSHOT</org.bip.executor.version>
