@@ -53,6 +53,11 @@ public class ServiceActivator implements BundleActivator {
             BIPActor actor2 = engine.register(route2, "2", true);
             BIPActor actor3 = engine.register(route3, "3", true);
 
+            MemoryMonitor routeOnOffMonitor = new MemoryMonitor(200);
+            final BIPActor actor4 = engine.register(routeOnOffMonitor, "monitor", true);
+
+            System.out.println("RouteMonitor register and actor reference " + actor4);
+
             final RoutePolicy routePolicy1 = createRoutePolicy(actor1);
             final RoutePolicy routePolicy2 = createRoutePolicy(actor2);
             final RoutePolicy routePolicy3 = createRoutePolicy(actor3);
@@ -80,8 +85,7 @@ public class ServiceActivator implements BundleActivator {
                 e.printStackTrace();
             }
 
-            MemoryMonitor routeOnOffMonitor = new MemoryMonitor(200);
-            final BIPActor executorM = engine.register(routeOnOffMonitor, "monitor", true);
+
 
             System.out.println("Bundle providing BIP Modules for Simple usecase is started.");
 

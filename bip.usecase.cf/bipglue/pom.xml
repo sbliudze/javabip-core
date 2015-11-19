@@ -5,7 +5,7 @@
         <groupId>io.xtech.bip</groupId>
         <artifactId>bip.usecase.switchableroute.parent</artifactId>
         <version>0.1.0-SNAPSHOT</version>
-        <relativePath>../bipparent/pom.xml</relativePath>
+        <relativePath>../bipparent</relativePath>
     </parent>
 
     <description>
@@ -15,13 +15,12 @@
     <name>BIP :: CF :: BIPGlue :: switchableroute </name>
 
     <artifactId>bip.usecase.switchableroute.bipglue</artifactId>
-    <version>${bipglue.version}</version>
 
     <packaging>bundle</packaging>
 
     <properties>
         <activator>io.xtech.bip.BIPGlueFactory</activator>
-        <osgi.private>io.xtech.bip.*</osgi.private>
+        <osgi.private>io.xtech.bip</osgi.private>
         <osgi.import>*</osgi.import>
     </properties>
  		
@@ -37,6 +36,14 @@
     		<groupId>org.bip</groupId>
     		<artifactId>org.bip.api</artifactId>
     	</dependency>
+        <dependency>
+            <groupId>org.bip</groupId>
+            <artifactId>org.bip.glue</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.bip</groupId>
+            <artifactId>org.bip.spec.examples</artifactId>
+        </dependency>
 
     </dependencies>
 
@@ -86,38 +93,5 @@
 
         </plugins>
     </build>
-
-
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-    <!-- Remote repositories declarations -->
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-
-    <!--
-	These repositories should be declared in a
-	master POM in a maven settings.xml file.
-    -->
-
-    <!--pluginRepositories>
-        <pluginRepository>
-            <id>maven-repo</id>
-            <name>maven repo</name>
-            <url>http://repo1.maven.org/maven2/</url>
-        </pluginRepository>
-
-    </pluginRepositories-->
-
-<!--    <repositories>
-        <repository>
-            <id>maven-repo</id>
-            <name>maven repo</name>
-            <url>http://repo1.maven.org/maven2/</url>
-        </repository>
-        <repository>
-            <id>fusesource.releases</id>
-            <name>FuseSource Releases Repository</name>
-            <url>http://repo.fusesource.com/maven2/</url>
-        </repository>
-
-    </repositories>-->
 
 </project>

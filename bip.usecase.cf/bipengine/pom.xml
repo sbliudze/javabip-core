@@ -5,14 +5,12 @@
         <groupId>io.xtech.bip</groupId>
         <artifactId>bip.usecase.switchableroute.parent</artifactId>
         <version>0.1.0-SNAPSHOT</version>
-        <relativePath>../bipparent/pom.xml</relativePath>
+        <relativePath>../bipparent</relativePath>
     </parent>
 
-  <groupId>io.xtech.bip</groupId>
-  
   <artifactId>bip.usecase.switchableroute.engine</artifactId>
   
-  <version>${bipengine.version}</version>
+  <version>0.1.0-SNAPSHOT</version>
   
   <name>BIP :: BIP Factory</name>
 
@@ -29,6 +27,7 @@
         <activator>io.xtech.bip.BIPEngineFactory</activator>
         <osgi.private>io.xtech.bip, org.bip.engine, org.bip.engine.api, net.sf.javabdd</osgi.private>
         <osgi.import>!sun.misc, org.bip.api, jdd.bdd; resolution:=optional, jdd.util; resolution:=optional, *</osgi.import>
+        <osgi.embed.depdendencies>akka-actor_${scala.binary.version}</osgi.embed.depdendencies>
     </properties>
  		
 
@@ -53,7 +52,57 @@
     		<groupId>com.typesafe.akka</groupId>
     		<artifactId>akka-actor_${scala.binary.version}</artifactId>
     	</dependency>
-        
+
+
+
+
+        <dependency>
+            <groupId>org.bip</groupId>
+            <artifactId>org.bip.spec.examples</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.bip</groupId>
+            <artifactId>org.bip.executor.impl</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-actor_${scala.binary.version}</artifactId>
+        </dependency>
+
+
     </dependencies>
 
     <reporting>
@@ -73,6 +122,7 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
+                <version>3.0.0</version>
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
@@ -86,6 +136,7 @@
                         <Private-Package>${osgi.private}</Private-Package>
                         <Require-Bundle>${osgi.bundles}</Require-Bundle>
                         <Include-Resource>src/main/resources</Include-Resource>
+                        <Embed-Dependency>${osgi.embed.depdendencies}</Embed-Dependency>
 <!--                    <Spring-Context>*;publish-context:=false;create-asynchronously:=true</Spring-Context>&gt;-->
                     </instructions>
                 </configuration>
@@ -95,45 +146,13 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 
         </plugins>
     </build>
 
-
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-    <!-- Remote repositories declarations -->
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-
-    <!--
-	These repositories should be declared in a
-	master POM in a maven settings.xml file.
-    -->
-
-    <!--pluginRepositories>
-        <pluginRepository>
-            <id>maven-repo</id>
-            <name>maven repo</name>
-            <url>http://repo1.maven.org/maven2/</url>
-        </pluginRepository>
-
-    </pluginRepositories-->
-
-<!--    <repositories>
-        <repository>
-            <id>maven-repo</id>
-            <name>maven repo</name>
-            <url>http://repo1.maven.org/maven2/</url>
-        </repository>
-        <repository>
-            <id>fusesource.releases</id>
-            <name>FuseSource Releases Repository</name>
-            <url>http://repo.fusesource.com/maven2/</url>
-        </repository>
-
-    </repositories>-->
 
 </project>

@@ -8,7 +8,7 @@
       <groupId>io.xtech.bip</groupId>
       <artifactId>bip.usecase.switchableroute.parent</artifactId>
       <version>0.1.0-SNAPSHOT</version>
-      <relativePath>../bipparent/pom.xml</relativePath>
+      <relativePath>../bipparent</relativePath>
   </parent>
 
   <description>
@@ -17,7 +17,7 @@
 
   <groupId>io.xtech.bip</groupId>
   <artifactId>bip.usecase.switchableroute.bipmodules</artifactId>
-  <version>${bipmodules.version}</version>
+  <version>0.1.0-SNAPSHOT</version>
   
   <packaging>bundle</packaging>
 

@@ -1,6 +1,9 @@
 package io.xtech.bip;
 
 import org.bip.api.BIPGlue;
+import org.bip.glue.TwoSynchronGlueBuilder;
+import org.bip.spec.MemoryMonitor;
+import org.bip.spec.SwitchableRouteDataTransfers;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -30,7 +33,7 @@ public class BIPGlueFactory implements BundleActivator {
 		try {
 			java.util.Hashtable<String, String> properties = new Hashtable<String, String>();
 			properties.put("domain.name", "switchable.route");
-			context.registerService(BIPGlue.class.getName(), glue, properties);
+			context.registerService(BIPGlue.class.getName(), bipGlue, properties);
 		}
 		catch (Exception ex) {
 			System.out.println(ex);
