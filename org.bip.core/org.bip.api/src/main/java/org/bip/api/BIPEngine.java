@@ -74,4 +74,6 @@ public interface BIPEngine {
 
 	void initialize();
 	
+	void initialize();
+
 }
