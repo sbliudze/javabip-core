@@ -1,6 +1,7 @@
 package org.bip.resources;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,9 +12,14 @@ import com.microsoft.z3.IntExpr;
 
 public class DNet implements ContextProvider {
 
+	public HashMap<ArrayList<String>, ArrayList<String>> resourceDependencies;
+	
 	private ArrayList<Place> places;
 	private ArrayList<Transition> transitions;
 	private HashMap<String, Transition> nameToTransition;
+	public HashMap<String, ArrayList<String>> placeNameToTransitionNames;
+	public HashMap<String, ArrayList<String>> transitionNameToPostplacesNames;
+	public HashMap<String, ArrayList<String>> placeNameToPostplacesNames;
 	public HashMap<String, Place> nameToPlace;
 	private ArrayList<InhibitorArc> inhibitors;
 	Context ctx;
@@ -23,6 +29,8 @@ public class DNet implements ContextProvider {
 	/* do something with the context */
 
 	// ctx.dispose();
+	
+	/**************** Constructors area *****************/
 
 	public DNet() {
 		places = new ArrayList<Place>();
@@ -30,6 +38,10 @@ public class DNet implements ContextProvider {
 		inhibitors = new ArrayList<InhibitorArc>();
 		nameToPlace = new HashMap<String, Place>();
 		nameToTransition = new HashMap<String, Transition>();
+		resourceDependencies = new HashMap<ArrayList<String>, ArrayList<String>>();
+		placeNameToTransitionNames = new HashMap<String, ArrayList<String>>();
+		transitionNameToPostplacesNames = new HashMap<String, ArrayList<String>>();
+		placeNameToPostplacesNames = new  HashMap<String, ArrayList<String>>();
 	}
 
 	public void setContext(Context context) {
@@ -43,6 +55,15 @@ public class DNet implements ContextProvider {
 		// conflict-freedom
 	}
 	
+	public void reInit() {
+		for (Transition transition : transitions)
+			transition.reInit();
+	}
+	
+	/************************************************/
+	
+	/**************** Creation area *****************/
+	
 	public Place addPlace(String placeName) {
 		if (!nameToPlace.containsKey(placeName)) {
 			Place place = new Place(placeName);
@@ -54,24 +75,47 @@ public class DNet implements ContextProvider {
 	}
 
 	public void addTransition(String transitionName, ArrayList<Place> inPlaces, ArrayList<Place> outPlaces) throws DNetException {
-		for (Place place : inPlaces) {
-			if (!places.contains(place)) {
-				throw new DNetException("The prePlace \"" + place.name() + "\" of transition \"" + transitionName + "\" is not among the places of the DNet.");
-			}
-		}
-		for (Place place : outPlaces) {
-			if (!places.contains(place)) {
-				throw new DNetException("The postPlace " + place.name() + " of transition " + transitionName + "is not among the places of the DNet.");
-			}
-		}
-
+		createHelperStructures(transitionName, inPlaces, outPlaces);
 		Transition tr = new Transition(transitionName, inPlaces, outPlaces);
 		this.transitions.add(tr);
 		this.nameToTransition.put(transitionName, tr);
 	}
 
-	public void addTransition(String transitionName, ArrayList<Place> inPlaces, ArrayList<Place> outPlaces, Constraint constraint) {
+	private void createHelperStructures(String transitionName, ArrayList<Place> inPlaces, ArrayList<Place> outPlaces) throws DNetException {
+		ArrayList<String> ins = new ArrayList<String>();
+
+		ArrayList<String> outs = new ArrayList<String>();
+		for (Place place : outPlaces) {
+			outs.add(place.name());
+			if (!places.contains(place)) {
+				throw new DNetException("The postPlace " + place.name() + " of transition " + transitionName + "is not among the places of the DNet.");
+			}
+		}
+		for (Place place : inPlaces) {
+			ins.add(place.name());
+			if (!placeNameToPostplacesNames.containsKey(place.name())) {
+				placeNameToPostplacesNames.put(place.name(), outs);
+			} else {
+				placeNameToTransitionNames.get(place.name()).addAll(outs);
+			}
+		
+			if (!places.contains(place)) {
+				throw new DNetException("The prePlace \"" + place.name() + "\" of transition \"" + transitionName + "\" is not among the places of the DNet.");
+			}
+			
+			if (!placeNameToTransitionNames.containsKey(place.name())) {
+				placeNameToTransitionNames.put(place.name(), new ArrayList<String>(Arrays.asList(transitionName)));
+			} else {
+				placeNameToTransitionNames.get(place.name()).add(transitionName);
+			}
+		}
+		resourceDependencies.put(ins, outs);
+		transitionNameToPostplacesNames.put(transitionName, outs);
+	}
+	
+	public void addTransition(String transitionName, ArrayList<Place> inPlaces, ArrayList<Place> outPlaces, Constraint constraint) throws DNetException {
 		constraint.addContext(ctx);
+		createHelperStructures(transitionName, inPlaces, outPlaces);
 		Transition tr = new Transition(transitionName, inPlaces, outPlaces, constraint);
 		this.transitions.add(tr);
 		this.nameToTransition.put(transitionName, tr);
@@ -84,17 +128,22 @@ public class DNet implements ContextProvider {
 		tr.addInhibitor(inh);
 		inhibitors.add(inh);
 	}
+	
+	
+	/************************************************/
+	
+	/******************* Running *******************/
 
 	public ArrayList<BoolExpr> run(HashMap<Place, ArrayList<IntExpr>> placeVariables, HashMap<Place, ArrayList<Transition>> placeTokens) throws DNetException {
 		ArrayList<BoolExpr> dependencyConstraints = new ArrayList<BoolExpr>();
 		
 		ArrayList<Transition> disabled = new ArrayList<Transition>();
-
 		// TODO make terminating run
 		return findEnabledAndFire(placeVariables, placeTokens, dependencyConstraints, disabled);
 		//disabled.clear();
 		//return dependencyConstraints;
 	}
+	
 
 	//TODO check it works correctly
 	private ArrayList<BoolExpr> findEnabledAndFire(HashMap<Place, ArrayList<IntExpr>> placeVariables, HashMap<Place, ArrayList<Transition>> placeTokens,
@@ -102,7 +151,6 @@ public class DNet implements ContextProvider {
 		for (Transition transition : transitions) {
 			if (!disabled.contains(transition)) {
 				if (transition.enabled(placeTokens)) {
-					System.out.println("Transition " + transition.name() + " enabled with tokens " + placeTokens);
 					transition.disable();
 					disabled.add(transition);
 					Map<String, ArithExpr> stringtoConstraintVar = new HashMap<String, ArithExpr>();
@@ -117,7 +165,6 @@ public class DNet implements ContextProvider {
 
 						IntExpr var = createIntVariable(ctx, variableName);
 						placeVariables.get(place).add(var);
-
 						stringtoConstraintVar.put(place.name(), var);
 
 						// TODO if a postplace is in the preplaces -?
@@ -155,6 +202,34 @@ public class DNet implements ContextProvider {
 		return (IntExpr) ctx.mkConst(ctx.mkSymbol(name), ctx.getIntSort());
 	}
 	
+	/************************************************/
+
+	/******************* Getters ********************/
+
+	@Override
+	public Context getContext() {
+		return ctx;
+	}
+
+	public ArrayList<Place> places() {
+		return places;
+	}
+
+	public Place getPlace(String placeName) {
+		return nameToPlace.get(placeName);
+	}
+	
+	public ArrayList<String> getDependentResources(String resource) {
+		ArrayList<String> result = new ArrayList<String>();
+		for (ArrayList<String> inResources : resourceDependencies.keySet()) {
+			if (inResources.contains(resource))
+				result.addAll(resourceDependencies.get(inResources));
+		}
+		return result;
+	}
+
+	/************************************************/
+	
 	public void print() {
 		System.out.println("DNet consists of: ");
 		System.out.println(places.size() + " places: ");
@@ -166,14 +241,5 @@ public class DNet implements ContextProvider {
 		for (Transition tr : transitions) {
 			System.out.println(tr + " ");
 		}
-	}
-
-	@Override
-	public Context getContext() {
-		return ctx;
-	}
-	
-	public ArrayList<Place> places() {
-		return places;
 	}
 }
