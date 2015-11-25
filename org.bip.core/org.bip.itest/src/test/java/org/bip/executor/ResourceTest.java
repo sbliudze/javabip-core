@@ -78,12 +78,14 @@ public class ResourceTest {
 			public void configure() {
 				 synchron(ComponentNeedingResource.class, "getResource").to(AllocatorImpl.class,
 						 "request");
+				 synchron(ComponentNeedingResource.class, "release").to(AllocatorImpl.class,
+						 "release");
 				 
-					port(ComponentNeedingResource.class, "release").acceptsNothing();
-					port(ComponentNeedingResource.class, "release")	.requiresNothing();
+				//	port(ComponentNeedingResource.class, "release").acceptsNothing();
+				//	port(ComponentNeedingResource.class, "release")	.requiresNothing();
 				 
 				 data(ComponentNeedingResource.class, "utility").to(AllocatorImpl.class, "request");
-
+				 data(ComponentNeedingResource.class, "resourceUnit").to(AllocatorImpl.class, "resourceUnit");
 			}
 
 		}.build();
@@ -92,11 +94,14 @@ public class ResourceTest {
 		AllocatorImpl alloc = new AllocatorImpl(dnetSpec); 
 		
 		
-		ComponentNeedingResource aComp = new ComponentNeedingResource();
-	
-		BIPActor actor = engine.register(aComp, "resourceNeeder", true); 
+		ComponentNeedingResource aComp = new ComponentNeedingResource(128);
+		ComponentNeedingResource bComp = new ComponentNeedingResource(100);
+		
+		BIPActor actor1 = engine.register(aComp, "resourceNeeder1", true); 
+		BIPActor actor2 = engine.register(bComp, "resourceNeeder2", true); 
 		BIPActor allocatorActor = engine.register(alloc, "allocator", true); 
 		aComp.setAllocator(allocatorActor);
+		bComp.setAllocator(allocatorActor);
 		ResourceProvider memory = new Memory(256);
 		ResourceProvider processor = new Processor();
 		ResourceProvider bus = new Bus(128);
