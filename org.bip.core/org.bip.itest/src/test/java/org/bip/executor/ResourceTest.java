@@ -96,7 +96,6 @@ public class ResourceTest {
 		
 		ComponentNeedingResource aComp = new ComponentNeedingResource(128);
 		ComponentNeedingResource bComp = new ComponentNeedingResource(100);
-		
 
 		BIPActor actor1 = engine.register(aComp, "resourceNeeder1", true); 
 		BIPActor actor2 = engine.register(bComp, "resourceNeeder2", true); 

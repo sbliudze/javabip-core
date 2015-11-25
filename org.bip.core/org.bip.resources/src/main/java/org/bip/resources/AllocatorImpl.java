@@ -303,7 +303,6 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 			}
 		}
 		return true;
-
 	}
 
 	// for each place which has tokens, add its cost - or should it be for each place in general (the case of !=0) ??

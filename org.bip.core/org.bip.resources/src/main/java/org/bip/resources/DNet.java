@@ -11,8 +11,6 @@ import com.microsoft.z3.Context;
 import com.microsoft.z3.IntExpr;
 
 public class DNet implements ContextProvider {
-
-
 	public HashMap<ArrayList<String>, ArrayList<String>> resourceDependencies;
 	
 	private ArrayList<Place> places;
@@ -30,6 +28,8 @@ public class DNet implements ContextProvider {
 	/* do something with the context */
 
 	// ctx.dispose();
+	
+	/**************** Constructors area *****************/
 
 	
 	/**************** Constructors area *****************/
@@ -39,7 +39,6 @@ public class DNet implements ContextProvider {
 		inhibitors = new ArrayList<InhibitorArc>();
 		nameToPlace = new HashMap<String, Place>();
 		nameToTransition = new HashMap<String, Transition>();
-
 		resourceDependencies = new HashMap<ArrayList<String>, ArrayList<String>>();
 		placeNameToTransitionNames = new HashMap<String, ArrayList<String>>();
 		transitionNameToPostplacesNames = new HashMap<String, ArrayList<String>>();
@@ -140,12 +139,12 @@ public class DNet implements ContextProvider {
 		ArrayList<BoolExpr> dependencyConstraints = new ArrayList<BoolExpr>();
 		
 		ArrayList<Transition> disabled = new ArrayList<Transition>();
-
 		// TODO make terminating run
 		return findEnabledAndFire(placeVariables, placeTokens, dependencyConstraints, disabled);
 		//disabled.clear();
 		//return dependencyConstraints;
 	}
+	
 
 
 	//TODO check it works correctly
@@ -154,7 +153,6 @@ public class DNet implements ContextProvider {
 		for (Transition transition : transitions) {
 			if (!disabled.contains(transition)) {
 				if (transition.enabled(placeTokens)) {
-
 					transition.disable();
 					disabled.add(transition);
 					Map<String, ArithExpr> stringtoConstraintVar = new HashMap<String, ArithExpr>();
@@ -169,7 +167,6 @@ public class DNet implements ContextProvider {
 
 						IntExpr var = createIntVariable(ctx, variableName);
 						placeVariables.get(place).add(var);
-
 						stringtoConstraintVar.put(place.name(), var);
 
 						// TODO if a postplace is in the preplaces -?
@@ -235,7 +232,6 @@ public class DNet implements ContextProvider {
 
 	/************************************************/
 	
-
 	public void print() {
 		System.out.println("DNet consists of: ");
 		System.out.println(places.size() + " places: ");

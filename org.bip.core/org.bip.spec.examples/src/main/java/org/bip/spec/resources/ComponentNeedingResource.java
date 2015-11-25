@@ -87,7 +87,15 @@ public class ComponentNeedingResource implements ResourceAware {
 	public String utility() {
 		return utility;
 	}
-	
+
+	@Data(name = "resourceUnit", accessTypePort = AccessType.any)
+	public ArrayList<String> releasedResources() {
+		ArrayList<String> dataRelease = new ArrayList<String>();
+		dataRelease.add("p");
+		dataRelease.add("m");
+		return dataRelease;
+	}
+
 	@Override
 	public void setAllocator(BIPActor allocatorExecutor) {
 		this.allocatorExecutor = allocatorExecutor;
