@@ -33,7 +33,6 @@
 	<module>org.bip.executor.impl</module>
 	<module>org.bip.spec.examples</module>
 	<module>org.bip.itest</module>
-	<module>org.bip.kar</module>
   </modules>
    
 </project>
