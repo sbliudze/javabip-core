@@ -101,20 +101,6 @@
       <version>2.12.4</version>
     </plugin>
 
-<!--
-    &lt;!&ndash; deactivate the @ for resources filtering to keep only the ${...} &ndash;&gt;
-    <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-resources-plugin</artifactId>
-      <configuration>
-        <useDefaultDelimiters>false</useDefaultDelimiters>
-        <delimiters>
-          <delimiter>${*}</delimiter>
-        </delimiters>
-      </configuration>
-    </plugin>
--->
-
 
   </plugins>
 
@@ -124,22 +110,6 @@
 
   <dependencyManagement>
     <dependencies>
-
-      <dependency>
-        <groupId>io.xtech.cf.project.dependencies</groupId>
-        <artifactId>cf-project-dependencies</artifactId>
-        <version>${cf.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>io.xtech.cf.features.dependencies</groupId>
-        <artifactId>cf-features-dependencies</artifactId>
-        <version>${cf.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
 
       <dependency>
         <groupId>org.bip</groupId>
