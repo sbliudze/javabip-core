@@ -10,8 +10,7 @@ import java.util.ArrayList;
 import org.bip.api.BIPActor;
 import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
-import org.bip.engine.BIPCoordinatorImpl;
-import org.bip.engine.api.EngineFactory;
+import org.bip.engine.factory.EngineFactory;
 import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
 import org.bip.glue.GlueBuilder;
 import org.bip.glue.TwoSynchronGlueBuilder;
@@ -75,7 +74,7 @@ public class TelephonicTest {
 	public void test5()
 	{
 		
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
+
 
 		//BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
@@ -88,6 +87,9 @@ public class TelephonicTest {
 			}
 
 		}.build();
+
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
+
 		engine.specifyGlue(bipGlue);
 
 		int n=5; 
@@ -190,8 +192,6 @@ public class TelephonicTest {
 	@Test
 	public void test10()
 	{
-		
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
 
 		// BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
@@ -204,6 +204,9 @@ public class TelephonicTest {
 			}
 
 		}.build();
+
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
+
 		engine.specifyGlue(bipGlue);
 		
 		int n=10; 
@@ -331,8 +334,6 @@ public class TelephonicTest {
 	@Test
 	public void test15()
 	{
-		
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
 
 		// BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
@@ -345,6 +346,10 @@ public class TelephonicTest {
 			}
 
 		}.build();
+
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
+
+
 		engine.specifyGlue(bipGlue);
 		
 		int n=15; 
@@ -497,7 +502,7 @@ public class TelephonicTest {
 	public void test20()
 	{
 		
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
+
 
 		// BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
@@ -510,6 +515,9 @@ public class TelephonicTest {
 			}
 
 		}.build();
+
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
+
 		engine.specifyGlue(bipGlue);
 		
 		int n=20; 
@@ -687,7 +695,7 @@ public class TelephonicTest {
 	public void test25()
 	{
 		
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
+
 
 		// BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
@@ -700,6 +708,9 @@ public class TelephonicTest {
 			}
 
 		}.build();
+
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
+
 		engine.specifyGlue(bipGlue);
 		
 		int n=25; 
@@ -902,7 +913,7 @@ public class TelephonicTest {
 	public void test30()
 	{
 		
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
+
 
 		// BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
@@ -915,6 +926,9 @@ public class TelephonicTest {
 			}
 
 		}.build();
+
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
+
 		engine.specifyGlue(bipGlue);
 		
 		int n=30; 
@@ -1142,7 +1156,7 @@ public class TelephonicTest {
 	public void test35()
 	{
 		
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
+
 
 		// BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
@@ -1155,6 +1169,7 @@ public class TelephonicTest {
 			}
 
 		}.build();
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
 		engine.specifyGlue(bipGlue);
 		
 		int n=35; 
@@ -1407,7 +1422,7 @@ public class TelephonicTest {
 	public void test40()
 	{
 		
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
+
 
 		// BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
@@ -1420,6 +1435,7 @@ public class TelephonicTest {
 			}
 
 		}.build();
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
 		engine.specifyGlue(bipGlue);
 		
 		int n=40; 
@@ -1697,7 +1713,7 @@ public class TelephonicTest {
 	public void test45()
 	{
 		
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
+
 
 		// BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
@@ -1710,6 +1726,9 @@ public class TelephonicTest {
 			}
 
 		}.build();
+
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
+
 		engine.specifyGlue(bipGlue);
 		
 		int n = 45;
@@ -2013,7 +2032,7 @@ public class TelephonicTest {
 	public void test50()
 	{
 		
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
+
 
 		// BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
@@ -2026,6 +2045,7 @@ public class TelephonicTest {
 			}
 
 		}.build();
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
 		engine.specifyGlue(bipGlue);
 		
 		int n=50; 

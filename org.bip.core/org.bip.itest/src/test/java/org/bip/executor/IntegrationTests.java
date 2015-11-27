@@ -22,8 +22,7 @@ import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
 import org.bip.api.PortBase;
 import org.bip.api.PortType;
-import org.bip.engine.BIPCoordinatorImpl;
-import org.bip.engine.api.EngineFactory;
+import org.bip.engine.factory.EngineFactory;
 import org.bip.exceptions.BIPException;
 import org.bip.glue.GlueBuilder;
 import org.bip.glue.TwoSynchronGlueBuilder;
@@ -106,10 +105,10 @@ public class IntegrationTests {
 	@Test
 	public void testBehaviourBuilding() throws BIPException {
 
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
-		
 		// get Glue object from xml file
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueExecutableBehaviour.xml");
+
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
 
 		SwitchableRouteExecutableBehavior route1 = new SwitchableRouteExecutableBehavior("1");
 		SwitchableRouteExecutableBehavior route2 = new SwitchableRouteExecutableBehavior("2");
@@ -184,12 +183,6 @@ public class IntegrationTests {
 	@Test
 	public void testEnforceableSpontaneous() throws BIPException {
 
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
-		
-		final int noSpontaneousToBeSend = 5;
-		final int noOfMilisecondsBetweenS = 1000;
-		final int executorLoopDelay = 1000;
-
 		BIPGlue bipGlue = new GlueBuilder() {
 			@Override
 			public void configure() {
@@ -203,6 +196,14 @@ public class IntegrationTests {
 			}
 
 		}.build();
+
+
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
+		
+		final int noSpontaneousToBeSend = 5;
+		final int noOfMilisecondsBetweenS = 1000;
+		final int executorLoopDelay = 1000;
+
 
 
 		TestSpecEnforceableSpontaneous component1 = new TestSpecEnforceableSpontaneous();
@@ -261,11 +262,6 @@ public class IntegrationTests {
 	@Test
 	public void testEnforceableSpontaneous2() throws BIPException {
 
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
-		
-		final int noSpontaneousToBeSend = 1;
-		final int noOfMilisecondsBetweenS = 1000;
-
 		BIPGlue bipGlue = new GlueBuilder() {
 			@Override
 			public void configure() {
@@ -279,6 +275,13 @@ public class IntegrationTests {
 			}
 
 		}.build();
+
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
+		
+		final int noSpontaneousToBeSend = 1;
+		final int noOfMilisecondsBetweenS = 1000;
+
+
 
 		// bipGlue.toXML(System.out);
 		
@@ -361,11 +364,7 @@ public class IntegrationTests {
 		 * treated to be able to have enforceable transition enabled.
 		 */
 
-		final int noIterations = 5;
-		final int noOfMilisecondsBetweenS = 1000;
-		// final int executorLoopDelay = 1000;
 
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
 		
 		BIPGlue bipGlue = new GlueBuilder() {
 			@Override
@@ -389,6 +388,12 @@ public class IntegrationTests {
 			}
 
 		}.build();
+
+		final int noIterations = 5;
+		final int noOfMilisecondsBetweenS = 1000;
+		// final int executorLoopDelay = 1000;
+
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
 
 		// TODO, make it into a separate test that does test round trip to-from xml.
 		ByteArrayOutputStream bipGlueOutputStream = new ByteArrayOutputStream();
@@ -476,11 +481,7 @@ public class IntegrationTests {
 		 * ArrayIndexOutOfBoundException.
 		 */
 
-		final int noIterations = 5;
-		final int noOfMilisecondsBetweenS = 1000;
 
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
-		
 		BIPGlue bipGlue = new GlueBuilder() {
 			@Override
 			public void configure() {
@@ -503,6 +504,12 @@ public class IntegrationTests {
 			}
 
 		}.build();
+
+		final int noIterations = 5;
+		final int noOfMilisecondsBetweenS = 1000;
+
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
+
 
 		// Component P that does not need enable signals.
 
@@ -593,8 +600,6 @@ public class IntegrationTests {
 		final int noOfMilisecondsBetweenS = 10;
 		final int executorLoopDelay = 1000;
 
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
-		
 		BIPGlue bipGlue = new GlueBuilder() {
 			@Override
 			public void configure() {
@@ -609,6 +614,10 @@ public class IntegrationTests {
 			}
 
 		}.build();
+
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
+		
+
 
 		// Component P that does not need enable signals.
 
@@ -772,8 +781,6 @@ public class IntegrationTests {
 										// too.
 		final int noOfMilisecondsBetweenS = 1000;
 		final int executorLoopDelay = 1000;
-		
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
 
 		BIPGlue bipGlue = new GlueBuilder() {
 			@Override
@@ -794,6 +801,10 @@ public class IntegrationTests {
 			}
 
 		}.build();
+
+
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
+
 
 		// Component P that does not need enable signals.
 

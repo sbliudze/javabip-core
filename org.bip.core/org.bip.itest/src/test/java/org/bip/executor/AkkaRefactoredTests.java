@@ -12,9 +12,7 @@ import org.bip.api.BIPActor;
 import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
 import org.bip.api.OrchestratedExecutor;
-import org.bip.engine.BIPCoordinatorImpl;
-import org.bip.engine.DataCoordinatorKernel;
-import org.bip.engine.api.EngineFactory;
+import org.bip.engine.factory.EngineFactory;
 import org.bip.exceptions.BIPException;
 import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
 import org.bip.glue.GlueBuilder;
@@ -76,7 +74,7 @@ public class AkkaRefactoredTests {
 			}
 		}.build();
 		
-		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue4SealableData);
 
 		// Two not initialized and one initialized data
 		SealableData<Integer> data1 = new SealableData<Integer>();
@@ -120,9 +118,11 @@ public class AkkaRefactoredTests {
 	@Test
 	public void bipDataAvailabilityTestWithEnvDataSpontaneous() throws BIPException {
 
-		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
-
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueDataAvailability.xml");
+
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
+
+
 
 		ComponentAWithEnvData componentA = new ComponentAWithEnvData(250);
 		BIPActor actor1 = engine.register(componentA, "compA", true);
@@ -218,10 +218,12 @@ public class AkkaRefactoredTests {
 
 	@Test
 	public void simpleTunnelingProxyTest() {
-		
-		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
 
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueDataAvailability.xml");
+
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
+
+
 
 		ComponentAWithEnvData componentA = new ComponentAWithEnvData(250);
 		
@@ -264,9 +266,11 @@ public class AkkaRefactoredTests {
 	@Test
 	public void bipProxyTest() throws BIPException {
 
-		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
-
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueDataAvailability.xml");
+
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
+
+
 
 		ProperComponentAWithEnvData componentA = new ProperComponentAWithEnvData(250);
 		

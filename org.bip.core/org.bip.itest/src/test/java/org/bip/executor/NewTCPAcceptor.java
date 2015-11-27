@@ -9,9 +9,7 @@ import java.net.ServerSocket;
 import org.bip.api.BIPActor;
 import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
-import org.bip.engine.BIPCoordinatorImpl;
-import org.bip.engine.DataCoordinatorKernel;
-import org.bip.engine.api.EngineFactory;
+import org.bip.engine.factory.EngineFactory;
 import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
 import org.bip.glue.TwoSynchronGlueBuilder;
 import org.bip.spec.pubsub.typed.ClientProxy;
@@ -60,9 +58,6 @@ public class NewTCPAcceptor {
 			ServerSocket tcpacceptor = new ServerSocket(7676);
 
 
-
-		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
-
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
 			public void configure() {
@@ -77,7 +72,7 @@ public class NewTCPAcceptor {
 
 		}.build();
 
-			// bipGlue.toXML(System.out);
+			BIPEngine engine = engineFactory.create("myEngine", bipGlue);
 
 			CommandBuffer buffer = new CommandBuffer(BUFFER_SIZE);
 			BIPActor actorBuffer = engine.register(buffer, "buffer", true);
