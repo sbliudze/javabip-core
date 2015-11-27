@@ -33,15 +33,7 @@
 		<artifactId>org.bip.api</artifactId>
 		<scope>test</scope>
 	</dependency>
-
-<!--
-	<dependency>
-		<groupId>org.bip.epfl</groupId>
-		<artifactId>org.bip.engine</artifactId>
-		<scope>test</scope>
-	</dependency>
--->
-
+	  
 	  <dependency>
 		  <groupId>org.bip.shared</groupId>
 		  <artifactId>org.bip.engine.api</artifactId>
@@ -83,12 +75,6 @@
 		<artifactId>junit</artifactId>
 		<scope>test</scope>
 	</dependency>
-
-	  <dependency>
-		  <groupId>org.bip.shared</groupId>
-		  <artifactId>org.bip.engine.factory</artifactId>
-		  <version>0.1.0-SNAPSHOT</version>
-	  </dependency>
 
   </dependencies>
 
