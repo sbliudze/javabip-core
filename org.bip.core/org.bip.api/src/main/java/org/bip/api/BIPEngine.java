@@ -70,5 +70,8 @@ public interface BIPEngine {
 	 * It starts the execution of BIP engine cycles for the registered BIP components.
 	 */
 	void execute();
+
+
+	void initialize();
 	
 }
