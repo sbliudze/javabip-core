@@ -7,8 +7,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
@@ -18,7 +16,9 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RoutePolicy;
-import org.bip.api.*;
+import org.bip.api.BIPActor;
+import org.bip.api.BIPEngine;
+import org.bip.api.BIPGlue;
 import org.bip.engine.factory.EngineFactory;
 import org.bip.exceptions.BIPException;
 import org.bip.glue.GlueBuilder;
@@ -32,12 +32,14 @@ import org.bip.spec.HanoiGlueBuilder;
 import org.bip.spec.HanoiMonitor;
 import org.bip.spec.InitialServer;
 import org.bip.spec.LeftHanoiPeg;
+import org.bip.spec.Master;
 import org.bip.spec.MemoryMonitor;
 import org.bip.spec.MiddleHanoiPeg;
 import org.bip.spec.PSSComponent;
 import org.bip.spec.Peer;
 import org.bip.spec.RightHanoiPeg;
 import org.bip.spec.Server;
+import org.bip.spec.Slave;
 import org.bip.spec.SwitchableRouteDataTransfers;
 import org.bip.spec.Tracker;
 import org.bip.spec.TwoDataProvider1;
@@ -667,7 +669,79 @@ public class AkkaExecutorTests {
 		assertTrue("CompC has not made any transitions", componentC.noOfTransitions > 0);
 		
 	}
-	
+
+	@Test
+	public void bipMasterSlaveTest() throws BIPException {
+
+		BIPGlue bipGlue = new GlueBuilder() {
+			@Override
+			public void configure() {
+
+				port(Master.class, "req").requires(Slave.class, "get");
+				port(Master.class, "req").accepts(Slave.class, "get");
+
+				port(Master.class, "compute").requires(Slave.class, "work", Slave.class, "work");
+				port(Master.class, "compute").accepts(Slave.class, "work");
+
+				port(Slave.class, "get").requires(Master.class, "req");
+				port(Slave.class, "get").accepts(Master.class, "req");
+
+				port(Slave.class, "work").requires(Master.class, "compute");
+				port(Slave.class, "work").accepts(Master.class, "compute", Slave.class, "work");
+
+				data(Slave.class, "ID").to(Master.class, "slaveID");
+
+			}
+
+		}.build();
+
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
+
+		Master masterA = new Master("masterA");
+		Master masterB = new Master("masterB");
+		Slave slaveA = new Slave("slaveA");
+		Slave slaveB = new Slave("slaveB");
+		Slave slaveC = new Slave("slaveC");
+		Slave slaveD = new Slave("slaveD");
+		Slave slaveE = new Slave("slaveE");
+
+		BIPActor executorMA = engine.register(masterA, "masterA", true);
+
+		BIPActor executorMB = engine.register(masterB, "masterB", true);
+
+		BIPActor executorSA = engine.register(slaveA, "slaveA", true);
+
+		BIPActor executorSB = engine.register(slaveB, "slaveB", true);
+
+		BIPActor executorSC = engine.register(slaveC, "slaveC", true);
+
+		BIPActor executorSD = engine.register(slaveD, "slaveD", true);
+
+		BIPActor executorSE = engine.register(slaveE, "slaveE", true);
+
+		engine.specifyGlue(bipGlue);
+		engine.start();
+
+		engine.execute();
+
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		engine.stop();
+		engineFactory.destroy(engine);
+
+		// assertTrue("CompA has not made any transitions", masterA.noOfTransitions > 2 ||
+		// masterB.noOfTransitions > 2);
+		// assertTrue("CompC has not made any transitions", slaveA.noOfTransitions > 0);
+		// assertTrue("CompB has not made any transitions", slaveB.noOfTransitions > 0);
+		// assertTrue("CompC has not made any transitions", slaveC.noOfTransitions > 0);
+		// assertTrue("CompC has not made any transitions", slaveD.noOfTransitions > 0);
+		// assertTrue("CompC has not made any transitions", slaveE.noOfTransitions > 0);
+
+	}
 	
 	@Test
 	public void akkaExecutorPhilosopherwithDataTest() {
