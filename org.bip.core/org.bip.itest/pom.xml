@@ -60,7 +60,7 @@
 	<dependency>
 		<groupId>org.bip</groupId>
 		<artifactId>org.bip.resources</artifactId>
-		<version>${org.bip.resources.version}</version>
+		<version>0.1.0-SNAPSHOT</version>
 		<scope>test</scope>
 	</dependency>
 
