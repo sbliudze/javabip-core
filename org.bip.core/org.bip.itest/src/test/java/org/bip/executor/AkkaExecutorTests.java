@@ -156,7 +156,7 @@ public class AkkaExecutorTests {
 		MemoryMonitor routeOnOffMonitor = new MemoryMonitor(200);
 		final BIPActor executorM = engine.register(routeOnOffMonitor, "monitor", true);
 
-		engine.specifyGlue(bipGlue);
+//		engine.specifyGlue(bipGlue);
 		engine.start();
 		
 		engine.execute();
@@ -204,7 +204,7 @@ public class AkkaExecutorTests {
 		org.bip.spec.hanoi.HanoiPeg leftMiddleHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(size, false);
 		BIPActor actor5 = engine.register(leftMiddleHanoiPeg, "LeftMiddleHanoiPeg", false);				
 				
-		engine.specifyGlue(bipGlue4Hanoi);
+		// engine.specifyGlue(bipGlue4Hanoi);
 		engine.start();
 
 		engine.execute();
@@ -249,7 +249,7 @@ public class AkkaExecutorTests {
 		org.bip.spec.hanoi.HanoiPeg rightHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(size, true);
 		BIPActor actor3 = engine.register(rightHanoiPeg, "RightHanoiPeg", false);
 		
-		engine.specifyGlue(bipGlue4Hanoi);
+		// engine.specifyGlue(bipGlue4Hanoi);
 		
 		engine.start();
 		
@@ -298,7 +298,7 @@ public class AkkaExecutorTests {
 				size);
 		BIPActor actor4 = engine.register(rightHanoiPeg, "RightHanoiPeg", false);
 
-		engine.specifyGlue(bipGlue4Hanoi);
+		// engine.specifyGlue(bipGlue4Hanoi);
 		engine.start();
 
 		engine.execute();
@@ -345,7 +345,7 @@ public class AkkaExecutorTests {
 				size);
 		BIPActor actor4 = engine.register(rightHanoiPeg, "RightHanoiPeg", false);
 
-		engine.specifyGlue(bipGlue4Hanoi);
+		// engine.specifyGlue(bipGlue4Hanoi);
 		engine.start();
 
 		engine.execute();
@@ -388,7 +388,7 @@ public class AkkaExecutorTests {
 		RightHanoiPeg rightHanoiPeg = new RightHanoiPeg(size);
 		BIPActor actor4 = engine.register(rightHanoiPeg, "rightHanoi", false);
 
-		engine.specifyGlue(bipGlue4Hanoi);
+		// engine.specifyGlue(bipGlue4Hanoi);
 		engine.start();
 
 		engine.execute();
@@ -435,7 +435,7 @@ public class AkkaExecutorTests {
 		RightHanoiPeg rightHanoiPeg = new RightHanoiPeg(size);
 		BIPActor actor4 = engine.register(rightHanoiPeg, "rightHanoi", false);
 
-		engine.specifyGlue(bipGlue4Hanoi);
+		// engine.specifyGlue(bipGlue4Hanoi);
 		engine.start();
 
 		engine.execute();
@@ -489,7 +489,7 @@ public class AkkaExecutorTests {
 		Consumer cComponent = new Consumer(100);
 		BIPActor cExecutor = engine.register(cComponent, "cCompE", true);
 		
-		engine.specifyGlue(bipGlue);
+		// engine.specifyGlue(bipGlue);
 		engine.start();
 
 		
@@ -534,7 +534,7 @@ public class AkkaExecutorTests {
 		final BIPActor executor3 = engine.register(server3, "3", true);
 
 
-		engine.specifyGlue(bipGlue);
+		// engine.specifyGlue(bipGlue);
 		engine.start();
 		engine.execute();
 
@@ -574,7 +574,7 @@ public class AkkaExecutorTests {
 		final BIPActor executor2a = engine.register( peer2a, "21", true);
 		final BIPActor executor2b = engine.register( peer2b, "22", true);
 		
-		engine.specifyGlue(bipGlue);
+		// engine.specifyGlue(bipGlue);
 		engine.start();
 		
 		engine.execute();
@@ -611,7 +611,7 @@ public class AkkaExecutorTests {
 		Consumer consumer = new Consumer(350);
 		BIPActor actor2 = engine.register(consumer, "consumer", true);
 		
-		engine.specifyGlue(bipGlue);
+		// engine.specifyGlue(bipGlue);
 		engine.start();
 
 		engine.execute();
@@ -650,7 +650,7 @@ public class AkkaExecutorTests {
 		BIPActor executorC = engine.register(componentC, "compC", true);
 		
 
-		engine.specifyGlue(bipGlue);
+		// engine.specifyGlue(bipGlue);
 		engine.start();
 
 		engine.execute();
@@ -719,7 +719,7 @@ public class AkkaExecutorTests {
 
 		BIPActor executorSE = engine.register(slaveE, "slaveE", true);
 
-		engine.specifyGlue(bipGlue);
+		// engine.specifyGlue(bipGlue);
 		engine.start();
 
 		engine.execute();
@@ -769,7 +769,7 @@ public class AkkaExecutorTests {
 		BIPActor p2E = engine.register(p2, "p2E", true);
 		BIPActor p3E = engine.register(p3, "p3E", true);
 
-		engine.specifyGlue(bipGlue4Philosophers);
+		// engine.specifyGlue(bipGlue4Philosophers);
 		engine.start();
 
 		engine.execute();
@@ -817,7 +817,7 @@ public class AkkaExecutorTests {
 		final BIPActor executorB = engine.register(componentB, "compB", true);
 		final BIPActor executorC = engine.register(componentC, "compC", true);
 
-		engine.specifyGlue(bipGlue);
+		// engine.specifyGlue(bipGlue);
 		engine.start();
 
 		engine.execute();

@@ -33,7 +33,7 @@
 		<artifactId>org.bip.api</artifactId>
 		<scope>test</scope>
 	</dependency>
-	  
+
 	  <dependency>
 		  <groupId>org.bip.shared</groupId>
 		  <artifactId>org.bip.engine.api</artifactId>
