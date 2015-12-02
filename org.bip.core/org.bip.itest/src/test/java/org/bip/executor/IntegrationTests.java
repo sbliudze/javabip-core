@@ -125,11 +125,8 @@ public class IntegrationTests {
 			}
 
 		}.build();
-
-
-
 		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
-		
+
 		CounterInterface counter = new RouteTransitionCounter();
 		SwitchableRoute route1 = new SwitchableRoute("1");
 		SwitchableRoute route2 = new SwitchableRoute("2");
@@ -208,6 +205,7 @@ public class IntegrationTests {
 
 		// get Glue object from xml file
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueExecutableBehaviour.xml");
+
 
 		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
 		CounterInterface counter = new RouteTransitionCounter();		

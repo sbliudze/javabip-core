@@ -8,11 +8,108 @@
 
   <name>BIP :: Core </name>
 
+<<<<<<< HEAD
 	<scm>
 		<developerConnection>scm:git:git@git.xtech.io/academy/bip.git</developerConnection>
 		<url>https://git.xtech.io/academy/bip.git</url>
 		<tag>HEAD</tag>
 	</scm>
+=======
+   <properties>	
+   
+		<slf4j-api.version>1.5.11</slf4j-api.version>
+ 		<log4j.version>1.2.16</log4j.version>
+ 		<junit.version>4.11</junit.version>
+ 		<antlr4.version>4.0</antlr4.version> 
+ 		<spring-osgi-core.version>1.2.1</spring-osgi-core.version>
+ 		<spring.version>3.1.3.RELEASE</spring.version>  	
+ 		<org.osgi.core.version>4.2.0</org.osgi.core.version> 		
+ 		<camel-core.version>2.10.0.redhat-60024</camel-core.version> 
+ 		<org.bip.engine.version>0.1.0-SNAPSHOT</org.bip.engine.version>
+ 		<org.bip.lsr.version>0.1.0-SNAPSHOT</org.bip.lsr.version>
+ 		<org.bip.executor.impl.version>0.1.0-SNAPSHOT</org.bip.executor.impl.version>
+		<org.bip.api.version>0.1.0-SNAPSHOT</org.bip.api.version>
+		<org.bip.executor.version>0.1.0-SNAPSHOT</org.bip.executor.version>
+		<org.bip.glue.version>0.1.0-SNAPSHOT</org.bip.glue.version>
+		<org.bip.resources.version>0.1.0-SNAPSHOT</org.bip.resources.version>
+		<org.bip.executor.springinosgi.version>0.1.0-SNAPSHOT</org.bip.executor.springinosgi.version>
+ 		<org.bip.jmx.version>0.1.0-SNAPSHOT</org.bip.jmx.version>	
+ 		<org.bip.spec.examples.version>0.1.0-SNAPSHOT</org.bip.spec.examples.version>
+ 		<akka.version>2.1.1</akka.version>
+ 		
+  </properties>
+ 
+  <description>It contains all core packages/functionality of BIP project.</description>
+  
+	<profiles>
+		<profile>
+			<id>ct</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+				<module>org.bip.api</module>
+				<module>org.bip.jmx</module>
+				<module>org.bip.glue</module>
+				<module>org.bip.executor</module>
+				<module>org.bip.executor.impl</module>				
+				<module>org.bip.spec.examples</module>
+				<module>org.bip.itest</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>epfl</id>
+			<modules>
+				<module>org.bip.api</module>
+				<module>org.bip.jmx</module>
+				<module>org.bip.glue</module>
+				<module>org.bip.executor</module>
+				<module>org.bip.executor.impl</module>
+				<module>org.bip.spec.examples</module>
+				<module>org.bip.itest</module>
+				<module>org.bip.resources</module>
+			</modules>
+		</profile>
+	</profiles>
+	
+	<build>
+	
+			<pluginManagement>
+			<plugins>
+      	
+				<plugin>
+					<groupId>org.apache.felix</groupId>
+					<artifactId>maven-bundle-plugin</artifactId>
+					<version>2.3.5</version>
+				</plugin>
+				
+				<plugin>
+    	    		<groupId>org.apache.maven.plugins</groupId>
+        			<artifactId>maven-compiler-plugin</artifactId>
+        			<version>3.1</version>
+        		</plugin>
+        	
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-project-info-reports-plugin</artifactId>
+					<version>2.4</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-report-plugin</artifactId>
+					<version>2.9</version>
+					<executions>
+						<execution>
+							<id>html report for tests</id>
+							<phase>site</phase>
+							<goals>
+								<goal>report</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+>>>>>>> 97e139fc32753573900424407ea9169ebdf85ad2
 
 
   <description>It contains all core packages/functionality of BIP project.</description>

@@ -68,6 +68,7 @@ public class ResourceTest {
 	public void test() throws RecognitionException, IOException, DNetException
 	{
 
+
 		//BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
@@ -86,8 +87,9 @@ public class ResourceTest {
 
 		}.build();
 
+
 		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
-		
+
 		String dnetSpec = "src/test/resources/dnet.txt";
 		AllocatorImpl alloc = new AllocatorImpl(dnetSpec); 
 		
