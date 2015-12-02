@@ -10,9 +10,7 @@ import org.bip.api.BIPActor;
 import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
 import org.bip.api.ResourceProvider;
-import org.bip.engine.BIPCoordinatorImpl;
-import org.bip.engine.DataCoordinatorKernel;
-import org.bip.engine.api.EngineFactory;
+import org.bip.engine.factory.EngineFactory;
 import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
 import org.bip.glue.GlueBuilder;
 import org.bip.glue.TwoSynchronGlueBuilder;
@@ -69,8 +67,6 @@ public class ResourceTest {
 	@Test
 	public void test() throws RecognitionException, IOException, DNetException
 	{
-		
-		BIPEngine engine = engineFactory.create("myEngine", new DataCoordinatorKernel(new BIPCoordinatorImpl(system)));
 
 		//BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
@@ -91,6 +87,8 @@ public class ResourceTest {
 
 		}.build();
 
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
+		
 		String dnetSpec = "src/test/resources/dnet.txt";
 		AllocatorImpl alloc = new AllocatorImpl(dnetSpec); 
 		
