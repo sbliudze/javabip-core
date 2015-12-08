@@ -1,50 +1,30 @@
 package io.xtech.bip;
 
 import akka.actor.ActorSystem;
-import akka.actor.TypedActor;
-import akka.actor.TypedProps;
-import akka.japi.Creator;
-import akka.osgi.ActorSystemActivator;
-import akka.osgi.OsgiActorSystemFactory;
 import com.typesafe.config.*;
-import org.apache.camel.CamelContext;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.bip.api.BIPActor;
-import org.bip.api.BIPEngine;
-import org.bip.api.BIPGlue;
-import org.bip.api.OrchestratedExecutor;
-import org.bip.engine.DataCoordinatorKernel;
-import org.bip.engine.BIPCoordinatorImpl;
-import org.bip.engine.api.EngineFactory;
-import org.bip.executor.ExecutorKernel;
-import org.bip.spec.SwitchableRouteDataTransfers;
+import org.bip.api.*;
+import org.bip.engine.factory.EngineFactory;
 import org.osgi.framework.*;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public class BIPEngineFactory implements BundleActivator {
 
 	// volatile Thread greetingThread;
 
+	ActorSystem actorSystem;
+
+	HashMap<String, BIPEngine> engines = new HashMap<String, BIPEngine>();
+
+	BIPServiceListener bipServiceListener;
+
 	@Override
 	public void start(final BundleContext context) throws Exception {
 
-		System.out.println("Client bundle with robust greeting is starting.");
+		System.out.println("BIP Engine factory bundle listening to BIPGlue services is starting.");
 
-//		Runnable runnable = new Runnable() {
-//			public void run() {
-
-				ClassLoader actorSystemClassLoader = ActorSystem.class.getClassLoader();
-				Config config = ConfigFactory.defaultReference(actorSystemClassLoader);
-
-				ActorSystem actorSystem = ActorSystem.create("BIPActorSystem",  config, actorSystemClassLoader);
 				EngineFactory engineFactory = null;
-				HashMap<String, BIPEngine> engines = new HashMap<String, BIPEngine>();
 
-
-
-/*
 				// Get ActorSystem to create EngineFactory.
 				while (actorSystem == null)	{
 
@@ -52,147 +32,238 @@ public class BIPEngineFactory implements BundleActivator {
 
 						if (ref != null) {
 
-							try {
-
-								actorSystem = (ActorSystem) context.getService(ref);
-
-								if (actorSystem != null) {
-									engineFactory = new EngineFactory(actorSystem);
-								}
-
-								if (actorSystem == null)
-									Thread.sleep(5000);
-
-							} catch (InterruptedException ex) {
-								System.out.println("Intialization thread interrupted without a chance to complete.");
-								return;
-							}
-
-							context.ungetService(ref);
+							actorSystem = (ActorSystem) context.getService(ref); // can still be null.
 
 						}
-					}
-*/
 
-						/////////////
+						if (actorSystem == null) {
 
-						ServiceListener bipGlueListener = new BIPGlueListener(engineFactory, context, actorSystem);
+							ClassLoader actorSystemClassLoader = ActorSystem.class.getClassLoader();
+							Config config = ConfigFactory.defaultReference(actorSystemClassLoader);
 
-						synchronized (bipGlueListener) {
+							actorSystem = ActorSystem.create("BIPActorSystem",  config, actorSystemClassLoader);
 
-							String filter = "(" + Constants.OBJECTCLASS + "="
+						}
+						else
+							System.out.println("Using Actorsystem provided as a service.");
+
+						engineFactory = new EngineFactory(actorSystem);
+						// context.ungetService(ref);
+
+				}
+
+				bipServiceListener = new BIPServiceListener(engineFactory, context, actorSystem);
+
+				synchronized (bipServiceListener) {
+
+					String filter = "(" + Constants.OBJECTCLASS + "="
 									+ BIPGlue.class.getName() + ")";
 
-							try {
-								context.addServiceListener(bipGlueListener, filter);
-								ServiceReference[] refs = context.getServiceReferences(null, filter);
+					try {
+						context.addServiceListener(bipServiceListener, filter);
+						ServiceReference[] refs = context.getServiceReferences(null, filter);
 
-								if (refs != null) {
-									for (ServiceReference r : refs) {
-										bipGlueListener.serviceChanged(
-												new ServiceEvent(ServiceEvent.REGISTERED, r));
-									}
-								}
-
-
-							} catch (InvalidSyntaxException e) {
-								e.printStackTrace();
-								return;
+						if (refs != null) {
+							for (ServiceReference r : refs) {
+								bipServiceListener.serviceChanged(
+									new ServiceEvent(ServiceEvent.REGISTERED, r));
 							}
-
 						}
 
-//			}
-//		};
+					} catch (InvalidSyntaxException e) {
+						e.printStackTrace();
+						return;
+					}
 
-//		greetingThread = new Thread(runnable);
-//		greetingThread.start();
+				}
+
+		synchronized (bipServiceListener) {
+
+			String filter = "(" + Constants.OBJECTCLASS + "="
+					+ BIPSpec.class.getName() + ")";
+
+			try {
+				context.addServiceListener(bipServiceListener, filter);
+				ServiceReference[] refs = context.getServiceReferences(null, filter);
+
+				if (refs != null) {
+					for (ServiceReference r : refs) {
+						bipServiceListener.serviceChanged(
+								new ServiceEvent(ServiceEvent.REGISTERED, r));
+					}
+				}
+
+			} catch (InvalidSyntaxException e) {
+				e.printStackTrace();
+				return;
+			}
+
+		}
+
+
 
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
 
-	//	if (greetingThread != null)
-	//		greetingThread.interrupt();
+		synchronized (bipServiceListener) {
 
+			bipServiceListener.close();
+
+		}
 	}
 
 
-	public class BIPGlueListener implements ServiceListener {
+	public class BIPServiceListener implements ServiceListener {
 
 		private final ActorSystem actorSystem;
 		EngineFactory engineFactory;
 
 		BundleContext context;
 
-		public BIPGlueListener(EngineFactory engineFactory, BundleContext context, ActorSystem actorSystem) {
+		public BIPServiceListener(EngineFactory engineFactory, BundleContext context, ActorSystem actorSystem) {
 			this.engineFactory = engineFactory;
 			this.context = context;
 			this.actorSystem = actorSystem;
 		}
 
 		HashMap<ServiceReference, ServiceRegistration> map = new HashMap<ServiceReference, ServiceRegistration>();
+		HashMap<String, BIPEngine> mapDomainNameEngine = new HashMap<String, BIPEngine>();
+		HashMap<String, HashSet<ServiceReference>> mapEngineSpec = new HashMap<String, HashSet<ServiceReference>>();
+		HashMap<String, Integer> mapEngineRequiredComponents = new HashMap<String, Integer>();
+		HashMap<String, ArrayList<ServiceRegistration>> mapBIPActors = new HashMap<String, ArrayList<ServiceRegistration>>();
 
+		public void close() {
+
+			for (ServiceRegistration serviceRegistration : map.values() ) {
+				BIPEngine engine = (BIPEngine) context.getService( serviceRegistration.getReference() );
+				serviceRegistration.unregister();
+				engine.stop();
+				engineFactory.destroy(engine);
+			}
+
+		}
+
+		public void registerComponent(BIPEngine bipEngine,
+									  BIPSpec spec,
+									  String domainName,
+									  String componentName,
+									  Boolean useAnnotationsBasedSpec) {
+
+			BIPActor bipActor = bipEngine.register(spec, componentName, useAnnotationsBasedSpec);
+
+			Hashtable<String, Object> properties = new Hashtable<String, Object>();
+			properties.put("domain.name", domainName);
+			properties.put("component.name", componentName);
+
+			ServiceRegistration serviceRegistration =
+					context.registerService(BIPActor.class.getName(), bipActor, properties);
+
+			ArrayList<ServiceRegistration> actors = mapBIPActors.get(domainName);
+
+			if (actors == null) {
+				actors = new ArrayList<ServiceRegistration>();
+				mapBIPActors.put(domainName, actors);
+			}
+
+			actors.add(serviceRegistration);
+
+		}
 
 		public synchronized void serviceChanged(ServiceEvent event) {
+
+			Object service = context.getService(event.getServiceReference());
 
 			switch (event.getType()) {
 
 				case ServiceEvent.REGISTERED:
 
-					BIPGlue glue = (BIPGlue) context.getService(event.getServiceReference());
+					if (service instanceof BIPGlue) {
+						BIPGlue glue = (BIPGlue) service;
 
 					if (glue != null) {
-						BIPEngine bipEngine = create(glue, actorSystem);
 
-						Object domainName = event.getServiceReference().getProperty("domain.name");
+						String domainName;
+						Integer noOfComponents;
+
+						try {
+							domainName = event.getServiceReference().getProperty("domain.name").toString();
+							noOfComponents = Integer.valueOf( event.getServiceReference().getProperty("noOfComponents").toString() );
+						}
+						catch (Exception e) {
+							return;
+						}
+
 						Hashtable<String, Object> properties = new Hashtable<String, Object>();
 						properties.put("domain.name", domainName);
+						properties.put("noOfComponents", noOfComponents);
+
+						BIPEngine bipEngine = engineFactory.create((String) domainName, glue);
 
 						try {
 							ServiceRegistration serviceRegistration = context.registerService(BIPEngine.class.getName(), bipEngine, properties);
 							map.put(event.getServiceReference(), serviceRegistration);
-						}
-						catch (Exception ex) {
+							mapDomainNameEngine.put(domainName, bipEngine);
+							mapEngineRequiredComponents.put(domainName, noOfComponents);
+						} catch (Exception ex) {
 							map.remove(event.getServiceReference());
+							mapDomainNameEngine.remove(domainName);
+							mapEngineRequiredComponents.remove(domainName);
+							engineFactory.destroy(bipEngine);
 						}
 
-						// test //
-
-						CamelContext camelContext = new DefaultCamelContext();
-						camelContext.setAutoStartup(false);
-
-						SwitchableRouteDataTransfers route1 = new SwitchableRouteDataTransfers("1", camelContext);
-						SwitchableRouteDataTransfers route2 = new SwitchableRouteDataTransfers("2", camelContext);
-						SwitchableRouteDataTransfers route3 = new SwitchableRouteDataTransfers("3", camelContext);
-
-						System.out.println("Trying to create a Typed actor");
-						System.out.flush();
-
-						final ExecutorKernel executor = new ExecutorKernel(route1, "1", true);
-						OrchestratedExecutor executorActor;
-
-						executorActor = TypedActor.get(actorSystem).typedActorOf(
-								new TypedProps<OrchestratedExecutor>(OrchestratedExecutor.class,
-										new Creator<OrchestratedExecutor>() {
-											public ExecutorKernel create() {
-												return executor;
-											}
-										}), executor.getId());
-
-
-						executor.setProxy(executorActor);
-
-						System.out.println("Typed actor created successfully " + executorActor);
-						System.out.flush();
-
-						executorActor.register(bipEngine);
-
-
-
-						// test //
 					}
+
+					}
+
+					if (service instanceof BIPSpec) {
+						BIPSpec spec = (BIPSpec) service;
+
+						if (spec != null) {
+
+							if (event.getServiceReference().getProperty("domain.name") == null ||
+								event.getServiceReference().getProperty("component.name") == null ||
+								event.getServiceReference().getProperty("annotations") == null)
+								return;
+
+							String domainName = event.getServiceReference().getProperty("domain.name").toString();
+
+							if (mapEngineRequiredComponents.get(domainName) == -1)
+								return;
+
+							HashSet<ServiceReference> specs = mapEngineSpec.get(domainName);
+							if (specs == null) {
+								specs = new HashSet<ServiceReference>();
+								mapEngineSpec.put(domainName, specs);
+							}
+							specs.add(event.getServiceReference());
+
+
+
+							if (mapEngineRequiredComponents.get(domainName) != null &&
+								specs.size() == mapEngineRequiredComponents.get(domainName)) {
+
+								BIPEngine bipEngine = mapDomainNameEngine.get(domainName);
+
+								for (ServiceReference ref : specs) {
+
+									registerComponent(bipEngine,
+											(BIPSpec) context.getService(ref),
+											ref.getProperty("domain.name").toString(),
+											ref.getProperty("component.name").toString(),
+											Boolean.valueOf( ref.getProperty("annotations").toString() ));
+
+								}
+
+								mapEngineRequiredComponents.put(domainName, -1);
+								bipEngine.start();
+								bipEngine.execute();
+
+							}
+						}
+					}
+
 
 
 					break;
@@ -202,12 +273,59 @@ public class BIPEngineFactory implements BundleActivator {
 
 				case ServiceEvent.UNREGISTERING:
 
-					ServiceRegistration serviceRegistration = map.remove(event.getServiceReference());
-					if (serviceRegistration != null) {
+					if (service instanceof BIPGlue) {
+
+						String domainName;
+						Integer noOfComponents;
+
+						try {
+							domainName = event.getServiceReference().getProperty("domain.name").toString();
+							noOfComponents = Integer.valueOf( event.getServiceReference().getProperty("noOfComponents").toString() );
+						}
+						catch (Exception e) {
+							return;
+						}
+
+						ServiceRegistration serviceRegistration = map.remove(event.getServiceReference());
 						BIPEngine engine = (BIPEngine) context.getService( serviceRegistration.getReference() );
+
+						mapDomainNameEngine.remove(domainName);
+						mapEngineSpec.remove(domainName);
+						mapEngineRequiredComponents.remove(domainName);
+
+						for (ServiceRegistration registration : mapBIPActors.get(domainName)) {
+							registration.unregister();
+						}
+
 						serviceRegistration.unregister();
+						engine.stop();
 						engineFactory.destroy(engine);
+
 					}
+
+					if (service instanceof BIPSpec) {
+						BIPSpec spec = (BIPSpec) service;
+
+						if (spec != null) {
+
+							if (event.getServiceReference().getProperty("domain.name") == null ||
+									event.getServiceReference().getProperty("component.name") == null ||
+									event.getServiceReference().getProperty("annotations") == null)
+								return;
+
+							String domainName = event.getServiceReference().getProperty("domain.name").toString();
+
+							if (mapEngineRequiredComponents.get(domainName) == -1)
+								return;
+
+							HashSet<ServiceReference> specs = mapEngineSpec.get(domainName);
+							if (specs != null) {
+								specs.remove(event.getServiceReference());
+							}
+
+						}
+					}
+
 					break;
 
 				default:
@@ -215,23 +333,6 @@ public class BIPEngineFactory implements BundleActivator {
 			}
 		}
 
-	}
-
-
-	public BIPEngine create(BIPGlue glue, ActorSystem actorSystem) {
-
-		BIPEngine bipEngine;
-
-		if (glue.getDataWires().size() == 0) {
-			bipEngine = new BIPCoordinatorImpl(actorSystem);
-		}
-		else {
-			bipEngine = new DataCoordinatorKernel(new BIPCoordinatorImpl(actorSystem));
-		}
-
-		// bipEngine.specifyGlue(glue);
-
-		return bipEngine;
 	}
 
 }

@@ -24,6 +24,7 @@ import org.bip.annotations.Guard;
 import org.bip.annotations.Port;
 import org.bip.annotations.Ports;
 import org.bip.annotations.Transition;
+import org.bip.api.BIPSpec;
 import org.bip.api.DataOut.AccessType;
 import org.bip.api.Executor;
 import org.bip.api.PortType;
@@ -45,7 +46,7 @@ import org.springframework.beans.factory.InitializingBean;
 @Ports({ @Port(name = "end", type = PortType.spontaneous), @Port(name = "on", type = PortType.enforceable), 
 		 @Port(name = "off", type = PortType.enforceable), @Port(name = "finished", type = PortType.enforceable) })
 @ComponentType(initial = "off", name = "org.bip.spec.SwitchableRouteDataTransfers")
-public class SwitchableRouteDataTransfers implements CamelContextAware, InitializingBean, DisposableBean {
+public class SwitchableRouteDataTransfers implements CamelContextAware, InitializingBean, DisposableBean, BIPSpec {
 
 	public int noOfEnforcedTransitions;
 	
