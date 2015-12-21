@@ -78,9 +78,10 @@ class BehaviourImpl implements ExecutableBehaviour {
 	private Object bipComponent;
 	private Class<?> componentClass;
 
-
 	private Logger logger = LoggerFactory.getLogger(BehaviourImpl.class);
 
+	//******************************** Constructors *********************************************
+	
 	/**
 	 * Creation of Behaviour without providing dataOut. However, there can be some dataIn hidden in guards and transitions
 	 * 
@@ -226,6 +227,9 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 	}
 
+	//*************************** End of Constructors *******************************************
+	
+	//******************************* Getter functions ******************************************
 	public String getCurrentState() {
 		return currentState;
 	}
@@ -273,6 +277,41 @@ class BehaviourImpl implements ExecutableBehaviour {
 	public Set<Data<?>> portToDataInForGuard(Port port) {
 			return this.portToDataInForGuard.get(port);
 	}
+	
+	public List<Port> portsNeedingData(String dataName) {
+		ArrayList<Port> result = new ArrayList<Port>();
+		for (ExecutableTransition transition : this.allTransitions) {
+			Iterable<Data<?>> data = transition.dataRequired();
+			for (Data<?> d : data) {
+				if (d.name().equals(dataName)) {
+					result.add(this.transitionToPort.get(transition));
+					break;
+				}
+			}
+		}
+		return result;
+	}
+	
+	public Set<Port> getDataProvidingPorts(String dataName) {
+		if (dataName == null || dataName.isEmpty()) {
+			return new HashSet<Port>();
+		}
+		for (DataOut<?> data : dataOut) {
+			if (data.name().equals(dataName)) {
+				return data.allowedPorts();
+			}
+		}
+		return new HashSet<Port>();
+	}
+
+	public List<Transition> getAllTransitions() {
+		List<Transition> result = new ArrayList<Transition>( allTransitions );
+		return result;
+	}
+	
+	//************************** End of Getter functions ****************************************
+	
+	//***************************** Transition existence ****************************************
 
 	@Override
 	public boolean existInCurrentStateAndEnforceableWithData() {
@@ -334,7 +373,22 @@ class BehaviourImpl implements ExecutableBehaviour {
 		return internalEnabled;
 		
 	}
-
+	
+	@Override
+	public boolean isSpontaneousPort(String port) {
+		if (port == null || port.isEmpty()) {
+			throw new IllegalArgumentException(
+					"The name of the required port for the component "
+							+ bipComponent.getClass().getName()
+							+ " cannot be null or empty.");
+		}
+		return spontaneousPorts.containsKey(port);
+	}
+	
+	//************************** End of Transition existence ************************************
+	
+	//************************************** Enabledness ****************************************
+	
 	private boolean isInCurrentStateAndEnabled(ExecutableTransition transition, Map<String, Boolean> guardToValue) throws BIPException {
 
 		if (!transition.source().equals(currentState)) {
@@ -403,7 +457,57 @@ class BehaviourImpl implements ExecutableBehaviour {
 		}
 		return guardToValue;
 	}
+	
+	public List<Boolean> checkEnabledness(String port, List<Map<String, Object>> data) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, BIPException {
 
+		ArrayList<Boolean> result = new ArrayList<Boolean>();
+		ExecutableTransition transition = getTransition(currentState, port);
+		// TODO DESIGN, find out why this can happen if the guard is not there, 
+		// it does not need data, any data is good, no need to do check Enabledness?
+		if (!transition.hasGuard()) {
+			for (int i = data.size(); i > 0; i--) {
+				result.add(true);
+			}
+			return result;
+		}
+		// for each different row of the data evaluation table
+		for (Map<String, Object> dataRow : data) {
+			Map<String, Boolean> guardToValue = new Hashtable<String, Boolean>();
+			// for each Guard of this transition
+			for (Guard guard : transition.transitionGuards()) {
+				if (!guard.hasData()) {
+					guardToValue.put(guard.name(), guard.evaluateGuard(bipComponent));
+				} else {
+					// if it has data,
+					// then for each data it needs add the corresponding value
+					// to the array of its arguments
+					ArrayList<Object> args = new ArrayList<Object>();
+					for (Data<?> guardData : guard.dataRequired()) {
+						Object value = dataRow.get(guardData.name());
+						args.add(value);
+					}
+					guardToValue.put(guard.name(), guard.evaluateGuard(bipComponent, args.toArray()));
+				}
+			}
+			result.add(transition.guardIsTrue(guardToValue));
+		}
+		return result;
+	}
+	
+	//******************************* End of enabledness ****************************************
+	//************************************ Execution ********************************************
+
+	// TODO, now it also executes spontaneous transitions with data, does getTransition properly works?
+	public void execute(String portID, Map<String, ?> data) {
+		// this component does not take part in the interaction
+
+		if (portID == null) {
+			return;
+		}
+		ExecutableTransition transition = getTransition(currentState, portID);
+		invokeMethod(transition, data);
+	}
+	
 	// ExecutorKernel, the owner of BehaviourImpl is checking the correctness of the execution.
 	public void executePort(String portID) throws BIPException {
 		// this component does not take part in the interaction
@@ -461,77 +565,6 @@ class BehaviourImpl implements ExecutableBehaviour {
 		}
 	}
 
-	private void performTransition(ExecutableTransition transition) throws BIPException {
-		if (!currentState.equals(transition.source())) {
-			throw new BIPException("Could not perform transition " + transition.name() + 
-								   " of component " + componentType + 
-								   " because the component is in the wrong state " + currentState +
-								   " instead of state " + transition.source());
-		}
-		currentState = transition.target();
-	}
-
-	public List<Boolean> checkEnabledness(String port, List<Map<String, Object>> data) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, BIPException {
-
-		ArrayList<Boolean> result = new ArrayList<Boolean>();
-		ExecutableTransition transition = getTransition(currentState, port);
-		// TODO DESIGN, find out why this can happen if the guard is not there, 
-		// it does not need data, any data is good, no need to do check Enabledness?
-		if (!transition.hasGuard()) {
-			for (int i = data.size(); i > 0; i--) {
-				result.add(true);
-			}
-			return result;
-		}
-		// for each different row of the data evaluation table
-		for (Map<String, Object> dataRow : data) {
-			Map<String, Boolean> guardToValue = new Hashtable<String, Boolean>();
-			// for each Guard of this transition
-			for (Guard guard : transition.transitionGuards()) {
-				if (!guard.hasData()) {
-					guardToValue.put(guard.name(), guard.evaluateGuard(bipComponent));
-				} else {
-					// if it has data,
-					// then for each data it needs add the corresponding value
-					// to the array of its arguments
-					ArrayList<Object> args = new ArrayList<Object>();
-					for (Data<?> guardData : guard.dataRequired()) {
-						Object value = dataRow.get(guardData.name());
-						args.add(value);
-					}
-					guardToValue.put(guard.name(), guard.evaluateGuard(bipComponent, args.toArray()));
-				}
-			}
-			result.add(transition.guardIsTrue(guardToValue));
-		}
-		return result;
-	}
-
-	public List<Port> portsNeedingData(String dataName) {
-		ArrayList<Port> result = new ArrayList<Port>();
-		for (ExecutableTransition transition : this.allTransitions) {
-			Iterable<Data<?>> data = transition.dataRequired();
-			for (Data<?> d : data) {
-				if (d.name().equals(dataName)) {
-					result.add(this.transitionToPort.get(transition));
-					break;
-				}
-			}
-		}
-		return result;
-	}
-
-	// TODO, now it also executes spontaneous transitions with data, does getTransition properly works?
-	public void execute(String portID, Map<String, ?> data) {
-		// this component does not take part in the interaction
-
-		if (portID == null) {
-			return;
-		}
-		ExecutableTransition transition = getTransition(currentState, portID);
-		invokeMethod(transition, data);
-	}
-
 	// TODO, now it also executes spontaneous transitions with data, does transition.dataRequired() works properly?
 	private void invokeMethod(ExecutableTransition transition, Map<String, ?> data) {
 		Method componentMethod;
@@ -568,33 +601,17 @@ class BehaviourImpl implements ExecutableBehaviour {
 		}
 
 	}
-
-	public Set<Port> getDataProvidingPorts(String dataName) {
-		if (dataName == null || dataName.isEmpty()) {
-			return new HashSet<Port>();
+	
+	private void performTransition(ExecutableTransition transition) throws BIPException {
+		if (!currentState.equals(transition.source())) {
+			throw new BIPException("Could not perform transition " + transition.name() + 
+								   " of component " + componentType + 
+								   " because the component is in the wrong state " + currentState +
+								   " instead of state " + transition.source());
 		}
-		for (DataOut<?> data : dataOut) {
-			if (data.name().equals(dataName)) {
-				return data.allowedPorts();
-			}
-		}
-		return new HashSet<Port>();
+		currentState = transition.target();
 	}
 
-	public List<Transition> getAllTransitions() {
-		List<Transition> result = new ArrayList<Transition>( allTransitions );
-		return result;
-	}
-
-	@Override
-	public boolean isSpontaneousPort(String port) {
-		if (port == null || port.isEmpty()) {
-			throw new IllegalArgumentException(
-					"The name of the required port for the component "
-							+ bipComponent.getClass().getName()
-							+ " cannot be null or empty.");
-		}
-		return spontaneousPorts.containsKey(port);
-	}
+	//****************************** End of Execution *******************************************
 
 }
