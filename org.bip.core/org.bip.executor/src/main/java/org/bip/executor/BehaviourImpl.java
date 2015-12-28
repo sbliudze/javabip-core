@@ -57,6 +57,8 @@ class BehaviourImpl implements ExecutableBehaviour {
 	// source state)
 //	private Hashtable<String, ExecutableTransition> nameToTransition;
 	// gives a Transition instance from two keys - first key is currentState, second key is transition name.
+	//TODO DISCUSS since it's a hashtable, there cannot be several transitions with the same name 
+	// for different data variables (see theory?) 
 	private Hashtable<String, Hashtable<String, ExecutableTransition>> nameToTransition;
 	
 	private ArrayList<ExecutableTransition> allTransitions;	
@@ -73,8 +75,16 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 	// the list of dataOut variables for this component
 	private ArrayList<DataOutImpl<?>> dataOut;
-	// the map between the name of the out variable and the method computing it
+	 
+	/**
+	 * The map between the name of the out variable and the method computing it
+	 */
 	private Hashtable<String, Method> dataOutName;
+	
+	private Map<String, List<Port>> dataFromTransitionToPorts;
+	private Map<String, List<Port>> dataFromGuardsToPorts;
+	private Map<String, List<Port>> portsNeedingData;
+	
 	private Object bipComponent;
 	private Class<?> componentClass;
 
@@ -117,6 +127,9 @@ class BehaviourImpl implements ExecutableBehaviour {
 		
 		portToDataInForGuard = new Hashtable<Port, Set<Data<?>>>();
 		portToDataInForTransition = new Hashtable<Port, Set<Data<?>>>();
+		dataFromTransitionToPorts = new HashMap<String, List<Port>>();
+		dataFromGuardsToPorts = new HashMap<String, List<Port>>();
+		portsNeedingData = new HashMap<String, List<Port>>();
 		enforceablePorts = new ArrayList<Port>();
 		spontaneousPorts = new Hashtable<String, Port>();
 		for (Port port : allPorts) {
@@ -138,7 +151,9 @@ class BehaviourImpl implements ExecutableBehaviour {
 			nameToTransition.put(state, new Hashtable<String, ExecutableTransition>());
 		}
 
-
+		HashMap<String, Port> mapIdToPort = new HashMap<String, Port>( );
+		for (Port port : allPorts)
+			mapIdToPort.put(port.getId(), port);
 		
 		this.internalTransitions = new ArrayList<ExecutableTransition>();
 		this.spontaneousTransitions = new ArrayList<ExecutableTransition>();
@@ -147,7 +162,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 			stateTransitions.get(transition.source()).add(transition);
 			nameToTransition.get(transition.source()).put(transition.name(), transition);
-
+			
 			switch (transition.getType()) {
 			case enforceable:
 				enforceableTransitions.add(transition);
@@ -166,11 +181,6 @@ class BehaviourImpl implements ExecutableBehaviour {
 			}
 		}
 			
-
-		HashMap<String, Port> mapIdToPort = new HashMap<String, Port>( );
-		for (Port port : allPorts)
-			mapIdToPort.put(port.getId(), port);
-
 		transitionToPort = new Hashtable<ExecutableTransition, Port>();
 		for (ExecutableTransition transition : enforceableTransitions) {
 
@@ -181,15 +191,60 @@ class BehaviourImpl implements ExecutableBehaviour {
 			if (transition.hasGuard()) {
 				Set<Data<?>> portGuardData = portToDataInForGuard.get(port);
 				for (Guard guard : transition.transitionGuards()) {
-					portGuardData.addAll( guard.dataRequired() );
+					portGuardData.addAll(guard.dataRequired());
+					for (Data<?> data : guard.dataRequired()) {
+						// for each data in guard data, add it to guard collection 
+						if (!dataFromGuardsToPorts.containsKey(data.name())) {
+							ArrayList<Port> dataPorts = new ArrayList<Port>();
+							dataPorts.add(port);
+							dataFromGuardsToPorts.put(data.name(), dataPorts);
+						} else {
+							if (!dataFromGuardsToPorts.get(data.name()).contains(port)) {
+								dataFromGuardsToPorts.get(data.name()).add(port);
+							}
+						}
+						// for each data in guard data, add it to general collection (if not there)
+						if (!portsNeedingData.containsKey(data.name())) {
+							ArrayList<Port> dataPorts = new ArrayList<Port>();
+							dataPorts.add(port);
+							portsNeedingData.put(data.name(), dataPorts);
+						} else {
+							if (!portsNeedingData.get(data.name()).contains(port)) {
+								portsNeedingData.get(data.name()).add(port);
+							}
+						}
+					}
 				}
 			}
 
+			//TODO check about spontaneous - that portsNeedingData does not care about it
+			// (foreach is in enforceable but not in all)
 			Set<Data<?>> portTransitionData = portToDataInForTransition.get(port);
 			for (Data<?> data : transition.dataRequired()) {
+				// for each data in transitions data, add it to transition collection 
+				if (!dataFromTransitionToPorts.containsKey(data.name())) {
+					ArrayList<Port> dataPorts = new ArrayList<Port>();
+					dataPorts.add(port);
+					dataFromTransitionToPorts.put(data.name(), dataPorts);
+				} else {
+					if (!dataFromTransitionToPorts.get(data.name()).contains(port)) {
+						dataFromTransitionToPorts.get(data.name()).add(port);
+					}
+				}
+				// for each data in transition data, add it to general collection (if not there)
+				if (!portsNeedingData.containsKey(data.name())) {
+					ArrayList<Port> dataPorts = new ArrayList<Port>();
+					dataPorts.add(port);
+					portsNeedingData.put(data.name(), dataPorts);
+				} else {
+					if (!portsNeedingData.get(data.name()).contains(port)) {
+						portsNeedingData.get(data.name()).add(port);
+					}
+				}
 				portTransitionData.add(data);
 			}
-
+			
+			
 			Set<Port> stateports = stateToPorts.get(transition.source());
 			if (stateports == null) {
 				throw new BIPException("The source state " + transition.source() + 
@@ -200,7 +255,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 			stateports.add(port);
 
 		}
-
+		
 	}
 
 	/**
@@ -274,13 +329,25 @@ class BehaviourImpl implements ExecutableBehaviour {
 		return this.portToDataInForGuard;
 	}
 
+	//is it used by someone else than the engine? so - should it contain data for spontaneous ports as well?
 	public Set<Data<?>> portToDataInForGuard(Port port) {
 			return this.portToDataInForGuard.get(port);
 	}
 	
 	public List<Port> portsNeedingData(String dataName) {
+		/*
 		ArrayList<Port> result = new ArrayList<Port>();
-		for (ExecutableTransition transition : this.allTransitions) {
+		if (dataFromTransitionToPorts.containsKey(dataName)){
+		result.addAll(dataFromTransitionToPorts.get(dataName));}
+		if (dataFromGuardsToPorts.containsKey(dataName)){
+		result.addAll(dataFromGuardsToPorts.get(dataName)); }
+		*/
+		//TODO DISCUSS now, instead of returning only data for transitions, it returns also data for guards
+		/*
+		 * Now if the transition does not need data, but the guard does, it is returned as well 
+		 */
+		/*	Old implementation:	
+ 		for (ExecutableTransition transition : this.allTransitions) {
 			Iterable<Data<?>> data = transition.dataRequired();
 			for (Data<?> d : data) {
 				if (d.name().equals(dataName)) {
@@ -288,8 +355,9 @@ class BehaviourImpl implements ExecutableBehaviour {
 					break;
 				}
 			}
-		}
-		return result;
+		} 
+		*/
+		return portsNeedingData.get(dataName);
 	}
 	
 	public Set<Port> getDataProvidingPorts(String dataName) {
@@ -464,6 +532,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 		ExecutableTransition transition = getTransition(currentState, port);
 		// TODO DESIGN, find out why this can happen if the guard is not there, 
 		// it does not need data, any data is good, no need to do check Enabledness?
+		// probably this code was added "just in case" - maybe an exception instead? 
 		if (!transition.hasGuard()) {
 			for (int i = data.size(); i > 0; i--) {
 				result.add(true);
@@ -497,13 +566,13 @@ class BehaviourImpl implements ExecutableBehaviour {
 	//******************************* End of enabledness ****************************************
 	//************************************ Execution ********************************************
 
-	// TODO, now it also executes spontaneous transitions with data, does getTransition properly works?
 	public void execute(String portID, Map<String, ?> data) {
 		// this component does not take part in the interaction
 
 		if (portID == null) {
 			return;
 		}
+		//getTransition works correctly with spontaneous as well, as it addresses the list of all transitions
 		ExecutableTransition transition = getTransition(currentState, portID);
 		invokeMethod(transition, data);
 	}
@@ -539,8 +608,10 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 	private void invokeMethod(ExecutableTransition transition) {
 		Method componentMethod;
+		String errorMessage = "The following exception while executing " + transition.name() 
+				+" in component " + this.componentType;
 		try {
-			logger.info("Invocation: " + transition.name() );
+			logger.debug("In component " + this.componentType + " INVOCATION of " + transition.name() );
 			componentMethod = transition.method();
 			if (!componentMethod.getDeclaringClass().isAssignableFrom(componentClass)) {
 				throw new IllegalArgumentException("The method " + componentMethod.getName() + 
@@ -551,21 +622,21 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 			performTransition(transition);
 
+			
 		} catch (SecurityException e) {
-			ExceptionHelper.printExceptionTrace(logger, e);
+			ExceptionHelper.printExceptionTrace(logger, e, errorMessage);
 		} catch (IllegalAccessException e) {
-			ExceptionHelper.printExceptionTrace(logger, e);
+			ExceptionHelper.printExceptionTrace(logger, e, errorMessage);
 		} catch (IllegalArgumentException e) {
-			ExceptionHelper.printExceptionTrace(logger, e);
+			ExceptionHelper.printExceptionTrace(logger, e, errorMessage);
 		} catch (InvocationTargetException e) {
-			ExceptionHelper.printExceptionTrace(logger, e);
+			ExceptionHelper.printExceptionTrace(logger, e, errorMessage);
 			ExceptionHelper.printExceptionTrace(logger, e.getCause());
 		} catch (BIPException e) {
-			ExceptionHelper.printExceptionTrace(logger, e);
+			ExceptionHelper.printExceptionTrace(logger, e, errorMessage);
 		}
 	}
 
-	// TODO, now it also executes spontaneous transitions with data, does transition.dataRequired() works properly?
 	private void invokeMethod(ExecutableTransition transition, Map<String, ?> data) {
 		Method componentMethod;
 		try {
@@ -577,6 +648,9 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 			Object[] args = new Object[componentMethod.getParameterTypes().length];
 			int i = 0;
+			/* NOTE  dataRequired works in the same manner for enforceable and spontaneous transitions,
+			 * since it is processed by the builder who does not differentiate between them 
+			 */
 			for (Data<?> trData : transition.dataRequired()) {
 				// name parameter can not be null as it is enforced by the constructor.
 				Object value = data.get(trData.name());
@@ -584,7 +658,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 				args[i] = value;
 				i++;
 			}
-			logger.info("Invocation: " + transition.name() + " with args " + data);
+			logger.debug("In component " + this.componentType + " INVOCATION of " + transition.name() + " with args " + data);
 			componentMethod.invoke(bipComponent, args);
 			performTransition(transition);
 		} catch (SecurityException e) {
