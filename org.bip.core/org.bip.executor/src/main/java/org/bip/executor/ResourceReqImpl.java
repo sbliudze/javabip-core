@@ -22,5 +22,4 @@ public class ResourceReqImpl {
 		result.append(", utility=" + utility);
 		return result.toString();
 	}
-
 }

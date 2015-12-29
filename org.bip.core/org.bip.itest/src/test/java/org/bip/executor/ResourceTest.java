@@ -67,7 +67,6 @@ public class ResourceTest {
 	@Test
 	public void test() throws RecognitionException, IOException, DNetException
 	{
-
 		//BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
@@ -95,12 +94,12 @@ public class ResourceTest {
 		ComponentNeedingResource aComp = new ComponentNeedingResource(128);
 		ComponentNeedingResource bComp = new ComponentNeedingResource(100);
 
+
 		BIPActor actor1 = engine.register(aComp, "resourceNeeder1", true); 
 		BIPActor actor2 = engine.register(bComp, "resourceNeeder2", true); 
 		BIPActor allocatorActor = engine.register(alloc, "allocator", true); 
 		aComp.setAllocator(allocatorActor);
 		bComp.setAllocator(allocatorActor);
-
 		ResourceProvider memory = new Memory(256);
 		ResourceProvider processor = new Processor();
 		ResourceProvider bus = new Bus(128);
@@ -119,6 +118,7 @@ public class ResourceTest {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+
 		engine.stop();
 		engineFactory.destroy(engine);
 	}

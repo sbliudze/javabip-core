@@ -58,7 +58,7 @@ public class BehaviourBuilder {
 	private Hashtable<Method, String> methodUtility;
 	//helper map to construct resource to transition map
 	private Hashtable<Method, TransitionImpl> methodToTransition;
-
+	
 	public BehaviourBuilder(Object component) {
 		this.component = component;
 		allTransitions = new ArrayList<TransitionImpl>();
@@ -74,7 +74,6 @@ public class BehaviourBuilder {
 		methodResources = new Hashtable<Method, ArrayList<ResourceReqImpl>>();
 		methodUtility = new Hashtable<Method, String>();
 		methodToTransition = new Hashtable<Method, TransitionImpl>();
-
 	}
 
 	public ExecutableBehaviour build(ComponentProvider provider) throws BIPException {
@@ -114,6 +113,21 @@ public class BehaviourBuilder {
 			data.computeAllowedPort(allEnforceablePorts);
 		}
 
+		for (Method method : methodResources.keySet()) {
+			transitionResources.put(methodToTransition.get(method), methodResources.get(method));
+			transitionRequest.put(methodToTransition.get(method), methodUtility.get(method));
+		}
+		if (methodResources.size() != methodUtility.size()) {
+			throw new BIPException("There is a transition where either the required resources or the utility function is not specified");
+		}
+		
+		if (!resources.isEmpty())
+		{
+			return new BehaviourImpl(componentType, currentState, transformIntoExecutableTransition(), 
+					 componentPorts, states, guards.values(), dataOut, dataOutName, dataOutName2, component,
+					 transitionResources, transitionRequest);
+		}
+		
 		for (Method method : methodResources.keySet()) {
 			transitionResources.put(methodToTransition.get(method), methodResources.get(method));
 			transitionRequest.put(methodToTransition.get(method), methodUtility.get(method));
@@ -307,13 +321,11 @@ public class BehaviourBuilder {
 		TransitionImpl t = new TransitionImpl(name, source, target, guard, method, data, resourceReq) ;
 		methodToTransition.put(method, t);
 		//TODO transition here or execulable transition?
-		
-		allTransitions.add(t);
 
-		allTransitions.add(new TransitionImpl(name, source, target, guard, method, data));
+		allTransitions.add(t);
+		//allTransitions.add(new TransitionImpl(name, source, target, guard, method, data));
 
 	}	
-
 
 
 	/**

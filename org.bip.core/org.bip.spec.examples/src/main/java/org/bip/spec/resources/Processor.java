@@ -51,13 +51,4 @@ public class Processor extends Resource {
 		else {throw new BIPException("Processor cost can be only changed by one or zero");}
 	}
 
-	
-//	public void updateCost(String newCost) {
-//		int taken = Integer.parseInt(newCost);
-//		if (taken ==1)
-//		{
-//			this.cost = "p=0";
-//		}
-//	}
-
 }

@@ -11,6 +11,7 @@ import com.microsoft.z3.Context;
 import com.microsoft.z3.IntExpr;
 
 public class DNet implements ContextProvider {
+
 	public HashMap<ArrayList<String>, ArrayList<String>> resourceDependencies;
 	
 	private ArrayList<Place> places;
@@ -31,8 +32,6 @@ public class DNet implements ContextProvider {
 	
 	/**************** Constructors area *****************/
 
-	
-	/**************** Constructors area *****************/
 	public DNet() {
 		places = new ArrayList<Place>();
 		transitions = new ArrayList<Transition>();
@@ -145,8 +144,6 @@ public class DNet implements ContextProvider {
 		//return dependencyConstraints;
 	}
 	
-
-
 	//TODO check it works correctly
 	private ArrayList<BoolExpr> findEnabledAndFire(HashMap<Place, ArrayList<IntExpr>> placeVariables, HashMap<Place, ArrayList<Transition>> placeTokens,
 			ArrayList<BoolExpr> dependencyConstraints, ArrayList<Transition> disabled) throws DNetException {

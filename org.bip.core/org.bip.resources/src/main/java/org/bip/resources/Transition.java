@@ -149,11 +149,11 @@ public class Transition {
 
 		return true;
 	}
-	
+
 	public BoolExpr constraint(Map<String, ArithExpr> stringToConstraintVar) throws DNetException {
 		return this.constraint.constraintNode.evaluate(stringToConstraintVar);
 	}
-	
+
 	public void reInit() {
 		this.fired = false;
 	}

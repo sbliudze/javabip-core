@@ -288,6 +288,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 		this.dataOutName2 = dataOutName2;
 	}
 
+
 	public BehaviourImpl(String type, String currentState,
 			ArrayList<ExecutableTransition> allTransitions,
 			ArrayList<Port> componentPorts, HashSet<String> states,
@@ -299,6 +300,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 				 componentPorts, states, guards, dataOut, dataOutName, dataOutName2, component);
 		this.resources = resources2;
 }
+
 
 	//creation of behaviour with a map <transition, resource> and a map <transition, request>
 	public BehaviourImpl(String type, String currentState, ArrayList<ExecutableTransition> allTransitions, ArrayList<Port> componentPorts,
@@ -316,6 +318,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 	
 
 	//******************************* Getter functions ******************************************
+
 
 
 	public String getCurrentState() {
