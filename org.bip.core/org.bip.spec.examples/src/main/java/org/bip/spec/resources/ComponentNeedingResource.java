@@ -1,7 +1,6 @@
 package org.bip.spec.resources;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import org.bip.annotations.ComponentType;
 import org.bip.annotations.Data;
 import org.bip.annotations.Port;
@@ -11,7 +10,6 @@ import org.bip.annotations.ResourcesRequired;
 import org.bip.annotations.Transition;
 import org.bip.annotations.ResourceRequired;
 import org.bip.api.BIPActor;
-import org.bip.api.Executor;
 import org.bip.api.PortType;
 import org.bip.api.ResourceAware;
 import org.bip.api.ResourceType;
@@ -63,24 +61,6 @@ public class ComponentNeedingResource implements ResourceAware {
 		// allocatorExecutor.inform("release", data);
 		// TODO can we release some resources and keep others?
 		// because the problem is, we know nothing about the bus..
-	}
-
-	@Data(name = "utility", accessTypePort = AccessType.any)
-	public String utility() {
-		return utility;
-	}
-
-	@Data(name = "resourceUnit", accessTypePort = AccessType.any)
-	public ArrayList<String> releasedResources() {
-		ArrayList<String> dataRelease = new ArrayList<String>();
-		dataRelease.add("p");
-		dataRelease.add("m");
-		return dataRelease;
-	}
-
-	@Override
-	public void setAllocator(BIPActor allocatorExecutor) {
-		this.allocatorExecutor = allocatorExecutor;
 	}
 
 	@Data(name = "utility", accessTypePort = AccessType.any)

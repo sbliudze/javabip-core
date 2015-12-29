@@ -134,17 +134,17 @@ public class Transition {
 	}
 	
 	public boolean equals(Object o) {
-		
+
 		if (this == o)
 			return true;
-		
+
 		if (!(o instanceof Transition)) {
 			return false;
 		}
-		
+
 		Transition compareTo = (Transition) o;
-		
-		if ( !this.name().equals(compareTo.name()))
+
+		if (!this.name().equals(compareTo.name()))
 			return false;
 
 		return true;
@@ -154,8 +154,7 @@ public class Transition {
 		return this.constraint.constraintNode.evaluate(stringToConstraintVar);
 	}
 	
-	public void reInit()
-	{
+	public void reInit() {
 		this.fired = false;
 	}
 }
