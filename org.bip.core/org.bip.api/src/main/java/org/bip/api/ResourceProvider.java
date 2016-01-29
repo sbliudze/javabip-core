@@ -2,15 +2,15 @@ package org.bip.api;
 
 public interface ResourceProvider {
 
-	String cost();
+	public String cost();
 
-	String name();
-	
-	ResourceType type();
-	
-//	void updateCost(String newCost);
-	
-	void augmentCost(String deltaCost);
-	void decreaseCost(String deltaCost);
+	public String name();
 
+	public ResourceType type();
+
+	public void augmentCost(String deltaCost);
+
+	public void decreaseCost(String deltaCost);
+
+	public String providedResourceID();
 }

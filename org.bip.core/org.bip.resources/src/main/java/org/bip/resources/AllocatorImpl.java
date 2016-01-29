@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -18,6 +19,7 @@ import org.bip.annotations.Ports;
 import org.bip.api.Allocator;
 import org.bip.api.PortType;
 import org.bip.api.ResourceProvider;
+import org.bip.api.DataOut.AccessType;
 import org.bip.exceptions.BIPException;
 import org.bip.resources.grammar.constraintLexer;
 import org.bip.resources.grammar.constraintParser;
@@ -35,7 +37,8 @@ import com.microsoft.z3.Model;
 import com.microsoft.z3.Solver;
 import com.microsoft.z3.Status;
 
-@Ports({ @Port(name = "request", type = PortType.enforceable), @Port(name = "release", type = PortType.enforceable) })
+@Ports({ @Port(name = "request", type = PortType.enforceable), @Port(name = "release", type = PortType.enforceable), 
+	 @Port(name = "provideResource", type = PortType.enforceable)})
 @ComponentType(initial = "0", name = "org.bip.resources.AllocatorImpl")
 public class AllocatorImpl implements ContextProvider, Allocator {
 
@@ -52,6 +55,9 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 	// a map: dnet place corresponding to a resource <-> resource provider
 	private HashMap<Place, ResourceProvider> placeToResource;
 	// TODO a priori resource names and place names should be the same. what if not? CHECK THINK
+	// upd: this should be redundant. this map uses place.name(), the above map uses resource.name().
+	// therefore, TODO: check that for every resource there is a place and for every place there is a resource
+	// what if we have several resources for the same place? they should have still one provider, right, or?.. (see the very first todo line 47)
 	private HashMap<String, ResourceProvider> placeNameToResource;
 
 	// a map: dnet place <-> list of tokens contained in that place (=list of transition that have put tokens in there)
@@ -66,6 +72,14 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 	// a map: request string <-> model provided by the solver. is used in order not to solve the thing twice during the guard evaluation and the actual
 	// allocation
 	private HashMap<String, Model> requestToModel;
+	/**
+	 * The id of the resource proxy that was allocated to an asking component. Must be updated at each allocation cycle.
+	 */
+	//private String currentResourceID;
+	/**
+	 * The map containing the requested resources in pairs: the lable of requested resource <-> the id of the provided resource proxy.
+	 */
+	private Hashtable<String, String> resourceLableToID;
 
 	/**************** Constructors *****************/
 
@@ -79,6 +93,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		placeNameToResource = new HashMap<String, ResourceProvider>();
 		resourceNameToGivenValue = new HashMap<String, Expr>();
 		requestToModel = new HashMap<String, Model>();
+		resourceLableToID = new Hashtable<String, String>();
 	}
 
 	// if an allocator received a dnet and no context, it creates a context and parses the dnet
@@ -223,7 +238,8 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		return request;
 	}
 
-	@org.bip.annotations.Transition(name = "request", source = "0", target = "0", guard = "canAllocate")
+	// TODO rename to allocate?
+	@org.bip.annotations.Transition(name = "request", source = "0", target = "1", guard = "canAllocate")
 	public void specifyRequest(@Data(name = "request") String requestString) throws DNetException {
 		if (!requestToModel.containsKey(requestString)) {
 			throw new BIPException("The request " + requestString
@@ -235,21 +251,36 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 			if (placeVariables.get(place).size() > 0) {
 
 				for (int i = 0; i < placeVariables.get(place).size(); i++) {
-					Expr res = model.evaluate(placeVariables.get(place).get(i), false);
+					Expr varName = placeVariables.get(place).get(i);
+					Expr res = model.evaluate(varName, false);
 					if (res.isIntNum()) {
 						// update the cost after allocating the resource!
 						// TODO the resource must be somehow dispatched back to the requesting component
 						placeToResource.get(place).decreaseCost(res.toString());
+						//currentResourceID = placeToResource.get(place).resourceID();
+						//TODO the label is not necessarily place.name()
+						resourceLableToID.put(place.name(), placeToResource.get(place).providedResourceID());
 						// TODO this line makes it possible only for one item of each resource to be allocated which is maybe not what we want
 						resourceNameToGivenValue.put(place.name(), res);
-						logger.debug("Resource " + place.name() + " allocated: " + res.toString() + " units");
+						logger.info("Resource " + place.name() +  ", variable " + varName.toString() +" allocated: " + res.toString() + " units");
 					}
 				}
 			}
 		}
 		requestToModel.remove(requestString);
 	}
+	
+	@org.bip.annotations.Transition(name = "provideResource", source = "1", target = "0", guard = "canAllocate")
+	public void provideResource() throws DNetException {
+		//? no meaningful things to do
+	}
+	
 
+	@Data(name="resources", accessTypePort = AccessType.allowed, ports = { "provideResource" })
+	public Hashtable<String, String> resources() {
+		return resourceLableToID;
+	}
+	
 	@org.bip.annotations.Transition(name = "release", source = "0", target = "0", guard = "canRelease")
 	public void releaseResource(@Data(name = "resourceUnit") ArrayList<String> unitNames) throws DNetException {
 		logger.debug("Releasing resources: " + unitNames);

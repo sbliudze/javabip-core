@@ -1,6 +1,8 @@
 package org.bip.spec.resources;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
+
 import org.bip.annotations.ComponentType;
 import org.bip.annotations.Data;
 import org.bip.annotations.Port;
@@ -15,7 +17,9 @@ import org.bip.api.ResourceAware;
 import org.bip.api.ResourceType;
 import org.bip.api.DataOut.AccessType;
 
-@Ports({ @Port(name = "getResource", type = PortType.enforceable), @Port(name = "release", type = PortType.enforceable) })
+@Ports({ @Port(name = "getResource", type = PortType.enforceable), 
+	@Port(name = "process", type = PortType.enforceable),
+	@Port(name = "release", type = PortType.enforceable) })
 @ComponentType(initial = "0", name = "org.bip.spec.ComponentNeedingResource")
 public class ComponentNeedingResource implements ResourceAware {
 
@@ -40,9 +44,9 @@ public class ComponentNeedingResource implements ResourceAware {
 		System.err.println("Asking for resources");
 	}
 
-	@Transition(name = "", source = "1", target = "2", guard = "")
-	public void process() {
-		// here we must be using a resourcs
+	@Transition(name = "process", source = "1", target = "2", guard = "")
+	public void process(@Data(name="resourceArray") Hashtable<String, String> resources) {
+		// here we must be using a resource
 		System.err.println("Processing something using resources");
 	}
 

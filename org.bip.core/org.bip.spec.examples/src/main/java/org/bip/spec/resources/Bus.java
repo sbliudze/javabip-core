@@ -5,6 +5,7 @@ import org.bip.api.ResourceType;
 public class Bus extends Resource {
 
 	private final String name = "b";
+	private final String resourceID= "bus";
 	private String cost = "";
 	int capacity;
 	int currentCapacity;
@@ -29,6 +30,11 @@ public class Bus extends Resource {
 	public ResourceType type() {
 		return ResourceType.bus;
 	}
+	
+	@Override
+	public String providedResourceID() {
+		return resourceID;
+	}
 
 	// we suppose that the allocator sends us the new value (or maybe rather the difference?)
 	public void updateCost(String newCost) {
@@ -40,18 +46,6 @@ public class Bus extends Resource {
 
 	private String costString() {
 		return "b>=0 & b<=" + Integer.toString(currentCapacity);
-	}
-
-	@Override
-	public void augmentCost(String deltaCost) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void decreaseCost(String deltaCost) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

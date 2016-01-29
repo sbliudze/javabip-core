@@ -5,6 +5,7 @@ import org.bip.exceptions.BIPException;
 
 public class Processor extends Resource {
 	private final String name = "p";
+	private final String resourceID= "proc";
 	private String cost = "";
 
 	public Processor() {
@@ -26,15 +27,11 @@ public class Processor extends Resource {
 		return ResourceType.processor;
 	}
 	
-//	public void updateCost(String newCost) {
-//		int taken = Integer.parseInt(newCost);
-//		if (taken ==1)
-//		{
-//			this.cost = "p=0";
-//		}
-//	}
-
-
+	@Override
+	public String providedResourceID() {
+		return resourceID;
+	}
+	
 	@Override
 	public void augmentCost(String deltaCost) {
 		int taken = Integer.parseInt(deltaCost);

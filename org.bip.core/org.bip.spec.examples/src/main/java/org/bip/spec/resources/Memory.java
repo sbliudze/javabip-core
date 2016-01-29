@@ -6,9 +6,10 @@ import org.bip.api.ResourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Memory implements ResourceProvider, ResourceProxy {
+public class Memory implements ResourceProvider  {
 
 	private final String name = "m";
+	private final String resourceID= "simpleMemory";
 	private String cost = "";
 	private int capacity;
 	private int currentCapacity;
@@ -36,28 +37,13 @@ public class Memory implements ResourceProvider, ResourceProxy {
 		return ResourceType.memory;
 	}
 
-	// we suppose that the allocator sends us the new value (or maybe rather the difference?)
-//	public void updateCost(String newCost) {
-//		logger.debug("Cost of " + name + " updated to " + newCost);
-//		int taken = Integer.parseInt(newCost);
-//		this.currentCapacity = capacity-taken;
-//		//TODO throw exception if the difference is less than zero
-//	}
-
 	private String costString() {
 		return "m>=0 & m<=" + Integer.toString(currentCapacity);
 	}
 
 	@Override
-	public ResourceProxy get() {
-		// TODO Auto-generated method stub
-		return this;
-	}
-
-	@Override
-	public void release(ResourceProxy proxy) {
-		// TODO Auto-generated method stub
-		
+	public String providedResourceID() {
+		return resourceID;
 	}
 
 	@Override

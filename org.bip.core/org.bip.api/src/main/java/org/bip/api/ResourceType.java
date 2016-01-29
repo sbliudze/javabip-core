@@ -4,7 +4,8 @@ package org.bip.api;
 public enum ResourceType {
 	memory,
 	processor,
-	thread,
 	bus,
+	thread,
+	route,
 	custom
 }
