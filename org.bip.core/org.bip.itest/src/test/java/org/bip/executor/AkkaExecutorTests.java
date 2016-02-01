@@ -156,6 +156,7 @@ public class AkkaExecutorTests {
 	
 	// No asserts yet, just to see if the whole thing does not blow at
 	// initialization time and due to first few cycles.
+	@SuppressWarnings("unused")
 	@Test
 	public void bipRandomLargerHannoiWithDataTest() throws JAXBException,
 			BIPException {
@@ -208,6 +209,7 @@ public class AkkaExecutorTests {
 	// No asserts yet, just to see if the whole thing does not blow at
 	// initialization time and due to first few cycles.
 	@Test
+	@SuppressWarnings("unused")
 	public void bipRandomHannoiWithDataTest() throws JAXBException,
 			BIPException {
 
@@ -251,6 +253,7 @@ public class AkkaExecutorTests {
 
 	
 	@Test
+	@SuppressWarnings("unused")
 	public void bipHannoiWithDataTestSize3() throws JAXBException, BIPException {
 
 		BIPGlue bipGlue4Hanoi = new org.bip.spec.hanoi.HanoiOptimalGlueBuilder()
@@ -299,6 +302,7 @@ public class AkkaExecutorTests {
 	}
 
 	@Test
+	@SuppressWarnings("unused")
 	public void bipHannoiWithDataTestSize8() throws JAXBException, BIPException {
 
 		BIPGlue bipGlue4Hanoi = new org.bip.spec.hanoi.HanoiOptimalGlueBuilder()
@@ -347,6 +351,7 @@ public class AkkaExecutorTests {
 
 	// It does not use data transfers but plenty of interactions and more ports.
 	@Test
+	@SuppressWarnings("unused")
 	public void akkaExecutorHannoiNoDataTransferswithActorEngineTest() {
 
 		int size = 3;
@@ -390,6 +395,7 @@ public class AkkaExecutorTests {
 
 
 	@Test
+	@SuppressWarnings("unused")
 	public void akkaExecutorHannoiTest() {
 
 		int size = 8;
@@ -529,6 +535,7 @@ public class AkkaExecutorTests {
 	}
 
 	@Test
+	@SuppressWarnings("unused")
 	public void TrackerPeerTest()
 	{
 
@@ -578,6 +585,7 @@ public class AkkaExecutorTests {
 }
 	
 	@Test
+	@SuppressWarnings("unused")
 	public void bipDataFeederConsumerTest() throws BIPException {
 
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueFeederConsumer.xml");
@@ -610,6 +618,7 @@ public class AkkaExecutorTests {
 	}
 
 	@Test
+	@SuppressWarnings("unused")
 	public void bipDataAvailabilityTest() throws BIPException {
 
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueDataAvailability.xml");
@@ -650,6 +659,7 @@ public class AkkaExecutorTests {
 	}
 
 	@Test
+	@SuppressWarnings("unused")
 	public void bipMasterSlaveTest() throws BIPException {
 
 		BIPGlue bipGlue = new GlueBuilder() {
@@ -669,6 +679,8 @@ public class AkkaExecutorTests {
 				port(Slave.class, "work").accepts(Master.class, "compute", Slave.class, "work");
 
 				data(Slave.class, "ID").to(Master.class, "slaveID");
+				data(Slave.class, "ID").to(Master.class, "slaveID1");
+				data(Slave.class, "ID").to(Master.class, "slaveID2");
 
 			}
 
@@ -676,27 +688,27 @@ public class AkkaExecutorTests {
 
 		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
 
-		Master masterA = new Master("masterA");
-		Master masterB = new Master("masterB");
+		Master master1 = new Master("master1");
+		Master master2 = new Master("master2");
 		Slave slaveA = new Slave("slaveA");
 		Slave slaveB = new Slave("slaveB");
 		Slave slaveC = new Slave("slaveC");
 		Slave slaveD = new Slave("slaveD");
 		Slave slaveE = new Slave("slaveE");
 
-		BIPActor executorMA = engine.register(masterA, "masterA", true);
+		BIPActor executorM1 = engine.register(master1, "master1", true);
 
-		BIPActor executorMB = engine.register(masterB, "masterB", true);
+//		BIPActor executorM2 = engine.register(master2, "master2", true);
 
 		BIPActor executorSA = engine.register(slaveA, "slaveA", true);
 
 		BIPActor executorSB = engine.register(slaveB, "slaveB", true);
 
-		BIPActor executorSC = engine.register(slaveC, "slaveC", true);
-
-		BIPActor executorSD = engine.register(slaveD, "slaveD", true);
-
-		BIPActor executorSE = engine.register(slaveE, "slaveE", true);
+//		BIPActor executorSC = engine.register(slaveC, "slaveC", true);
+//
+//		BIPActor executorSD = engine.register(slaveD, "slaveD", true);
+//
+//		BIPActor executorSE = engine.register(slaveE, "slaveE", true);
 
 		// engine.specifyGlue(bipGlue);
 		engine.start();
@@ -712,13 +724,13 @@ public class AkkaExecutorTests {
 		engine.stop();
 		engineFactory.destroy(engine);
 
-		// assertTrue("CompA has not made any transitions", masterA.noOfTransitions > 2 ||
-		// masterB.noOfTransitions > 2);
-		// assertTrue("CompC has not made any transitions", slaveA.noOfTransitions > 0);
-		// assertTrue("CompB has not made any transitions", slaveB.noOfTransitions > 0);
-		// assertTrue("CompC has not made any transitions", slaveC.noOfTransitions > 0);
-		// assertTrue("CompC has not made any transitions", slaveD.noOfTransitions > 0);
-		// assertTrue("CompC has not made any transitions", slaveE.noOfTransitions > 0);
+		// assertTrue("Master 1 or 2 has not made any transitions", master1.noOfTransitions > 2 ||
+		// master2.noOfTransitions > 2);
+		// assertTrue("Slave A has not made any transitions", slaveA.noOfTransitions > 0);
+		// assertTrue("Slave B has not made any transitions", slaveB.noOfTransitions > 0);
+		// assertTrue("Slave C has not made any transitions", slaveC.noOfTransitions > 0);
+		// assertTrue("Slave D has not made any transitions", slaveD.noOfTransitions > 0);
+		// assertTrue("Slave E has not made any transitions", slaveE.noOfTransitions > 0);
 
 	}
 	

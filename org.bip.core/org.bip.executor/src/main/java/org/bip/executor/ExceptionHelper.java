@@ -5,6 +5,14 @@ import org.slf4j.Logger;
 public class ExceptionHelper {
 
 	public static void printExceptionTrace(Logger logger, Throwable e) {
+		logger.error(getStringErrorMessage(e));
+	}
+	
+	public static void printExceptionTrace(Logger logger, Throwable e, String message) {
+		logger.error(message + "\n" + getStringErrorMessage(e));
+	}
+	
+	private static String getStringErrorMessage(Throwable e) {
 		StackTraceElement[] trace = e.getStackTrace();
 		StringBuilder errorMsg = new StringBuilder();
 		errorMsg.append(e.getClass());
@@ -17,6 +25,7 @@ public class ExceptionHelper {
 			errorMsg.append('\n');
 			errorMsg.append("              ");
 		}
-		logger.error(errorMsg.toString());
+		return errorMsg.toString();
 	}
+	
 }
