@@ -4,10 +4,15 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import org.antlr.v4.runtime.RecognitionException;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Route;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.RoutePolicy;
 import org.bip.api.BIPActor;
 import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
@@ -18,7 +23,10 @@ import org.bip.glue.GlueBuilder;
 import org.bip.glue.TwoSynchronGlueBuilder;
 import org.bip.resources.AllocatorImpl;
 import org.bip.resources.DNetException;
+import org.bip.spec.MemoryMonitor;
 import org.bip.spec.RouteOnOffMonitor;
+import org.bip.spec.SwitchableRouteDataTransfers;
+import org.bip.spec.resources.RouteManager;
 import org.bip.spec.resources.RouteResource;
 import org.bip.spec.resources.Bus;
 import org.bip.spec.resources.ComponentNeedingResource;
@@ -102,8 +110,8 @@ public class ResourceTest {
 		BIPActor actor1 = engine.register(aComp, "resourceNeeder1", true); 
 		BIPActor actor2 = engine.register(bComp, "resourceNeeder2", true); 
 		BIPActor allocatorActor = engine.register(alloc, "allocator", true); 
-		aComp.setAllocator(allocatorActor);
-		bComp.setAllocator(allocatorActor);
+		// aComp.setAllocator(allocatorActor);
+		// bComp.setAllocator(allocatorActor); // we do not use the allocator inside, maybe remove the ResourceAware interface
 		ResourceProvider memory = new Memory(256);
 		ResourceProvider processor = new Processor();
 		ResourceProvider bus = new Bus(128);
@@ -146,26 +154,60 @@ public class ResourceTest {
 		String dnetSpec = "src/test/resources/sortdnet.txt";
 		AllocatorImpl alloc = new AllocatorImpl(dnetSpec); 
 		
-		ComponentNeedingResource aComp = new ComponentNeedingResource(128);
-		ComponentNeedingResource bComp = new ComponentNeedingResource(100);
-
-
-		BIPActor actor1 = engine.register(aComp, "resourceNeeder1", true); 
-		BIPActor actor2 = engine.register(bComp, "resourceNeeder2", true); 
-		BIPActor allocatorActor = engine.register(alloc, "allocator", true); 
-		aComp.setAllocator(allocatorActor);
-		bComp.setAllocator(allocatorActor);
-		
 		CamelContext camelContext = new DefaultCamelContext();
 		camelContext.setAutoStartup(false);
+		 ArrayList<RouteResource> routes = new ArrayList<RouteResource>();
+
+		RouteResource route1 = new RouteResource("1", camelContext);
+		RouteResource route2 = new RouteResource("2", camelContext);
+		RouteResource route3 = new RouteResource("3", camelContext);
+		RouteResource route4 = new RouteResource("4", camelContext);
+		routes.add(route1); routes.add(route2);
+		routes.add(route3); routes.add(route4);
 		
-		RouteResource camelRoute = new RouteResource("1", camelContext);
-		ResourceProvider processor = new Processor();
-		ResourceProvider bus = new Bus(128);
+		BIPActor route1Actor = engine.register(route1, "1", true);
+		BIPActor route2Actor = engine.register(route2, "2", true);
+		BIPActor route3Actor = engine.register(route3, "3", true);
+		BIPActor route4Actor = engine.register(route4, "4", true);
 		
-		//alloc.addResource(camelRoute);
-		alloc.addResource(processor);
-		alloc.addResource(bus);
+		RouteManager routeManager = new RouteManager(camelContext, routes);
+		
+		final RoutePolicy routePolicy1 = createRoutePolicy(route1Actor);
+		final RoutePolicy routePolicy2 = createRoutePolicy(route2Actor);
+		final RoutePolicy routePolicy3 = createRoutePolicy(route3Actor);
+		final RoutePolicy routePolicy4 = createRoutePolicy(route4Actor);
+
+		RouteBuilder builder = new RouteBuilder() {
+
+			@Override
+			public void configure() throws Exception {
+				from("file:inputfolder1?delete=true").routeId("1")
+						.routePolicy(routePolicy1).to("file:outputfolder1");
+
+				from("file:inputfolder2?delete=true").routeId("2")
+						.routePolicy(routePolicy2).to("file:outputfolder2");
+
+				from("file:inputfolder3?delete=true").routeId("3")
+						.routePolicy(routePolicy3).to("file:outputfolder3");
+				from("file:inputfolder4?delete=true").routeId("4")
+						.routePolicy(routePolicy4).to("file:outputfolder4");
+			}
+			
+		};
+		
+		try {
+			camelContext.addRoutes(builder);
+			camelContext.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		MemoryMonitor routeOnOffMonitor = new MemoryMonitor(200);
+		final BIPActor executorM = engine.register(routeOnOffMonitor, "monitor", true);
+
+
+		BIPActor allocatorActor = engine.register(alloc, "allocator", true); 
+		alloc.addResource(routeManager);
 
 		engine.specifyGlue(bipGlue);
 
@@ -180,5 +222,43 @@ public class ResourceTest {
 
 		engine.stop();
 		engineFactory.destroy(engine);
+	}
+	
+	private RoutePolicy createRoutePolicy(final BIPActor actor) {
+
+		return new RoutePolicy() {
+
+			public void onInit(Route route) {
+			}
+
+			public void onExchangeDone(Route route, Exchange exchange) {
+
+				actor.inform("end");
+			}
+
+			public void onExchangeBegin(Route route, Exchange exchange) {
+			}
+
+			@Override
+			public void onRemove(Route arg0) {
+			}
+
+			@Override
+			public void onResume(Route arg0) {
+			}
+
+			@Override
+			public void onStart(Route arg0) {
+			}
+
+			@Override
+			public void onStop(Route arg0) {
+			}
+
+			@Override
+			public void onSuspend(Route arg0) {
+			}
+		};
+
 	}
 }

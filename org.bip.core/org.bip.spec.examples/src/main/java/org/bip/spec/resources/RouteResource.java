@@ -15,6 +15,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RoutePolicy;
@@ -27,20 +28,15 @@ import org.bip.annotations.Transition;
 import org.bip.api.DataOut.AccessType;
 import org.bip.api.Executor;
 import org.bip.api.PortType;
-import org.bip.api.ResourceProvider;
 import org.bip.api.ResourceProxy;
-import org.bip.api.ResourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
-
-
-// TODO DESIGN, DISCUSS, should all the BIP specs implement MutableIdentification
-
 @Ports({ @Port(name = "end", type = PortType.spontaneous), @Port(name = "on", type = PortType.enforceable), 
-		 @Port(name = "off", type = PortType.enforceable), @Port(name = "finished", type = PortType.enforceable) })
+		 @Port(name = "off", type = PortType.enforceable), @Port(name = "finished", type = PortType.enforceable),
+		 @Port(name = "init", type = PortType.enforceable), @Port(name = "delete", type = PortType.enforceable)  })
 @ComponentType(initial = "off", name = "org.bip.spec.resources.RouteResource")
 public class RouteResource implements CamelContextAware, InitializingBean, DisposableBean, ResourceProxy {
 
@@ -74,17 +70,75 @@ public class RouteResource implements CamelContextAware, InitializingBean, Dispo
 		this.camelContext = (ModelCamelContext) camelContext;
 	}
 
-	/**
-	 * In some cases you may want to execute
-	 */
-	// @Port(name="end", type="spontaneous")
-	public void workDone() {
-		logger.debug("Port handler for end port is executing.");
+	@Transition(name = "init", source = "i", target = "off", guard = "")
+	public void initRoute(String routePath) throws Exception {
+		logger.debug("Stop transition handler for {} is being executed.", routeId);
+		newRoute();
+		noOfEnforcedTransitions++;
+	}
+	
+	private void newRoute() {
+		RouteBuilder builder = new RouteBuilder() {
+
+			@Override
+			public void configure() throws Exception {
+				from("file:inputfolder1?delete=true").routeId("1")
+						.routePolicy(createRoutePolicy())
+						.to("file:outputfolder1");
+			}
+		};
+		try {
+			camelContext.addRoutes(builder);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
-	/*
-	 * Check what are the conditions for throwing the exception.
-	 */
+	private RoutePolicy createRoutePolicy() {
+		return new RoutePolicy() {
+
+			public void onInit(Route route) {
+			}
+
+			public void onExchangeDone(Route route, Exchange exchange) {
+
+				executor.inform("end");
+			}
+
+			public void onExchangeBegin(Route route, Exchange exchange) {
+			}
+
+			@Override
+			public void onRemove(Route arg0) {
+			}
+
+			@Override
+			public void onResume(Route arg0) {
+			}
+
+			@Override
+			public void onStart(Route arg0) {
+			}
+
+			@Override
+			public void onStop(Route arg0) {
+			}
+
+			@Override
+			public void onSuspend(Route arg0) {
+			}
+		};
+	}
+
+	@Transition(name = "delete", source = "off", target = "i", guard = "")
+	public void deleteRoute(String routePath) throws Exception {
+		logger.debug("Stop transition handler for {} is being executed.", routeId);
+		camelContext.stopRoute(routeId);
+		camelContext.removeRoute(routeId);
+		noOfEnforcedTransitions++;
+	}
+	
 	@Transition(name = "off", source = "on", target = "wait", guard = "")
 	public void stopRoute() throws Exception {
 		logger.debug("Stop transition handler for {} is being executed.", routeId);

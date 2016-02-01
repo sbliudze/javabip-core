@@ -8,70 +8,53 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RoutePolicy;
 import org.bip.api.ResourceProvider;
 import org.bip.api.ResourceType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RouteManager implements ResourceProvider {
 
+	private Logger logger = LoggerFactory.getLogger(RouteManager.class);
+	
+	private final String name = "r";
 	private ArrayList<RouteResource> routes;
 	private String cost = "";
-	private int capacity;
+	private int capacity = 4;
 	private int currentCapacity;
+	private CamelContext camelContext ;
 	
-	public RouteManager() {
-		routes = new ArrayList<RouteResource>();
-		
-		CamelContext camelContext = new DefaultCamelContext();
-		camelContext.setAutoStartup(false);
-		
-		RouteBuilder builder = new RouteBuilder() {
-
-			@Override
-			public void configure() throws Exception {
-				from("file:inputfolder1?delete=true").routeId("1")
-						//.routePolicy(routePolicy1)
-						.to("file:outputfolder1");
-
-				from("file:inputfolder2?delete=true").routeId("2")
-						//.routePolicy(routePolicy2)
-				.to("file:outputfolder2");
-
-				from("file:inputfolder3?delete=true").routeId("3")
-						//.routePolicy(routePolicy3)
-						.to("file:outputfolder3");
-			}
-			
-		};
-		
-		
-		try {
-			camelContext.addRoutes(builder);
-			camelContext.start();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public RouteManager(CamelContext camelContext, ArrayList<RouteResource> routes) {
+		this.routes = routes;
+		this.camelContext = camelContext;
+		this.cost =  costString();
 	}
-
+	
+	//TODO augmentCost and decreaseCost are similar in different classes, make a superclass
 	@Override
-	public void augmentCost(String arg0) {
-		// TODO Auto-generated method stub
-		
+	public void augmentCost(String deltaCost) {
+		logger.debug("Cost of " + name + " increased by " + deltaCost);
+		int taken = Integer.parseInt(deltaCost);
+		this.currentCapacity += taken;
+		this.cost = costString();
+		System.err.println("cost is now (+) " + cost);
 	}
 
 	@Override
 	public String cost() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.cost;
 	}
 
 	@Override
-	public void decreaseCost(String arg0) {
-		// TODO Auto-generated method stub
-		
+	public void decreaseCost(String deltaCost) {
+		logger.debug("Cost of " + name + " decreased by " + deltaCost);
+		int taken = Integer.parseInt(deltaCost);
+		this.currentCapacity -= taken;
+		this.cost = costString();
+		System.err.println("cost is now (-) " + cost);
 	}
 
 	@Override
 	public String name() {
-		// TODO Auto-generated method stub
-		return null;
+		return name;
 	}
 
 	@Override
@@ -81,7 +64,12 @@ public class RouteManager implements ResourceProvider {
 
 	@Override
 	public String providedResourceID() {
+		//TODO decide on provided resource id
 		return "route";
+	}
+	
+	private String costString() {
+		return "r>=0 & r<=" + Integer.toString(currentCapacity);
 	}
 	
 }
