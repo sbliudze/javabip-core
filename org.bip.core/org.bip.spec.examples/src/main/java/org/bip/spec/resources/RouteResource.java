@@ -25,6 +25,7 @@ import org.bip.annotations.Guard;
 import org.bip.annotations.Port;
 import org.bip.annotations.Ports;
 import org.bip.annotations.Transition;
+import org.bip.api.BIPActor;
 import org.bip.api.DataOut.AccessType;
 import org.bip.api.Executor;
 import org.bip.api.PortType;
@@ -37,7 +38,7 @@ import org.springframework.beans.factory.InitializingBean;
 @Ports({ @Port(name = "end", type = PortType.spontaneous), @Port(name = "on", type = PortType.enforceable), 
 		 @Port(name = "off", type = PortType.enforceable), @Port(name = "finished", type = PortType.enforceable),
 		 @Port(name = "init", type = PortType.enforceable), @Port(name = "delete", type = PortType.enforceable)  })
-@ComponentType(initial = "off", name = "org.bip.spec.resources.RouteResource")
+@ComponentType(initial = "i", name = "org.bip.spec.resources.RouteResource")
 public class RouteResource implements CamelContextAware, InitializingBean, DisposableBean, ResourceProxy {
 
 	public int noOfEnforcedTransitions;
@@ -48,7 +49,7 @@ public class RouteResource implements CamelContextAware, InitializingBean, Dispo
 
 	Logger logger = LoggerFactory.getLogger(RouteResource.class);
 
-	private Executor executor;
+	private BIPActor executor;
 	private RoutePolicy notifier;
 
 	private int deltaMemory = 100;
@@ -57,7 +58,7 @@ public class RouteResource implements CamelContextAware, InitializingBean, Dispo
 		this.camelContext = (ModelCamelContext) camelContext;
 	}
 
-	public void setExecutor(Executor executor) {
+	public void setExecutor(BIPActor executor) {
 		this.executor = executor;
 	}
 
@@ -70,21 +71,26 @@ public class RouteResource implements CamelContextAware, InitializingBean, Dispo
 		this.camelContext = (ModelCamelContext) camelContext;
 	}
 
-	@Transition(name = "init", source = "i", target = "off", guard = "")
-	public void initRoute(String routePath) throws Exception {
-		logger.debug("Stop transition handler for {} is being executed.", routeId);
-		newRoute();
+	@Transition(name = "init", source = "i", target = "off", guard = "idOK")
+	public void initRoute(@Data(name="routeIn")String inPath, @Data(name="routeOut")String outPath) throws Exception {
+		String id = routeId+ "1";
+		System.out.println("Creating new route from " + inPath + " to " + outPath + " with id " + id);
+		newRoute(inPath, outPath, id);
+		camelContext.stopRoute(routeId);
+		routeId = id;
 		noOfEnforcedTransitions++;
 	}
 	
-	private void newRoute() {
+	private void newRoute(String inPath, String outPath, String id) {
+		final String in = inPath;
+		final String out = outPath;
+		final String idd = id;
 		RouteBuilder builder = new RouteBuilder() {
 
 			@Override
 			public void configure() throws Exception {
-				from("file:inputfolder1?delete=true").routeId("1")
-						.routePolicy(createRoutePolicy())
-						.to("file:outputfolder1");
+				from("file:" + in + "?delete=true").routeId(idd)
+						.routePolicy(createRoutePolicy()).to("file:" + out);
 			}
 		};
 		try {
@@ -132,42 +138,47 @@ public class RouteResource implements CamelContextAware, InitializingBean, Dispo
 	}
 
 	@Transition(name = "delete", source = "off", target = "i", guard = "")
-	public void deleteRoute(String routePath) throws Exception {
+	public void deleteRoute() throws Exception {
 		logger.debug("Stop transition handler for {} is being executed.", routeId);
 		camelContext.stopRoute(routeId);
 		camelContext.removeRoute(routeId);
 		noOfEnforcedTransitions++;
 	}
 	
-	@Transition(name = "off", source = "on", target = "wait", guard = "")
-	public void stopRoute() throws Exception {
-		logger.debug("Stop transition handler for {} is being executed.", routeId);
-		camelContext.suspendRoute(routeId);
-		noOfEnforcedTransitions++;
-	}
-
-	@Transition(name = "end", source = "wait", target = "done", guard = "!isFinished")
-	public void spontaneousEnd() {
-		logger.debug("Received end notification for the route {}.", routeId);
-	}
-
-	@Transition(name = "", source = "wait", target = "done", guard = "isFinished")
-	public void internalEnd() {
-		logger.debug("Transitioning to done state directly since work within {} is already finished.", routeId);
-	}
-
-	@Transition(name = "finished", source = "done", target = "off", guard = "")
-	public void finishedTransition() {
-		logger.debug("Transitioning to off state from done for {}.", routeId);
-		noOfEnforcedTransitions++;
-	}
-
+//	@Transition(name = "off", source = "on", target = "wait", guard = "")
+//	public void stopRoute() throws Exception {
+//		logger.debug("Stop transition handler for {} is being executed.", routeId);
+//		camelContext.suspendRoute(routeId);
+//		noOfEnforcedTransitions++;
+//	}
+	
 	@Transition(name = "on", source = "off", target = "on", guard = "")
 	public void startRoute() throws Exception {
 		logger.debug("Start transition handler for {} is being executed.", routeId);
 		camelContext.resumeRoute(routeId);
+		System.out.println("Starting route " + routeId);
 		noOfEnforcedTransitions++;
 	}
+
+	//@Transition(name = "end", source = "wait", target = "done", guard = "!isFinished")
+	@Transition(name = "end", source = "on", target = "off", guard = "")
+	public void spontaneousEnd() throws Exception {
+		logger.debug("Received end notification for the route {}.", routeId);
+		camelContext.suspendRoute(routeId);
+	}
+
+//	@Transition(name = "", source = "wait", target = "done", guard = "isFinished")
+//	public void internalEnd() {
+//		logger.debug("Transitioning to done state directly since work within {} is already finished.", routeId);
+//	}
+//
+//	@Transition(name = "finished", source = "done", target = "off", guard = "")
+//	public void finishedTransition() {
+//		logger.debug("Transitioning to off state from done for {}.", routeId);
+//		noOfEnforcedTransitions++;
+//	}
+
+
 
 	@Guard(name = "isFinished")
 	public boolean isFinished() {
@@ -176,6 +187,11 @@ public class RouteResource implements CamelContextAware, InitializingBean, Dispo
 		return camelContext.getInflightRepository().size(routeId) == 0;
 	}
 
+	
+	@Guard(name = "idOK")
+	public boolean interactionAllowed(@Data(name="id")String id) {
+		return this.routeId==id;
+	}
 
 	@Data(name = "deltaMemoryOnTransition", accessTypePort = AccessType.allowed, ports = { "on", "finished" })
 	public int deltaMemoryOnTransition() {
@@ -196,7 +212,7 @@ public class RouteResource implements CamelContextAware, InitializingBean, Dispo
 		if (routePolicyList == null) {
 			routePolicyList = new ArrayList<RoutePolicy>();
 		}
-		final Executor finalExecutor = executor;
+		final BIPActor finalExecutor = executor;
 		notifier = new RoutePolicy() {
 
 			public void onInit(Route route) {
@@ -254,7 +270,8 @@ public class RouteResource implements CamelContextAware, InitializingBean, Dispo
 	
 	@Override
 	public String resourceID() {
-		return commonResourceID + routeId;
+		//return commonResourceID + routeId;
+		return routeId;
 	}
 
 }

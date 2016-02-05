@@ -772,7 +772,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 		} catch (BIPException e) {
 			ExceptionHelper.printExceptionTrace(logger, e, errorMessage);
 		} catch (Throwable e) {
-			ExceptionHelper.printExceptionTrace(logger, e);
+			ExceptionHelper.printExceptionTrace(logger, e, errorMessage);
 		}
 	}
 

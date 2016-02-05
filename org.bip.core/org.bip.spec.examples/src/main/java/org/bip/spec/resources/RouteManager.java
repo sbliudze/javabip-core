@@ -16,16 +16,19 @@ public class RouteManager implements ResourceProvider {
 	private Logger logger = LoggerFactory.getLogger(RouteManager.class);
 	
 	private final String name = "r";
-	private ArrayList<RouteResource> routes;
+	private ArrayList<RouteResource> avRoutes;
+	private ArrayList<RouteResource> navRoutes;
 	private String cost = "";
 	private int capacity = 4;
 	private int currentCapacity;
 	private CamelContext camelContext ;
 	
 	public RouteManager(CamelContext camelContext, ArrayList<RouteResource> routes) {
-		this.routes = routes;
+		this.avRoutes = routes;
 		this.camelContext = camelContext;
+		currentCapacity = routes.size();
 		this.cost =  costString();
+		navRoutes = new ArrayList<RouteResource>();
 	}
 	
 	//TODO augmentCost and decreaseCost are similar in different classes, make a superclass
@@ -49,6 +52,8 @@ public class RouteManager implements ResourceProvider {
 		int taken = Integer.parseInt(deltaCost);
 		this.currentCapacity -= taken;
 		this.cost = costString();
+		navRoutes.add(avRoutes.get(0));
+		avRoutes.remove(0);
 		System.err.println("cost is now (-) " + cost);
 	}
 
@@ -64,8 +69,8 @@ public class RouteManager implements ResourceProvider {
 
 	@Override
 	public String providedResourceID() {
-		//TODO decide on provided resource id
-		return "route";
+		//TODO unstable: depends on the order of call with decreaseCost
+		return navRoutes.get(0).resourceID();
 	}
 	
 	private String costString() {

@@ -47,7 +47,7 @@ public class ComponentNeedingResource implements ResourceAware {
 	@Transition(name = "process", source = "1", target = "2", guard = "")
 	public void process(@Data(name="resourceArray") Hashtable<String, String> resources) {
 		// here we must be using a resource
-		System.err.println("Processing something using resources");
+		System.err.println("Processing something using resources: "+ resources);
 	}
 
 	// TODO if we make this transition spontaneous, then we need to call it ourselves,

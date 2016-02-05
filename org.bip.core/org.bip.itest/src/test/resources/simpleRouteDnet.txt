@@ -1,0 +1,2 @@
+places r, m, b, p;
+transition t1 from p, m to b constraint m<=b;

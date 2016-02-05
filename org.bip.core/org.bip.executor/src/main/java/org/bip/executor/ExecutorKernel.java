@@ -198,8 +198,8 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 			// that there are no transitions
 			// store this information and use it for the next cycles till you get something
 			// different. When this is done uncomment the next line.
-			// waitingForSpontaneous = true;
-			 engine.inform(proxy, behaviour.getCurrentState(), globallyDisabledPorts);
+			 waitingForSpontaneous = true;
+			// engine.inform(proxy, behaviour.getCurrentState(), globallyDisabledPorts);
 			// Next step will be invoked upon receiving a spontaneous event. 
 			return;
 		}
@@ -240,14 +240,16 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 
 				logger.debug("Execution of "+ portID + " in component " + id + " with data "+ parameter);
 				
-				try {
-					if (!behaviour.checkEnabledness(portID, parameter).get(0)) {
-						throw new BIPException("Port with " + portID
-								+ " that requires data is not enabled for the received data");
-					}
-				} catch (Exception e) {
-					throw new BIPException(e);
-				}
+				//try {
+					// TODO why do we need to check for the second time? not sure it is correct
+					// I think there should not be such a check also because the data for guard and the data for transition might be different
+//					if (!behaviour.checkEnabledness(portID, parameter).get(0)) {
+//						throw new BIPException("Port " + portID + " of component " + id
+//								+ " that requires data is not enabled for the received data " + parameter);
+//					}
+//				} catch (Exception e) {
+//					throw new BIPException(e);
+//				}
 
 				behaviour.execute(portID, dataEvaluation);
 			}
@@ -341,7 +343,7 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 			args[0] = bipComponent;
 			Object methodResult = behaviour.getDataOutMapping2().get(name)
 					.invokeWithArguments(args);
-			
+			//TODO what if methodResult is null?
 			if (!clazz.equals(Object.class) && !methodResult.getClass().isAssignableFrom(clazz)) {
 				result = getPrimitiveData(name, methodResult, clazz);
 			} else

@@ -1,9 +1,6 @@
 package org.bip.executor;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
 import org.antlr.v4.runtime.RecognitionException;
@@ -19,19 +16,20 @@ import org.bip.api.BIPGlue;
 import org.bip.api.ResourceProvider;
 import org.bip.engine.factory.EngineFactory;
 import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
-import org.bip.glue.GlueBuilder;
 import org.bip.glue.TwoSynchronGlueBuilder;
 import org.bip.resources.AllocatorImpl;
 import org.bip.resources.DNetException;
 import org.bip.spec.MemoryMonitor;
-import org.bip.spec.RouteOnOffMonitor;
-import org.bip.spec.SwitchableRouteDataTransfers;
-import org.bip.spec.resources.RouteManager;
-import org.bip.spec.resources.RouteResource;
+import org.bip.spec.PComponent;
+import org.bip.spec.QComponent;
+import org.bip.spec.RComponent;
 import org.bip.spec.resources.Bus;
 import org.bip.spec.resources.ComponentNeedingResource;
+import org.bip.spec.resources.RouteUser;
 import org.bip.spec.resources.Memory;
 import org.bip.spec.resources.Processor;
+import org.bip.spec.resources.RouteManager;
+import org.bip.spec.resources.RouteResource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,26 +58,10 @@ public class ResourceTest {
 
 	}
 	
-	private BIPGlue createGlue(String bipGlueFilename) {
-		BIPGlue bipGlue = null;
-
-		InputStream inputStream;
-		try {
-			inputStream = new FileInputStream(bipGlueFilename);
-
-			bipGlue = GlueBuilder.fromXML(inputStream);
-
-		} catch (FileNotFoundException e) {
-
-			e.printStackTrace();
-		}
-		return bipGlue;
-	}
-	
+	@SuppressWarnings("unused")
 	@Test
 	public void procMemBusTest() throws RecognitionException, IOException, DNetException
 	{
-		//BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
 			public void configure() {
@@ -98,6 +80,7 @@ public class ResourceTest {
 
 		}.build();
 
+		
 		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
 		
 		String dnetSpec = "src/test/resources/dnet.txt";
@@ -135,10 +118,124 @@ public class ResourceTest {
 		engineFactory.destroy(engine);
 	}
 	
+	@SuppressWarnings("unused")
+	@Test
+	public void simpleRouteTest() throws RecognitionException, IOException, DNetException
+	{
+		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
+			@Override
+			public void configure() {
+
+				 synchron(RouteUser.class, "askRoute").to(AllocatorImpl.class,
+						 "request");
+//				 synchron(RouteUser.class, "release").to(AllocatorImpl.class,
+//						 "release");
+				 synchron(RouteUser.class, "getRoute").to(AllocatorImpl.class,
+						 "provideResource");
+				 synchron(RouteUser.class, "initRoute").to(RouteResource.class,
+						 "init");
+				 synchron(RouteUser.class, "transfer").to(RouteResource.class,
+						 "on");
+				 synchron(RouteUser.class, "release").to(RouteResource.class,
+						 "delete");
+
+				port(RouteUser.class, "release").requires(RouteResource.class,
+						"delete", AllocatorImpl.class, "release");
+				port(AllocatorImpl.class, "release").requires(RouteUser.class, "release");
+				port(RouteResource.class, "delete").requires(RouteUser.class, "release");
+				port(RouteUser.class, "release").accepts(RouteResource.class,
+						"delete", AllocatorImpl.class, "release");
+				port(AllocatorImpl.class, "release").accepts(RouteResource.class,
+						"delete", RouteUser.class, "release");
+				port(RouteResource.class, "delete").accepts(RouteUser.class,
+						"release", AllocatorImpl.class, "release"); 
+				
+				 data(RouteUser.class, "utility").to(AllocatorImpl.class, "request");
+				 data(RouteUser.class, "resourceUnit").to(AllocatorImpl.class, "resourceUnit");
+				 data(AllocatorImpl.class, "resources").to(RouteUser.class, "resourceArray");
+				 data(RouteUser.class, "route").to(RouteResource.class, "id");
+				 data(RouteUser.class, "inPath").to(RouteResource.class, "routeIn");
+				 data(RouteUser.class, "outPath").to(RouteResource.class, "routeOut");
+			}
+
+		}.build();
+
+		bipGlue.toXML(System.out);
+		
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
+		
+		String dnetSpec = "src/test/resources/simpleRouteDnet.txt";
+		AllocatorImpl alloc = new AllocatorImpl(dnetSpec); 
+		
+		RouteUser routeUser1 = new RouteUser();
+
+		BIPActor actor1 = engine.register(routeUser1, "routeUser1", true); 
+		BIPActor allocatorActor = engine.register(alloc, "allocator", true); 
+
+		ResourceProvider memory = new Memory(256);
+		ResourceProvider processor = new Processor();
+		ResourceProvider bus = new Bus(128);
+
+		CamelContext camelContext = new DefaultCamelContext();
+		camelContext.setAutoStartup(false);
+		ArrayList<RouteResource> routes = new ArrayList<RouteResource>();
+
+		RouteResource route1 = new RouteResource("1", camelContext);
+		RouteResource route2 = new RouteResource("2", camelContext);
+		routes.add(route1); routes.add(route2);
+		
+		BIPActor route1Actor = engine.register(route1, "1", true);
+		BIPActor route2Actor = engine.register(route2, "2", true);
+		route1.setExecutor(route1Actor);route2.setExecutor(route2Actor);
+		
+		ResourceProvider routeManager = new RouteManager(camelContext, routes);
+		
+		final RoutePolicy routePolicy1 = createRoutePolicy(route1Actor);
+		final RoutePolicy routePolicy2 = createRoutePolicy(route2Actor);
+
+		RouteBuilder builder = new RouteBuilder() {
+
+			@Override
+			public void configure() throws Exception {
+				from("file:inputfolder1?delete=true").routeId("1")
+						.routePolicy(routePolicy1).to("file:outputfolder1");
+
+				from("file:inputfolder2?delete=true").routeId("2")
+						.routePolicy(routePolicy2).to("file:outputfolder2");
+			}
+			
+		};
+		
+		try {
+			camelContext.addRoutes(builder);
+			camelContext.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		alloc.addResource(memory);
+		alloc.addResource(processor);
+		alloc.addResource(bus);
+		alloc.addResource(routeManager);
+
+		engine.specifyGlue(bipGlue);
+
+		engine.start();
+		engine.execute();
+
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		engine.stop();
+		engineFactory.destroy(engine);
+	}
+	
 	@Test
 	public void sortingTest() throws RecognitionException, IOException, DNetException
 	{
-		//BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
 			public void configure() {
@@ -151,12 +248,12 @@ public class ResourceTest {
 		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
 		
 		//TODO create dnet
-		String dnetSpec = "src/test/resources/sortdnet.txt";
+		String dnetSpec = "src/test/resources/sortDnet.txt";
 		AllocatorImpl alloc = new AllocatorImpl(dnetSpec); 
 		
 		CamelContext camelContext = new DefaultCamelContext();
 		camelContext.setAutoStartup(false);
-		 ArrayList<RouteResource> routes = new ArrayList<RouteResource>();
+		ArrayList<RouteResource> routes = new ArrayList<RouteResource>();
 
 		RouteResource route1 = new RouteResource("1", camelContext);
 		RouteResource route2 = new RouteResource("2", camelContext);
