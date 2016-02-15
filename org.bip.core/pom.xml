@@ -26,7 +26,6 @@
 	<module>org.bip.executor</module>
 	<module>org.bip.executor.impl</module>
 	<module>org.bip.spec.examples</module>
-	<module>org.bip.itest</module>
   </modules>
    
 </project>

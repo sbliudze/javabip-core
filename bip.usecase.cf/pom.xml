@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>io.xtech</groupId>
 		<artifactId>xtech-parent</artifactId>
-		<version>7</version>
+		<version>9</version>
 	</parent>
 
 	<groupId>io.xtech.bip</groupId>
