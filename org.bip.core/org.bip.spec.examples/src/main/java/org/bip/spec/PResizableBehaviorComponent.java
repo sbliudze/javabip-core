@@ -26,7 +26,7 @@ public class PResizableBehaviorComponent {
 	// sr spontaneous is rolling back to previous state.
 	// se spontaneous is enabling transition to the next state.
 
-	Logger logger = LoggerFactory.getLogger(SwitchableRoute.class);
+	Logger logger = LoggerFactory.getLogger(PResizableBehaviorComponent.class);
 
 	public int pCounter = 0;
 

@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 @ComponentType(initial = "start", name = "org.bip.spec.PSSComponent")
 public class PSSComponent {
 
-	Logger logger = LoggerFactory.getLogger(SwitchableRoute.class);
+	Logger logger = LoggerFactory.getLogger(PSSComponent.class);
 
 	public int pCounter = 0;
 

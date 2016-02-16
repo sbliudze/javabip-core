@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 @ComponentType(initial = "start", name = "TestSpecEnforceableSpontaneous")
 public class TestSpecEnforceableSpontaneous {
 
-    Logger logger = LoggerFactory.getLogger(SwitchableRoute.class);
+    Logger logger = LoggerFactory.getLogger(TestSpecEnforceableSpontaneous.class);
 
     public int pCounter = 0;
     public int sCounter = 0;
