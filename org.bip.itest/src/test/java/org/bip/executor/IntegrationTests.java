@@ -104,8 +104,89 @@ public class IntegrationTests {
 		assertEquals(portC.hashCode(), portD.hashCode());
 	}
 
+	
 	@Test
-	public void testBehaviourBuilding() throws BIPException {
+	public void routesTest() throws BIPException {
+
+
+		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
+			@Override
+			public void configure() {
+
+				synchron(SwitchableRoute.class, "on").to(RouteOnOffMonitor.class, "add");
+				synchron(SwitchableRoute.class, "finished").to(RouteOnOffMonitor.class, "rm");
+				
+				port(SwitchableRoute.class, "off").acceptsNothing();
+				port(SwitchableRoute.class, "off")	.requiresNothing();
+
+			}
+		}.build();
+
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
+
+		SwitchableRoute route1 = new SwitchableRoute("1");
+		SwitchableRoute route2 = new SwitchableRoute("2");
+		SwitchableRoute route3 = new SwitchableRoute("3");
+		RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
+
+		CamelContext camelContext = new DefaultCamelContext();
+		route1.setCamelContext(camelContext);
+		route2.setCamelContext(camelContext);
+		route3.setCamelContext(camelContext);
+		
+		final BIPActor executor1 = engine.register(route1, "1", true);
+		final BIPActor executor2 = engine.register(route2, "2", true);
+		final BIPActor executor3 = engine.register(route3, "3", true);
+
+		final BIPActor executorM = engine.register(routeOnOffMonitor, "monitor", true);
+		
+		final RoutePolicy routePolicy1 = createRoutePolicy(executor1);
+		final RoutePolicy routePolicy2 = createRoutePolicy(executor2); 
+		final RoutePolicy routePolicy3 = createRoutePolicy(executor3);
+		
+		RouteBuilder builder = new RouteBuilder() {
+
+			@Override
+			public void configure() throws Exception {
+				from("file:inputfolder1?delete=true").routeId("1")
+						.routePolicy(routePolicy1).to("file:outputfolder1");
+
+			from("file:inputfolder2?delete=true").routeId("2")
+						.routePolicy(routePolicy2).to("file:outputfolder2");
+
+				from("file:inputfolder3?delete=true").routeId("3")
+						.routePolicy(routePolicy3).to("file:outputfolder3");
+			}
+		};
+		camelContext.setAutoStartup(false);
+		try {
+			camelContext.addRoutes(builder);
+			camelContext.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		engine.specifyGlue(bipGlue);
+		engine.start();
+		engine.execute();
+		
+		try {
+			Thread.sleep(20000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		engine.stop();
+		engineFactory.destroy(engine);
+			
+		assertTrue("Route 1 has not made any transitions", route1.noOfEnforcedTransitions > 0);
+		assertTrue("Route 2 has not made any transitions", route2.noOfEnforcedTransitions > 0);
+		assertTrue("Route 3 has not made any transitions", route3.noOfEnforcedTransitions > 0);
+		
+	}
+	
+	@Test
+	public void behaviourBuildingTest() throws BIPException {
 
 		// get Glue object from xml file
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueExecutableBehaviour.xml");
@@ -183,7 +264,7 @@ public class IntegrationTests {
 	}
 
 	@Test
-	public void testEnforceableSpontaneous() throws BIPException {
+	public void enforceableSpontaneousTest() throws BIPException {
 
 		BIPGlue bipGlue = new GlueBuilder() {
 			@Override
@@ -262,7 +343,7 @@ public class IntegrationTests {
 	}
 
 	@Test
-	public void testEnforceableSpontaneous2() throws BIPException {
+	public void enforceableSpontaneous2Test() throws BIPException {
 
 		BIPGlue bipGlue = new GlueBuilder() {
 			@Override
@@ -348,7 +429,7 @@ public class IntegrationTests {
 	}
 
 	@Test	
-	public void testTernaryInteractionWithTrigger() throws BIPException {
+	public void ternaryInteractionWithTriggerTest() throws BIPException {
 
 		/*
 		 * Test story.
@@ -474,7 +555,7 @@ public class IntegrationTests {
 	}
 
 	@Test
-	public void testWithMistakeInWiring() throws BIPException {
+	public void mistakeInWiringTest() throws BIPException {
 
 		/*
 		 * 
@@ -577,7 +658,7 @@ public class IntegrationTests {
 	}
 
 	@Test
-	public void testMultipleSpontaneous() throws BIPException {
+	public void ultipleSpontaneousTest() throws BIPException {
 
 		/*
 		 * Test story.
@@ -756,8 +837,8 @@ public class IntegrationTests {
 	}
 
 	@Test
-	@Ignore // old ignore.
-	public void testBinaryInteractionLargeBehavior()
+	@Ignore // old ignore because the test is time-consuming
+	public void binaryInteractionLargeBehaviorTest()
 			throws NoSuchMethodException, BIPException {
 
 		/*
@@ -904,7 +985,7 @@ public class IntegrationTests {
 	}
 
 	@Test
-	public void testSynchronGlueBuilderSwitchableRoute() {
+	public void synchronGlueBuilderSwitchableRouteTest() {
 
 		BIPGlue glue = new TwoSynchronGlueBuilder() {
 			@Override

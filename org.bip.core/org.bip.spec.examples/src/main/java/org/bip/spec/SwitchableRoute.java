@@ -51,6 +51,7 @@ public class SwitchableRoute implements CamelContextAware, InitializingBean, Dis
 	public ModelCamelContext camelContext;
 
 	public String routeId;
+	public int noOfEnforcedTransitions;
 
 	Logger logger = LoggerFactory.getLogger(SwitchableRoute.class);
 
@@ -93,7 +94,7 @@ public class SwitchableRoute implements CamelContextAware, InitializingBean, Dis
 	public void stopRoute() throws Exception {
 		logger.debug("Stop transition handler for {} is being executed.", routeId);
 		camelContext.suspendRoute(routeId);
-
+		noOfEnforcedTransitions++;
 	}
 
 	@Transition(name = "end", source = "wait", target = "done", guard = "!isFinished")
@@ -108,6 +109,7 @@ public class SwitchableRoute implements CamelContextAware, InitializingBean, Dis
 
 	@Transition(name = "finished", source = "done", target = "off", guard = "")
 	public void finishedTransition() throws Exception {
+		noOfEnforcedTransitions++;
 		logger.debug("Transitioning to off state from done for {}.", routeId);
 	}
 
@@ -115,6 +117,7 @@ public class SwitchableRoute implements CamelContextAware, InitializingBean, Dis
 	public void startRoute() throws Exception {
 		logger.debug("Start transition handler for {} is being executed.", routeId);
 		camelContext.resumeRoute(routeId);
+		noOfEnforcedTransitions++;
 	}
 
 	@Guard(name = "isFinished")
