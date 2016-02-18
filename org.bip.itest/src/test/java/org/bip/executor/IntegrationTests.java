@@ -43,6 +43,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import akka.actor.ActorSystem;
 
@@ -94,7 +96,7 @@ public class IntegrationTests {
 	}
 
 	@Test
-	public void testHashCodePort() {
+	public void hashCodePortTest() {
 		PortBase portA = new PortImpl("p", PortType.enforceable, SwitchableRoute.class);
 		PortBase portB = new PortImpl("p", PortType.enforceable, SwitchableRoute.class);
 		PortBase portC = new PortImpl("p", PortType.enforceable, SwitchableRoute.class);
@@ -108,6 +110,12 @@ public class IntegrationTests {
 	@Test
 	public void routesTest() throws BIPException {
 
+		/*
+		 * Test story.
+		 * 
+		 * The classical Switchable Routes example with three routes and one monitor,
+		 * without data transfer, specification through annotations.
+		 */
 
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
@@ -188,7 +196,13 @@ public class IntegrationTests {
 	@Test
 	public void behaviourBuildingTest() throws BIPException {
 
-		// get Glue object from xml file
+		/*
+		 * Test story.
+		 * 
+		 * The classical Switchable Routes example with three routes and one monitor,
+		 * without data transfer, specification through provided behaviour.
+		 */
+		
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueExecutableBehaviour.xml");
 
 		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
@@ -266,6 +280,17 @@ public class IntegrationTests {
 	@Test
 	public void enforceableSpontaneousTest() throws BIPException {
 
+		/*
+		 * Test story.
+		 * 
+		 * There is one component (TestSpecEnforceableSpontaneous) 
+		 * with one enforceable port p and one spontaneous port s. 
+		 * The two ports must be executed in alternation, one after the other.
+		 * A separate thread sends a fixed number of spontaneous events with a random frequency. 
+		 * The testing thread then sleeps every now and then until a certain number of sleeps has been reached.
+		 * By then the component must have executed all spontaneous transitions.
+		 */
+		
 		BIPGlue bipGlue = new GlueBuilder() {
 			@Override
 			public void configure() {
@@ -287,8 +312,6 @@ public class IntegrationTests {
 		final int noOfMilisecondsBetweenS = 1000;
 		final int executorLoopDelay = 1000;
 
-
-
 		TestSpecEnforceableSpontaneous component1 = new TestSpecEnforceableSpontaneous();
 
 		final BIPActor executor1 = engine.register(component1, "comp1", true);
@@ -308,7 +331,7 @@ public class IntegrationTests {
 				}
 
 			}
-		}, "SW2");
+		}, "SpontaneousSender");
 
 		engine.specifyGlue(bipGlue);
 		engine.start();
@@ -345,6 +368,19 @@ public class IntegrationTests {
 	@Test
 	public void enforceableSpontaneous2Test() throws BIPException {
 
+		/*
+		 * Test story.
+		 * 
+		 * There is one component (TestSpecEnforceableSpontaneous) 
+		 * with one enforceable port p and one spontaneous port s. 
+		 * The two ports must be executed in alternation, one after the other.
+		 * A separate thread sends a fixed number of spontaneous events with a random frequency. 
+		 * The testing thread then sleeps every now and then until a certain number of sleeps has been reached.
+		 * By then the component must have executed all spontaneous transitions.
+		 * 
+		 * The difference with the previous test is in sleep duration and frequency and that there is only one spontaneous transition.
+		 */
+		
 		BIPGlue bipGlue = new GlueBuilder() {
 			@Override
 			public void configure() {
@@ -363,10 +399,6 @@ public class IntegrationTests {
 		
 		final int noSpontaneousToBeSend = 1;
 		final int noOfMilisecondsBetweenS = 1000;
-
-
-
-		// bipGlue.toXML(System.out);
 		
 		TestSpecEnforceableSpontaneous component1 = new TestSpecEnforceableSpontaneous();
 
@@ -388,7 +420,7 @@ public class IntegrationTests {
 				}
 
 			}
-		}, "SW2");
+		}, "SpontaneousSender");
 
 		engine.specifyGlue(bipGlue);
 		engine.start();
@@ -434,8 +466,12 @@ public class IntegrationTests {
 		/*
 		 * Test story.
 		 * 
-		 * Rcomponent with its port triggers an interaction where pComponent (p
-		 * port) is synchronized with qComponent (q) port
+		 * Rcomponent with its port triggers an interaction where pComponent 
+		 * (p port) is synchronized with qComponent (q port)
+		 * 
+		 * In Q: s enables q, after executing q gets disabled.
+		 * In P: either p does not need to be globally enabled, 
+		 * or s enables p, after executing p gets disabled.
 		 * 
 		 * pComponent because it is initialized with false will not be able to
 		 * execute transitions with spontaneous events. What happens then with
@@ -559,11 +595,10 @@ public class IntegrationTests {
 
 		/*
 		 * 
-		 * In place annotated with comment MISTAKE on purpose, we use the second
+		 * In place annotated with comment "MISTAKE on purpose", we use the second
 		 * time pComponent instead of q component to get
 		 * ArrayIndexOutOfBoundException.
 		 */
-
 
 		BIPGlue bipGlue = new GlueBuilder() {
 			@Override
@@ -658,7 +693,7 @@ public class IntegrationTests {
 	}
 
 	@Test
-	public void ultipleSpontaneousTest() throws BIPException {
+	public void multipleSpontaneousTest() throws BIPException {
 
 		/*
 		 * Test story.
@@ -673,7 +708,7 @@ public class IntegrationTests {
 		 * R.s is also being sent so that R.r can be enabled.
 		 * 
 		 * [DONE] This test assumes a new treatment of spontaneous events,
-		 * namely that if one spontaneous event has arrived then if it guard
+		 * namely that if one spontaneous event has arrived then if its guard
 		 * evaluates to true (or guard does not exist) then there is no
 		 * exception if enforceable transition also evaluates to true.
 		 * Spontaneous transition will have a precedence over enforceable one.

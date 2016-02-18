@@ -27,11 +27,8 @@ public class QComponent {
 
     boolean qEnabled = false;
 
-    /*
-      * Check what are the conditions for throwing the exception.
-      */
     @Transition(name = "q", source = "start", target = "start", guard = "isQEnabled")
-    public void enforceableQ() throws Exception {
+    public void enforceableQ() {
         logger.debug("Q transition is being executed.");
         qCounter++;
         qEnabled = false;
