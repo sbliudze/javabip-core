@@ -26,25 +26,19 @@ import org.bip.engine.factory.EngineFactory;
 import org.bip.exceptions.BIPException;
 import org.bip.glue.GlueBuilder;
 import org.bip.glue.TwoSynchronGlueBuilder;
-import org.bip.spec.CounterInterface;
-import org.bip.spec.MemoryMonitor;
 import org.bip.spec.PComponent;
 import org.bip.spec.PResizableBehaviorComponent;
 import org.bip.spec.PSSComponent;
 import org.bip.spec.QComponent;
 import org.bip.spec.RComponent;
 import org.bip.spec.RouteOnOffMonitor;
-import org.bip.spec.RouteTransitionCounter;
 import org.bip.spec.SwitchableRoute;
-import org.bip.spec.SwitchableRouteDataTransfers;
 import org.bip.spec.SwitchableRouteExecutableBehavior;
 import org.bip.spec.TestSpecEnforceableSpontaneous;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import akka.actor.ActorSystem;
 
@@ -1016,38 +1010,6 @@ public class IntegrationTests {
 		assertEquals(0, pComponent.pCounter);
 
 		assertEquals(noIterations, qComponent.qCounter);
-
-	}
-
-	@Test
-	public void synchronGlueBuilderSwitchableRouteTest() {
-
-		BIPGlue glue = new TwoSynchronGlueBuilder() {
-			@Override
-			public void configure() {
-
-				synchron(SwitchableRouteDataTransfers.class, "on").to(
-						MemoryMonitor.class, "add");
-				synchron(SwitchableRouteDataTransfers.class, "finished").to(
-						MemoryMonitor.class, "rm");
-				port(SwitchableRouteDataTransfers.class, "off")
-						.acceptsNothing();
-				port(SwitchableRouteDataTransfers.class, "off")
-						.requiresNothing();
-				data(SwitchableRouteDataTransfers.class,
-						"deltaMemoryOnTransition").to(MemoryMonitor.class,
-						"memoryUsage");
-
-			}
-
-		}.build();
-
-		assertEquals("Incorrect number of accepts ", 5, glue
-				.getAcceptConstraints().size());
-		assertEquals("Incorrect number of requires ", 5, glue
-				.getRequiresConstraints().size());
-		assertEquals("Incorrect number of data wires ", 1, glue.getDataWires()
-				.size());
 
 	}
 

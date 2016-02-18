@@ -74,7 +74,7 @@ public class AkkaExecutorTests {
 	}
 
 	@Test
-	public void bipDataTransferTest() throws BIPException {
+	public void routesWithDataTest() throws BIPException {
 
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
@@ -158,7 +158,7 @@ public class AkkaExecutorTests {
 	// initialization time and due to first few cycles.
 	@SuppressWarnings("unused")
 	@Test
-	public void bipRandomLargerHannoiWithDataTest() throws JAXBException,
+	public void randomLargerHannoiWithDataTest() throws JAXBException,
 			BIPException {
 
 		int size = 3;
@@ -210,7 +210,7 @@ public class AkkaExecutorTests {
 	// initialization time and due to first few cycles.
 	@Test
 	@SuppressWarnings("unused")
-	public void bipRandomHannoiWithDataTest() throws JAXBException,
+	public void randomHannoiWithDataTest() throws JAXBException,
 			BIPException {
 
 		int size = 3;
@@ -254,7 +254,7 @@ public class AkkaExecutorTests {
 	
 	@Test
 	@SuppressWarnings("unused")
-	public void bipHannoiWithDataTestSize3() throws JAXBException, BIPException {
+	public void hannoiWithDataTestSize3() throws JAXBException, BIPException {
 
 		BIPGlue bipGlue4Hanoi = new org.bip.spec.hanoi.HanoiOptimalGlueBuilder()
 				.build();
@@ -303,7 +303,7 @@ public class AkkaExecutorTests {
 
 	@Test
 	@SuppressWarnings("unused")
-	public void bipHannoiWithDataTestSize8() throws JAXBException, BIPException {
+	public void hannoiWithDataTestSize8() throws JAXBException, BIPException {
 
 		BIPGlue bipGlue4Hanoi = new org.bip.spec.hanoi.HanoiOptimalGlueBuilder()
 				.build();
@@ -352,7 +352,7 @@ public class AkkaExecutorTests {
 	// It does not use data transfers but plenty of interactions and more ports.
 	@Test
 	@SuppressWarnings("unused")
-	public void akkaExecutorHannoiNoDataTransferswithActorEngineTest() {
+	public void hannoiNoDataSize3Test() {
 
 		int size = 3;
 
@@ -396,12 +396,13 @@ public class AkkaExecutorTests {
 
 	@Test
 	@SuppressWarnings("unused")
-	public void akkaExecutorHannoiTest() {
+	public void hannoiNoDataSize8Test() {
 
 		int size = 8;
 
 		BIPGlue bipGlue4Hanoi = new HanoiGlueBuilder(size).build();
 
+		// TODO The following comment is no longer valid, is it?
 		// TODO Discussion, here we do not use TypedActor to create an engine. Thus the BIP engine is not protected 
 		// from multiple-thread calls against its functions. BIP engine is not guaranteed to be multiple-thread safe right?, so we should
 		// remove this test as there is a similar one that does hanoi testing without data transfers.
@@ -496,7 +497,7 @@ public class AkkaExecutorTests {
 
 	@Ignore
 	@Test
-	public void ServersTest() {
+	public void serversTest() {
 
 		// TODO, PLEASE use BIP glue builders and not XML file.
 		// TODO, BUG? BTW, BIP glue is not using class InitialServer only Server.
@@ -536,7 +537,7 @@ public class AkkaExecutorTests {
 
 	@Test
 	@SuppressWarnings("unused")
-	public void TrackerPeerTest()
+	public void trackerPeerTest()
 	{
 
 		// TODO, PLEASE use BIP glue builders and not XML file.
@@ -586,7 +587,7 @@ public class AkkaExecutorTests {
 	
 	@Test
 	@SuppressWarnings("unused")
-	public void bipDataFeederConsumerTest() throws BIPException {
+	public void feederConsumerTest() throws BIPException {
 
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueFeederConsumer.xml");
 
@@ -619,7 +620,7 @@ public class AkkaExecutorTests {
 
 	@Test
 	@SuppressWarnings("unused")
-	public void bipDataAvailabilityTest() throws BIPException {
+	public void dataAvailabilityTest() throws BIPException {
 
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueDataAvailability.xml");
 
@@ -660,7 +661,18 @@ public class AkkaExecutorTests {
 
 	@Test
 	@SuppressWarnings("unused")
-	public void bipMasterSlaveTest() throws BIPException {
+	/* * The test-case is not finished due to a limitation of the data approach.
+	 * The problem is in the guard in Master in compute-work-work interaction.
+	 * The Master needs two different data, representing Slave id, each of the data can be provided by any slave.
+	 * The DataCoordinator queries all Slave components, and outputs false for the interaction with the same component (M-S1-S1). 
+	 * After this false the interaction (M-S1-S2) will be also disabled since S1 is disabled.
+	 * 
+	 * We cannot disable the possibility of the same component providing different data during one interaction, 
+	 * as it is a valid usage. However we cannot distinguish in the DataCoordinator the case of M-S from the case of M-S-S, 
+	 * since this is information from the Glue, which is analyzed elsewhere.
+	*/
+	@Ignore 
+	public void masterSlaveTest() throws BIPException {
 
 		BIPGlue bipGlue = new GlueBuilder() {
 			@Override
@@ -697,18 +709,8 @@ public class AkkaExecutorTests {
 		Slave slaveE = new Slave("slaveE");
 
 		BIPActor executorM1 = engine.register(master1, "master1", true);
-
-//		BIPActor executorM2 = engine.register(master2, "master2", true);
-
 		BIPActor executorSA = engine.register(slaveA, "slaveA", true);
-
 		BIPActor executorSB = engine.register(slaveB, "slaveB", true);
-
-//		BIPActor executorSC = engine.register(slaveC, "slaveC", true);
-//
-//		BIPActor executorSD = engine.register(slaveD, "slaveD", true);
-//
-//		BIPActor executorSE = engine.register(slaveE, "slaveE", true);
 
 		// engine.specifyGlue(bipGlue);
 		engine.start();
@@ -724,23 +726,18 @@ public class AkkaExecutorTests {
 		engine.stop();
 		engineFactory.destroy(engine);
 
-		// assertTrue("Master 1 or 2 has not made any transitions", master1.noOfTransitions > 2 ||
-		// master2.noOfTransitions > 2);
+		// assertTrue("Master 1 has not made any transitions", master1.noOfTransitions > 2);
 		// assertTrue("Slave A has not made any transitions", slaveA.noOfTransitions > 0);
 		// assertTrue("Slave B has not made any transitions", slaveB.noOfTransitions > 0);
-		// assertTrue("Slave C has not made any transitions", slaveC.noOfTransitions > 0);
-		// assertTrue("Slave D has not made any transitions", slaveD.noOfTransitions > 0);
-		// assertTrue("Slave E has not made any transitions", slaveE.noOfTransitions > 0);
 
 	}
 	
 	@Test
-	public void akkaExecutorPhilosopherwithDataTest() {
+	public void philosopherwithDataTest() {
 
 		BIPGlue bipGlue4Philosophers = new DiningPhilosophersGlueBuilder().build();
 
 		BIPEngine engine = engineFactory.create("myEngine", bipGlue4Philosophers);
-
 
 
 		Fork f1 = new Fork(1);
@@ -792,7 +789,7 @@ public class AkkaExecutorTests {
 	// TODO, Explain exactly what is the limitation.
 	@Test
 	@Ignore
-	public void bipTwoDataTest() throws BIPException {
+	public void twoDataTest() throws BIPException {
 
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueTwoData.xml");
 
