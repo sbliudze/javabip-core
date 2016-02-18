@@ -1,4 +1,4 @@
-package org.bip.executor;
+package org.bip.executor.pubsub;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -24,7 +24,7 @@ import akka.actor.ActorSystem;
 
 import com.typesafe.config.ConfigFactory;
 
-public class UntypedTCPAcceptor {
+public class UntypedPubSubTest {
 	
 	ActorSystem system;
 	OrchestratedExecutorFactory factory;
@@ -100,7 +100,7 @@ public class UntypedTCPAcceptor {
 			CommandHandler handler5 = new CommandHandler(proxyForManager);
 			BIPActor commandHandler5 = engine.register(handler5, "commandHandler5", true);
 
-			Thread tr = new Thread(new UntypedTestPubSub());
+			Thread tr = new Thread(new UntypedPubSubRunnable());
 			tr.start();
 
 			// Thread tr2 = new Thread(new UntypedTestPubSub());

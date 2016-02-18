@@ -1,4 +1,4 @@
-package org.bip.executor;
+package org.bip.executor.pubsub;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -8,11 +8,11 @@ import lsr.concurrence.provided.tests.ClientInputReader;
 import lsr.concurrence.provided.tests.ClientOutputWriter;
 import lsr.concurrence.provided.tests.InputChecker;
 
-public class TestPubSub implements Runnable {
+public class PubSubRunnable implements Runnable {
 	
 	boolean runTest;
 
-	public TestPubSub(boolean b) {
+	public PubSubRunnable(boolean b) {
 		this.runTest = b;
 	}
 

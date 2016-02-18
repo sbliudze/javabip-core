@@ -1,4 +1,4 @@
-package org.bip.executor;
+package org.bip.executor.pubsub;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -32,7 +32,7 @@ import akka.actor.ActorSystem;
 
 import com.typesafe.config.ConfigFactory;
 
-public class NewTCPAcceptor {
+public class PubSub5topicsTest {
 	
 	ActorSystem system;
 	OrchestratedExecutorFactory factory;
@@ -156,15 +156,15 @@ public class NewTCPAcceptor {
 			// CommandHandler handler9 = new CommandHandler(proxyForManager);
 			// BIPActor commandHandler9 = engine.register(handler9, "commandHandler9", true);
 
-			Thread tr0=new Thread(new PubSub5topics(topics, msgs));
+			Thread tr0=new Thread(new PubSub5topicsFirstRunnable(topics, msgs));
 			tr0.start();
-			Thread tr1=new Thread(new PubSub5topics(topics, msgs));
+			Thread tr1=new Thread(new PubSub5topicsFirstRunnable(topics, msgs));
 			tr1.start();
-			Thread tr2=new Thread(new PubSub5topics1(topics, msgs));
+			Thread tr2=new Thread(new PubSub5topicsSecondRunnable(topics, msgs));
 			tr2.start();
-			Thread tr3=new Thread(new PubSub5topics1(topics, msgs));
+			Thread tr3=new Thread(new PubSub5topicsSecondRunnable(topics, msgs));
 			tr3.start();
-			Thread tr4=new Thread(new PubSub5topics(topics, msgs));
+			Thread tr4=new Thread(new PubSub5topicsFirstRunnable(topics, msgs));
 			tr4.start();
 
 //			Thread tr6 = new Thread(new TestPubSub(true));
