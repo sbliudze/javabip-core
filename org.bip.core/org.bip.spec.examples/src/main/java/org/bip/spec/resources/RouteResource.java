@@ -15,6 +15,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
@@ -53,7 +54,7 @@ public class RouteResource implements CamelContextAware, InitializingBean, Dispo
 	private RoutePolicy notifier;
 
 	private int deltaMemory = 100;
-
+	
 	public void setCamelContext(CamelContext camelContext) {
 		this.camelContext = (ModelCamelContext) camelContext;
 	}
@@ -74,7 +75,7 @@ public class RouteResource implements CamelContextAware, InitializingBean, Dispo
 	@Transition(name = "init", source = "i", target = "off", guard = "idOK")
 	public void initRoute(@Data(name="routeIn")String inPath, @Data(name="routeOut")String outPath) throws Exception {
 		String id = routeId+ "1";
-		System.out.println("Creating new route from " + inPath + " to " + outPath + " with id " + id);
+		System.err.println("Creating new route from " + inPath + " to " + outPath + " with id " + id);
 		newRoute(inPath, outPath, id);
 		camelContext.stopRoute(routeId);
 		routeId = id;
@@ -90,7 +91,33 @@ public class RouteResource implements CamelContextAware, InitializingBean, Dispo
 			@Override
 			public void configure() throws Exception {
 				from("file:" + in + "?delete=true").routeId(idd)
-						.routePolicy(createRoutePolicy()).to("file:" + out);
+						.routePolicy(createRoutePolicy()).onCompletion().process(new org.apache.camel.Processor() {
+		                    Thread stop;
+		                    
+		                    @Override
+		                    public void process(final Exchange exchange) throws Exception {
+		                        // stop this route using a thread that will stop
+		                        // this route gracefully while we are still running
+		                        if (stop == null) {
+		                            stop = new Thread() {
+		                                @Override
+		                                public void run() {
+		                                    try {
+		                                    	//TODO this method does not work if there are no files to process
+		                                    	// HACK creating another thread to stop the route...
+		                                    	System.err.println("stopping");
+		                                        exchange.getContext().stopRoute("myRoute");
+		                                    } catch (Exception e) {
+		                                        // ignore
+		                                    }
+		                                }
+		                            };
+		                        }
+		 
+		                        // start the thread that stops this route
+		                        stop.start();
+		                    }
+		                }).end().to("file:" + out);
 			}
 		};
 		try {
@@ -108,7 +135,7 @@ public class RouteResource implements CamelContextAware, InitializingBean, Dispo
 			}
 
 			public void onExchangeDone(Route route, Exchange exchange) {
-
+				System.err.print("exchange done");
 				executor.inform("end");
 			}
 
@@ -223,6 +250,7 @@ public class RouteResource implements CamelContextAware, InitializingBean, Dispo
 
 			public void onExchangeDone(Route route, Exchange exchange) {
 				finalExecutor.inform("end");
+				System.err.println("exchange done!!!");
 			}
 
 			@Override

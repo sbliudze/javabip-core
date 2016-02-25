@@ -74,7 +74,6 @@ public class RouteUser {
 		// allocatorExecutor.inform("release", data);
 		// TODO can we release some resources and keep others?
 		// because the problem is, we know nothing about the bus..
-		System.exit(-1);
 	}
 
 	@Data(name = "utility", accessTypePort = AccessType.any)

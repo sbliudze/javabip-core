@@ -136,8 +136,8 @@ public class ResourceTest {
 						 "init");
 				 synchron(RouteUser.class, "transfer").to(RouteResource.class,
 						 "on");
-				 synchron(RouteUser.class, "release").to(RouteResource.class,
-						 "delete");
+//				 synchron(RouteUser.class, "release").to(RouteResource.class,
+//						 "delete");
 
 				port(RouteUser.class, "release").requires(RouteResource.class,
 						"delete", AllocatorImpl.class, "release");
@@ -172,26 +172,22 @@ public class ResourceTest {
 		BIPActor actor1 = engine.register(routeUser1, "routeUser1", true); 
 		BIPActor allocatorActor = engine.register(alloc, "allocator", true); 
 
-		ResourceProvider memory = new Memory(256);
-		ResourceProvider processor = new Processor();
-		ResourceProvider bus = new Bus(128);
-
 		CamelContext camelContext = new DefaultCamelContext();
 		camelContext.setAutoStartup(false);
 		ArrayList<RouteResource> routes = new ArrayList<RouteResource>();
 
 		RouteResource route1 = new RouteResource("1", camelContext);
-		RouteResource route2 = new RouteResource("2", camelContext);
-		routes.add(route1); routes.add(route2);
+		//RouteResource route2 = new RouteResource("2", camelContext);
+		routes.add(route1); //routes.add(route2);
 		
-		BIPActor route1Actor = engine.register(route1, "1", true);
-		BIPActor route2Actor = engine.register(route2, "2", true);
-		route1.setExecutor(route1Actor);route2.setExecutor(route2Actor);
+		BIPActor route1Actor = engine.register(route1, "route1", true);
+		//BIPActor route2Actor = engine.register(route2, "route2", true);
+		route1.setExecutor(route1Actor);//route2.setExecutor(route2Actor);
 		
 		ResourceProvider routeManager = new RouteManager(camelContext, routes);
 		
 		final RoutePolicy routePolicy1 = createRoutePolicy(route1Actor);
-		final RoutePolicy routePolicy2 = createRoutePolicy(route2Actor);
+		//final RoutePolicy routePolicy2 = createRoutePolicy(route2Actor);
 
 		RouteBuilder builder = new RouteBuilder() {
 
@@ -200,8 +196,8 @@ public class ResourceTest {
 				from("file:inputfolder1?delete=true").routeId("1")
 						.routePolicy(routePolicy1).to("file:outputfolder1");
 
-				from("file:inputfolder2?delete=true").routeId("2")
-						.routePolicy(routePolicy2).to("file:outputfolder2");
+//				from("file:inputfolder2?delete=true").routeId("2")
+//						.routePolicy(routePolicy2).to("file:outputfolder2");
 			}
 			
 		};
@@ -212,10 +208,7 @@ public class ResourceTest {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		alloc.addResource(memory);
-		alloc.addResource(processor);
-		alloc.addResource(bus);
+ 
 		alloc.addResource(routeManager);
 
 		engine.specifyGlue(bipGlue);
@@ -232,6 +225,8 @@ public class ResourceTest {
 		engine.stop();
 		engineFactory.destroy(engine);
 	}
+	
+	
 	
 	@Test
 	public void sortingTest() throws RecognitionException, IOException, DNetException
@@ -329,7 +324,7 @@ public class ResourceTest {
 			}
 
 			public void onExchangeDone(Route route, Exchange exchange) {
-
+				System.err.println("exchange done!!!");
 				actor.inform("end");
 			}
 
