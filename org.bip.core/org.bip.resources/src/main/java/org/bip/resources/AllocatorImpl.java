@@ -270,7 +270,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		requestToModel.remove(requestString);
 	}
 	
-	@org.bip.annotations.Transition(name = "provideResource", source = "1", target = "0", guard = "canAllocate")
+	@org.bip.annotations.Transition(name = "provideResource", source = "1", target = "0", guard = "")
 	public void provideResource() throws DNetException {
 		//? no meaningful things to do
 	}

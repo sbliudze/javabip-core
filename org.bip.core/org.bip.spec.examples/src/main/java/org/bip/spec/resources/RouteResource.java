@@ -77,7 +77,7 @@ public class RouteResource implements CamelContextAware, InitializingBean, Dispo
 		String id = routeId+ "1";
 		System.err.println("Creating new route from " + inPath + " to " + outPath + " with id " + id);
 		newRoute(inPath, outPath, id);
-		camelContext.stopRoute(routeId);
+		//camelContext.stopRoute(routeId);
 		routeId = id;
 		noOfEnforcedTransitions++;
 	}
@@ -91,6 +91,7 @@ public class RouteResource implements CamelContextAware, InitializingBean, Dispo
 			@Override
 			public void configure() throws Exception {
 				from("file:" + in + "?delete=true").routeId(idd)
+				// onCompletion is processed every time an exchange of one file is done.
 						.routePolicy(createRoutePolicy()).onCompletion().process(new org.apache.camel.Processor() {
 		                    Thread stop;
 		                    
@@ -105,7 +106,6 @@ public class RouteResource implements CamelContextAware, InitializingBean, Dispo
 		                                    try {
 		                                    	//TODO this method does not work if there are no files to process
 		                                    	// HACK creating another thread to stop the route...
-		                                    	System.err.println("stopping");
 		                                        exchange.getContext().stopRoute("myRoute");
 		                                    } catch (Exception e) {
 		                                        // ignore

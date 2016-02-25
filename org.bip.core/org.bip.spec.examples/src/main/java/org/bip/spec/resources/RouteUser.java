@@ -47,7 +47,8 @@ public class RouteUser {
 	
 	@Transition(name = "initRoute", source = "1.25", target = "1.5", guard = "")
 	public void initRoute() {
-		// here we must be using a resource
+		// here we create a route, giving it the endpoints we need, but in fact we do not need to perform anything ourselves
+		// TODO create transitions which can synchronize with an "empty" transition?
 		System.err.println("creating route");
 
 	}
@@ -59,21 +60,10 @@ public class RouteUser {
 
 	}
 	
-	// TODO if we make this transition spontaneous, then we need to call it ourselves,
-	// then we have to have a link to our own executor
 	@Transition(name = "release", source = "2", target = "0", guard = "")
 	public void release() {
 		System.err.println("Releasing resources");
-		// HashMap<String, Object> data = new HashMap<String, Object>();
-		// //data.put("resourceUnit", "m");
-		// allocatorExecutor.inform("release", data);
-		// data.clear();
-		// ArrayList<String> dataRelease = new ArrayList<String>();
-		// dataRelease.add("p"); dataRelease.add("m");
-		// data.put("resourceUnit", dataRelease);
-		// allocatorExecutor.inform("release", data);
-		// TODO can we release some resources and keep others?
-		// because the problem is, we know nothing about the bus..
+		routeID = "";
 	}
 
 	@Data(name = "utility", accessTypePort = AccessType.any)
@@ -86,14 +76,17 @@ public class RouteUser {
 		return routeID;
 	}
 
+	private String inPath = "files/infolder/";
+	private String outPath =  "files/outfolder/";
+	
 	@Data(name = "inPath", accessTypePort = AccessType.any)
 	public String inPath() {
-		return "files/infolder/";
+		return inPath;
 	}
 	
 	@Data(name = "outPath", accessTypePort = AccessType.any)
 	public String outPath() {
-		return "files/outfolder/";
+		return outPath;
 	}
 	
 	@Data(name = "resourceUnit", accessTypePort = AccessType.any)

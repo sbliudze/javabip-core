@@ -19,7 +19,6 @@ public class RouteManager implements ResourceProvider {
 	private ArrayList<RouteResource> avRoutes;
 	private ArrayList<RouteResource> navRoutes;
 	private String cost = "";
-	private int capacity = 4;
 	private int currentCapacity;
 	private CamelContext camelContext ;
 	
@@ -38,6 +37,10 @@ public class RouteManager implements ResourceProvider {
 		int taken = Integer.parseInt(deltaCost);
 		this.currentCapacity += taken;
 		this.cost = costString();
+		avRoutes.add(navRoutes.get(0));
+		navRoutes.remove(0);
+		//TODO this simple adding-removing above works fine only when there is one route
+		//(otherwise it will add-remove an arbitrary route but not a particular one.
 		System.err.println("cost is now (+) " + cost);
 	}
 
