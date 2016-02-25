@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 
 public class HanoiMonitor {
 
-    Logger logger = LoggerFactory.getLogger(SwitchableRoute.class);
+    Logger logger = LoggerFactory.getLogger(HanoiMonitor.class);
 
     private int size;
 

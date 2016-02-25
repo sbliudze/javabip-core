@@ -45,7 +45,7 @@ public class SwitchableRouteForBIPBuilding implements CamelContextAware, Initial
 
 	public String routeId;
 
-	Logger logger = LoggerFactory.getLogger(SwitchableRoute.class);
+	Logger logger = LoggerFactory.getLogger(SwitchableRouteForBIPBuilding.class);
 
 	private Executor executor;
 	private RoutePolicy notifier;

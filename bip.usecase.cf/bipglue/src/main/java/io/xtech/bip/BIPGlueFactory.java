@@ -33,6 +33,7 @@ public class BIPGlueFactory implements BundleActivator {
 		try {
 			java.util.Hashtable<String, String> properties = new Hashtable<String, String>();
 			properties.put("domain.name", "switchable.route");
+			properties.put("noOfComponents", "4");
 			context.registerService(BIPGlue.class.getName(), bipGlue, properties);
 		}
 		catch (Exception ex) {

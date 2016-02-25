@@ -1,13 +1,14 @@
 package org.bip.spec;
 
 import org.bip.annotations.*;
+import org.bip.api.BIPSpec;
 import org.bip.api.PortType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Ports({ @Port(name = "add", type = PortType.enforceable), @Port(name = "rm", type = PortType.enforceable) })
 @ComponentType(initial = "one", name = "org.bip.spec.MemoryMonitor")
-public class MemoryMonitor {
+public class MemoryMonitor implements BIPSpec {
 	private Logger logger = LoggerFactory.getLogger(MemoryMonitor.class);
 	
 	final private int memoryLimit;

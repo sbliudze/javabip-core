@@ -8,9 +8,6 @@
 
 package org.bip.spec;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -18,17 +15,16 @@ import org.apache.camel.Route;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RoutePolicy;
-import org.bip.annotations.ComponentType;
-import org.bip.annotations.Guard;
-import org.bip.annotations.Port;
-import org.bip.annotations.Ports;
-import org.bip.annotations.Transition;
+import org.bip.annotations.*;
 import org.bip.api.Executor;
 import org.bip.api.PortType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * [DONE] ensure guards atomicity There is a potential problem that isFinished
@@ -41,19 +37,24 @@ import org.springframework.beans.factory.InitializingBean;
  * 
  */
 
-@Ports({ @Port(name = "end", type = PortType.spontaneous), 
+@Ports({ @Port(name = "end", type = PortType.spontaneous),
+         @Port(name = "error", type = PortType.spontaneous),
+         @Port(name = "functional", type = PortType.spontaneous),
 		 @Port(name = "on", type = PortType.enforceable), 
 		 @Port(name = "off", type = PortType.enforceable), 
 		 @Port(name = "finished", type = PortType.enforceable) })
 @ComponentType(initial = "off", name = "org.bip.spec.SwitchableRoute")
-public class SwitchableRoute implements CamelContextAware, InitializingBean, DisposableBean {
+public class SwitchableRouteErrorException implements CamelContextAware, InitializingBean, DisposableBean {
+
+    public int noOfEnforcedTransitions;
+
+    public int noOfErrors;
 
 	public ModelCamelContext camelContext;
 
 	public String routeId;
-	public int noOfEnforcedTransitions;
 
-	Logger logger = LoggerFactory.getLogger(SwitchableRoute.class);
+	Logger logger = LoggerFactory.getLogger(SwitchableRouteErrorException.class);
 
 	private Executor executor;
 	private RoutePolicy notifier;
@@ -70,11 +71,11 @@ public class SwitchableRoute implements CamelContextAware, InitializingBean, Dis
 		return camelContext;
 	}
 
-	public SwitchableRoute(String routeId) {
+	public SwitchableRouteErrorException(String routeId) {
 		this.routeId = routeId;
 	}
-	
-	public SwitchableRoute(String routeId, CamelContext camelContext) {
+
+	public SwitchableRouteErrorException(String routeId, CamelContext camelContext) {
 		this.routeId = routeId;
 		this.camelContext = (ModelCamelContext)camelContext;
 	}
@@ -90,12 +91,25 @@ public class SwitchableRoute implements CamelContextAware, InitializingBean, Dis
 	/*
 	 * Check what are the conditions for throwing the exception.
 	 */
+
 	@Transition(name = "off", source = "on", target = "wait", guard = "")
 	public void stopRoute() throws Exception {
 		logger.debug("Stop transition handler for {} is being executed.", routeId);
 		camelContext.suspendRoute(routeId);
-		noOfEnforcedTransitions++;
+        noOfEnforcedTransitions++;
 	}
+
+    @Transition(name = "error", source = "on", target = "error")
+    public void errorHandler() throws Exception {
+        logger.debug("Error transition handler for {} is being executed.", routeId);
+        camelContext.suspendRoute(routeId);
+        noOfErrors++;
+    }
+
+    @Transition(name="functional", source = "nonfunctional", target = "off", guard = "")
+    public void spontaneousFunctional() throws Exception {
+        logger.info("Received functional notification for the route {}.", routeId);
+    }
 
 	@Transition(name = "end", source = "wait", target = "done", guard = "!isFinished")
 	public void spontaneousEnd() throws Exception {
@@ -107,17 +121,20 @@ public class SwitchableRoute implements CamelContextAware, InitializingBean, Dis
 		logger.info("Transitioning to done state directly since work within {} is already finished.", routeId);
 	}
 
-	@Transition(name = "finished", source = "done", target = "off", guard = "")
+    @Transitions( {
+	@Transition(name = "finished", source = "done", target = "off", guard = ""),
+    @Transition(name = "finished", source = "error", target = "nonfunctional", guard = "")
+            })
 	public void finishedTransition() throws Exception {
-		noOfEnforcedTransitions++;
-		logger.debug("Transitioning to off state from done for {}.", routeId);
+		logger.debug("Finished Transition for route {}.", routeId);
+        noOfEnforcedTransitions++;
 	}
 
 	@Transition(name = "on", source = "off", target = "on", guard = "")
 	public void startRoute() throws Exception {
 		logger.debug("Start transition handler for {} is being executed.", routeId);
 		camelContext.resumeRoute(routeId);
-		noOfEnforcedTransitions++;
+        noOfEnforcedTransitions++;
 	}
 
 	@Guard(name = "isFinished")

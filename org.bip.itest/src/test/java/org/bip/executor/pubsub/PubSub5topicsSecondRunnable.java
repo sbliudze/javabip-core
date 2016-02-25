@@ -1,4 +1,4 @@
-package org.bip.executor;
+package org.bip.executor.pubsub;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -10,13 +10,13 @@ import lsr.concurrence.provided.tests.ClientOutputWriter;
 
 import org.junit.Test;
 
-public class PubSub5topics1 implements Runnable {
+public class PubSub5topicsSecondRunnable implements Runnable {
 
 	private Socket connection;
 	private ArrayList<String> topics = new ArrayList<String>();
 	private ArrayList<String> msgs = new ArrayList<String>();
 	
-	public PubSub5topics1(ArrayList<String> topics, ArrayList<String> messages) {
+	public PubSub5topicsSecondRunnable(ArrayList<String> topics, ArrayList<String> messages) {
 		this.topics = topics;
 		this.msgs = messages;
 	}

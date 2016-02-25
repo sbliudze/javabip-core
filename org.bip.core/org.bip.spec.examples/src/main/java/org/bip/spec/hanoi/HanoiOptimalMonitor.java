@@ -30,13 +30,12 @@ In each case, a total of 2ⁿ-1 moves are made.
 import org.bip.annotations.ExecutableBehaviour;
 import org.bip.api.PortType;
 import org.bip.executor.BehaviourBuilder;
-import org.bip.spec.SwitchableRoute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HanoiOptimalMonitor {
 
-    Logger logger = LoggerFactory.getLogger(SwitchableRoute.class);
+    Logger logger = LoggerFactory.getLogger(HanoiOptimalMonitor.class);
 
     private int size;
 

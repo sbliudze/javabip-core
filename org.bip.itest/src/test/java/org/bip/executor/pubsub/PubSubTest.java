@@ -1,4 +1,4 @@
-package org.bip.executor;
+package org.bip.executor.pubsub;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -27,7 +27,7 @@ import akka.actor.ActorSystem;
 
 import com.typesafe.config.ConfigFactory;
 
-public class TCPAcceptor {
+public class PubSubTest {
 	
 	ActorSystem system;
 	OrchestratedExecutorFactory factory;
@@ -56,13 +56,13 @@ public class TCPAcceptor {
 			ServerSocket tcpacceptor = new ServerSocket(7676);
 
 
-			Thread tr = new Thread(new TestPubSub(false));
+			Thread tr = new Thread(new PubSubRunnable(false));
 			tr.start();
 
-			Thread tr2 = new Thread(new TestPubSub(false));
+			Thread tr2 = new Thread(new PubSubRunnable(false));
 			tr2.start();
 
-			Thread tr3 = new Thread(new TestPubSub(true));
+			Thread tr3 = new Thread(new PubSubRunnable(true));
 			tr3.start();
 
 

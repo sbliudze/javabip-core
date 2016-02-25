@@ -21,7 +21,9 @@ import org.bip.spec.ComponentAWithEnvData;
 import org.bip.spec.ComponentAWithEnvDataInterface;
 import org.bip.spec.ComponentB;
 import org.bip.spec.ComponentC;
+import org.bip.spec.MemoryMonitor;
 import org.bip.spec.ProperComponentAWithEnvData;
+import org.bip.spec.SwitchableRouteDataTransfers;
 import org.bip.spec.seal.SealableData;
 import org.bip.spec.seal.SealableDataReader;
 import org.bip.spec.seal.SealableDataWriter;
@@ -53,6 +55,38 @@ public class AkkaRefactoredTests {
 	public void cleanup() {
 
 		system.shutdown();
+
+	}
+	
+	@Test
+	public void synchronGlueBuilderSwitchableRouteTest() {
+
+		BIPGlue glue = new TwoSynchronGlueBuilder() {
+			@Override
+			public void configure() {
+
+				synchron(SwitchableRouteDataTransfers.class, "on").to(
+						MemoryMonitor.class, "add");
+				synchron(SwitchableRouteDataTransfers.class, "finished").to(
+						MemoryMonitor.class, "rm");
+				port(SwitchableRouteDataTransfers.class, "off")
+						.acceptsNothing();
+				port(SwitchableRouteDataTransfers.class, "off")
+						.requiresNothing();
+				data(SwitchableRouteDataTransfers.class,
+						"deltaMemoryOnTransition").to(MemoryMonitor.class,
+						"memoryUsage");
+
+			}
+
+		}.build();
+
+		assertEquals("Incorrect number of accepts ", 5, glue
+				.getAcceptConstraints().size());
+		assertEquals("Incorrect number of requires ", 5, glue
+				.getRequiresConstraints().size());
+		assertEquals("Incorrect number of data wires ", 1, glue.getDataWires()
+				.size());
 
 	}
 
@@ -116,12 +150,11 @@ public class AkkaRefactoredTests {
 	}	
 
 	@Test
-	public void bipDataAvailabilityTestWithEnvDataSpontaneous() throws BIPException {
+	public void dataAvailabilityTestWithEnvDataSpontaneous() throws BIPException {
 
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueDataAvailability.xml");
 
 		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
-
 
 
 		ComponentAWithEnvData componentA = new ComponentAWithEnvData(250);
@@ -161,36 +194,6 @@ public class AkkaRefactoredTests {
 
 
 		assertEquals("New environment based memory limit is not set", componentA.memoryLimit, 500);
-
-	}
-
-	public static Object createSimpleProxy(ActorSystem actorSystem, ClassLoader classLoader, OrchestratedExecutor executor, Object bipSpec) {
-		
-		final Object proxy = ExecutorHandler.newProxyInstance(classLoader, executor, bipSpec);
-		
-		Object executorActor = TypedActor.get(actorSystem).typedActorOf(
-                new TypedProps<Object>((Class<? super Object>) proxy.getClass(), new Creator<Object>() {
-                    public Object create() {
-                        return proxy;
-                    }
-                }), executor.getId());
-		
-		return executorActor;
-
-	}
-
-	public static Object createTunellingProxy(ActorSystem actorSystem, ClassLoader classLoader, OrchestratedExecutor executor, Object bipSpec) {
-		
-		final Object proxy = TunellingExecutorHandler.newProxyInstance(classLoader, executor, bipSpec);
-		
-		Object executorActor = TypedActor.get(actorSystem).typedActorOf(
-                new TypedProps<Object>((Class<? super Object>) proxy.getClass(), new Creator<Object>() {
-                    public Object create() {
-                        return proxy;
-                    }
-                }), executor.getId());
-		
-		return executorActor;
 
 	}
 
@@ -271,7 +274,6 @@ public class AkkaRefactoredTests {
 		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
 
 
-
 		ProperComponentAWithEnvData componentA = new ProperComponentAWithEnvData(250);
 		
 		ComponentAWithEnvDataInterface proxy1 = (ComponentAWithEnvDataInterface) engine.register(componentA, "compA",
@@ -310,6 +312,37 @@ public class AkkaRefactoredTests {
 
 	}
 
+	//TODO, add a comment, what is this method for?
+	public static Object createSimpleProxy(ActorSystem actorSystem, ClassLoader classLoader, OrchestratedExecutor executor, Object bipSpec) {
+		
+		final Object proxy = ExecutorHandler.newProxyInstance(classLoader, executor, bipSpec);
+		
+		Object executorActor = TypedActor.get(actorSystem).typedActorOf(
+                new TypedProps<Object>((Class<? super Object>) proxy.getClass(), new Creator<Object>() {
+                    public Object create() {
+                        return proxy;
+                    }
+                }), executor.getId());
+		
+		return executorActor;
+
+	}
+
+	//TODO, add a comment, what is this method for?
+	public static Object createTunellingProxy(ActorSystem actorSystem, ClassLoader classLoader, OrchestratedExecutor executor, Object bipSpec) {
+		
+		final Object proxy = TunellingExecutorHandler.newProxyInstance(classLoader, executor, bipSpec);
+		
+		Object executorActor = TypedActor.get(actorSystem).typedActorOf(
+                new TypedProps<Object>((Class<? super Object>) proxy.getClass(), new Creator<Object>() {
+                    public Object create() {
+                        return proxy;
+                    }
+                }), executor.getId());
+		
+		return executorActor;
+
+	}
 	
 	private BIPGlue createGlue(String bipGlueFilename) {
 		BIPGlue bipGlue = null;

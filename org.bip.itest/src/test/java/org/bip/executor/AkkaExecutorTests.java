@@ -23,28 +23,7 @@ import org.bip.engine.factory.EngineFactory;
 import org.bip.exceptions.BIPException;
 import org.bip.glue.GlueBuilder;
 import org.bip.glue.TwoSynchronGlueBuilder;
-import org.bip.spec.ComponentA;
-import org.bip.spec.ComponentB;
-import org.bip.spec.ComponentC;
-import org.bip.spec.Consumer;
-import org.bip.spec.Feeder;
-import org.bip.spec.HanoiGlueBuilder;
-import org.bip.spec.HanoiMonitor;
-import org.bip.spec.InitialServer;
-import org.bip.spec.LeftHanoiPeg;
-import org.bip.spec.Master;
-import org.bip.spec.MemoryMonitor;
-import org.bip.spec.MiddleHanoiPeg;
-import org.bip.spec.PSSComponent;
-import org.bip.spec.Peer;
-import org.bip.spec.RightHanoiPeg;
-import org.bip.spec.Server;
-import org.bip.spec.Slave;
-import org.bip.spec.SwitchableRouteDataTransfers;
-import org.bip.spec.Tracker;
-import org.bip.spec.TwoDataProvider1;
-import org.bip.spec.TwoDataProvider2;
-import org.bip.spec.TwoDataTaker;
+import org.bip.spec.*;
 import org.bip.spec.diningphilosophers.DiningPhilosophersGlueBuilder;
 import org.bip.spec.diningphilosophers.Fork;
 import org.bip.spec.diningphilosophers.Philosophers;
@@ -95,7 +74,7 @@ public class AkkaExecutorTests {
 	}
 
 	@Test
-	public void bipDataTransferTest() throws BIPException {
+	public void routesWithDataTest() throws BIPException {
 
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
@@ -105,7 +84,7 @@ public class AkkaExecutorTests {
 				synchron(SwitchableRouteDataTransfers.class, "finished").to(MemoryMonitor.class, "rm");
 				
 				port(SwitchableRouteDataTransfers.class, "off").acceptsNothing();
-				port(SwitchableRouteDataTransfers.class, "off")	.requiresNothing();
+				port(SwitchableRouteDataTransfers.class, "off").requiresNothing();
 				
 				data(SwitchableRouteDataTransfers.class, "deltaMemoryOnTransition").to(MemoryMonitor.class, "memoryUsage");
 
@@ -156,7 +135,7 @@ public class AkkaExecutorTests {
 		MemoryMonitor routeOnOffMonitor = new MemoryMonitor(200);
 		final BIPActor executorM = engine.register(routeOnOffMonitor, "monitor", true);
 
-		engine.specifyGlue(bipGlue);
+//		engine.specifyGlue(bipGlue);
 		engine.start();
 		
 		engine.execute();
@@ -179,7 +158,7 @@ public class AkkaExecutorTests {
 	// initialization time and due to first few cycles.
 	@SuppressWarnings("unused")
 	@Test
-	public void bipRandomLargerHannoiWithDataTest() throws JAXBException,
+	public void randomLargerHannoiWithDataTest() throws JAXBException,
 			BIPException {
 
 		int size = 3;
@@ -205,7 +184,7 @@ public class AkkaExecutorTests {
 		org.bip.spec.hanoi.HanoiPeg leftMiddleHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(size, false);
 		BIPActor actor5 = engine.register(leftMiddleHanoiPeg, "LeftMiddleHanoiPeg", false);				
 				
-		engine.specifyGlue(bipGlue4Hanoi);
+		// engine.specifyGlue(bipGlue4Hanoi);
 		engine.start();
 
 		engine.execute();
@@ -231,7 +210,7 @@ public class AkkaExecutorTests {
 	// initialization time and due to first few cycles.
 	@Test
 	@SuppressWarnings("unused")
-	public void bipRandomHannoiWithDataTest() throws JAXBException,
+	public void randomHannoiWithDataTest() throws JAXBException,
 			BIPException {
 
 		int size = 3;
@@ -251,7 +230,7 @@ public class AkkaExecutorTests {
 		org.bip.spec.hanoi.HanoiPeg rightHanoiPeg = new org.bip.spec.hanoi.HanoiPeg(size, true);
 		BIPActor actor3 = engine.register(rightHanoiPeg, "RightHanoiPeg", false);
 		
-		engine.specifyGlue(bipGlue4Hanoi);
+		// engine.specifyGlue(bipGlue4Hanoi);
 		
 		engine.start();
 		
@@ -275,7 +254,7 @@ public class AkkaExecutorTests {
 	
 	@Test
 	@SuppressWarnings("unused")
-	public void bipHannoiWithDataTestSize3() throws JAXBException, BIPException {
+	public void hannoiWithDataTestSize3() throws JAXBException, BIPException {
 
 		BIPGlue bipGlue4Hanoi = new org.bip.spec.hanoi.HanoiOptimalGlueBuilder()
 				.build();
@@ -301,7 +280,7 @@ public class AkkaExecutorTests {
 				size);
 		BIPActor actor4 = engine.register(rightHanoiPeg, "RightHanoiPeg", false);
 
-		engine.specifyGlue(bipGlue4Hanoi);
+		// engine.specifyGlue(bipGlue4Hanoi);
 		engine.start();
 
 		engine.execute();
@@ -324,7 +303,7 @@ public class AkkaExecutorTests {
 
 	@Test
 	@SuppressWarnings("unused")
-	public void bipHannoiWithDataTestSize8() throws JAXBException, BIPException {
+	public void hannoiWithDataTestSize8() throws JAXBException, BIPException {
 
 		BIPGlue bipGlue4Hanoi = new org.bip.spec.hanoi.HanoiOptimalGlueBuilder()
 				.build();
@@ -349,7 +328,7 @@ public class AkkaExecutorTests {
 				size);
 		BIPActor actor4 = engine.register(rightHanoiPeg, "RightHanoiPeg", false);
 
-		engine.specifyGlue(bipGlue4Hanoi);
+		// engine.specifyGlue(bipGlue4Hanoi);
 		engine.start();
 
 		engine.execute();
@@ -373,7 +352,7 @@ public class AkkaExecutorTests {
 	// It does not use data transfers but plenty of interactions and more ports.
 	@Test
 	@SuppressWarnings("unused")
-	public void akkaExecutorHannoiNoDataTransferswithActorEngineTest() {
+	public void hannoiNoDataSize3Test() {
 
 		int size = 3;
 
@@ -393,7 +372,7 @@ public class AkkaExecutorTests {
 		RightHanoiPeg rightHanoiPeg = new RightHanoiPeg(size);
 		BIPActor actor4 = engine.register(rightHanoiPeg, "rightHanoi", false);
 
-		engine.specifyGlue(bipGlue4Hanoi);
+		// engine.specifyGlue(bipGlue4Hanoi);
 		engine.start();
 
 		engine.execute();
@@ -417,12 +396,13 @@ public class AkkaExecutorTests {
 
 	@Test
 	@SuppressWarnings("unused")
-	public void akkaExecutorHannoiTest() {
+	public void hannoiNoDataSize8Test() {
 
 		int size = 8;
 
 		BIPGlue bipGlue4Hanoi = new HanoiGlueBuilder(size).build();
 
+		// TODO The following comment is no longer valid, is it?
 		// TODO Discussion, here we do not use TypedActor to create an engine. Thus the BIP engine is not protected 
 		// from multiple-thread calls against its functions. BIP engine is not guaranteed to be multiple-thread safe right?, so we should
 		// remove this test as there is a similar one that does hanoi testing without data transfers.
@@ -441,7 +421,7 @@ public class AkkaExecutorTests {
 		RightHanoiPeg rightHanoiPeg = new RightHanoiPeg(size);
 		BIPActor actor4 = engine.register(rightHanoiPeg, "rightHanoi", false);
 
-		engine.specifyGlue(bipGlue4Hanoi);
+		// engine.specifyGlue(bipGlue4Hanoi);
 		engine.start();
 
 		engine.execute();
@@ -495,7 +475,7 @@ public class AkkaExecutorTests {
 		Consumer cComponent = new Consumer(100);
 		BIPActor cExecutor = engine.register(cComponent, "cCompE", true);
 		
-		engine.specifyGlue(bipGlue);
+		// engine.specifyGlue(bipGlue);
 		engine.start();
 
 		
@@ -517,7 +497,7 @@ public class AkkaExecutorTests {
 
 	@Ignore
 	@Test
-	public void ServersTest() {
+	public void serversTest() {
 
 		// TODO, PLEASE use BIP glue builders and not XML file.
 		// TODO, BUG? BTW, BIP glue is not using class InitialServer only Server.
@@ -540,7 +520,7 @@ public class AkkaExecutorTests {
 		final BIPActor executor3 = engine.register(server3, "3", true);
 
 
-		engine.specifyGlue(bipGlue);
+		// engine.specifyGlue(bipGlue);
 		engine.start();
 		engine.execute();
 
@@ -557,7 +537,7 @@ public class AkkaExecutorTests {
 
 	@Test
 	@SuppressWarnings("unused")
-	public void TrackerPeerTest()
+	public void trackerPeerTest()
 	{
 
 		// TODO, PLEASE use BIP glue builders and not XML file.
@@ -581,7 +561,7 @@ public class AkkaExecutorTests {
 		final BIPActor executor2a = engine.register( peer2a, "21", true);
 		final BIPActor executor2b = engine.register( peer2b, "22", true);
 		
-		engine.specifyGlue(bipGlue);
+		// engine.specifyGlue(bipGlue);
 		engine.start();
 		
 		engine.execute();
@@ -607,7 +587,7 @@ public class AkkaExecutorTests {
 	
 	@Test
 	@SuppressWarnings("unused")
-	public void bipDataFeederConsumerTest() throws BIPException {
+	public void feederConsumerTest() throws BIPException {
 
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueFeederConsumer.xml");
 
@@ -619,7 +599,7 @@ public class AkkaExecutorTests {
 		Consumer consumer = new Consumer(350);
 		BIPActor actor2 = engine.register(consumer, "consumer", true);
 		
-		engine.specifyGlue(bipGlue);
+		// engine.specifyGlue(bipGlue);
 		engine.start();
 
 		engine.execute();
@@ -640,7 +620,7 @@ public class AkkaExecutorTests {
 
 	@Test
 	@SuppressWarnings("unused")
-	public void bipDataAvailabilityTest() throws BIPException {
+	public void dataAvailabilityTest() throws BIPException {
 
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueDataAvailability.xml");
 
@@ -659,7 +639,7 @@ public class AkkaExecutorTests {
 		BIPActor executorC = engine.register(componentC, "compC", true);
 		
 
-		engine.specifyGlue(bipGlue);
+		// engine.specifyGlue(bipGlue);
 		engine.start();
 
 		engine.execute();
@@ -681,7 +661,18 @@ public class AkkaExecutorTests {
 
 	@Test
 	@SuppressWarnings("unused")
-	public void bipMasterSlaveTest() throws BIPException {
+	/* * The test-case is not finished due to a limitation of the data approach.
+	 * The problem is in the guard in Master in compute-work-work interaction.
+	 * The Master needs two different data, representing Slave id, each of the data can be provided by any slave.
+	 * The DataCoordinator queries all Slave components, and outputs false for the interaction with the same component (M-S1-S1). 
+	 * After this false the interaction (M-S1-S2) will be also disabled since S1 is disabled.
+	 * 
+	 * We cannot disable the possibility of the same component providing different data during one interaction, 
+	 * as it is a valid usage. However we cannot distinguish in the DataCoordinator the case of M-S from the case of M-S-S, 
+	 * since this is information from the Glue, which is analyzed elsewhere.
+	*/
+	@Ignore 
+	public void masterSlaveTest() throws BIPException {
 
 		BIPGlue bipGlue = new GlueBuilder() {
 			@Override
@@ -718,20 +709,10 @@ public class AkkaExecutorTests {
 		Slave slaveE = new Slave("slaveE");
 
 		BIPActor executorM1 = engine.register(master1, "master1", true);
-
-//		BIPActor executorM2 = engine.register(master2, "master2", true);
-
 		BIPActor executorSA = engine.register(slaveA, "slaveA", true);
-
 		BIPActor executorSB = engine.register(slaveB, "slaveB", true);
 
-//		BIPActor executorSC = engine.register(slaveC, "slaveC", true);
-//
-//		BIPActor executorSD = engine.register(slaveD, "slaveD", true);
-//
-//		BIPActor executorSE = engine.register(slaveE, "slaveE", true);
-
-		engine.specifyGlue(bipGlue);
+		// engine.specifyGlue(bipGlue);
 		engine.start();
 
 		engine.execute();
@@ -745,23 +726,18 @@ public class AkkaExecutorTests {
 		engine.stop();
 		engineFactory.destroy(engine);
 
-		// assertTrue("Master 1 or 2 has not made any transitions", master1.noOfTransitions > 2 ||
-		// master2.noOfTransitions > 2);
+		// assertTrue("Master 1 has not made any transitions", master1.noOfTransitions > 2);
 		// assertTrue("Slave A has not made any transitions", slaveA.noOfTransitions > 0);
 		// assertTrue("Slave B has not made any transitions", slaveB.noOfTransitions > 0);
-		// assertTrue("Slave C has not made any transitions", slaveC.noOfTransitions > 0);
-		// assertTrue("Slave D has not made any transitions", slaveD.noOfTransitions > 0);
-		// assertTrue("Slave E has not made any transitions", slaveE.noOfTransitions > 0);
 
 	}
 	
 	@Test
-	public void akkaExecutorPhilosopherwithDataTest() {
+	public void philosopherwithDataTest() {
 
 		BIPGlue bipGlue4Philosophers = new DiningPhilosophersGlueBuilder().build();
 
 		BIPEngine engine = engineFactory.create("myEngine", bipGlue4Philosophers);
-
 
 
 		Fork f1 = new Fork(1);
@@ -781,7 +757,7 @@ public class AkkaExecutorTests {
 		BIPActor p2E = engine.register(p2, "p2E", true);
 		BIPActor p3E = engine.register(p3, "p3E", true);
 
-		engine.specifyGlue(bipGlue4Philosophers);
+		// engine.specifyGlue(bipGlue4Philosophers);
 		engine.start();
 
 		engine.execute();
@@ -813,7 +789,7 @@ public class AkkaExecutorTests {
 	// TODO, Explain exactly what is the limitation.
 	@Test
 	@Ignore
-	public void bipTwoDataTest() throws BIPException {
+	public void twoDataTest() throws BIPException {
 
 		BIPGlue bipGlue = createGlue("src/test/resources/bipGlueTwoData.xml");
 
@@ -829,7 +805,7 @@ public class AkkaExecutorTests {
 		final BIPActor executorB = engine.register(componentB, "compB", true);
 		final BIPActor executorC = engine.register(componentC, "compC", true);
 
-		engine.specifyGlue(bipGlue);
+		// engine.specifyGlue(bipGlue);
 		engine.start();
 
 		engine.execute();
@@ -848,7 +824,124 @@ public class AkkaExecutorTests {
 		assertTrue("CompC has not made any transitions", componentC.noOfTransitions > 0);
 
 	}
-	
+
+
+
+    @Test
+    public void switchableRouteWithErrors() throws BIPException {
+
+        BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
+            @Override
+            public void configure() {
+
+                synchron(SwitchableRouteErrorException.class, "on").to(RouteOnOffMonitor.class, "add");
+                synchron(SwitchableRouteErrorException.class, "finished").to(RouteOnOffMonitor.class, "rm");
+
+                port(SwitchableRouteErrorException.class, "off").acceptsNothing();
+                port(SwitchableRouteErrorException.class, "off").requiresNothing();
+
+            }
+
+        }.build();
+
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
+
+        CamelContext camelContext = new DefaultCamelContext();
+        camelContext.setAutoStartup(false);
+
+        SwitchableRouteErrorException route1 = new SwitchableRouteErrorException("1", camelContext);
+        SwitchableRouteErrorException route2 = new SwitchableRouteErrorException("2", camelContext);
+        SwitchableRouteErrorException route3 = new SwitchableRouteErrorException("3", camelContext);
+
+        BIPActor actor1 = engine.register(route1, "1", true);
+        BIPActor actor2 = engine.register(route2, "2", true);
+        BIPActor actor3 = engine.register(route3, "3", true);
+
+        final RoutePolicy routePolicy1 = createRoutePolicy(actor1);
+        final RoutePolicy routePolicy2 = createRoutePolicy(actor2);
+        final RoutePolicy routePolicy3 = createRoutePolicy(actor3);
+
+        RouteBuilder builder = new RouteBuilder() {
+
+            @Override
+            public void configure() throws Exception {
+                from("file:inputfolder1?delete=true").routeId("1")
+                        .routePolicy(routePolicy1).to("file:outputfolder1");
+
+                from("file:inputfolder2?delete=true").routeId("2")
+                        .routePolicy(routePolicy2).to("file:outputfolder2");
+
+                from("file:inputfolder3?delete=true").routeId("3")
+                        .routePolicy(routePolicy3).to("file:outputfolder3");
+            }
+
+        };
+
+        try {
+            camelContext.addRoutes(builder);
+            camelContext.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        RouteOnOffMonitor routeOnOffMonitor = new RouteOnOffMonitor(2);
+        final BIPActor executorM = engine.register(routeOnOffMonitor, "monitor", true);
+
+        //engine.specifyGlue(bipGlue);
+        engine.start();
+
+        engine.execute();
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        actor1.inform("error");
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        actor1.inform("functional");
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        actor2.inform("error");
+        actor3.inform("error");
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        actor3.inform("functional");
+        actor2.inform("functional");
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        engine.stop();
+        engineFactory.destroy(engine);
+
+        assertTrue("Routes have not made any transitions", route1.noOfEnforcedTransitions
+                + route2.noOfEnforcedTransitions + route3.noOfEnforcedTransitions > 0);
+
+        assertTrue("Each route has had one error", route1.noOfErrors == 1 &&
+                route2.noOfErrors == 1 && route3.noOfErrors == 1);
+
+    }
 	
 	private BIPGlue createGlue(String bipGlueFilename) {
 		BIPGlue bipGlue = null;
