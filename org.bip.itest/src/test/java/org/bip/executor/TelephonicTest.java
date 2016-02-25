@@ -1958,7 +1958,7 @@ public class TelephonicTest {
 		client40 = setClientRefs(clients, client40);
 		client41 = setClientRefs(clients, client41);
 		client42 = setClientRefs(clients, client42);
-		client43 = setClientRefs(clients, client34);
+		client43 = setClientRefs(clients, client43);
 		client44 = setClientRefs(clients, client44);
 		client45 = setClientRefs(clients, client45);
 		
@@ -2292,7 +2292,7 @@ public class TelephonicTest {
 		client40 = setClientRefs(clients, client40);
 		client41 = setClientRefs(clients, client41);
 		client42 = setClientRefs(clients, client42);
-		client43 = setClientRefs(clients, client34);
+		client43 = setClientRefs(clients, client43);
 		client44 = setClientRefs(clients, client44);
 		client45 = setClientRefs(clients, client45);
 		client46 = setClientRefs(clients, client46);
