@@ -10,9 +10,7 @@ import java.util.ArrayList;
 import org.bip.api.BIPActor;
 import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
-import org.bip.engine.BIPCoordinatorImpl;
-import org.bip.engine.DataCoordinatorKernel;
-import org.bip.engine.api.EngineFactory;
+import org.bip.engine.factory.EngineFactory;
 import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
 import org.bip.glue.GlueBuilder;
 import org.bip.glue.TwoSynchronGlueBuilder;
@@ -57,8 +55,7 @@ public class TelephonicTestForCompNum {
 
 		system.shutdown();
 
-	}
-	
+	}	
 	private BIPGlue createGlue(String bipGlueFilename) {
 		BIPGlue bipGlue = null;
 
@@ -79,7 +76,7 @@ public class TelephonicTestForCompNum {
 	public void test2()
 	{
 		
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
+	
 
 		//BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
@@ -92,6 +89,7 @@ public class TelephonicTestForCompNum {
 			}
 
 		}.build();
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
 		engine.specifyGlue(bipGlue);
 
 		int n=2; 
@@ -170,9 +168,8 @@ public class TelephonicTestForCompNum {
 	public void test7()
 	{
 		
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
-
 		BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
 		engine.specifyGlue(bipGlue);
 		
 		int n=7; 
@@ -277,9 +274,9 @@ public class TelephonicTestForCompNum {
 	public void test12()
 	{
 		
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
 
 		BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
 		engine.specifyGlue(bipGlue);
 		
 		int n=12; 
@@ -416,9 +413,9 @@ public class TelephonicTestForCompNum {
 	public void test17()
 	{
 		
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
 
 		BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
 		engine.specifyGlue(bipGlue);
 		
 		int n=17; 
@@ -580,9 +577,9 @@ public class TelephonicTestForCompNum {
 	public void test22()
 	{
 		
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
 
 		BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
 		engine.specifyGlue(bipGlue);
 		
 		int n=22; 
@@ -769,9 +766,9 @@ public class TelephonicTestForCompNum {
 	public void test27()
 	{
 		
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
 
 		BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
 		engine.specifyGlue(bipGlue);
 		
 		int n=27; 
@@ -983,9 +980,8 @@ public class TelephonicTestForCompNum {
 	public void test32()
 	{
 		
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
-
 		BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
 		engine.specifyGlue(bipGlue);
 		
 		int n=32; 
@@ -1222,9 +1218,9 @@ public class TelephonicTestForCompNum {
 	public void test37()
 	{
 		
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
 
 		BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
 		engine.specifyGlue(bipGlue);
 		
 		int n=37; 
@@ -1486,9 +1482,9 @@ public class TelephonicTestForCompNum {
 	public void test42()
 	{
 		
-		BIPEngine engine = engineFactory.create("myEngine", new BIPCoordinatorImpl(system));
 
 		BIPGlue bipGlue = createGlue("src/test/resources/EmptyGlue.xml");
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
 		engine.specifyGlue(bipGlue);
 		
 		int n = 42;
