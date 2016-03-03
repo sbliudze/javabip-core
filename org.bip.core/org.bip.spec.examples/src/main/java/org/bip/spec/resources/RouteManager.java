@@ -1,6 +1,7 @@
 package org.bip.spec.resources;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -20,14 +21,21 @@ public class RouteManager implements ResourceProvider {
 	private ArrayList<RouteResource> navRoutes;
 	private String cost = "";
 	private int currentCapacity;
-	private CamelContext camelContext ;
+	private CamelContext camelContext;
+	private HashMap<RouteResource, String> routeIds;
 	
-	public RouteManager(CamelContext camelContext, ArrayList<RouteResource> routes) {
+	public RouteManager(CamelContext camelContext, ArrayList<RouteResource> routes) throws Exception {
 		this.avRoutes = routes;
 		this.camelContext = camelContext;
 		currentCapacity = routes.size();
 		this.cost =  costString();
 		navRoutes = new ArrayList<RouteResource>();
+		routeIds = new HashMap<RouteResource, String>();
+		camelContext.stopRoute("1");
+		camelContext.removeRoute("1");
+		for (RouteResource routeResource : routes) {
+			routeIds.put(routeResource, routeResource.routeId);
+		}
 	}
 	
 	//TODO augmentCost and decreaseCost are similar in different classes, make a superclass

@@ -120,7 +120,7 @@ public class ResourceTest {
 	
 	@SuppressWarnings("unused")
 	@Test
-	public void simpleRouteTest() throws RecognitionException, IOException, DNetException
+	public void simpleRouteTest() throws Exception
 	{
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
@@ -160,7 +160,7 @@ public class ResourceTest {
 
 		}.build();
 
-		bipGlue.toXML(System.out);
+		// bipGlue.toXML(System.out);
 		
 		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
 		
@@ -229,7 +229,7 @@ public class ResourceTest {
 	
 	
 	@Test
-	public void sortingTest() throws RecognitionException, IOException, DNetException
+	public void sortingTest() throws Exception
 	{
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override

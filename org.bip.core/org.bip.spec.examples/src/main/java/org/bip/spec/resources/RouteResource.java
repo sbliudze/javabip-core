@@ -8,6 +8,8 @@
 
 package org.bip.spec.resources;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +17,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
-import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
@@ -28,7 +29,6 @@ import org.bip.annotations.Ports;
 import org.bip.annotations.Transition;
 import org.bip.api.BIPActor;
 import org.bip.api.DataOut.AccessType;
-import org.bip.api.Executor;
 import org.bip.api.PortType;
 import org.bip.api.ResourceProxy;
 import org.slf4j.Logger;
@@ -71,15 +71,18 @@ public class RouteResource implements CamelContextAware, InitializingBean, Dispo
 		this.routeId = routeId;
 		this.camelContext = (ModelCamelContext) camelContext;
 	}
+	
+	private String routeSource;
 
 	@Transition(name = "init", source = "i", target = "off", guard = "idOK")
 	public void initRoute(@Data(name="routeIn")String inPath, @Data(name="routeOut")String outPath) throws Exception {
 		String id = routeId+ "1";
+		routeSource = inPath;
 		System.err.println("Creating new route from " + inPath + " to " + outPath + " with id " + id);
 		newRoute(inPath, outPath, id);
-		//camelContext.stopRoute(routeId);
 		routeId = id;
 		noOfEnforcedTransitions++;
+		//System.err.println(camelContext.getRoutes());
 	}
 	
 	private void newRoute(String inPath, String outPath, String id) {
@@ -92,38 +95,40 @@ public class RouteResource implements CamelContextAware, InitializingBean, Dispo
 			public void configure() throws Exception {
 				from("file:" + in + "?delete=true").routeId(idd)
 				// onCompletion is processed every time an exchange of one file is done.
-						.routePolicy(createRoutePolicy()).onCompletion().process(new org.apache.camel.Processor() {
-		                    Thread stop;
-		                    
-		                    @Override
-		                    public void process(final Exchange exchange) throws Exception {
-		                        // stop this route using a thread that will stop
-		                        // this route gracefully while we are still running
-		                        if (stop == null) {
-		                            stop = new Thread() {
-		                                @Override
-		                                public void run() {
-		                                    try {
-		                                    	//TODO this method does not work if there are no files to process
-		                                    	// HACK creating another thread to stop the route...
-		                                        exchange.getContext().stopRoute("myRoute");
-		                                    } catch (Exception e) {
-		                                        // ignore
-		                                    }
-		                                }
-		                            };
-		                        }
-		 
-		                        // start the thread that stops this route
-		                        stop.start();
-		                    }
-		                }).end().to("file:" + out);
+						.routePolicy(createRoutePolicy()).
+//						onCompletion().process(new org.apache.camel.Processor() {
+//		                    Thread stop;
+//		                    
+//		                    @Override
+//		                    public void process(final Exchange exchange) throws Exception {
+//		                        // stop this route using a thread that will stop
+//		                        // this route gracefully while we are still running
+//		                        if (stop == null) {
+//		                            stop = new Thread() {
+//		                                @Override
+//		                                public void run() {
+//		                                    try {
+//		                                    	System.err.println("RUNNING SHUTDOWN");
+//		                                    	//TODO this method does not work if there are no files to process
+//		                                    	// HACK creating another thread to stop the route...
+//		                                        exchange.getContext().stopRoute(routeId);
+//		                                    } catch (Exception e) {
+//		                                        // ignore
+//		                                    }
+//		                                }
+//		                            };
+//		                        }
+//		 
+//		                        // start the thread that stops this route
+//		                        stop.start();
+//		                    }
+//		                }).end().
+		                to("file:" + out);
 			}
 		};
 		try {
 			camelContext.addRoutes(builder);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -172,13 +177,6 @@ public class RouteResource implements CamelContextAware, InitializingBean, Dispo
 		noOfEnforcedTransitions++;
 	}
 	
-//	@Transition(name = "off", source = "on", target = "wait", guard = "")
-//	public void stopRoute() throws Exception {
-//		logger.debug("Stop transition handler for {} is being executed.", routeId);
-//		camelContext.suspendRoute(routeId);
-//		noOfEnforcedTransitions++;
-//	}
-	
 	@Transition(name = "on", source = "off", target = "on", guard = "")
 	public void startRoute() throws Exception {
 		logger.debug("Start transition handler for {} is being executed.", routeId);
@@ -186,26 +184,27 @@ public class RouteResource implements CamelContextAware, InitializingBean, Dispo
 		System.out.println("Starting route " + routeId);
 		noOfEnforcedTransitions++;
 	}
+	
+	//we assume that new files do not appear in the folder, therefore once it's empty, we can stop the route.
+	//@Transition(name = "", source = "on", target = "off", guard = "folderIsEmpty")
+	public void stopEmptyRoute() throws Exception {
+		logger.debug("Stop due to no data transition handler for {} is being executed.", routeId);
+		camelContext.stopRoute(routeId);
+		System.out.println("Stopping route " + routeId + " as there is no transfer to be done");
+		noOfEnforcedTransitions++;
+	}
 
-	//@Transition(name = "end", source = "wait", target = "done", guard = "!isFinished")
 	@Transition(name = "end", source = "on", target = "off", guard = "")
 	public void spontaneousEnd() throws Exception {
 		logger.debug("Received end notification for the route {}.", routeId);
 		camelContext.suspendRoute(routeId);
 	}
 
-//	@Transition(name = "", source = "wait", target = "done", guard = "isFinished")
-//	public void internalEnd() {
-//		logger.debug("Transitioning to done state directly since work within {} is already finished.", routeId);
-//	}
-//
-//	@Transition(name = "finished", source = "done", target = "off", guard = "")
-//	public void finishedTransition() {
-//		logger.debug("Transitioning to off state from done for {}.", routeId);
-//		noOfEnforcedTransitions++;
-//	}
-
-
+	@Guard(name = "folderIsEmpty")
+	public boolean isDirEmpty() throws IOException {
+		File file = new File(routeSource);
+		return file.list().length==0;
+	}
 
 	@Guard(name = "isFinished")
 	public boolean isFinished() {
