@@ -22,7 +22,7 @@ public class RouteManager implements ResourceProvider {
 	private String cost = "";
 	private int currentCapacity;
 	private CamelContext camelContext;
-	private HashMap<RouteResource, String> routeIds;
+	private HashMap<String, RouteResource> routeIds;
 	
 	public RouteManager(CamelContext camelContext, ArrayList<RouteResource> routes) throws Exception {
 		this.avRoutes = routes;
@@ -30,11 +30,11 @@ public class RouteManager implements ResourceProvider {
 		currentCapacity = routes.size();
 		this.cost =  costString();
 		navRoutes = new ArrayList<RouteResource>();
-		routeIds = new HashMap<RouteResource, String>();
+		routeIds = new HashMap<String, RouteResource>();
 		camelContext.stopRoute("1");
 		camelContext.removeRoute("1");
 		for (RouteResource routeResource : routes) {
-			routeIds.put(routeResource, routeResource.routeId);
+			routeIds.put(routeResource.routeId, routeResource);
 		}
 	}
 	
@@ -51,6 +51,16 @@ public class RouteManager implements ResourceProvider {
 		//(otherwise it will add-remove an arbitrary route but not a particular one.
 		System.err.println("cost is now (+) " + cost);
 	}
+	
+	public void augmentCost(String deltaCost, String resourceID) {
+		logger.debug("Cost of " + name + " increased by " + deltaCost);
+		int taken = Integer.parseInt(deltaCost);
+		this.currentCapacity += taken;
+		this.cost = costString();
+		avRoutes.add(routeIds.get(resourceID));
+		navRoutes.remove(routeIds.get(resourceID));
+		System.err.println("cost is now (+) " + cost);
+	}
 
 	@Override
 	public String cost() {
@@ -65,6 +75,16 @@ public class RouteManager implements ResourceProvider {
 		this.cost = costString();
 		navRoutes.add(avRoutes.get(0));
 		avRoutes.remove(0);
+		System.err.println("cost is now (-) " + cost);
+	}
+	
+	public void decreaseCost(String deltaCost, String resourceID) {
+		logger.debug("Cost of " + name + " decreased by " + deltaCost);
+		int taken = Integer.parseInt(deltaCost);
+		this.currentCapacity -= taken;
+		this.cost = costString();
+		navRoutes.add(routeIds.get(resourceID));
+		avRoutes.remove(routeIds.get(resourceID));
 		System.err.println("cost is now (-) " + cost);
 	}
 
