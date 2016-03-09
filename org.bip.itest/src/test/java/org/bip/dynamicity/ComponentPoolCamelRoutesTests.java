@@ -12,6 +12,7 @@ import org.bip.spec.RouteOnOffMonitor;
 import org.bip.spec.SwitchableRouteExecutableBehavior;
 import org.junit.After;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ComponentPoolCamelRoutesTests {
@@ -30,6 +31,7 @@ public class ComponentPoolCamelRoutesTests {
 		pool.cleanup();
 	}
 
+//	@Ignore
 	@Test
 	public void testAddMonitor() {
 		BIPComponent monitor = createComponent(new RouteOnOffMonitor(500), "m0", true);
@@ -42,6 +44,7 @@ public class ComponentPoolCamelRoutesTests {
 		assertTrue(pool.addInstance(route).isEmpty());
 	}
 
+//	@Ignore
 	@Test
 	public void testAddMonitorAndRoute() {
 		BIPComponent route0 = createComponent(new SwitchableRouteExecutableBehavior("r0"), "r0", false);
@@ -51,6 +54,7 @@ public class ComponentPoolCamelRoutesTests {
 		assertFalse(pool.addInstance(monitor0).isEmpty());
 	}
 	
+//	@Ignore
 	@Test
 	public void testAdd2MonitorsAnd2Routes() {
 		BIPComponent route0 = createComponent(new SwitchableRouteExecutableBehavior("r0"), "r0", false);
