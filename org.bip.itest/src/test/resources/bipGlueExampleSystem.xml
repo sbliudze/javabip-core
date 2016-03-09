@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- To modify to fit the example with types A, B, C, D, E -->
+<glue>
+	<accepts>
+	</accepts>
+
+	<requires>
+		<!-- Require for A type -->
+		<require>
+			<effect id="a0" specType="org.bip.spec.ExampleA" />
+			<causes>
+				<option>
+					<causes>
+						<port id="b0" specType="org.bip.spec.ExampleB" />
+						<port id="b0" specType="org.bip.spec.ExampleB" />
+					</causes>
+				</option>
+			</causes>
+		</require>
+
+		<!-- Require for B type -->
+		<require>
+			<effect id="b0" specType="org.bip.spec.ExampleB" />
+			<causes>
+				<option>
+					<causes>
+						<port id="a0" specType="org.bip.spec.ExampleA" />
+						<port id="a0" specType="org.bip.spec.ExampleA" />
+						<port id="a0" specType="org.bip.spec.ExampleA" />
+						<port id="c0" specType="org.bip.spec.ExampleC" />
+					</causes>
+				</option>
+				<option>
+					<causes>
+						<port id="c0" specType="org.bip.spec.ExampleC" />
+						<port id="c0" specType="org.bip.spec.ExampleC" />
+					</causes>
+				</option>
+			</causes>
+		</require>
+
+		<!-- Require for C type -->
+		<require>
+			<effect id="c0" specType="org.bip.spec.ExampleC" />
+			<causes>
+				<option>
+					<causes>
+					</causes>
+				</option>
+			</causes>
+		</require>
+
+		<!-- Require for D type -->
+		<require>
+			<effect id="d0" specType="org.bip.spec.ExampleD" />
+			<causes>
+				<option>
+					<causes>
+						<port id="e0" specType="org.bip.spec.ExampleE" />
+					</causes>
+				</option>
+			</causes>
+		</require>
+
+		<!-- Require for E type -->
+		<require>
+			<effect id="e0" specType="org.bip.spec.ExampleE" />
+			<causes>
+				<option>
+					<causes>
+					</causes>
+				</option>
+			</causes>
+		</require>
+	</requires>
+</glue>
