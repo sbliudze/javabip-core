@@ -25,6 +25,8 @@ import org.bip.spec.QComponent;
 import org.bip.spec.RComponent;
 import org.bip.spec.resources.Bus;
 import org.bip.spec.resources.ComponentNeedingResource;
+import org.bip.spec.resources.KalrayMemoryBank;
+import org.bip.spec.resources.KalrayResource;
 import org.bip.spec.resources.RouteUser;
 import org.bip.spec.resources.Memory;
 import org.bip.spec.resources.Processor;
@@ -56,6 +58,70 @@ public class ResourceTest {
 
 		system.shutdown();
 
+	}
+	
+	@Test
+	public void KalrayTest() throws RecognitionException, IOException,
+			DNetException {
+		String dnetSpec = "src/test/resources/kalray.txt";
+		AllocatorImpl alloc = new AllocatorImpl(dnetSpec);
+		//String costZero = "p >= 0";
+		
+		KalrayResource p = new KalrayResource("p", 1, false);
+		KalrayResource p1 = new KalrayResource("p1", 1, true);
+		KalrayResource p2 = new KalrayResource("p2", 1, true);
+		KalrayResource p3 = new KalrayResource("p3", 1, true);
+		KalrayResource p4 = new KalrayResource("p4", 1, true);
+		
+		KalrayResource m = new KalrayResource("m", 1, false);
+		KalrayResource m1 = new KalrayResource("m1", 1, true);
+		KalrayResource m2 = new KalrayResource("m2", 1, true);
+		KalrayResource m3 = new KalrayResource("m3", 1, true);
+		KalrayResource m4 = new KalrayResource("m4", 1, true);
+		
+//		KalrayResource L = new KalrayResource("L", 1, false);
+//		KalrayResource R = new KalrayResource("R", 1, false);
+		KalrayMemoryBank L = new KalrayMemoryBank("L");
+		KalrayMemoryBank R = new KalrayMemoryBank("R");
+
+		
+		KalrayResource b12L = new KalrayResource("b12L", 1, true);
+		KalrayResource b34L = new KalrayResource("b34L", 1, true);
+		KalrayResource b12R = new KalrayResource("b12R", 1, true);
+		KalrayResource b34R = new KalrayResource("b34R", 1, true);
+		
+//		alloc.specifyCost("p", "p >=0");
+//		alloc.specifyCost("m", "m >=0");
+//		alloc.specifyCost("L", "L >=0");
+//		alloc.specifyCost("R", "R >=0");
+//		alloc.specifyCost("p1", "p1=0 | p1=1");
+//		alloc.specifyCost("p2", "p2=0 | p2=1");
+//		alloc.specifyCost("p3", "p3=0 | p3=1");
+//		alloc.specifyCost("p4", "p4=0 | p4=1");
+//		alloc.specifyCost("m1", "m1=0 | m1=1");
+//		alloc.specifyCost("m2", "m2=0 | m2=1");
+//		alloc.specifyCost("m3", "m3=0 | m3=1");
+//		alloc.specifyCost("m4", "m4=0 | m4=1");
+//		alloc.specifyCost("b12L", "b12L=0 | b12L=1");
+//		alloc.specifyCost("b34L", "b34L=0 | b34L=1");
+//		alloc.specifyCost("b12R", "b12R=0 | b12R=1");
+//		alloc.specifyCost("b34R", "b34R=0 | b34R=1");
+		
+		alloc.addResource(p);alloc.addResource(p1);alloc.addResource(p2);alloc.addResource(p3);alloc.addResource(p4);
+		alloc.addResource(m);alloc.addResource(m1);alloc.addResource(m2);alloc.addResource(m3);alloc.addResource(m4);
+		alloc.addResource(R);alloc.addResource(L);
+		alloc.addResource(b12L);alloc.addResource(b34L);alloc.addResource(b12R);alloc.addResource(b34R);
+		
+		String firstRequest = "p=1 & m=1";
+		if (alloc.canAllocate(firstRequest))
+		{
+			alloc.specifyRequest(firstRequest);
+		}
+		if (alloc.canAllocate(firstRequest))
+		{
+			alloc.specifyRequest(firstRequest);
+		}
+		System.out.println();
 	}
 	
 	@SuppressWarnings("unused")

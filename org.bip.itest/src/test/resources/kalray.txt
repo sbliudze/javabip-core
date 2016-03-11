@@ -1,0 +1,9 @@
+places p, p1, p2, p3, p4, m, L, R, m1, m2, m3, m4, b12L, b12R, b34L, b34R;
+transition t1 from p to p1, p2, p3, p4 constraint (p=p1 & p2=0 & p3=0 & p4=0) | (p=p2 & p1=0 & p3=0 & p4=0) | (p=p3 & p1=0 & p2=0 & p4=0) | (p=p4 & p1=0 & p2=0 & p3=0);
+transition t2 from m to L, R constraint (m=L & R=0) | (m=R & L=0);
+transition t3 from L to m1, m2 constraint (L=m1 & m2=0) | (L=m2 & m1=0);
+transition t4 from R to m3, m4 constraint (R=m3 & m4=0) | (R=m4 & m3=0);
+transition t6 from L, p1, p2 to b12L constraint (b12L>0 & L>0 & ((p1>0 & p2=0 & L=1) | (p2>0 & p1=0 & L=2))) | (b12L=0 & L=0) | (b12L=0 & p1=0 &p2=0);
+transition t5 from L, p3, p4 to b34L constraint (b34L>0 & L>0 & ((p3>0 & p4=0 & L=3) | (p4>0 & p3=0 & L=4))) | (b34L=0 & L=0) | (b34L=0 & p3=0 &p4=0);
+transition t7 from R, p1, p2 to b12R constraint (b12R>0 & R>0 & ((p1>0 & p2=0 & R=1) | (p2>0 & p1=0 & R=2))) | (b12R=0 & R=0) | (b12R=0 & p1=0 &p2=0);
+transition t8 from R, p3, p4 to b34R constraint (b34R>0 & R>0 & ((p3>0 & p4=0 & R=3) | (p4>0 & p3=0 & R=4))) | (b34R=0 & R=0) | (b34R=0 & p3=0 &p4=0);

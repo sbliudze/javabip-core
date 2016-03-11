@@ -162,7 +162,8 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		}
 	}
 
-	private void specifyCost(String resource, String costString) {
+	//TODO revert to private (made public for the Kalray test)
+	public void specifyCost(String resource, String costString) {
 		ConstraintNode cost = parseRequest(costString);
 		resourceToCost.put(resource, cost);
 	}
@@ -349,7 +350,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 				}
 				stringtoConstraintVar.put(place.name(), placeSum);
 				logger.debug("For place " + place.name() + " the token variable names are " + stringtoConstraintVar + " and the constraint is "
-						+ resourceToCost);
+						+ resourceToCost.get(place.name()));
 				BoolExpr costExpr = resourceToCost.get(place.name()).evaluate(stringtoConstraintVar);
 				solver.add(costExpr);
 			}

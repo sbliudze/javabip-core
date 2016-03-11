@@ -154,8 +154,6 @@ public class DNet implements ContextProvider {
 					disabled.add(transition);
 					Map<String, ArithExpr> stringtoConstraintVar = new HashMap<String, ArithExpr>();
 					for (Place place : transition.postplaces()) {
-						placeTokens.get(place).add(transition);
-
 						// add a new token
 						placeTokens.get(place).add(transition);
 
@@ -185,7 +183,7 @@ public class DNet implements ContextProvider {
 
 					BoolExpr expr = transition.constraint(stringtoConstraintVar);
 					dependencyConstraints.add(expr);
-					System.out.println("After firing the tokens are: " + placeTokens);
+					System.out.println("After firing of " + transition.name() + " the tokens are: " + placeTokens);
 					return findEnabledAndFire(placeVariables, placeTokens, dependencyConstraints, disabled);
 				}
 			}
