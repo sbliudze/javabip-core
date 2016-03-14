@@ -13,6 +13,7 @@ import org.bip.spec.B;
 import org.bip.spec.C;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import akka.actor.ActorSystem;
@@ -37,6 +38,7 @@ public class DynamicityTests {
 
 	}
 
+	@Ignore
 	@Test
 	public void validDependenciesSystemTest() {
 		BIPGlue glue = createGlue("src/test/resources/bipGlueDependenciesSystem.xml");
