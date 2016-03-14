@@ -26,8 +26,10 @@ import org.bip.spec.QComponent;
 import org.bip.spec.RComponent;
 import org.bip.spec.resources.Bus;
 import org.bip.spec.resources.ComponentNeedingResource;
+import org.bip.spec.resources.KalrayData;
 import org.bip.spec.resources.KalrayMemoryBank;
 import org.bip.spec.resources.KalrayResource;
+import org.bip.spec.resources.KalrayTask;
 import org.bip.spec.resources.RouteUser;
 import org.bip.spec.resources.Memory;
 import org.bip.spec.resources.Processor;
@@ -172,24 +174,115 @@ public class ResourceTest {
 			alloc.specifyRequest(firstRequest);
 		}
 
-//		Hashtable<String, String> resources = alloc.resources();
 		ArrayList<String> unitNames = new ArrayList<String>();
-//		for (String res : resources.keySet()) {
-//			unitNames.add(res);
-//		}
-		//System.err.print(unitNames);
 		int allocID = alloc.allocID();
 		unitNames.add("m");unitNames.add("p");
-//		unitNames.add("m1"); unitNames.add("p1"); //TODO should get this info from allocator and check
-//		unitNames.add("L1"); unitNames.add("L2");
-//		unitNames.add("b12L");
-		alloc.releaseResource(unitNames, allocID-1);
+		alloc.releaseResource(unitNames, allocID);
 		
 		if (alloc.canAllocate(firstRequest)) {
 			alloc.specifyRequest(firstRequest);
 		} else {
-			System.out.println("FIASCO");
+			System.out.println("FIASCO-1");
 		}
+		alloc.releaseResource(unitNames, 1);
+		
+		if (alloc.canAllocate(firstRequest)) {
+			alloc.specifyRequest(firstRequest);
+		} else {
+			System.out.println("FIASCO-2");
+		}
+	}
+	
+	@Test
+	public void KalrayLRWithDataTest() throws RecognitionException, IOException,
+			DNetException {
+		/*
+		 * This test uses a dnet presenting simplified Kalray architecture.
+		 * Resources L and R are divided into two each, so that one (L1, R1) stores information about the memory
+		 * and the other (L2, R2) stores information about the processors already using the bank.
+		 */
+		String dnetSpec = "src/test/resources/kalray_LR";
+		AllocatorImpl alloc = new AllocatorImpl(dnetSpec);
+		
+		KalrayResource p = new KalrayResource("p", 1, false);
+		KalrayResource p1 = new KalrayResource("p1", 1, true);
+		KalrayResource p2 = new KalrayResource("p2", 1, true);
+		KalrayResource p3 = new KalrayResource("p3", 1, true);
+		KalrayResource p4 = new KalrayResource("p4", 1, true);
+		
+		KalrayResource m = new KalrayResource("m", 1, false);
+		KalrayResource m1 = new KalrayResource("m1", 1, true);
+		KalrayResource m2 = new KalrayResource("m2", 1, true);
+		KalrayResource m3 = new KalrayResource("m3", 1, true);
+		KalrayResource m4 = new KalrayResource("m4", 1, true);
+		
+		KalrayResource L1 = new KalrayResource("L1", 1, false);
+		KalrayResource R1 = new KalrayResource("R1", 1, false);
+		KalrayMemoryBank L2 = new KalrayMemoryBank("L2");
+		KalrayMemoryBank R2 = new KalrayMemoryBank("R2");
+		
+		KalrayResource b12L = new KalrayResource("b12L", 1, true);
+		KalrayResource b34L = new KalrayResource("b34L", 1, true);
+		KalrayResource b12R = new KalrayResource("b12R", 1, true);
+		KalrayResource b34R = new KalrayResource("b34R", 1, true);
+		
+		KalrayResource T = new KalrayResource("T", 1, false);
+		KalrayTask T1 = new KalrayTask("T1");
+		KalrayTask T2 = new KalrayTask("T2");
+		KalrayTask T3 = new KalrayTask("T3");
+		KalrayTask T4 = new KalrayTask("T4");
+		KalrayTask T5 = new KalrayTask("T5");
+			
+		KalrayData D12 = new KalrayData("D12");
+		KalrayData D13 = new KalrayData("D13");
+		KalrayData D24 = new KalrayData("D24");
+		KalrayData D53 = new KalrayData("D53");
+		KalrayData D34 = new KalrayData("D34");
+		
+		alloc.addResource(p);alloc.addResource(p1);alloc.addResource(p2);alloc.addResource(p3);alloc.addResource(p4);
+		alloc.addResource(m);alloc.addResource(m1);alloc.addResource(m2);alloc.addResource(m3);alloc.addResource(m4);
+		alloc.addResource(R1);alloc.addResource(L1);alloc.addResource(R2);alloc.addResource(L2);
+		alloc.addResource(b12L);alloc.addResource(b34L);alloc.addResource(b12R);alloc.addResource(b34R);
+		alloc.addResource(T);alloc.addResource(T1);alloc.addResource(T2);alloc.addResource(T3);alloc.addResource(T4);alloc.addResource(T5);
+		alloc.addResource(D12);alloc.addResource(D13);alloc.addResource(D24);alloc.addResource(D53);alloc.addResource(D34);
+		
+		T1.setData(D12);
+		T2.setData(D24);
+		T3.setData(D34);
+		T5.setData(D53);
+		//T1.setData(D13); ???
+		
+		String firstRequest = "T=1";
+		if (alloc.canAllocate(firstRequest)) {
+			alloc.specifyRequest(firstRequest);
+		}
+//		if (alloc.canAllocate(firstRequest)) {
+//			alloc.specifyRequest(firstRequest);
+//		}
+//		if (alloc.canAllocate(firstRequest)) {
+//			alloc.specifyRequest(firstRequest);
+//		}
+//		if (alloc.canAllocate(firstRequest)) {
+//			alloc.specifyRequest(firstRequest);
+//		}
+//
+//		ArrayList<String> unitNames = new ArrayList<String>();
+//		int allocID = alloc.allocID();
+//		unitNames.add("m");unitNames.add("p");
+//		alloc.releaseResource(unitNames, allocID);
+//		
+//		if (alloc.canAllocate(firstRequest)) {
+//			alloc.specifyRequest(firstRequest);
+//		} else {
+//			System.out.println("FIASCO-1");
+//		}
+//		alloc.releaseResource(unitNames, 1);
+//		
+//		if (alloc.canAllocate(firstRequest)) {
+//			alloc.specifyRequest(firstRequest);
+//		} else {
+//			System.out.println("FIASCO-2");
+//		}
 	}
 	
 	@SuppressWarnings("unused")

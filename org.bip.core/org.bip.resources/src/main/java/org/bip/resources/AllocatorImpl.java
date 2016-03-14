@@ -258,6 +258,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		//System.out.println(model.toString());
 		// TODO bus is not in placeVariables, as it is added in the dnet but not in the allocator
 		HashMap<String, Expr> resourceNameToGivenValue = new HashMap<String, Expr>();
+		System.err.println("----------");
 		for (Place place : placeVariables.keySet()) {
 			if (placeVariables.get(place).size() > 0) {
 				//System.err.println(allocationID + " " + placeVariables.get(place));
