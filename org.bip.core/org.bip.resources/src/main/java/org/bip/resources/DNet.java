@@ -5,6 +5,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.microsoft.z3.ArithExpr;
 import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
@@ -12,6 +15,8 @@ import com.microsoft.z3.IntExpr;
 
 public class DNet implements ContextProvider {
 
+	private Logger logger = LoggerFactory.getLogger(DNet.class);
+	
 	public HashMap<ArrayList<String>, ArrayList<String>> resourceDependencies;
 	
 	private ArrayList<Place> places;
@@ -96,9 +101,9 @@ public class DNet implements ContextProvider {
 			if (!placeNameToPostplacesNames.containsKey(place.name())) {
 				placeNameToPostplacesNames.put(place.name(), outs);
 			} else {
-				placeNameToTransitionNames.get(place.name()).addAll(outs);
+				placeNameToPostplacesNames.get(place.name()).addAll(outs);
 			}
-		
+			
 			if (!places.contains(place)) {
 				throw new DNetException("The prePlace \"" + place.name() + "\" of transition \"" + transitionName + "\" is not among the places of the DNet.");
 			}
@@ -183,7 +188,7 @@ public class DNet implements ContextProvider {
 
 					BoolExpr expr = transition.constraint(stringtoConstraintVar);
 					dependencyConstraints.add(expr);
-					System.out.println("After firing of " + transition.name() + " the tokens are: " + placeTokens);
+					logger.info("After firing of " + transition.name() + " the tokens are: " + placeTokens);
 					return findEnabledAndFire(placeVariables, placeTokens, dependencyConstraints, disabled);
 				}
 			}

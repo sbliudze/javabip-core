@@ -34,7 +34,6 @@ public class KalrayMemoryBank implements ResourceProvider  {
 
 	@Override
 	public String cost() {
-		System.err.println(processors);
 		if ((processors.contains(1) || processors.contains(2)) && !processors.contains(3) && !processors.contains(4))
 			return name + "=0 | " + name + "=3 | " + name + "=4" ;
 		if ((processors.contains(3) || processors.contains(4)) && !processors.contains(1) && !processors.contains(2))

@@ -25,6 +25,7 @@ public class RouteUser {
 
 	private final String utility;// = "p=1 & m=128";
 	private String routeID="";
+	private int allocID;
 	
 	public RouteUser() {
 		this.utility = "r=1";
@@ -38,11 +39,11 @@ public class RouteUser {
 	}
 
 	@Transition(name = "getRoute", source = "1", target = "1.25", guard = "")
-	public void getRoute(@Data(name="resourceArray") Hashtable<String, String> resources) {
+	public void getRoute(@Data(name="resourceArray") Hashtable<String, String> resources, @Data(name="allocID") int allocID) {
 		// here we must be using a resource
 		System.err.println("Storing the route resource: "+ resources);
 		routeID = resources.get("r");
-		
+		this.allocID = allocID;
 	}
 	
 	@Transition(name = "initRoute", source = "1.25", target = "1.5", guard = "")
@@ -88,6 +89,12 @@ public class RouteUser {
 	public String outPath() {
 		return outPath;
 	}
+	
+	@Data(name = "allocID", accessTypePort = AccessType.any)
+	public int allocID() {
+		return allocID;
+	}
+
 	
 	@Data(name = "resourceUnit", accessTypePort = AccessType.any)
 	public ArrayList<String> releasedResources() {

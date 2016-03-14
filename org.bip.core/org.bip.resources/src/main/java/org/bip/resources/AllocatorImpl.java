@@ -68,7 +68,8 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 	private HashMap<String, ConstraintNode> resourceToCost;
 	// a map: resource name <-> value produced by the solver (is used to find out how much we should release upon spontaneous release event)
 	// TODO it won't work this way if we have several components asking for the same resource - even if it is done in several times. or will I erase it? CHECK
-	private HashMap<String, Expr> resourceNameToGivenValue;
+	//private HashMap<String, Expr> resourceNameToGivenValue;
+	private HashMap<Integer, HashMap<String, Expr>> resourceNameToGivenValueInAllocation;
 	// a map: request string <-> model provided by the solver. is used in order not to solve the thing twice during the guard evaluation and the actual
 	// allocation
 	private HashMap<String, Model> requestToModel;
@@ -80,6 +81,13 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 	 * The map containing the requested resources in pairs: the lable of requested resource <-> the id of the provided resource proxy.
 	 */
 	private Hashtable<String, String> resourceLableToID;
+	
+	/**
+	 * An id which is unique for each new allocation (each new specifyRequest())
+	 * This id is used to determine which amount of resources is released 
+	 * when there are multiple allocations of the same resource
+	 */
+	private int allocationID;
 
 	/**************** Constructors *****************/
 
@@ -91,9 +99,10 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		nameToResource = new HashMap<String, ResourceProvider>();
 		placeToResource = new HashMap<Place, ResourceProvider>();
 		placeNameToResource = new HashMap<String, ResourceProvider>();
-		resourceNameToGivenValue = new HashMap<String, Expr>();
+		resourceNameToGivenValueInAllocation = new HashMap<Integer, HashMap<String,Expr>>(); //new HashMap<String, Expr>();
 		requestToModel = new HashMap<String, Model>();
 		resourceLableToID = new Hashtable<String, String>();
+		allocationID = 0;
 	}
 
 	// if an allocator received a dnet and no context, it creates a context and parses the dnet
@@ -162,8 +171,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		}
 	}
 
-	//TODO revert to private (made public for the Kalray test)
-	public void specifyCost(String resource, String costString) {
+	private void specifyCost(String resource, String costString) {
 		ConstraintNode cost = parseRequest(costString);
 		resourceToCost.put(resource, cost);
 	}
@@ -238,7 +246,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		request.setContextProvider(this);
 		return request;
 	}
-
+	
 	// TODO rename to allocate?
 	@org.bip.annotations.Transition(name = "request", source = "0", target = "1", guard = "canAllocate")
 	public void specifyRequest(@Data(name = "request") String requestString) throws DNetException {
@@ -247,16 +255,22 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 					+ " given as data parameter for transition has not been accepted before as data given for the guard.");
 		}
 		Model model = requestToModel.get(requestString);
+		//System.out.println(model.toString());
 		// TODO bus is not in placeVariables, as it is added in the dnet but not in the allocator
+		HashMap<String, Expr> resourceNameToGivenValue = new HashMap<String, Expr>();
 		for (Place place : placeVariables.keySet()) {
 			if (placeVariables.get(place).size() > 0) {
-
+				//System.err.println(allocationID + " " + placeVariables.get(place));
 				for (int i = 0; i < placeVariables.get(place).size(); i++) {
 					Expr varName = placeVariables.get(place).get(i);
 					Expr res = model.evaluate(varName, false);
+					//System.err.println(allocationID + " " + varName + " " + res.toString());
 					if (res.isIntNum()) {
+						int i_r = Integer.parseInt(res.toString());
+						if (i_r != 0) {
+							System.err.println(place.name() + ": " + i_r);
+						}
 						// update the cost after allocating the resource!
-						// TODO the resource must be somehow dispatched back to the requesting component
 						placeToResource.get(place).decreaseCost(res.toString());
 						//currentResourceID = placeToResource.get(place).resourceID();
 						//TODO the label is not necessarily place.name()
@@ -268,6 +282,10 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 				}
 			}
 		}
+		resourceNameToGivenValueInAllocation.put(allocationID, resourceNameToGivenValue);
+		//System.err.println(allocationID + " " + resourceNameToGivenValueInAllocation);
+		allocationID++;
+	
 		requestToModel.remove(requestString);
 	}
 	
@@ -277,59 +295,63 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 	}
 	
 
-	@Data(name="resources", accessTypePort = AccessType.allowed, ports = { "provideResource" })
+	@Data(name = "resources", accessTypePort = AccessType.allowed, ports = { "provideResource" })
 	public Hashtable<String, String> resources() {
 		return resourceLableToID;
 	}
 	
+	@Data(name = "allocID", accessTypePort = AccessType.allowed, ports = { "provideResource" })
+	public int allocID() {
+		return allocationID-1;
+	}
+	
 	@org.bip.annotations.Transition(name = "release", source = "0", target = "0", guard = "canRelease")
-	public void releaseResource(@Data(name = "resourceUnit") ArrayList<String> unitNames) throws DNetException {
+	public void releaseResource(@Data(name = "resourceUnit") ArrayList<String> unitNames, @Data(name = "allocID") int allocID) throws DNetException {
 		logger.debug("Releasing resources: " + unitNames);
 		for (String unit : unitNames) {
 			// release the amount allocated for the given resource
-			releaseResource(unit);
+			releaseResource(unit, allocID);
 
 			// for each place reachable from this place
 			if (!dnet.placeNameToPostplacesNames.containsKey(unit)) {
-				return;
+				break;
 			}
-			for (String placeName : dnet.placeNameToPostplacesNames.get(unit)) {
-				logger.debug("Releasing resource : " + placeName + " dependent on " + unit);
-				// TODO check the amount (token) only having come from the place released
-				// if the resource was allocated, release it
-				if (resourceNameToGivenValue.containsKey(unit)) {
-					releaseResource(placeName);
-				}
-//				for (IntExpr e : placeVariables.get(dnet.getPlace(placeName))) {
-//					// if e has come from a transition which has unit as i
-//				}
-			}
+			recursiveRelease(allocID, unit);
 		}
-//		if (dnet.resourceDependencies.containsKey(unitNames)) {
-//			// TODO it will not work because the lists are not the same
-//			ArrayList<String> dependentResource = dnet.resourceDependencies.get(unitNames);
-//			for (String r : dependentResource) {
-//				releaseResource(r);
-//			}
-//		}
+		//System.out.println("resources released " + ": " + allocID + " " + unitNames);
 	}
 
-	private void releaseResource(String resourceName) {
-		Expr res = resourceNameToGivenValue.get(resourceName);
+	private void recursiveRelease(int allocID, String unit) {
+		if (dnet.placeNameToPostplacesNames.get(unit)==null) return;
+		for (String placeName : dnet.placeNameToPostplacesNames.get(unit)) {
+			logger.debug("Releasing resource: " + placeName + " dependent on " + unit);
+			// TODO check the amount (token) only having come from the place released
+			// if the resource was allocated, release it
+			if (resourceNameToGivenValueInAllocation.get(allocID).containsKey(unit)) {
+				releaseResource(placeName, allocID);
+				recursiveRelease(allocID, placeName);
+			}
+		}
+	}
+
+	private void releaseResource(String resourceName, int allocID) {
+		Expr res = resourceNameToGivenValueInAllocation.get(allocID).get(resourceName);
 		// update cost with returning the value
-		logger.debug("Releasing resource: " + resourceName + ", the amount allocated was " + res + ", the resource provider is " + placeNameToResource.get(resourceName));
-		//TODO remove a corresponding token as well?
+		logger.info("Releasing resource: " + resourceName + ", the amount allocated was " + res + ", the resource provider is " + placeNameToResource.get(resourceName));
+		//TODO remove a corresponding token as well? - why, no, there are no tokens saved between runs
 		
 		// update the cost after deallocating the resource
 		placeNameToResource.get(resourceName).augmentCost(res.toString());
 	}
 	
 	@Guard(name = "canRelease")
-	public boolean canRelease(@Data(name = "resourceUnit") ArrayList<String> unitNames) throws DNetException {
+	public boolean canRelease(@Data(name = "resourceUnit") ArrayList<String> unitNames, @Data(name = "allocID") int allocID) throws DNetException {
+		if (resourceNameToGivenValueInAllocation.get(allocID)==null) return false;
+		//System.out.println(resourceNameToGivenValueInAllocation + ": " + allocID + " " + unitNames);
 		for (String unit : unitNames) {
 			// TODO what if there are several items of the same resource, then we should also know the name - rather the id - of component?
 			// get the expression for the allocated amount for this resource
-			Expr res = resourceNameToGivenValue.get(unit);
+			Expr res = resourceNameToGivenValueInAllocation.get(allocID).get(unit);
 			if (res == null) {
 				return false;
 			}

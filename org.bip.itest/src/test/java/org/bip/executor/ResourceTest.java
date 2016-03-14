@@ -2,6 +2,7 @@ package org.bip.executor;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 import org.antlr.v4.runtime.RecognitionException;
 import org.apache.camel.CamelContext;
@@ -63,9 +64,15 @@ public class ResourceTest {
 	@Test
 	public void KalrayTest() throws RecognitionException, IOException,
 			DNetException {
+		/*
+		 * This test uses a dnet presenting simplified Kalray architecture.
+		 * The weakness of this example is that the amount of memory given depends on the processor chosen.
+		 * (Due to limitations of Left and Right banks saying that processors from one group cannot access the same bank)
+		 *  The problem is solved (hopefully) in KalrayLRTest() which is using another version of a DNet, less concise.
+		 *  In this test, 5 allocations are being requested, four of them are satisfied.
+		 */
 		String dnetSpec = "src/test/resources/kalray.txt";
 		AllocatorImpl alloc = new AllocatorImpl(dnetSpec);
-		//String costZero = "p >= 0";
 		
 		KalrayResource p = new KalrayResource("p", 1, false);
 		KalrayResource p1 = new KalrayResource("p1", 1, true);
@@ -79,8 +86,6 @@ public class ResourceTest {
 		KalrayResource m3 = new KalrayResource("m3", 10, true);
 		KalrayResource m4 = new KalrayResource("m4", 10, true);
 		
-//		KalrayResource L = new KalrayResource("L", 1, false);
-//		KalrayResource R = new KalrayResource("R", 1, false);
 		KalrayMemoryBank L = new KalrayMemoryBank("L");
 		KalrayMemoryBank R = new KalrayMemoryBank("R");
 
@@ -90,44 +95,111 @@ public class ResourceTest {
 		KalrayResource b12R = new KalrayResource("b12R", 1, true);
 		KalrayResource b34R = new KalrayResource("b34R", 1, true);
 		
-//		alloc.specifyCost("p", "p >=0");
-//		alloc.specifyCost("m", "m >=0");
-//		alloc.specifyCost("L", "L >=0");
-//		alloc.specifyCost("R", "R >=0");
-//		alloc.specifyCost("p1", "p1=0 | p1=1");
-//		alloc.specifyCost("p2", "p2=0 | p2=1");
-//		alloc.specifyCost("p3", "p3=0 | p3=1");
-//		alloc.specifyCost("p4", "p4=0 | p4=1");
-//		alloc.specifyCost("m1", "m1=0 | m1=1");
-//		alloc.specifyCost("m2", "m2=0 | m2=1");
-//		alloc.specifyCost("m3", "m3=0 | m3=1");
-//		alloc.specifyCost("m4", "m4=0 | m4=1");
-//		alloc.specifyCost("b12L", "b12L=0 | b12L=1");
-//		alloc.specifyCost("b34L", "b34L=0 | b34L=1");
-//		alloc.specifyCost("b12R", "b12R=0 | b12R=1");
-//		alloc.specifyCost("b34R", "b34R=0 | b34R=1");
-		
 		alloc.addResource(p);alloc.addResource(p1);alloc.addResource(p2);alloc.addResource(p3);alloc.addResource(p4);
 		alloc.addResource(m);alloc.addResource(m1);alloc.addResource(m2);alloc.addResource(m3);alloc.addResource(m4);
 		alloc.addResource(R);alloc.addResource(L);
 		alloc.addResource(b12L);alloc.addResource(b34L);alloc.addResource(b12R);alloc.addResource(b34R);
 		
 		String firstRequest = "p=1 & m>0";
-		if (alloc.canAllocate(firstRequest))
-		{
+		if (alloc.canAllocate(firstRequest)) {
 			alloc.specifyRequest(firstRequest);
 		}
-		if (alloc.canAllocate(firstRequest))
-		{
+		if (alloc.canAllocate(firstRequest)) {
+			alloc.specifyRequest(firstRequest);
+		}
+		if (alloc.canAllocate(firstRequest)) {
+			alloc.specifyRequest(firstRequest);
+		}
+		if (alloc.canAllocate(firstRequest)) {
+			alloc.specifyRequest(firstRequest);
+		}
+		//this one will not allocate in the current setting - OK
+		if (alloc.canAllocate(firstRequest)) {
 			alloc.specifyRequest(firstRequest);
 		}
 		System.out.println();
+	}
+	
+	@Test
+	public void KalrayLRTest() throws RecognitionException, IOException,
+			DNetException {
+		/*
+		 * This test uses a dnet presenting simplified Kalray architecture.
+		 * Resources L and R are divided into two each, so that one (L1, R1) stores information about the memory
+		 * and the other (L2, R2) stores information about the processors already using the bank.
+		 */
+		String dnetSpec = "src/test/resources/kalray_LR";
+		AllocatorImpl alloc = new AllocatorImpl(dnetSpec);
+		
+		KalrayResource p = new KalrayResource("p", 1, false);
+		KalrayResource p1 = new KalrayResource("p1", 1, true);
+		KalrayResource p2 = new KalrayResource("p2", 1, true);
+		KalrayResource p3 = new KalrayResource("p3", 1, true);
+		KalrayResource p4 = new KalrayResource("p4", 1, true);
+		
+		KalrayResource m = new KalrayResource("m", 1, false);
+		KalrayResource m1 = new KalrayResource("m1", 1, true);
+		KalrayResource m2 = new KalrayResource("m2", 1, true);
+		KalrayResource m3 = new KalrayResource("m3", 1, true);
+		KalrayResource m4 = new KalrayResource("m4", 1, true);
+		
+		KalrayResource L1 = new KalrayResource("L1", 1, false);
+		KalrayResource R1 = new KalrayResource("R1", 1, false);
+		KalrayMemoryBank L2 = new KalrayMemoryBank("L2");
+		KalrayMemoryBank R2 = new KalrayMemoryBank("R2");
+		
+		KalrayResource b12L = new KalrayResource("b12L", 1, true);
+		KalrayResource b34L = new KalrayResource("b34L", 1, true);
+		KalrayResource b12R = new KalrayResource("b12R", 1, true);
+		KalrayResource b34R = new KalrayResource("b34R", 1, true);
+		
+		alloc.addResource(p);alloc.addResource(p1);alloc.addResource(p2);alloc.addResource(p3);alloc.addResource(p4);
+		alloc.addResource(m);alloc.addResource(m1);alloc.addResource(m2);alloc.addResource(m3);alloc.addResource(m4);
+		alloc.addResource(R1);alloc.addResource(L1);alloc.addResource(R2);alloc.addResource(L2);
+		alloc.addResource(b12L);alloc.addResource(b34L);alloc.addResource(b12R);alloc.addResource(b34R);
+		
+		String firstRequest = "p=1 & m=1";
+		if (alloc.canAllocate(firstRequest)) {
+			alloc.specifyRequest(firstRequest);
+		}
+		if (alloc.canAllocate(firstRequest)) {
+			alloc.specifyRequest(firstRequest);
+		}
+		if (alloc.canAllocate(firstRequest)) {
+			alloc.specifyRequest(firstRequest);
+		}
+		if (alloc.canAllocate(firstRequest)) {
+			alloc.specifyRequest(firstRequest);
+		}
+
+//		Hashtable<String, String> resources = alloc.resources();
+		ArrayList<String> unitNames = new ArrayList<String>();
+//		for (String res : resources.keySet()) {
+//			unitNames.add(res);
+//		}
+		//System.err.print(unitNames);
+		int allocID = alloc.allocID();
+		unitNames.add("m");unitNames.add("p");
+//		unitNames.add("m1"); unitNames.add("p1"); //TODO should get this info from allocator and check
+//		unitNames.add("L1"); unitNames.add("L2");
+//		unitNames.add("b12L");
+		alloc.releaseResource(unitNames, allocID-1);
+		
+		if (alloc.canAllocate(firstRequest)) {
+			alloc.specifyRequest(firstRequest);
+		} else {
+			System.out.println("FIASCO");
+		}
 	}
 	
 	@SuppressWarnings("unused")
 	@Test
 	public void procMemBusTest() throws RecognitionException, IOException, DNetException
 	{
+		/*
+		 * This test presents a very simple use-case when there are three resources:
+		 * Process + Memeory and Bus, which depends on them.
+		 */
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
 			public void configure() {
@@ -141,7 +213,9 @@ public class ResourceTest {
 				 
 				 data(ComponentNeedingResource.class, "utility").to(AllocatorImpl.class, "request");
 				 data(ComponentNeedingResource.class, "resourceUnit").to(AllocatorImpl.class, "resourceUnit");
+				 data(ComponentNeedingResource.class, "allocID").to(AllocatorImpl.class, "allocID");
 				 data(AllocatorImpl.class, "resources").to(ComponentNeedingResource.class, "resourceArray");
+				 data(AllocatorImpl.class, "allocID").to(ComponentNeedingResource.class, "allocID");
 			}
 
 		}.build();
@@ -155,15 +229,17 @@ public class ResourceTest {
 		ComponentNeedingResource aComp = new ComponentNeedingResource(128);
 		ComponentNeedingResource bComp = new ComponentNeedingResource(100);
 
-
+		// TODO fix this test
+		// something very strange happens. 
+		// when there is only one component, the test runs fine.
+		// however, when there are two components, the one asking 100 is ok
+		// but for 128 the model, even though correct, does not give the integer results. I HAVE NO IDEA WHY
 		BIPActor actor1 = engine.register(aComp, "resourceNeeder1", true); 
 		BIPActor actor2 = engine.register(bComp, "resourceNeeder2", true); 
 		BIPActor allocatorActor = engine.register(alloc, "allocator", true); 
-		// aComp.setAllocator(allocatorActor);
-		// bComp.setAllocator(allocatorActor); // we do not use the allocator inside, maybe remove the ResourceAware interface
 		ResourceProvider memory = new Memory(256);
 		ResourceProvider processor = new Processor();
-		ResourceProvider bus = new Bus(128);
+		ResourceProvider bus = new Bus(129);
 		
 		alloc.addResource(memory);
 		alloc.addResource(processor);
@@ -218,7 +294,9 @@ public class ResourceTest {
 				
 				 data(RouteUser.class, "utility").to(AllocatorImpl.class, "request");
 				 data(RouteUser.class, "resourceUnit").to(AllocatorImpl.class, "resourceUnit");
+				 data(RouteUser.class, "allocID").to(AllocatorImpl.class, "allocID");
 				 data(AllocatorImpl.class, "resources").to(RouteUser.class, "resourceArray");
+				 data(AllocatorImpl.class, "allocID").to(RouteUser.class, "allocID");
 				 data(RouteUser.class, "route").to(RouteResource.class, "id");
 				 data(RouteUser.class, "inPath").to(RouteResource.class, "routeIn");
 				 data(RouteUser.class, "outPath").to(RouteResource.class, "routeOut");

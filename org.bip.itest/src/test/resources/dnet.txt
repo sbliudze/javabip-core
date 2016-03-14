@@ -1,5 +1,2 @@
-places p, m, b, a, k;
+places p, m, b;
 transition t1 from p, m to b constraint m<=b;
-transition t2 from a, b, m to k;
-inhibitor from p to t2 refers *, t1, ghb;
-
