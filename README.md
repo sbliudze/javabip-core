@@ -1,17 +1,13 @@
-# BIP main repository
+# BIP Core Project
 
-This repository contains multiple Maven projects. In the perfect world it would
-be just one maven project to be built. Unfortunately, the world is not perfect 
-and you need to built the project separately. 
+BEFORE you can build this project you need to build org.bip.epfl project in 
+../org.bip.epfl directory.
 
-Depending on the state of your environment (Maven repository) you may
-be able to skip some of the steps.
+This is the BIP core project that provides BIP executors, BIP API, BIP Glue, ...
 
-Each project has its own README.md that you should look at to know how
-to build.
+To deploy to a local CF while building, use Maven profile `deploy`:
+ 
+```
+mvn clean install -Pdeploy -Ddeploy.dir=<cf-path>
 
-org.bip.epfl
-org.bip.core
-bip-engine-shared
-org.bip.itest
-bip.usecase.cf
+```

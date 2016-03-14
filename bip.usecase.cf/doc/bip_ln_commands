@@ -1,9 +1,0 @@
-ln $HOME/.m2/repository/io/xtech/bip/bip.usecase.switchableroute.admin/1.0.0-SNAPSHOT/bip.usecase.switchableroute.admin-1.0.0-SNAPSHOT.jar bip.usecase.switchableroute.admin
-ln $HOME/.m2/repository/io/xtech/bip/bip.usecase.switchableroute.engine/0.1.xtech-bipengine-00001/bip.usecase.switchableroute.engine-0.1.xtech-bipengine-00001.jar bip.usecase.switchableroute.engine
-ln $HOME/.m2/repository/io/xtech/bip/bip.usecase.switchableroute.bipmodules/1.0.0-SNAPSHOT/bip.usecase.switchableroute.bipmodules-1.0.0-SNAPSHOT.jar bip.usecase.switchableroute.bipmodules
-ln $HOME/.m2/repository/org/bip/org.bip.api/0.1.0-SNAPSHOT/org.bip.api-0.1.0-SNAPSHOT.jar org.bip.api
-ln $HOME/.m2/repository/org/bip/org.bip.executor/0.1.0-SNAPSHOT/org.bip.executor-0.1.0-SNAPSHOT.jar org.bip.executor
-ln $HOME/.m2/repository/org/bip/org.bip.executor.springinosgi/0.1.0-SNAPSHOT/org.bip.executor.springinosgi-0.1.0-SNAPSHOT.jar org.bip.executor.springinosgi
-ln $HOME/.m2/repository/org/bip/org.bip.glue/0.1.0-SNAPSHOT/org.bip.glue-0.1.0-SNAPSHOT.jar org.bip.glue
-ln $HOME/.m2/repository/org/bip/org.bip.impl/0.1.0-SNAPSHOT/org.bip.impl-0.1.0-SNAPSHOT.jar org.bip.impl
-ln $HOME/.m2/repository/org/bip/org.bip.spec.examples/0.1.0-SNAPSHOT/org.bip.spec.examples-0.1.0-SNAPSHOT.jar org.bip.spec.examples
