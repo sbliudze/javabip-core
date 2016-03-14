@@ -73,11 +73,11 @@ public class ResourceTest {
 		KalrayResource p3 = new KalrayResource("p3", 1, true);
 		KalrayResource p4 = new KalrayResource("p4", 1, true);
 		
-		KalrayResource m = new KalrayResource("m", 1, false);
-		KalrayResource m1 = new KalrayResource("m1", 1, true);
-		KalrayResource m2 = new KalrayResource("m2", 1, true);
-		KalrayResource m3 = new KalrayResource("m3", 1, true);
-		KalrayResource m4 = new KalrayResource("m4", 1, true);
+		KalrayResource m = new KalrayResource("m", 10, false);
+		KalrayResource m1 = new KalrayResource("m1", 10, true);
+		KalrayResource m2 = new KalrayResource("m2", 10, true);
+		KalrayResource m3 = new KalrayResource("m3", 10, true);
+		KalrayResource m4 = new KalrayResource("m4", 10, true);
 		
 //		KalrayResource L = new KalrayResource("L", 1, false);
 //		KalrayResource R = new KalrayResource("R", 1, false);
@@ -112,7 +112,7 @@ public class ResourceTest {
 		alloc.addResource(R);alloc.addResource(L);
 		alloc.addResource(b12L);alloc.addResource(b34L);alloc.addResource(b12R);alloc.addResource(b34R);
 		
-		String firstRequest = "p=1 & m=1";
+		String firstRequest = "p=1 & m>0";
 		if (alloc.canAllocate(firstRequest))
 		{
 			alloc.specifyRequest(firstRequest);
