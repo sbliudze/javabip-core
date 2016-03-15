@@ -182,6 +182,10 @@ public class DNet implements ContextProvider {
 
 						for (int i = 1; i < placeVariables.get(place).size(); i++) {
 							placeSum = getContext().mkAdd(placeSum, placeVariables.get(place).get(i));
+						
+							//TODO think about constraints on token variables which should be >=0
+							// in general, this might not always be the case that each variable is positive.
+							dependencyConstraints.add(getContext().mkGe(placeVariables.get(place).get(i), getContext().mkInt(0)));
 						}
 						stringtoConstraintVar.put(place.name(), placeSum);
 					}

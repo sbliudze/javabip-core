@@ -38,8 +38,9 @@ public class KalrayTask  implements ResourceProvider{
 	@Override
 	public void decreaseCost(String deltaCost) {
 		logger.debug("Cost of " + name + " decreased by " + deltaCost);
-		this.executed = true;
-		dataKalray.create();
+		int taken = Integer.parseInt(deltaCost);
+		if (taken>0){	this.executed = true;}
+		if (dataKalray!=null & taken>0) dataKalray.create();
 	}
 
 	@Override

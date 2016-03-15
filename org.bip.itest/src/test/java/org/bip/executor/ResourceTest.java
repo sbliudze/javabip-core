@@ -201,7 +201,7 @@ public class ResourceTest {
 		 * Resources L and R are divided into two each, so that one (L1, R1) stores information about the memory
 		 * and the other (L2, R2) stores information about the processors already using the bank.
 		 */
-		String dnetSpec = "src/test/resources/kalray_LR";
+		String dnetSpec = "src/test/resources/kalray_data";
 		AllocatorImpl alloc = new AllocatorImpl(dnetSpec);
 		
 		KalrayResource p = new KalrayResource("p", 1, false);
@@ -233,7 +233,7 @@ public class ResourceTest {
 		KalrayTask T4 = new KalrayTask("T4");
 		KalrayTask T5 = new KalrayTask("T5");
 			
-		KalrayData D12 = new KalrayData("D12");
+		//KalrayData D12 = new KalrayData("D12");
 		KalrayData D13 = new KalrayData("D13");
 		KalrayData D24 = new KalrayData("D24");
 		KalrayData D53 = new KalrayData("D53");
@@ -244,38 +244,59 @@ public class ResourceTest {
 		alloc.addResource(R1);alloc.addResource(L1);alloc.addResource(R2);alloc.addResource(L2);
 		alloc.addResource(b12L);alloc.addResource(b34L);alloc.addResource(b12R);alloc.addResource(b34R);
 		alloc.addResource(T);alloc.addResource(T1);alloc.addResource(T2);alloc.addResource(T3);alloc.addResource(T4);alloc.addResource(T5);
-		alloc.addResource(D12);alloc.addResource(D13);alloc.addResource(D24);alloc.addResource(D53);alloc.addResource(D34);
+		//alloc.addResource(D12);
+		alloc.addResource(D13);alloc.addResource(D24);alloc.addResource(D53);alloc.addResource(D34);
 		
-		T1.setData(D12);
+		T1.setData(D13);
 		T2.setData(D24);
 		T3.setData(D34);
 		T5.setData(D53);
-		//T1.setData(D13); ???
+		//T1.setData(D12); ???
 		
 		String firstRequest = "T=1";
+		//first, T1, T5, T2 can be provided
+		// after T1 and T5, T3 can be provided as well
+		long starttime = System.currentTimeMillis();
 		if (alloc.canAllocate(firstRequest)) {
 			alloc.specifyRequest(firstRequest);
 		}
-//		if (alloc.canAllocate(firstRequest)) {
-//			alloc.specifyRequest(firstRequest);
-//		}
-//		if (alloc.canAllocate(firstRequest)) {
-//			alloc.specifyRequest(firstRequest);
-//		}
-//		if (alloc.canAllocate(firstRequest)) {
-//			alloc.specifyRequest(firstRequest);
-//		}
-//
-//		ArrayList<String> unitNames = new ArrayList<String>();
-//		int allocID = alloc.allocID();
-//		unitNames.add("m");unitNames.add("p");
-//		alloc.releaseResource(unitNames, allocID);
-//		
-//		if (alloc.canAllocate(firstRequest)) {
-//			alloc.specifyRequest(firstRequest);
-//		} else {
-//			System.out.println("FIASCO-1");
-//		}
+		long endtime = System.currentTimeMillis();
+		System.out.println(endtime-starttime);
+		starttime = System.currentTimeMillis();
+		if (alloc.canAllocate(firstRequest)) {
+			alloc.specifyRequest(firstRequest);
+		}
+		endtime = System.currentTimeMillis();
+		System.out.println(endtime-starttime);
+		starttime = System.currentTimeMillis();
+		if (alloc.canAllocate(firstRequest)) {
+			alloc.specifyRequest(firstRequest);
+		}
+		endtime = System.currentTimeMillis();
+		System.out.println(endtime-starttime);
+		starttime = System.currentTimeMillis();
+		if (alloc.canAllocate(firstRequest)) {
+			alloc.specifyRequest(firstRequest);
+		}
+		endtime = System.currentTimeMillis();
+		System.out.println(endtime-starttime);
+	
+		 if (alloc.canAllocate(firstRequest)) {
+		 alloc.specifyRequest(firstRequest);
+		 } else {
+		 System.out.println("No possibility to provide - all p and m busy!");
+		 }
+
+		ArrayList<String> unitNames = new ArrayList<String>();
+		int allocID = alloc.allocID();
+		unitNames.add("m");unitNames.add("p");
+		alloc.releaseResource(unitNames, allocID);
+		
+		if (alloc.canAllocate(firstRequest)) {
+			alloc.specifyRequest(firstRequest);
+		} else {
+			System.out.println("FIASCO-1");
+		}
 //		alloc.releaseResource(unitNames, 1);
 //		
 //		if (alloc.canAllocate(firstRequest)) {
