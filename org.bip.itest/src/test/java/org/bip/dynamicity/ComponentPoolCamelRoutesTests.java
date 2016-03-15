@@ -12,9 +12,13 @@ import org.bip.spec.RouteOnOffMonitor;
 import org.bip.spec.SwitchableRouteExecutableBehavior;
 import org.junit.After;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
+/**
+ * Tests for Camel Routes system.
+ * 
+ * @author rutz
+ */
 public class ComponentPoolCamelRoutesTests {
 
 	private static ComponentPool pool;
@@ -31,7 +35,11 @@ public class ComponentPoolCamelRoutesTests {
 		pool.cleanup();
 	}
 
-//	@Ignore
+
+	/*
+	 * Test on adding components
+	 */
+
 	@Test
 	public void testAddMonitor() {
 		BIPComponent monitor = createComponent(new RouteOnOffMonitor(500), "m0", true);
@@ -44,7 +52,6 @@ public class ComponentPoolCamelRoutesTests {
 		assertTrue(pool.addInstance(route).isEmpty());
 	}
 
-//	@Ignore
 	@Test
 	public void testAddMonitorAndRoute() {
 		BIPComponent route0 = createComponent(new SwitchableRouteExecutableBehavior("r0"), "r0", false);
@@ -54,7 +61,6 @@ public class ComponentPoolCamelRoutesTests {
 		assertFalse(pool.addInstance(monitor0).isEmpty());
 	}
 	
-//	@Ignore
 	@Test
 	public void testAdd2MonitorsAnd2Routes() {
 		BIPComponent route0 = createComponent(new SwitchableRouteExecutableBehavior("r0"), "r0", false);
@@ -79,5 +85,85 @@ public class ComponentPoolCamelRoutesTests {
 		assertTrue(pool.addInstance(route1).isEmpty());
 		assertFalse(pool.addInstance(monitor0).isEmpty());
 		assertFalse(pool.addInstance(route2).isEmpty());
+	}
+
+	/*
+	 * Test on removing components
+	 */
+	
+	@Test
+	public void testRemoveOnlyMonitor() {
+		BIPComponent route0 = createComponent(new SwitchableRouteExecutableBehavior("r0"), "r0", false);
+		BIPComponent route1 = createComponent(new SwitchableRouteExecutableBehavior("r1"), "r1", false);
+		BIPComponent route2 = createComponent(new SwitchableRouteExecutableBehavior("r2"), "r2", false);
+		BIPComponent monitor0 = createComponent(new RouteOnOffMonitor(500), "m0", true);
+
+		// ADD
+		assertTrue(pool.addInstance(route0).isEmpty());
+		assertTrue(pool.addInstance(route1).isEmpty());
+		assertFalse(pool.addInstance(monitor0).isEmpty());
+		assertFalse(pool.addInstance(route2).isEmpty());
+		
+		//REMOVE
+		assertFalse(pool.removeInstance(monitor0));
+	}
+	
+	@Test
+	public void testRemoveRedundantMonitor() {
+		BIPComponent route0 = createComponent(new SwitchableRouteExecutableBehavior("r0"), "r0", false);
+		BIPComponent route1 = createComponent(new SwitchableRouteExecutableBehavior("r1"), "r1", false);
+		BIPComponent route2 = createComponent(new SwitchableRouteExecutableBehavior("r2"), "r2", false);
+		BIPComponent monitor0 = createComponent(new RouteOnOffMonitor(500), "m0", true);
+		BIPComponent monitor1 = createComponent(new RouteOnOffMonitor(500), "m1", true);
+
+		// ADD
+		assertTrue(pool.addInstance(route0).isEmpty());
+		assertTrue(pool.addInstance(route1).isEmpty());
+		assertFalse(pool.addInstance(monitor0).isEmpty());
+		assertFalse(pool.addInstance(monitor1).isEmpty());
+		assertFalse(pool.addInstance(route2).isEmpty());
+		
+		//REMOVE
+		assertTrue(pool.removeInstance(monitor0));
+	}
+	
+	@Test
+	public void testRemoveRedundantRoute() {
+		BIPComponent route0 = createComponent(new SwitchableRouteExecutableBehavior("r0"), "r0", false);
+		BIPComponent route1 = createComponent(new SwitchableRouteExecutableBehavior("r1"), "r1", false);
+		BIPComponent route2 = createComponent(new SwitchableRouteExecutableBehavior("r2"), "r2", false);
+		BIPComponent monitor0 = createComponent(new RouteOnOffMonitor(500), "m0", true);
+		BIPComponent monitor1 = createComponent(new RouteOnOffMonitor(500), "m1", true);
+
+		// ADD
+		assertTrue(pool.addInstance(route0).isEmpty());
+		assertTrue(pool.addInstance(route1).isEmpty());
+		assertFalse(pool.addInstance(monitor0).isEmpty());
+		assertFalse(pool.addInstance(monitor1).isEmpty());
+		assertFalse(pool.addInstance(route2).isEmpty());
+		
+		//REMOVE
+		assertTrue(pool.removeInstance(route2));
+	}
+	
+	@Test
+	public void testRemoveRedundantRouteUntilInvalid() {
+		BIPComponent route0 = createComponent(new SwitchableRouteExecutableBehavior("r0"), "r0", false);
+		BIPComponent route1 = createComponent(new SwitchableRouteExecutableBehavior("r1"), "r1", false);
+		BIPComponent route2 = createComponent(new SwitchableRouteExecutableBehavior("r2"), "r2", false);
+		BIPComponent monitor0 = createComponent(new RouteOnOffMonitor(500), "m0", true);
+		BIPComponent monitor1 = createComponent(new RouteOnOffMonitor(500), "m1", true);
+
+		// ADD
+		assertTrue(pool.addInstance(route0).isEmpty());
+		assertTrue(pool.addInstance(route1).isEmpty());
+		assertFalse(pool.addInstance(monitor0).isEmpty());
+		assertFalse(pool.addInstance(monitor1).isEmpty());
+		assertFalse(pool.addInstance(route2).isEmpty());
+		
+		//REMOVE
+		assertTrue(pool.removeInstance(route2));
+		assertTrue(pool.removeInstance(route1));
+		assertFalse(pool.removeInstance(route0));
 	}
 }

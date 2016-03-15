@@ -19,6 +19,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 //TODO Write the accept statements for the glue and test it with the engine
+/**
+ * Test class for the component pool on system in the wiki.
+ * 
+ * @author rutz
+ */
 public class ComponentPoolTests {
 	private static ComponentPool pool;
 
