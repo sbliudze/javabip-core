@@ -2,17 +2,50 @@
 <!-- To modify to fit the example with types A, B, C, D, E -->
 <glue>
 	<accepts>
+		<accept>
+			<effect id="portA" specType="org.bip.spec.ExampleA"/>
+			<causes>
+				<port id="portB" specType="org.bip.spec.ExampleB"/>
+				<port id="portC" specType="org.bip.spec.ExampleC"/>
+			</causes>
+		</accept>
+		<accept>
+			<effect id="portB" specType="org.bip.spec.ExampleB"/>
+			<causes>
+				<port id="portA" specType="org.bip.spec.ExampleA"/>
+				<port id="portC" specType="org.bip.spec.ExampleC"/>
+			</causes>
+		</accept>
+		<accept>
+			<effect id="portC" specType="org.bip.spec.ExampleC"/>
+			<causes>
+				<port id="portA" specType="org.bip.spec.ExampleA"/>
+				<port id="portB" specType="org.bip.spec.ExampleB"/>
+			</causes>
+		</accept>
+		<accept>
+			<effect id="portD" specType="org.bip.spec.ExampleD"/>
+			<causes>
+				<port id="portE" specType="org.bip.spec.ExampleE"/>
+			</causes>
+		</accept>
+		<accept>
+			<effect id="portE" specType="org.bip.spec.ExampleE"/>
+			<causes>
+				<port id="portD" specType="org.bip.spec.ExampleD"/>
+			</causes>
+		</accept>
 	</accepts>
 
 	<requires>
 		<!-- Require for A type -->
 		<require>
-			<effect id="a0" specType="org.bip.spec.ExampleA" />
+			<effect id="portA" specType="org.bip.spec.ExampleA" />
 			<causes>
 				<option>
 					<causes>
-						<port id="b0" specType="org.bip.spec.ExampleB" />
-						<port id="b0" specType="org.bip.spec.ExampleB" />
+						<port id="portB" specType="org.bip.spec.ExampleB" />
+						<port id="portB" specType="org.bip.spec.ExampleB" />
 					</causes>
 				</option>
 			</causes>
@@ -20,20 +53,20 @@
 
 		<!-- Require for B type -->
 		<require>
-			<effect id="b0" specType="org.bip.spec.ExampleB" />
+			<effect id="portB" specType="org.bip.spec.ExampleB" />
 			<causes>
 				<option>
 					<causes>
-						<port id="a0" specType="org.bip.spec.ExampleA" />
-						<port id="a0" specType="org.bip.spec.ExampleA" />
-						<port id="a0" specType="org.bip.spec.ExampleA" />
-						<port id="c0" specType="org.bip.spec.ExampleC" />
+						<port id="portA" specType="org.bip.spec.ExampleA" />
+						<port id="portA" specType="org.bip.spec.ExampleA" />
+						<port id="portA" specType="org.bip.spec.ExampleA" />
+						<port id="portC" specType="org.bip.spec.ExampleC" />
 					</causes>
 				</option>
 				<option>
 					<causes>
-						<port id="c0" specType="org.bip.spec.ExampleC" />
-						<port id="c0" specType="org.bip.spec.ExampleC" />
+						<port id="portC" specType="org.bip.spec.ExampleC" />
+						<port id="portC" specType="org.bip.spec.ExampleC" />
 					</causes>
 				</option>
 			</causes>
@@ -41,7 +74,7 @@
 
 		<!-- Require for C type -->
 		<require>
-			<effect id="c0" specType="org.bip.spec.ExampleC" />
+			<effect id="portC" specType="org.bip.spec.ExampleC" />
 			<causes>
 				<option>
 					<causes>
@@ -52,11 +85,11 @@
 
 		<!-- Require for D type -->
 		<require>
-			<effect id="d0" specType="org.bip.spec.ExampleD" />
+			<effect id="portD" specType="org.bip.spec.ExampleD" />
 			<causes>
 				<option>
 					<causes>
-						<port id="e0" specType="org.bip.spec.ExampleE" />
+						<port id="portE" specType="org.bip.spec.ExampleE" />
 					</causes>
 				</option>
 			</causes>
@@ -64,7 +97,7 @@
 
 		<!-- Require for E type -->
 		<require>
-			<effect id="e0" specType="org.bip.spec.ExampleE" />
+			<effect id="portE" specType="org.bip.spec.ExampleE" />
 			<causes>
 				<option>
 					<causes>
