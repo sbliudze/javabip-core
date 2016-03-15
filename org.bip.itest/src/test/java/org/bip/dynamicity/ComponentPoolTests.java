@@ -109,29 +109,59 @@ public class ComponentPoolTests {
 
 	@Test(expected = BIPEngineException.class)
 	public void testRemoveNullComponent() {
+		// REMOVE
 		pool.removeInstance(null);
 	}
 
 	@Test
 	public void testRemoveInInvalidSystem() {
 		BIPComponent a0 = createComponent(new ExampleA(), "a0", true);
+		
+		// ADD
 		assertTrue(pool.addInstance(a0).isEmpty());
+		
+		// REMOVE
 		assertFalse(pool.removeInstance(a0));
 	}
 
 	@Test(expected = BIPEngineException.class)
 	public void testRemoveTwiceAComponent() {
 		BIPComponent a0 = createComponent(new ExampleA(), "a0", true);
+		
+		// ADD
 		assertTrue(pool.addInstance(a0).isEmpty());
 		assertFalse(pool.removeInstance(a0));
 		pool.removeInstance(a0);
 	}
 
 	@Test
-	public void testRemoveWithValidSystem() {
+	public void testRemoveWithValidSystem0() {
 		BIPComponent a0 = createComponent(new ExampleA(), "a0", true), a1 = createComponent(new ExampleA(), "a1", true),
 				a2 = createComponent(new ExampleA(), "a2", true);
 		BIPComponent b0 = createComponent(new ExampleB(), "b0", true), b1 = createComponent(new ExampleB(), "b1", true);
+		BIPComponent c0 = createComponent(new ExampleC(), "c0", true);
+		
+		// ADD
+		assertTrue(pool.addInstance(a0).isEmpty());
+		assertTrue(pool.addInstance(a1).isEmpty());
+		assertTrue(pool.addInstance(a2).isEmpty());
+		assertTrue(pool.addInstance(b0).isEmpty());
+		assertTrue(pool.addInstance(b1).isEmpty());
+		assertFalse(pool.addInstance(c0).isEmpty());
+		
+		// REMOVE
+		assertFalse(pool.removeInstance(c0));
+		assertFalse(pool.removeInstance(a0));
+		assertFalse(pool.removeInstance(b1));
+	}
+	
+	@Test
+	public void testRemoveWithValidSystem1() {
+		BIPComponent a0 = createComponent(new ExampleA(), "a0", true), a1 = createComponent(new ExampleA(), "a1", true),
+				a2 = createComponent(new ExampleA(), "a2", true);
+		BIPComponent b0 = createComponent(new ExampleB(), "b0", true), b1 = createComponent(new ExampleB(), "b1", true);
+		
+		// ADD
 		BIPComponent c0 = createComponent(new ExampleC(), "c0", true);
 		assertTrue(pool.addInstance(a0).isEmpty());
 		assertTrue(pool.addInstance(a1).isEmpty());
@@ -139,19 +169,23 @@ public class ComponentPoolTests {
 		assertTrue(pool.addInstance(b0).isEmpty());
 		assertTrue(pool.addInstance(b1).isEmpty());
 		assertFalse(pool.addInstance(c0).isEmpty());
+		
+		// REMOVE
+		assertTrue(pool.removeInstance(b1));
 		assertFalse(pool.removeInstance(c0));
 		assertFalse(pool.removeInstance(a0));
-		assertFalse(pool.removeInstance(b1));
 	}
 	
 	@Test
-	public void testRemoveWithBigValidSystem() {
+	public void testRemoveWithBigValidSystem0() {
 		BIPComponent a0 = createComponent(new ExampleA(), "a0", true), a1 = createComponent(new ExampleA(), "a1", true),
 				a2 = createComponent(new ExampleA(), "a2", true), a3 = createComponent(new ExampleA(), "a3", true),
 				a4 = createComponent(new ExampleA(), "a4", true);
 		BIPComponent b0 = createComponent(new ExampleB(), "b0", true), b1 = createComponent(new ExampleB(), "b1", true),
 				b2 = createComponent(new ExampleB(), "b2", true);
 		BIPComponent c0 = createComponent(new ExampleC(), "c0", true), c1 = createComponent(new ExampleC(), "c1", true);
+		
+		// ADD
 		assertTrue(pool.addInstance(a0).isEmpty());
 		assertTrue(pool.addInstance(a1).isEmpty());
 		assertTrue(pool.addInstance(a2).isEmpty());
@@ -162,10 +196,130 @@ public class ComponentPoolTests {
 		assertTrue(pool.addInstance(b2).isEmpty());
 		assertFalse(pool.addInstance(c0).isEmpty());
 		assertFalse(pool.addInstance(c1).isEmpty());
+		
+		// REMOVE
 		assertTrue(pool.removeInstance(c1));
 		assertTrue(pool.removeInstance(a3));
 		assertTrue(pool.removeInstance(a4));
 		assertTrue(pool.removeInstance(b2));
 		assertFalse(pool.removeInstance(c0));
+	}
+	
+	public void testRemoveWithBigValidSystem1() {
+		BIPComponent a0 = createComponent(new ExampleA(), "a0", true), a1 = createComponent(new ExampleA(), "a1", true),
+				a2 = createComponent(new ExampleA(), "a2", true), a3 = createComponent(new ExampleA(), "a3", true),
+				a4 = createComponent(new ExampleA(), "a4", true);
+		BIPComponent b0 = createComponent(new ExampleB(), "b0", true), b1 = createComponent(new ExampleB(), "b1", true),
+				b2 = createComponent(new ExampleB(), "b2", true);
+		BIPComponent c0 = createComponent(new ExampleC(), "c0", true), c1 = createComponent(new ExampleC(), "c1", true);
+		
+		// ADD
+		assertTrue(pool.addInstance(a0).isEmpty());
+		assertTrue(pool.addInstance(a1).isEmpty());
+		assertTrue(pool.addInstance(a2).isEmpty());
+		assertTrue(pool.addInstance(a3).isEmpty());
+		assertTrue(pool.addInstance(a4).isEmpty());
+		assertTrue(pool.addInstance(b0).isEmpty());
+		assertTrue(pool.addInstance(b1).isEmpty());
+		assertTrue(pool.addInstance(b2).isEmpty());
+		assertFalse(pool.addInstance(c0).isEmpty());
+		assertFalse(pool.addInstance(c1).isEmpty());
+		
+		// REMOVE
+		assertTrue(pool.removeInstance(c1));
+		assertTrue(pool.removeInstance(a3));
+		assertFalse(pool.removeInstance(c0));
+		assertFalse(pool.removeInstance(a4));
+		assertFalse(pool.removeInstance(b2));
+	}
+	
+	@Test
+	public void testRemoveWithBigValidSystem2() {
+		BIPComponent a0 = createComponent(new ExampleA(), "a0", true), a1 = createComponent(new ExampleA(), "a1", true),
+				a2 = createComponent(new ExampleA(), "a2", true), a3 = createComponent(new ExampleA(), "a3", true),
+				a4 = createComponent(new ExampleA(), "a4", true);
+		BIPComponent b0 = createComponent(new ExampleB(), "b0", true), b1 = createComponent(new ExampleB(), "b1", true),
+				b2 = createComponent(new ExampleB(), "b2", true);
+		BIPComponent c0 = createComponent(new ExampleC(), "c0", true), c1 = createComponent(new ExampleC(), "c1", true);
+		
+		// ADD
+		assertTrue(pool.addInstance(a0).isEmpty());
+		assertTrue(pool.addInstance(a1).isEmpty());
+		assertTrue(pool.addInstance(a2).isEmpty());
+		assertTrue(pool.addInstance(a3).isEmpty());
+		assertTrue(pool.addInstance(a4).isEmpty());
+		assertTrue(pool.addInstance(b0).isEmpty());
+		assertTrue(pool.addInstance(b1).isEmpty());
+		assertTrue(pool.addInstance(b2).isEmpty());
+		assertFalse(pool.addInstance(c0).isEmpty());
+		assertFalse(pool.addInstance(c1).isEmpty());
+		
+		// REMOVE
+		assertTrue(pool.removeInstance(a0));
+		assertTrue(pool.removeInstance(a1));
+		assertTrue(pool.removeInstance(a2));
+		assertTrue(pool.removeInstance(a3));
+		assertTrue(pool.removeInstance(a4));
+		assertTrue(pool.removeInstance(c1));
+		assertFalse(pool.removeInstance(c0));
+		assertFalse(pool.removeInstance(b2));
+		
+		// ADD
+		assertFalse(pool.addInstance(c0).isEmpty());
+		assertFalse(pool.addInstance(c1).isEmpty());
+	}
+	
+	@Test
+	public void testRemoveWithSmallValidSystem0() {
+		BIPComponent b0 = createComponent(new ExampleB(), "b0", true);
+		BIPComponent b1 = createComponent(new ExampleB(), "b1", true);
+		BIPComponent c0 = createComponent(new ExampleC(), "c0", true);
+		assertTrue(pool.addInstance(b0).isEmpty());
+		assertFalse(pool.addInstance(c0).isEmpty());
+		assertFalse(pool.addInstance(b1).isEmpty());
+		
+		// REMOVE
+		assertTrue(pool.removeInstance(b1));
+		assertTrue(pool.removeInstance(b0));
+		assertFalse(pool.removeInstance(c0));
+	}
+	
+	@Test
+	public void testRemoveWithSmallValidSystem1() {
+		BIPComponent b0 = createComponent(new ExampleB(), "b0", true);
+		BIPComponent b1 = createComponent(new ExampleB(), "b1", true);
+		BIPComponent c0 = createComponent(new ExampleC(), "c0", true);
+		assertTrue(pool.addInstance(b0).isEmpty());
+		assertFalse(pool.addInstance(c0).isEmpty());
+		assertFalse(pool.addInstance(b1).isEmpty());
+		
+		// REMOVE
+		assertTrue(pool.removeInstance(b1));
+		assertFalse(pool.removeInstance(c0));
+		assertFalse(pool.removeInstance(b0));
+	}
+	
+	@Test
+	public void testRemoveWithMiniSystem0() {
+		BIPComponent e = createComponent(new ExampleE(), "e", true);
+		
+		// ADD
+		assertFalse(pool.addInstance(e).isEmpty());
+		
+		// REMOVE
+		assertFalse(pool.removeInstance(e));
+	}
+	
+	@Test
+	public void testRemoveWithMiniSystem1() {
+		BIPComponent e = createComponent(new ExampleE(), "e", true);
+		BIPComponent d = createComponent(new ExampleD(), "d", true);
+		
+		// ADD
+		assertFalse(pool.addInstance(e).isEmpty());
+		assertFalse(pool.addInstance(d).isEmpty());
+		
+		// REMOVE
+		assertFalse(pool.removeInstance(e));
 	}
 }
