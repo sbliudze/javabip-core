@@ -36,6 +36,7 @@
     <org.bip.executor.impl.version>0.1.0-SNAPSHOT</org.bip.executor.impl.version>
     <org.bip.api.version>0.1.0-SNAPSHOT</org.bip.api.version>
     <org.bip.executor.version>0.1.0-SNAPSHOT</org.bip.executor.version>
+	 <org.bip.resources.version>0.1.0-SNAPSHOT</org.bip.resources.version>
     <org.bip.glue.version>0.1.0-SNAPSHOT</org.bip.glue.version>
     <org.bip.executor.springinosgi.version>0.1.0-SNAPSHOT</org.bip.executor.springinosgi.version>
     <org.bip.jmx.version>0.1.0-SNAPSHOT</org.bip.jmx.version>
@@ -202,6 +203,11 @@
         <version>${org.bip.glue.version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>org.bip</groupId>
+        <artifactId>org.bip.resources</artifactId>
+        <version>${org.bip.resources.version}</version>
+      </dependency>
 
       <dependency>
         <groupId>org.bip</groupId>

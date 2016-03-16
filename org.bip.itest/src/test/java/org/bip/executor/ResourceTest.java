@@ -19,7 +19,9 @@ import org.bip.engine.factory.EngineFactory;
 import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
 import org.bip.glue.TwoSynchronGlueBuilder;
 import org.bip.resources.AllocatorImpl;
+import org.bip.resources.BoundedResourceManager;
 import org.bip.resources.DNetException;
+import org.bip.resources.VirtualResourceManager;
 import org.bip.spec.MemoryMonitor;
 import org.bip.spec.PComponent;
 import org.bip.spec.QComponent;
@@ -30,6 +32,7 @@ import org.bip.spec.resources.KalrayData;
 import org.bip.spec.resources.KalrayMemoryBank;
 import org.bip.spec.resources.KalrayResource;
 import org.bip.spec.resources.KalrayTask;
+import org.bip.spec.resources.KalrayTaskResource;
 import org.bip.spec.resources.RouteUser;
 import org.bip.spec.resources.Memory;
 import org.bip.spec.resources.Processor;
@@ -64,7 +67,7 @@ public class ResourceTest {
 	}
 	
 	@Test
-	public void KalrayTest() throws RecognitionException, IOException,
+	public void KalraySimpleTest() throws RecognitionException, IOException,
 			DNetException {
 		/*
 		 * This test uses a dnet presenting simplified Kalray architecture.
@@ -73,7 +76,7 @@ public class ResourceTest {
 		 *  The problem is solved (hopefully) in KalrayLRTest() which is using another version of a DNet, less concise.
 		 *  In this test, 5 allocations are being requested, four of them are satisfied.
 		 */
-		String dnetSpec = "src/test/resources/kalray.txt";
+		String dnetSpec = "src/test/resources/simple_kalray.txt";
 		AllocatorImpl alloc = new AllocatorImpl(dnetSpec);
 		
 		KalrayResource p = new KalrayResource("p", 1, false);
@@ -204,34 +207,34 @@ public class ResourceTest {
 		String dnetSpec = "src/test/resources/kalray_data";
 		AllocatorImpl alloc = new AllocatorImpl(dnetSpec);
 		
-		KalrayResource p = new KalrayResource("p", 1, false);
-		KalrayResource p1 = new KalrayResource("p1", 1, true);
-		KalrayResource p2 = new KalrayResource("p2", 1, true);
-		KalrayResource p3 = new KalrayResource("p3", 1, true);
-		KalrayResource p4 = new KalrayResource("p4", 1, true);
+		VirtualResourceManager p = new VirtualResourceManager("p");
+		BoundedResourceManager p1 = new BoundedResourceManager("p1", 1);
+		BoundedResourceManager p2 = new BoundedResourceManager("p2", 1);
+		BoundedResourceManager p3 = new BoundedResourceManager("p3", 1);
+		BoundedResourceManager p4 = new BoundedResourceManager("p4", 1);
 		
-		KalrayResource m = new KalrayResource("m", 1, false);
-		KalrayResource m1 = new KalrayResource("m1", 1, true);
-		KalrayResource m2 = new KalrayResource("m2", 1, true);
-		KalrayResource m3 = new KalrayResource("m3", 1, true);
-		KalrayResource m4 = new KalrayResource("m4", 1, true);
+		VirtualResourceManager m = new VirtualResourceManager("m");
+		BoundedResourceManager m1 = new BoundedResourceManager("m1", 1);
+		BoundedResourceManager m2 = new BoundedResourceManager("m2", 1);
+		BoundedResourceManager m3 = new BoundedResourceManager("m3", 1);
+		BoundedResourceManager m4 = new BoundedResourceManager("m4", 1);
 		
-		KalrayResource L1 = new KalrayResource("L1", 1, false);
-		KalrayResource R1 = new KalrayResource("R1", 1, false);
+		VirtualResourceManager L1 = new VirtualResourceManager("L1");
+		VirtualResourceManager R1 = new VirtualResourceManager("R1");
 		KalrayMemoryBank L2 = new KalrayMemoryBank("L2");
 		KalrayMemoryBank R2 = new KalrayMemoryBank("R2");
 		
-		KalrayResource b12L = new KalrayResource("b12L", 1, true);
-		KalrayResource b34L = new KalrayResource("b34L", 1, true);
-		KalrayResource b12R = new KalrayResource("b12R", 1, true);
-		KalrayResource b34R = new KalrayResource("b34R", 1, true);
+		BoundedResourceManager b12L = new BoundedResourceManager("b12L", 1);
+		BoundedResourceManager b34L = new BoundedResourceManager("b34L", 1);
+		BoundedResourceManager b12R = new BoundedResourceManager("b12R", 1);
+		BoundedResourceManager b34R = new BoundedResourceManager("b34R", 1);
 		
 		KalrayResource T = new KalrayResource("T", 1, false);
-		KalrayTask T1 = new KalrayTask("T1");
-		KalrayTask T2 = new KalrayTask("T2");
-		KalrayTask T3 = new KalrayTask("T3");
-		KalrayTask T4 = new KalrayTask("T4");
-		KalrayTask T5 = new KalrayTask("T5");
+		KalrayTaskResource T1 = new KalrayTaskResource("T1");
+		KalrayTaskResource T2 = new KalrayTaskResource("T2");
+		KalrayTaskResource T3 = new KalrayTaskResource("T3");
+		KalrayTaskResource T4 = new KalrayTaskResource("T4");
+		KalrayTaskResource T5 = new KalrayTaskResource("T5");
 			
 		//KalrayData D12 = new KalrayData("D12");
 		KalrayData D13 = new KalrayData("D13");
@@ -295,15 +298,143 @@ public class ResourceTest {
 		if (alloc.canAllocate(firstRequest)) {
 			alloc.specifyRequest(firstRequest);
 		} else {
-			System.out.println("FIASCO-1");
+			System.out.println("FIASCO");
 		}
-//		alloc.releaseResource(unitNames, 1);
-//		
-//		if (alloc.canAllocate(firstRequest)) {
-//			alloc.specifyRequest(firstRequest);
-//		} else {
-//			System.out.println("FIASCO-2");
-//		}
+	}
+	
+	@Test
+	public void KalrayTest() throws RecognitionException, IOException,
+			DNetException {
+		/*
+		 * TODO test story
+		 */
+		
+		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
+			@Override
+			public void configure() {
+
+				// TODO create glue function for making links between methods and data automatically
+				 synchron(KalrayTask.class, "askResource").to(AllocatorImpl.class,
+						 "request");
+				 synchron(KalrayTask.class, "release").to(AllocatorImpl.class,
+						 "release");
+				 synchron(KalrayTask.class, "getResource").to(AllocatorImpl.class,
+						 "provideResource");
+				 
+				 data(KalrayTask.class, "utility").to(AllocatorImpl.class, "request");
+				 data(KalrayTask.class, "resourceUnit").to(AllocatorImpl.class, "resourceUnit");
+				 data(KalrayTask.class, "allocID").to(AllocatorImpl.class, "allocID");
+				 data(AllocatorImpl.class, "resources").to(KalrayTask.class, "resourceArray");
+				 data(AllocatorImpl.class, "allocID").to(KalrayTask.class, "allocID");
+			}
+
+		}.build();
+		
+		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
+		
+		String dnetSpec = "src/test/resources/kalray_data";
+		AllocatorImpl alloc = new AllocatorImpl(dnetSpec);
+		
+		VirtualResourceManager p = new VirtualResourceManager("p");
+		BoundedResourceManager p1 = new BoundedResourceManager("p1", 1);
+		BoundedResourceManager p2 = new BoundedResourceManager("p2", 1);
+		BoundedResourceManager p3 = new BoundedResourceManager("p3", 1);
+		BoundedResourceManager p4 = new BoundedResourceManager("p4", 1);
+		
+		VirtualResourceManager m = new VirtualResourceManager("m");
+		BoundedResourceManager m1 = new BoundedResourceManager("m1", 1);
+		BoundedResourceManager m2 = new BoundedResourceManager("m2", 1);
+		BoundedResourceManager m3 = new BoundedResourceManager("m3", 1);
+		BoundedResourceManager m4 = new BoundedResourceManager("m4", 1);
+		
+		VirtualResourceManager L1 = new VirtualResourceManager("L1");
+		VirtualResourceManager R1 = new VirtualResourceManager("R1");
+		KalrayMemoryBank L2 = new KalrayMemoryBank("L2");
+		KalrayMemoryBank R2 = new KalrayMemoryBank("R2");
+		
+		BoundedResourceManager b12L = new BoundedResourceManager("b12L", 1);
+		BoundedResourceManager b34L = new BoundedResourceManager("b34L", 1);
+		BoundedResourceManager b12R = new BoundedResourceManager("b12R", 1);
+		BoundedResourceManager b34R = new BoundedResourceManager("b34R", 1);
+		
+		KalrayResource T = new KalrayResource("T", 1, false);
+		String request = "p=1 & m=1";
+		KalrayTask T1 = new KalrayTask(request, "D13");
+		KalrayTask T2 = new KalrayTask(request, "D24");
+		KalrayTask T3 = new KalrayTask("p=1 & m=1 & D13=1 & D53=1", "D34");
+		KalrayTask T4 = new KalrayTask("p=1 & m=1 & D24=1 & D34=1", "");
+		KalrayTask T5 = new KalrayTask(request, "D53");
+			
+		KalrayData D13 = new KalrayData("D13");
+		KalrayData D24 = new KalrayData("D24");
+		KalrayData D53 = new KalrayData("D53");
+		KalrayData D34 = new KalrayData("D34");
+		
+		BIPActor actor1 = engine.register(T1, "task1", true); 
+		BIPActor actor2 = engine.register(T2, "task2", true); 
+		BIPActor actor3 = engine.register(T3, "task3", true); 
+		BIPActor actor4 = engine.register(T4, "task4", true); 
+		BIPActor actor5 = engine.register(T5, "task5", true); 
+		BIPActor allocatorActor = engine.register(alloc, "allocator", true); 
+		
+		alloc.addResource(p);alloc.addResource(p1);alloc.addResource(p2);alloc.addResource(p3);alloc.addResource(p4);
+		alloc.addResource(m);alloc.addResource(m1);alloc.addResource(m2);alloc.addResource(m3);alloc.addResource(m4);
+		alloc.addResource(R1);alloc.addResource(L1);alloc.addResource(R2);alloc.addResource(L2);
+		alloc.addResource(b12L);alloc.addResource(b34L);alloc.addResource(b12R);alloc.addResource(b34R);
+		alloc.addResource(T);//alloc.addResource(T1);alloc.addResource(T2);alloc.addResource(T3);alloc.addResource(T4);alloc.addResource(T5);
+		//alloc.addResource(D12);
+		alloc.addResource(D13);alloc.addResource(D24);alloc.addResource(D53);alloc.addResource(D34);
+		
+		T1.setData(D13);
+		T2.setData(D24);
+		T3.setData(D34);
+		T5.setData(D53);
+		//T1.setData(D12); ???
+		
+		String firstRequest = "T=1";
+		//first, T1, T5, T2 can be provided
+		// after T1 and T5, T3 can be provided as well
+		long starttime = System.currentTimeMillis();
+		if (alloc.canAllocate(firstRequest)) {
+			alloc.specifyRequest(firstRequest);
+		}
+		long endtime = System.currentTimeMillis();
+		System.out.println(endtime-starttime);
+		starttime = System.currentTimeMillis();
+		if (alloc.canAllocate(firstRequest)) {
+			alloc.specifyRequest(firstRequest);
+		}
+		endtime = System.currentTimeMillis();
+		System.out.println(endtime-starttime);
+		starttime = System.currentTimeMillis();
+		if (alloc.canAllocate(firstRequest)) {
+			alloc.specifyRequest(firstRequest);
+		}
+		endtime = System.currentTimeMillis();
+		System.out.println(endtime-starttime);
+		starttime = System.currentTimeMillis();
+		if (alloc.canAllocate(firstRequest)) {
+			alloc.specifyRequest(firstRequest);
+		}
+		endtime = System.currentTimeMillis();
+		System.out.println(endtime-starttime);
+	
+		 if (alloc.canAllocate(firstRequest)) {
+		 alloc.specifyRequest(firstRequest);
+		 } else {
+		 System.out.println("No possibility to provide - all p and m busy!");
+		 }
+
+		ArrayList<String> unitNames = new ArrayList<String>();
+		int allocID = alloc.allocID();
+		unitNames.add("m");unitNames.add("p");
+		alloc.releaseResource(unitNames, allocID);
+		
+		if (alloc.canAllocate(firstRequest)) {
+			alloc.specifyRequest(firstRequest);
+		} else {
+			System.out.println("FIASCO");
+		}
 	}
 	
 	@SuppressWarnings("unused")

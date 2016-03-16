@@ -23,7 +23,7 @@ import org.bip.api.DataOut.AccessType;
 @ComponentType(initial = "0", name = "org.bip.spec.RouteUser")
 public class RouteUser {
 
-	private final String utility;// = "p=1 & m=128";
+	private final String utility;
 	private String routeID="";
 	private int allocID;
 	

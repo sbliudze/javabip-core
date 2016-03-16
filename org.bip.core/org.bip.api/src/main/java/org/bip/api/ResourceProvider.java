@@ -8,9 +8,9 @@ public interface ResourceProvider {
 
 	public ResourceType type();
 
-	public void augmentCost(String deltaCost);
+	public void augmentCost(String amount);
 
-	public void decreaseCost(String deltaCost);
+	public void decreaseCost(String amount);
 
 	public String providedResourceID();
 }

@@ -367,7 +367,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 			if (placeVariables.get(place).size() > 0) {
 				ArithExpr placeSum = placeVariables.get(place).get(0);
 				// if there are several variables, we need to make a sum
-				// TODO TEST
+				// TODO TEST sum of the variables
 				for (int i = 1; i < placeVariables.get(place).size(); i++) {
 					placeSum = getContext().mkAdd(placeSum, placeVariables.get(place).get(i));
 				}
