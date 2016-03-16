@@ -11,30 +11,26 @@ import org.bip.glue.GlueBuilder;
 import org.bip.spec.A;
 import org.bip.spec.B;
 import org.bip.spec.C;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import akka.actor.ActorSystem;
 
 public class DynamicityTests {
 
-	ActorSystem system;
-	EngineFactory engineFactory;
+	private static ActorSystem system;
+	private static EngineFactory engineFactory;
 
-	@Before
-	public void initialize() {
-
+	@BeforeClass
+	public static void initialize() {
 		system = ActorSystem.create("MySystem");
 		engineFactory = new EngineFactory(system);
-
 	}
 
-	@After
-	public void cleanup() {
-
+	@AfterClass
+	public static void cleanup() {
 		system.shutdown();
-
 	}
 
 	@Test
