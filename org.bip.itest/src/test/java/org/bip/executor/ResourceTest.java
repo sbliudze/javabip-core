@@ -29,6 +29,7 @@ import org.bip.spec.RComponent;
 import org.bip.spec.resources.Bus;
 import org.bip.spec.resources.ComponentNeedingResource;
 import org.bip.spec.resources.KalrayData;
+import org.bip.spec.resources.KalrayMemory;
 import org.bip.spec.resources.KalrayMemoryBank;
 import org.bip.spec.resources.KalrayResource;
 import org.bip.spec.resources.KalrayTask;
@@ -320,11 +321,34 @@ public class ResourceTest {
 						 "release");
 				 synchron(KalrayTask.class, "getResource").to(AllocatorImpl.class,
 						 "provideResource");
+//				 synchron(KalrayTask.class, "generate").to(KalrayMemory.class,
+//						 "create");
+//				 synchron(KalrayMemory.class, "create").to(KalrayData.class,
+//						 "create");
+				port(KalrayTask.class, "generate").requires(KalrayMemory.class,
+						"create", KalrayData.class, "create");
+				port(KalrayMemory.class, "create").requires(KalrayData.class,
+						"create", KalrayTask.class, "generate");
+				port(KalrayData.class, "create").requires(KalrayMemory.class,
+						"create", KalrayTask.class, "generate");
+				port(KalrayTask.class, "generate").accepts(KalrayMemory.class,
+						"create", KalrayData.class, "create");
+				port(KalrayMemory.class, "create").accepts(KalrayData.class,
+						"create", KalrayTask.class, "generate");
+				port(KalrayData.class, "create").accepts(KalrayMemory.class,
+						"create", KalrayTask.class, "generate");
+
+				synchron(KalrayMemory.class, "deleteData").to(KalrayData.class,
+						 "delete");
 				 
 				 data(KalrayTask.class, "utility").to(AllocatorImpl.class, "request");
 				 data(KalrayTask.class, "resourceUnit").to(AllocatorImpl.class, "resourceUnit");
 				 data(KalrayTask.class, "allocID").to(AllocatorImpl.class, "allocID");
+				 data(KalrayTask.class, "memory").to(KalrayMemory.class, "id");
+				 data(KalrayTask.class, "dataName").to(KalrayMemory.class, "data");
+				 data(KalrayTask.class, "dataReadCount").to(KalrayMemory.class, "count");
 				 data(AllocatorImpl.class, "resources").to(KalrayTask.class, "resourceArray");
+				 data(AllocatorImpl.class, "amounts").to(KalrayTask.class, "resourceAmounts");
 				 data(AllocatorImpl.class, "allocID").to(KalrayTask.class, "allocID");
 			}
 
@@ -334,6 +358,8 @@ public class ResourceTest {
 		
 		String dnetSpec = "src/test/resources/kalray_data";
 		AllocatorImpl alloc = new AllocatorImpl(dnetSpec);
+		
+		//RESOURCES
 		
 		VirtualResourceManager p = new VirtualResourceManager("p");
 		BoundedResourceManager p1 = new BoundedResourceManager("p1", 1);
@@ -346,6 +372,14 @@ public class ResourceTest {
 		BoundedResourceManager m2 = new BoundedResourceManager("m2", 1);
 		BoundedResourceManager m3 = new BoundedResourceManager("m3", 1);
 		BoundedResourceManager m4 = new BoundedResourceManager("m4", 1);
+		// Now, the link between resource manager and memory is implicit in the names
+		// (we do not make any additional connections).
+		// Ideally, though,there should be one memory manager and several memories, no? 
+		KalrayMemory km1 = new KalrayMemory("m1");
+		KalrayMemory km2 = new KalrayMemory("m2");
+		KalrayMemory km3 = new KalrayMemory("m3");
+		KalrayMemory km4 = new KalrayMemory("m4");
+		//now, this resource manager should have a link to the memory resource (where the data is created)
 		
 		VirtualResourceManager L1 = new VirtualResourceManager("L1");
 		VirtualResourceManager R1 = new VirtualResourceManager("R1");
@@ -357,84 +391,52 @@ public class ResourceTest {
 		BoundedResourceManager b12R = new BoundedResourceManager("b12R", 1);
 		BoundedResourceManager b34R = new BoundedResourceManager("b34R", 1);
 		
-		KalrayResource T = new KalrayResource("T", 1, false);
-		String request = "p=1 & m=1";
-		KalrayTask T1 = new KalrayTask(request, "D13");
-		KalrayTask T2 = new KalrayTask(request, "D24");
-		KalrayTask T3 = new KalrayTask("p=1 & m=1 & D13=1 & D53=1", "D34");
-		KalrayTask T4 = new KalrayTask("p=1 & m=1 & D24=1 & D34=1", "");
-		KalrayTask T5 = new KalrayTask(request, "D53");
-			
 		KalrayData D13 = new KalrayData("D13");
 		KalrayData D24 = new KalrayData("D24");
 		KalrayData D53 = new KalrayData("D53");
 		KalrayData D34 = new KalrayData("D34");
+		
+		// TASKS - COMPONENTS
+		
+		String request = "p=1 & m=1";
+		KalrayTask T1 = new KalrayTask("T1", request, "D13");
+		KalrayTask T2 = new KalrayTask("T2", request, "D24");
+		KalrayTask T3 = new KalrayTask("T3", "p=1 & m=1 & D13=1 & D53=1", "D34");  T3.setRequiredData("D13");  T3.setRequiredData("D53");
+		KalrayTask T4 = new KalrayTask("T4", "p=1 & m=1 & D24=1 & D34=1", ""); T3.setRequiredData("D24");  T3.setRequiredData("D34");
+		KalrayTask T5 = new KalrayTask("T5", request, "D53");
 		
 		BIPActor actor1 = engine.register(T1, "task1", true); 
 		BIPActor actor2 = engine.register(T2, "task2", true); 
 		BIPActor actor3 = engine.register(T3, "task3", true); 
 		BIPActor actor4 = engine.register(T4, "task4", true); 
 		BIPActor actor5 = engine.register(T5, "task5", true); 
+		BIPActor actorm1 = engine.register(km1, "memory1", true); 
+		BIPActor actorm2 = engine.register(km2, "memory2", true); 
+		BIPActor actorm3 = engine.register(km3, "memory3", true); 
+		BIPActor actorm4 = engine.register(km4, "memory4", true); 
+		BIPActor actord1 = engine.register(D13, "data13", true); 
+		BIPActor actord2 = engine.register(D24, "data24", true); 
+		BIPActor actord3 = engine.register(D53, "data53", true); 
+		BIPActor actord4 = engine.register(D34, "data34", true); 
 		BIPActor allocatorActor = engine.register(alloc, "allocator", true); 
 		
 		alloc.addResource(p);alloc.addResource(p1);alloc.addResource(p2);alloc.addResource(p3);alloc.addResource(p4);
 		alloc.addResource(m);alloc.addResource(m1);alloc.addResource(m2);alloc.addResource(m3);alloc.addResource(m4);
 		alloc.addResource(R1);alloc.addResource(L1);alloc.addResource(R2);alloc.addResource(L2);
 		alloc.addResource(b12L);alloc.addResource(b34L);alloc.addResource(b12R);alloc.addResource(b34R);
-		alloc.addResource(T);//alloc.addResource(T1);alloc.addResource(T2);alloc.addResource(T3);alloc.addResource(T4);alloc.addResource(T5);
-		//alloc.addResource(D12);
 		alloc.addResource(D13);alloc.addResource(D24);alloc.addResource(D53);alloc.addResource(D34);
 		
-		T1.setData(D13);
-		T2.setData(D24);
-		T3.setData(D34);
-		T5.setData(D53);
-		//T1.setData(D12); ???
-		
-		String firstRequest = "T=1";
-		//first, T1, T5, T2 can be provided
-		// after T1 and T5, T3 can be provided as well
-		long starttime = System.currentTimeMillis();
-		if (alloc.canAllocate(firstRequest)) {
-			alloc.specifyRequest(firstRequest);
-		}
-		long endtime = System.currentTimeMillis();
-		System.out.println(endtime-starttime);
-		starttime = System.currentTimeMillis();
-		if (alloc.canAllocate(firstRequest)) {
-			alloc.specifyRequest(firstRequest);
-		}
-		endtime = System.currentTimeMillis();
-		System.out.println(endtime-starttime);
-		starttime = System.currentTimeMillis();
-		if (alloc.canAllocate(firstRequest)) {
-			alloc.specifyRequest(firstRequest);
-		}
-		endtime = System.currentTimeMillis();
-		System.out.println(endtime-starttime);
-		starttime = System.currentTimeMillis();
-		if (alloc.canAllocate(firstRequest)) {
-			alloc.specifyRequest(firstRequest);
-		}
-		endtime = System.currentTimeMillis();
-		System.out.println(endtime-starttime);
-	
-		 if (alloc.canAllocate(firstRequest)) {
-		 alloc.specifyRequest(firstRequest);
-		 } else {
-		 System.out.println("No possibility to provide - all p and m busy!");
-		 }
+		engine.start();
+		engine.execute();
 
-		ArrayList<String> unitNames = new ArrayList<String>();
-		int allocID = alloc.allocID();
-		unitNames.add("m");unitNames.add("p");
-		alloc.releaseResource(unitNames, allocID);
-		
-		if (alloc.canAllocate(firstRequest)) {
-			alloc.specifyRequest(firstRequest);
-		} else {
-			System.out.println("FIASCO");
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
+
+		engine.stop();
+		engineFactory.destroy(engine);
 	}
 	
 	@SuppressWarnings("unused")

@@ -192,7 +192,7 @@ public class DNet implements ContextProvider {
 
 					BoolExpr expr = transition.constraint(stringtoConstraintVar);
 					dependencyConstraints.add(expr);
-					logger.info("After firing of " + transition.name() + " the tokens are: " + placeTokens);
+					logger.debug("After firing of " + transition.name() + " the tokens are: " + placeTokens);
 					return findEnabledAndFire(placeVariables, placeTokens, dependencyConstraints, disabled);
 				}
 			}

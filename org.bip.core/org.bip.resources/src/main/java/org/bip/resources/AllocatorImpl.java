@@ -81,6 +81,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 	 * The map containing the requested resources in pairs: the lable of requested resource <-> the id of the provided resource proxy.
 	 */
 	private Hashtable<String, String> resourceLableToID;
+	private Hashtable<String, Integer> resourceLableToAmount;
 	
 	/**
 	 * An id which is unique for each new allocation (each new specifyRequest())
@@ -102,6 +103,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		resourceNameToGivenValueInAllocation = new HashMap<Integer, HashMap<String,Expr>>(); //new HashMap<String, Expr>();
 		requestToModel = new HashMap<String, Model>();
 		resourceLableToID = new Hashtable<String, String>();
+		resourceLableToAmount = new Hashtable<String, Integer>();
 		allocationID = 0;
 	}
 
@@ -208,9 +210,11 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		}
 		addCost();
 		if (solver.check() != Status.SATISFIABLE) {
+			//System.err.println("Allocation for " + requestString + " IS NOT POSSIBLE.");
 			return false;
 		}
 		Model model = solver.getModel();
+		//System.err.println("Allocation for " + requestString + ": "+ model);
 		// there is no optimisation in not putting the same model several times, since the context and the Expressions change for each execution,
 		// and they should be coherent with the model
 		// we save the model so that we can use it during the allocation phase
@@ -255,7 +259,9 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 					+ " given as data parameter for transition has not been accepted before as data given for the guard.");
 		}
 		Model model = requestToModel.get(requestString);
-		//System.out.println(model.toString());
+		resourceLableToID.clear();
+		resourceLableToAmount.clear();
+		System.out.println(model.toString());
 		// TODO bus is not in placeVariables, as it is added in the dnet but not in the allocator
 		HashMap<String, Expr> resourceNameToGivenValue = new HashMap<String, Expr>();
 		System.err.println("----------");
@@ -265,7 +271,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 				for (int i = 0; i < placeVariables.get(place).size(); i++) {
 					Expr varName = placeVariables.get(place).get(i);
 					Expr res = model.evaluate(varName, false);
-					//System.err.println(allocationID + " " + varName + " " + res.toString());
+					System.err.println(allocationID + " " + varName + " " + model.getConstInterp(varName));
 					if (res.isIntNum()) {
 						int i_r = Integer.parseInt(res.toString());
 						if (i_r != 0) {
@@ -278,6 +284,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 						resourceLableToID.put(place.name(), placeToResource.get(place).providedResourceID());
 						// TODO this line makes it possible only for one item of each resource to be allocated which is maybe not what we want
 						resourceNameToGivenValue.put(place.name(), res);
+						resourceLableToAmount.put(place.name(), i_r);
 						logger.info("Resource " + place.name() +  ", variable " + varName.toString() +" allocated: " + res.toString() + " units");
 					}
 				}
@@ -299,6 +306,12 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 	@Data(name = "resources", accessTypePort = AccessType.allowed, ports = { "provideResource" })
 	public Hashtable<String, String> resources() {
 		return resourceLableToID;
+		// TODO send only resources >0?
+	}
+	
+	@Data(name = "amounts", accessTypePort = AccessType.allowed, ports = { "provideResource" })
+	public Hashtable<String, Integer> amounts() {
+		return resourceLableToAmount;
 	}
 	
 	@Data(name = "allocID", accessTypePort = AccessType.allowed, ports = { "provideResource" })

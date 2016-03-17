@@ -29,5 +29,5 @@ public class BoundedResourceManager extends ResourceManager {
 		int taken = Integer.parseInt(amount);
 		this.currentCapacity -= taken;
 	}
-
+	
 }

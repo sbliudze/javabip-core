@@ -9,6 +9,6 @@ public interface ResourceConsumer {
 	public int allocID();
 	public String utility();
 	public void askResource();
-	public void getResource(Hashtable<String, String> resources, int allocID);
+	public void getResource(Hashtable<String, String> resources,  Hashtable<String, Integer> amounts, int allocID);
 	public void releaseResource();
 }
