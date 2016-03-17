@@ -2,6 +2,7 @@ package org.bip.dynamicity;
 
 import static org.bip.dynamicity.HelperFunctions.createComponent;
 import static org.bip.dynamicity.HelperFunctions.createGlue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.bip.api.BIPComponent;
@@ -129,11 +130,22 @@ public class ThreadedComponentPoolTests {
 		}
 
 		assertTrue(pool.removeInstance(e6));
+		assertTrue(pool.removeInstance(e5));
+		assertTrue(pool.removeInstance(d5));
+		assertTrue(pool.removeInstance(d6));
+		assertTrue(pool.removeInstance(a4));
+		assertTrue(pool.removeInstance(a5));
+		assertTrue(pool.removeInstance(a6));
+		assertTrue(pool.removeInstance(b4));
+		assertTrue(pool.removeInstance(c4));
+		assertTrue(pool.removeInstance(c5));
+		assertFalse(pool.removeInstance(c6));
+		assertFalse(pool.removeInstance(b5));
+		assertFalse(pool.removeInstance(b6));
 	}
 
 	@After
 	public void cleanup() {
 		pool.cleanup();
 	}
-
 }
