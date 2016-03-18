@@ -192,9 +192,15 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 
 	/************************ Transitions ***************************/
 
+	//private String componentID = "";
+	private  HashMap<String, Model> requestToTokens; //placeVariables
+	
 	@Guard(name = "canAllocate")
-	public boolean canAllocate(@Data(name = "request") String requestString) throws DNetException {
+	public boolean canAllocate(@Data(name = "request-id") ArrayList<String> ddd) throws DNetException {
+	//public boolean canAllocate(@Data(name = "request") String requestString, @Data(name = "id") String componentID) throws DNetException {
 		this.reContext();
+		String requestString = ddd.get(0);
+		String componentID = ddd.get(1);
 		logger.debug("Allocator checking resource availabilities for request " + requestString);
 		ConstraintNode request = parseRequest(requestString);
 		ArrayList<String> resourcesRequested = request.resourceInConstraint(request);
@@ -213,12 +219,14 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 			//System.err.println("Allocation for " + requestString + " IS NOT POSSIBLE.");
 			return false;
 		}
+		//System.err.println("Allocation for " + requestString + " OK.");
 		Model model = solver.getModel();
 		//System.err.println("Allocation for " + requestString + ": "+ model);
 		// there is no optimisation in not putting the same model several times, since the context and the Expressions change for each execution,
 		// and they should be coherent with the model
 		// we save the model so that we can use it during the allocation phase
-		requestToModel.put(requestString, model);
+		requestToModel.put(componentID+requestString, model);
+		//requestToTokens.put(componentID+requestString, placeVariables);
 		return true;
 	}
 
@@ -253,12 +261,15 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 	
 	// TODO rename to allocate?
 	@org.bip.annotations.Transition(name = "request", source = "0", target = "1", guard = "canAllocate")
-	public void specifyRequest(@Data(name = "request") String requestString) throws DNetException {
-		if (!requestToModel.containsKey(requestString)) {
-			throw new BIPException("The request " + requestString
+	//public void specifyRequest(@Data(name = "request") String requestString, @Data(name = "id") String componentID) throws DNetException {
+	public void specifyRequest(@Data(name = "request-id") ArrayList<String> ddd) throws DNetException {
+		String requestString = ddd.get(0);
+		String componentID = ddd.get(1);
+		if (!requestToModel.containsKey(componentID+requestString)) {
+			throw new BIPException("The request " + requestString + " of component " + componentID
 					+ " given as data parameter for transition has not been accepted before as data given for the guard.");
 		}
-		Model model = requestToModel.get(requestString);
+		Model model = requestToModel.get(componentID+requestString);
 		resourceLableToID.clear();
 		resourceLableToAmount.clear();
 		System.out.println(model.toString());
@@ -294,7 +305,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		//System.err.println(allocationID + " " + resourceNameToGivenValueInAllocation);
 		allocationID++;
 	
-		requestToModel.remove(requestString);
+		requestToModel.remove(componentID+requestString);
 	}
 	
 	@org.bip.annotations.Transition(name = "provideResource", source = "1", target = "0", guard = "")

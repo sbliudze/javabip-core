@@ -106,23 +106,23 @@ public class ResourceTest {
 		alloc.addResource(R);alloc.addResource(L);
 		alloc.addResource(b12L);alloc.addResource(b34L);alloc.addResource(b12R);alloc.addResource(b34R);
 		
-		String firstRequest = "p=1 & m>0";
-		if (alloc.canAllocate(firstRequest)) {
-			alloc.specifyRequest(firstRequest);
-		}
-		if (alloc.canAllocate(firstRequest)) {
-			alloc.specifyRequest(firstRequest);
-		}
-		if (alloc.canAllocate(firstRequest)) {
-			alloc.specifyRequest(firstRequest);
-		}
-		if (alloc.canAllocate(firstRequest)) {
-			alloc.specifyRequest(firstRequest);
-		}
-		//this one will not allocate in the current setting - OK
-		if (alloc.canAllocate(firstRequest)) {
-			alloc.specifyRequest(firstRequest);
-		}
+//		String firstRequest = "p=1 & m>0";
+//		if (alloc.canAllocate(firstRequest, "id1")) {
+//			alloc.specifyRequest(firstRequest, "id1");
+//		}
+//		if (alloc.canAllocate(firstRequest, "id1")) {
+//			alloc.specifyRequest(firstRequest, "id1");
+//		}
+//		if (alloc.canAllocate(firstRequest, "id1")) {
+//			alloc.specifyRequest(firstRequest, "id1");
+//		}
+//		if (alloc.canAllocate(firstRequest, "id1")) {
+//			alloc.specifyRequest(firstRequest, "id1");
+//		}
+//		//this one will not allocate in the current setting - OK
+//		if (alloc.canAllocate(firstRequest, "id1")) {
+//			alloc.specifyRequest(firstRequest, "id1");
+//		}
 		System.out.println();
 	}
 	
@@ -165,36 +165,36 @@ public class ResourceTest {
 		alloc.addResource(b12L);alloc.addResource(b34L);alloc.addResource(b12R);alloc.addResource(b34R);
 		
 		String firstRequest = "p=1 & m=1";
-		if (alloc.canAllocate(firstRequest)) {
-			alloc.specifyRequest(firstRequest);
-		}
-		if (alloc.canAllocate(firstRequest)) {
-			alloc.specifyRequest(firstRequest);
-		}
-		if (alloc.canAllocate(firstRequest)) {
-			alloc.specifyRequest(firstRequest);
-		}
-		if (alloc.canAllocate(firstRequest)) {
-			alloc.specifyRequest(firstRequest);
-		}
-
-		ArrayList<String> unitNames = new ArrayList<String>();
-		int allocID = alloc.allocID();
-		unitNames.add("m");unitNames.add("p");
-		alloc.releaseResource(unitNames, allocID);
-		
-		if (alloc.canAllocate(firstRequest)) {
-			alloc.specifyRequest(firstRequest);
-		} else {
-			System.out.println("FIASCO-1");
-		}
-		alloc.releaseResource(unitNames, 1);
-		
-		if (alloc.canAllocate(firstRequest)) {
-			alloc.specifyRequest(firstRequest);
-		} else {
-			System.out.println("FIASCO-2");
-		}
+//		if (alloc.canAllocate(firstRequest, "id1")) {
+//			alloc.specifyRequest(firstRequest, "id1");
+//		}
+//		if (alloc.canAllocate(firstRequest, "id1")) {
+//			alloc.specifyRequest(firstRequest, "id1");
+//		}
+//		if (alloc.canAllocate(firstRequest, "id1")) {
+//			alloc.specifyRequest(firstRequest, "id1");
+//		}
+//		if (alloc.canAllocate(firstRequest, "id1")) {
+//			alloc.specifyRequest(firstRequest, "id1");
+//		}
+//
+//		ArrayList<String> unitNames = new ArrayList<String>();
+//		int allocID = alloc.allocID();
+//		unitNames.add("m");unitNames.add("p");
+//		alloc.releaseResource(unitNames, allocID);
+//		
+//		if (alloc.canAllocate(firstRequest, "id1")) {
+//			alloc.specifyRequest(firstRequest, "id1");
+//		} else {
+//			System.out.println("FIASCO-1");
+//		}
+//		alloc.releaseResource(unitNames, 1);
+//		
+//		if (alloc.canAllocate(firstRequest, "id1")) {
+//			alloc.specifyRequest(firstRequest, "id1");
+//		} else {
+//			System.out.println("FIASCO-2");
+//		}
 	}
 	
 	@Test
@@ -261,46 +261,46 @@ public class ResourceTest {
 		//first, T1, T5, T2 can be provided
 		// after T1 and T5, T3 can be provided as well
 		long starttime = System.currentTimeMillis();
-		if (alloc.canAllocate(firstRequest)) {
-			alloc.specifyRequest(firstRequest);
-		}
-		long endtime = System.currentTimeMillis();
-		System.out.println(endtime-starttime);
-		starttime = System.currentTimeMillis();
-		if (alloc.canAllocate(firstRequest)) {
-			alloc.specifyRequest(firstRequest);
-		}
-		endtime = System.currentTimeMillis();
-		System.out.println(endtime-starttime);
-		starttime = System.currentTimeMillis();
-		if (alloc.canAllocate(firstRequest)) {
-			alloc.specifyRequest(firstRequest);
-		}
-		endtime = System.currentTimeMillis();
-		System.out.println(endtime-starttime);
-		starttime = System.currentTimeMillis();
-		if (alloc.canAllocate(firstRequest)) {
-			alloc.specifyRequest(firstRequest);
-		}
-		endtime = System.currentTimeMillis();
-		System.out.println(endtime-starttime);
-	
-		 if (alloc.canAllocate(firstRequest)) {
-		 alloc.specifyRequest(firstRequest);
-		 } else {
-		 System.out.println("No possibility to provide - all p and m busy!");
-		 }
-
-		ArrayList<String> unitNames = new ArrayList<String>();
-		int allocID = alloc.allocID();
-		unitNames.add("m");unitNames.add("p");
-		alloc.releaseResource(unitNames, allocID);
-		
-		if (alloc.canAllocate(firstRequest)) {
-			alloc.specifyRequest(firstRequest);
-		} else {
-			System.out.println("FIASCO");
-		}
+//		if (alloc.canAllocate(firstRequest, "id1")) {
+//			alloc.specifyRequest(firstRequest, "id1");
+//		}
+//		long endtime = System.currentTimeMillis();
+//		System.out.println(endtime-starttime);
+//		starttime = System.currentTimeMillis();
+//		if (alloc.canAllocate(firstRequest, "id1")) {
+//			alloc.specifyRequest(firstRequest, "id1");
+//		}
+//		endtime = System.currentTimeMillis();
+//		System.out.println(endtime-starttime);
+//		starttime = System.currentTimeMillis();
+//		if (alloc.canAllocate(firstRequest, "id1")) {
+//			alloc.specifyRequest(firstRequest, "id1");
+//		}
+//		endtime = System.currentTimeMillis();
+//		System.out.println(endtime-starttime);
+//		starttime = System.currentTimeMillis();
+//		if (alloc.canAllocate(firstRequest, "id1")) {
+//			alloc.specifyRequest(firstRequest, "id1");
+//		}
+//		endtime = System.currentTimeMillis();
+//		System.out.println(endtime-starttime);
+//	
+//		 if (alloc.canAllocate(firstRequest, "id1")) {
+//		 alloc.specifyRequest(firstRequest, "id1");
+//		 } else {
+//		 System.out.println("No possibility to provide - all p and m busy!");
+//		 }
+//
+//		ArrayList<String> unitNames = new ArrayList<String>();
+//		int allocID = alloc.allocID();
+//		unitNames.add("m");unitNames.add("p");
+//		alloc.releaseResource(unitNames, allocID);
+//		
+//		if (alloc.canAllocate(firstRequest, "id1")) {
+//			alloc.specifyRequest(firstRequest, "id1");
+//		} else {
+//			System.out.println("FIASCO");
+//		}
 	}
 	
 	@Test
@@ -315,12 +315,12 @@ public class ResourceTest {
 			public void configure() {
 
 				// TODO create glue function for making links between methods and data automatically
-				 synchron(KalrayTask.class, "askResource").to(AllocatorImpl.class,
-						 "request");
-				 synchron(KalrayTask.class, "release").to(AllocatorImpl.class,
-						 "release");
-				 synchron(KalrayTask.class, "getResource").to(AllocatorImpl.class,
-						 "provideResource");
+				synchron(KalrayTask.class, "askResource").to(
+						AllocatorImpl.class, "request");
+				synchron(KalrayTask.class, "release").to(AllocatorImpl.class,
+						"release");
+				synchron(KalrayTask.class, "getResource").to(
+						AllocatorImpl.class, "provideResource");
 //				 synchron(KalrayTask.class, "generate").to(KalrayMemory.class,
 //						 "create");
 //				 synchron(KalrayMemory.class, "create").to(KalrayData.class,
@@ -341,9 +341,12 @@ public class ResourceTest {
 				synchron(KalrayMemory.class, "deleteData").to(KalrayData.class,
 						 "delete");
 				 
-				 data(KalrayTask.class, "utility").to(AllocatorImpl.class, "request");
+				 //data(KalrayTask.class, "utility").to(AllocatorImpl.class, "request");
 				 data(KalrayTask.class, "resourceUnit").to(AllocatorImpl.class, "resourceUnit");
 				 data(KalrayTask.class, "allocID").to(AllocatorImpl.class, "allocID");
+				 //data(KalrayTask.class, "componentID").to(AllocatorImpl.class, "id");
+				 data(KalrayTask.class, "dataArray").to(AllocatorImpl.class, "request-id");
+				 
 				 data(KalrayTask.class, "memory").to(KalrayMemory.class, "id");
 				 data(KalrayTask.class, "dataName").to(KalrayMemory.class, "data");
 				 data(KalrayTask.class, "dataReadCount").to(KalrayMemory.class, "count");

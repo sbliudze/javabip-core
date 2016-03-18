@@ -1,5 +1,6 @@
 package org.bip.spec.resources;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 import org.bip.annotations.ComponentType;
@@ -64,7 +65,20 @@ public class KalrayTask extends RConsumerComponent {
 	public void releaseResource() {
 		System.err.println("Releasing the resources: " + dataRelease);
 	}
+	
+	@Data(name = "dataArray", accessTypePort = AccessType.any)
+	public ArrayList<String> dataArray() {
+		ArrayList<String> ddd = new ArrayList<String>();
+		ddd.add(utility);
+		ddd.add(name);
+		return ddd;
+	}
 
+	@Data(name = "componentID", accessTypePort = AccessType.any)
+	public String componentID() {
+		return name;
+	}
+	
 	@Data(name = "memory", accessTypePort = AccessType.any)
 	public String memoryID() {
 		return memoryId;
