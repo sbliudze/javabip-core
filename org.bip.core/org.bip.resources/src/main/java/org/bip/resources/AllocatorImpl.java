@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
+import javax.print.attribute.standard.Finishings;
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RecognitionException;
@@ -32,6 +34,7 @@ import com.microsoft.z3.ArithExpr;
 import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
+import com.microsoft.z3.FuncDecl;
 import com.microsoft.z3.IntExpr;
 import com.microsoft.z3.Model;
 import com.microsoft.z3.Solver;
@@ -102,6 +105,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		placeNameToResource = new HashMap<String, ResourceProvider>();
 		resourceNameToGivenValueInAllocation = new HashMap<Integer, HashMap<String,Expr>>(); //new HashMap<String, Expr>();
 		requestToModel = new HashMap<String, Model>();
+		requestToTokens = new HashMap<String, HashMap<Place,ArrayList<IntExpr>>>();
 		resourceLableToID = new Hashtable<String, String>();
 		resourceLableToAmount = new Hashtable<String, Integer>();
 		allocationID = 0;
@@ -193,7 +197,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 	/************************ Transitions ***************************/
 
 	//private String componentID = "";
-	private  HashMap<String, Model> requestToTokens; //placeVariables
+	private  HashMap<String, HashMap<Place, ArrayList<IntExpr>>> requestToTokens; //placeVariables
 	
 	@Guard(name = "canAllocate")
 	public boolean canAllocate(@Data(name = "request-id") ArrayList<String> ddd) throws DNetException {
@@ -226,7 +230,6 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		// and they should be coherent with the model
 		// we save the model so that we can use it during the allocation phase
 		requestToModel.put(componentID+requestString, model);
-		//requestToTokens.put(componentID+requestString, placeVariables);
 		return true;
 	}
 
@@ -272,35 +275,58 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		Model model = requestToModel.get(componentID+requestString);
 		resourceLableToID.clear();
 		resourceLableToAmount.clear();
-		System.out.println(model.toString());
+		//System.out.println(model.toString());
 		// TODO bus is not in placeVariables, as it is added in the dnet but not in the allocator
 		HashMap<String, Expr> resourceNameToGivenValue = new HashMap<String, Expr>();
+		FuncDecl [] delc = model.getConstDecls();
+		//TODO can there be a case that there are not only the constants, but also the other more complex functions?
+		// then getConstDecls is not enough, and we should also use model.getFuncDecls() 
 		System.err.println("----------");
-		for (Place place : placeVariables.keySet()) {
-			if (placeVariables.get(place).size() > 0) {
-				//System.err.println(allocationID + " " + placeVariables.get(place));
-				for (int i = 0; i < placeVariables.get(place).size(); i++) {
-					Expr varName = placeVariables.get(place).get(i);
-					Expr res = model.evaluate(varName, false);
-					System.err.println(allocationID + " " + varName + " " + model.getConstInterp(varName));
-					if (res.isIntNum()) {
-						int i_r = Integer.parseInt(res.toString());
-						if (i_r != 0) {
-							System.err.println(place.name() + ": " + i_r);
-						}
-						// update the cost after allocating the resource!
-						placeToResource.get(place).decreaseCost(res.toString());
-						//currentResourceID = placeToResource.get(place).resourceID();
-						//TODO the label is not necessarily place.name()
-						resourceLableToID.put(place.name(), placeToResource.get(place).providedResourceID());
-						// TODO this line makes it possible only for one item of each resource to be allocated which is maybe not what we want
-						resourceNameToGivenValue.put(place.name(), res);
-						resourceLableToAmount.put(place.name(), i_r);
-						logger.info("Resource " + place.name() +  ", variable " + varName.toString() +" allocated: " + res.toString() + " units");
-					}
-				}
+		for (FuncDecl func : model.getConstDecls()) {
+			//System.err.println(func.getName() + " - "  + model.getConstInterp(func));
+			String tokenName = func.getName().toString();
+			String placeName = tokenName.substring(0, tokenName.indexOf('-'));
+			Place place = dnet.nameToPlace.get(placeName);
+			String allocAmount = model.getConstInterp(func).toString();
+			int i_r = Integer.parseInt(allocAmount);
+			if (i_r != 0) {
+				System.err.println(place.name() + ": " + i_r);
 			}
+			placeToResource.get(place).decreaseCost(allocAmount);
+			//currentResourceID = placeToResource.get(place).resourceID();
+			//TODO the label is not necessarily place.name()
+			resourceLableToID.put(place.name(), placeToResource.get(place).providedResourceID());
+			// TODO this line makes it possible only for one item of each resource to be allocated which is maybe not what we want
+			resourceNameToGivenValue.put(place.name(), model.getConstInterp(func));
+			resourceLableToAmount.put(place.name(), i_r);
+			logger.info("Resource " + place.name() +  ", variable " + tokenName +" allocated: " + allocAmount + " units");
 		}
+		System.err.println("----------");
+//		for (Place place : placeVariables.keySet()) {
+//			if (placeVariables.get(place).size() > 0) {
+//				//System.err.println(allocationID + " " + placeVariables.get(place));
+//				for (int i = 0; i < placeVariables.get(place).size(); i++) {
+//					Expr varName = placeVariables.get(place).get(i);
+//					Expr res = model.evaluate(varName, false);
+//					System.err.println(allocationID + " " + varName + " " + model.getConstInterp(varName));
+//					if (res.isIntNum()) {
+//						int i_r = Integer.parseInt(res.toString());
+//						if (i_r != 0) {
+//							System.err.println(place.name() + ": " + i_r);
+//						}
+//						// update the cost after allocating the resource!
+//						placeToResource.get(place).decreaseCost(res.toString());
+//						//currentResourceID = placeToResource.get(place).resourceID();
+//						//TODO the label is not necessarily place.name()
+//						resourceLableToID.put(place.name(), placeToResource.get(place).providedResourceID());
+//						// TODO this line makes it possible only for one item of each resource to be allocated which is maybe not what we want
+//						resourceNameToGivenValue.put(place.name(), res);
+//						resourceLableToAmount.put(place.name(), i_r);
+//						logger.info("Resource " + place.name() +  ", variable " + varName.toString() +" allocated: " + res.toString() + " units");
+//					}
+//				}
+//			}
+//		}
 		resourceNameToGivenValueInAllocation.put(allocationID, resourceNameToGivenValue);
 		//System.err.println(allocationID + " " + resourceNameToGivenValueInAllocation);
 		allocationID++;
@@ -378,6 +404,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 			// get the expression for the allocated amount for this resource
 			Expr res = resourceNameToGivenValueInAllocation.get(allocID).get(unit);
 			if (res == null) {
+				System.out.println("No release: " + allocID + " " + unit);
 				return false;
 			}
 		}

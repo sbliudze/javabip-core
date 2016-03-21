@@ -44,6 +44,7 @@ public class KalrayTask extends RConsumerComponent {
 	public void getResource(@Data(name = "resourceArray") Hashtable<String, String> resources,
 			@Data(name = "resourceAmounts") Hashtable<String, Integer> resourceAmounts, @Data(name = "allocID") int allocID) {
 		System.err.println("Task " + this.name + " storing the resources: " + resourceAmounts);
+		System.err.println("Task " + this.name + ": resources to release after alloc " + allocID + " are " + dataRelease);
 		this.allocID = allocID;
 		for (String resourceName: resourceAmounts.keySet()) {
 			if (resourceName.contains("m") && resourceName.length()>1 && resourceAmounts.get(resourceName)>0) {
