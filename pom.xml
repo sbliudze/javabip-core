@@ -9,7 +9,7 @@
   <name>BIP :: Core </name>
 
 	<scm>
-		<developerConnection>scm:git:git@git.xtech.io/academy/bip.git</developerConnection>
+		<developerConnection>scm:git:git@git.xtech.io:bip/org.bip.core.git</developerConnection>
 		<url>https://git.xtech.io/academy/bip.git</url>
 		<tag>HEAD</tag>
 	</scm>
