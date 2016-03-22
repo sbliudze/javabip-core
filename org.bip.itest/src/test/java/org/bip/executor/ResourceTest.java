@@ -402,11 +402,11 @@ public class ResourceTest {
 		// TASKS - COMPONENTS
 		
 		String request = "p=1 & m=1";
-		KalrayTask T1 = new KalrayTask("T1", request, "D13");
-		KalrayTask T2 = new KalrayTask("T2", request, "D24");
-		KalrayTask T3 = new KalrayTask("T3", "p=1 & m=1 & D13=1 & D53=1", "D34");  T3.setRequiredData("D13");  T3.setRequiredData("D53");
-		KalrayTask T4 = new KalrayTask("T4", "p=1 & m=1 & D24=1 & D34=1", ""); T4.setRequiredData("D24");  T4.setRequiredData("D34");
-		KalrayTask T5 = new KalrayTask("T5", request, "D53");
+		KalrayTask T1 = new KalrayTask("T1", request, "D13"); T1.setRequiredData("-1"); 
+		KalrayTask T2 = new KalrayTask("T2", request, "D24"); T2.setRequiredData("-1");
+		KalrayTask T3 = new KalrayTask("T3", "p=1 & m=1 & D13=1 & D53=1", "D34");  T3.setRequiredData("D13");  T3.setRequiredData("D53"); T3.setRequiredData("-1");
+		KalrayTask T4 = new KalrayTask("T4", "p=1 & m=1 & D24=1 & D34=1", ""); T4.setRequiredData("D24");  T4.setRequiredData("D34"); T4.setRequiredData("-1");
+		KalrayTask T5 = new KalrayTask("T5", request, "D53"); T5.setRequiredData("-1");
 		
 		BIPActor actor1 = engine.register(T1, "task1", true); 
 		BIPActor actor2 = engine.register(T2, "task2", true); 

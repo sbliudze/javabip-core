@@ -359,15 +359,18 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 	@org.bip.annotations.Transition(name = "release", source = "0", target = "0", guard = "canRelease")
 	public void releaseResource(@Data(name = "resourceUnit") ArrayList<String> unitNames, @Data(name = "allocID") int allocID) throws DNetException {
 		logger.debug("Releasing resources: " + unitNames);
-		for (String unit : unitNames) {
+		String alloc = unitNames.get(unitNames.size()-1);
+		int allocId = Integer.parseInt(alloc);
+		for (int i=0; i< unitNames.size()-1; i++) {
+			String unit = unitNames.get(i);
 			// release the amount allocated for the given resource
-			releaseResource(unit, allocID);
+			releaseResource(unit, allocId);
 
 			// for each place reachable from this place
 			if (!dnet.placeNameToPostplacesNames.containsKey(unit)) {
 				break;
 			}
-			recursiveRelease(allocID, unit);
+			recursiveRelease(allocId, unit);
 		}
 		//System.out.println("resources released " + ": " + allocID + " " + unitNames);
 	}
@@ -386,6 +389,7 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 	}
 
 	private void releaseResource(String resourceName, int allocID) {
+		//System.out.println(placeNameToResource + ": " + allocID + " " + resourceName);
 		Expr res = resourceNameToGivenValueInAllocation.get(allocID).get(resourceName);
 		// update cost with returning the value
 		logger.info("Releasing resource: " + resourceName + ", the amount allocated was " + res + ", the resource provider is " + placeNameToResource.get(resourceName));
@@ -395,11 +399,14 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		placeNameToResource.get(resourceName).augmentCost(res.toString());
 	}
 	
-	@Guard(name = "canRelease")
-	public boolean canRelease(@Data(name = "resourceUnit") ArrayList<String> unitNames, @Data(name = "allocID") int allocID) throws DNetException {
+	@Guard(name = "canRelease") //, @Data(name = "allocID") int allocID
+	public boolean canRelease(@Data(name = "resourceUnit") ArrayList<String> unitNames) throws DNetException {
+		String alloc = unitNames.get(unitNames.size()-1);
+		int allocID = Integer.parseInt(alloc);
 		if (resourceNameToGivenValueInAllocation.get(allocID)==null) return false;
 		//System.out.println(resourceNameToGivenValueInAllocation + ": " + allocID + " " + unitNames);
-		for (String unit : unitNames) {
+		for (int i=0; i< unitNames.size()-1; i++) {
+			String unit = unitNames.get(i);
 			// TODO what if there are several items of the same resource, then we should also know the name - rather the id - of component?
 			// get the expression for the allocated amount for this resource
 			Expr res = resourceNameToGivenValueInAllocation.get(allocID).get(unit);

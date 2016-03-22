@@ -37,6 +37,8 @@ public class KalrayTask extends RConsumerComponent {
 
 	@Transition(name = "askResource", source = "0", target = "1", guard = "")
 	public void askResource() {
+		dataRelease.remove(dataRelease.size()-1);
+		dataRelease.add("-1");
 		System.err.println("Task " + this.name + " has asked for resources with utility " + utility);
 	}
 
@@ -44,8 +46,12 @@ public class KalrayTask extends RConsumerComponent {
 	public void getResource(@Data(name = "resourceArray") Hashtable<String, String> resources,
 			@Data(name = "resourceAmounts") Hashtable<String, Integer> resourceAmounts, @Data(name = "allocID") int allocID) {
 		System.err.println("Task " + this.name + " storing the resources: " + resourceAmounts);
-		System.err.println("Task " + this.name + ": resources to release after alloc " + allocID + " are " + dataRelease);
+	
 		this.allocID = allocID;
+		Integer ii = allocID;
+		dataRelease.remove(dataRelease.size()-1);
+		dataRelease.add(ii.toString());
+		System.err.println("Task " + this.name + ": resources to release after alloc " + allocID + " are " + dataRelease);
 		for (String resourceName: resourceAmounts.keySet()) {
 			if (resourceName.contains("m") && resourceName.length()>1 && resourceAmounts.get(resourceName)>0) {
 				this.memoryId = resources.get(resourceName);
@@ -65,6 +71,12 @@ public class KalrayTask extends RConsumerComponent {
 	@Transition(name = "release", source = "3", target = "0", guard = "")
 	public void releaseResource() {
 		System.err.println("Releasing the resources: " + dataRelease);
+	}
+	
+	@Transition(name = "", source = "-1", target = "0", guard = "")
+	public void cleanUp() {
+		dataRelease.remove(dataRelease.size()-1);
+		dataRelease.add("-1");
 	}
 	
 	@Data(name = "dataArray", accessTypePort = AccessType.any)
