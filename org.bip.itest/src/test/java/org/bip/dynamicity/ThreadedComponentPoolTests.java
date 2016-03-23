@@ -73,7 +73,7 @@ public class ThreadedComponentPoolTests {
 		pool.addInstance(e2);
 		pool.addInstance(e3);
 		pool.addInstance(e4);
-		
+
 		adder = new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -92,7 +92,7 @@ public class ThreadedComponentPoolTests {
 				pool.addInstance(e6);
 			}
 		});
-		
+
 		remover = new Thread(new Runnable() {
 			@Override
 			public void run() {

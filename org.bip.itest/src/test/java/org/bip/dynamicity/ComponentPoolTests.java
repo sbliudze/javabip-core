@@ -327,4 +327,26 @@ public class ComponentPoolTests {
 		// REMOVE
 		assertFalse(pool.removeInstance(e));
 	}
+	
+	@Test
+	public void testRemoveWithOptimization() {
+		BIPComponent a0 = createComponent(new ExampleA(), "a0", true), a1 = createComponent(new ExampleA(), "a1", true),
+				a2 = createComponent(new ExampleA(), "a2", true);
+		BIPComponent b0 = createComponent(new ExampleB(), "b0", true), b1 = createComponent(new ExampleB(), "b1", true);
+		BIPComponent c0 = createComponent(new ExampleC(), "c0", true);
+		BIPComponent e0 = createComponent(new ExampleE(), "e0", true);
+		
+		// ADD
+		assertTrue(pool.addInstance(a0).isEmpty());
+		assertTrue(pool.addInstance(a1).isEmpty());
+		assertTrue(pool.addInstance(a2).isEmpty());
+		assertTrue(pool.addInstance(b0).isEmpty());
+		assertFalse(pool.addInstance(e0).isEmpty());
+		assertFalse(pool.addInstance(b1).isEmpty());
+		assertFalse(pool.addInstance(c0).isEmpty());
+		
+		// REMOVE
+		assertTrue(pool.removeInstance(c0));
+		assertFalse(pool.removeInstance(e0));
+	}
 }
