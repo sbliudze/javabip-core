@@ -42,13 +42,13 @@ public class ComponentPoolCamelRoutesTests {
 	@Test
 	public void testAddMonitor() {
 		BIPComponent monitor = createComponent(new RouteOnOffMonitor(500), "m0", true);
-		assertTrue(pool.addInstance(monitor).isEmpty());
+		assertFalse(pool.addInstance(monitor));
 	}
 
 	@Test
 	public void testAddRoute() {
 		BIPComponent route = createComponent(new SwitchableRouteExecutableBehavior("r0"), "r0", false);
-		assertTrue(pool.addInstance(route).isEmpty());
+		assertFalse(pool.addInstance(route));
 	}
 
 	@Test
@@ -56,8 +56,8 @@ public class ComponentPoolCamelRoutesTests {
 		BIPComponent route0 = createComponent(new SwitchableRouteExecutableBehavior("r0"), "r0", false);
 		BIPComponent monitor0 = createComponent(new RouteOnOffMonitor(500), "m0", true);
 
-		assertTrue(pool.addInstance(route0).isEmpty());
-		assertFalse(pool.addInstance(monitor0).isEmpty());
+		assertFalse(pool.addInstance(route0));
+		assertTrue(pool.addInstance(monitor0));
 	}
 
 	@Test
@@ -67,10 +67,10 @@ public class ComponentPoolCamelRoutesTests {
 		BIPComponent route1 = createComponent(new SwitchableRouteExecutableBehavior("r1"), "r1", false);
 		BIPComponent monitor1 = createComponent(new RouteOnOffMonitor(500), "m1", true);
 
-		assertTrue(pool.addInstance(route0).isEmpty());
-		assertTrue(pool.addInstance(route1).isEmpty());
-		assertFalse(pool.addInstance(monitor0).isEmpty());
-		assertFalse(pool.addInstance(monitor1).isEmpty());
+		assertFalse(pool.addInstance(route0));
+		assertFalse(pool.addInstance(route1));
+		assertTrue(pool.addInstance(monitor0));
+		assertTrue(pool.addInstance(monitor1));
 	}
 
 	@Test
@@ -80,16 +80,16 @@ public class ComponentPoolCamelRoutesTests {
 		BIPComponent route2 = createComponent(new SwitchableRouteExecutableBehavior("r2"), "r2", false);
 		BIPComponent monitor0 = createComponent(new RouteOnOffMonitor(500), "m0", true);
 
-		assertTrue(pool.addInstance(route0).isEmpty());
-		assertTrue(pool.addInstance(route1).isEmpty());
-		assertFalse(pool.addInstance(monitor0).isEmpty());
-		assertFalse(pool.addInstance(route2).isEmpty());
+		assertFalse(pool.addInstance(route0));
+		assertFalse(pool.addInstance(route1));
+		assertTrue(pool.addInstance(monitor0));
+		assertTrue(pool.addInstance(route2));
 	}
 
 	/*
 	 * Test on removing components
 	 */
-
+//FLIP ASSERT FROM HERE
 	@Test
 	public void testRemoveOnlyMonitor() {
 		BIPComponent route0 = createComponent(new SwitchableRouteExecutableBehavior("r0"), "r0", false);
@@ -98,10 +98,10 @@ public class ComponentPoolCamelRoutesTests {
 		BIPComponent monitor0 = createComponent(new RouteOnOffMonitor(500), "m0", true);
 
 		// ADD
-		assertTrue(pool.addInstance(route0).isEmpty());
-		assertTrue(pool.addInstance(route1).isEmpty());
-		assertFalse(pool.addInstance(monitor0).isEmpty());
-		assertFalse(pool.addInstance(route2).isEmpty());
+		assertFalse(pool.addInstance(route0));
+		assertFalse(pool.addInstance(route1));
+		assertTrue(pool.addInstance(monitor0));
+		assertTrue(pool.addInstance(route2));
 
 		// REMOVE
 		assertFalse(pool.removeInstance(monitor0));
@@ -116,11 +116,11 @@ public class ComponentPoolCamelRoutesTests {
 		BIPComponent monitor1 = createComponent(new RouteOnOffMonitor(500), "m1", true);
 
 		// ADD
-		assertTrue(pool.addInstance(route0).isEmpty());
-		assertTrue(pool.addInstance(route1).isEmpty());
-		assertFalse(pool.addInstance(monitor0).isEmpty());
-		assertFalse(pool.addInstance(monitor1).isEmpty());
-		assertFalse(pool.addInstance(route2).isEmpty());
+		assertFalse(pool.addInstance(route0));
+		assertFalse(pool.addInstance(route1));
+		assertTrue(pool.addInstance(monitor0));
+		assertTrue(pool.addInstance(monitor1));
+		assertTrue(pool.addInstance(route2));
 
 		// REMOVE
 		assertTrue(pool.removeInstance(monitor0));
@@ -135,11 +135,11 @@ public class ComponentPoolCamelRoutesTests {
 		BIPComponent monitor1 = createComponent(new RouteOnOffMonitor(500), "m1", true);
 
 		// ADD
-		assertTrue(pool.addInstance(route0).isEmpty());
-		assertTrue(pool.addInstance(route1).isEmpty());
-		assertFalse(pool.addInstance(monitor0).isEmpty());
-		assertFalse(pool.addInstance(monitor1).isEmpty());
-		assertFalse(pool.addInstance(route2).isEmpty());
+		assertFalse(pool.addInstance(route0));
+		assertFalse(pool.addInstance(route1));
+		assertTrue(pool.addInstance(monitor0));
+		assertTrue(pool.addInstance(monitor1));
+		assertTrue(pool.addInstance(route2));
 
 		// REMOVE
 		assertTrue(pool.removeInstance(route2));
@@ -154,11 +154,11 @@ public class ComponentPoolCamelRoutesTests {
 		BIPComponent monitor1 = createComponent(new RouteOnOffMonitor(500), "m1", true);
 
 		// ADD
-		assertTrue(pool.addInstance(route0).isEmpty());
-		assertTrue(pool.addInstance(route1).isEmpty());
-		assertFalse(pool.addInstance(monitor0).isEmpty());
-		assertFalse(pool.addInstance(monitor1).isEmpty());
-		assertFalse(pool.addInstance(route2).isEmpty());
+		assertFalse(pool.addInstance(route0));
+		assertFalse(pool.addInstance(route1));
+		assertTrue(pool.addInstance(monitor0));
+		assertTrue(pool.addInstance(monitor1));
+		assertTrue(pool.addInstance(route2));
 
 		// REMOVE
 		assertTrue(pool.removeInstance(route2));

@@ -18,7 +18,6 @@ import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-//TODO Write the accept statements for the glue and test it with the engine
 /**
  * Test class for the component pool on system in the wiki.
  * 
@@ -50,62 +49,62 @@ public class ComponentPoolTests {
 
 	@Test
 	public void testAddInstanceToPool() {
-		assertTrue(pool.addInstance(createComponent(new ExampleB(), "b0", true)).isEmpty());
+		assertFalse(pool.addInstance(createComponent(new ExampleB(), "b0", true)));
 	}
 
 	@Test(expected = BIPEngineException.class)
 	public void testAddInstanceTwiceToPool() {
 		BIPComponent b = createComponent(new ExampleB(), "b0", true);
-		assertTrue(pool.addInstance(b).isEmpty());
+		assertFalse(pool.addInstance(b));
 		pool.addInstance(b);
 	}
 
 	@Test
 	public void testValidSystem0() {
-		assertTrue(pool.addInstance(createComponent(new ExampleA(), "a0", true)).isEmpty());
-		assertTrue(pool.addInstance(createComponent(new ExampleA(), "a1", true)).isEmpty());
-		assertTrue(pool.addInstance(createComponent(new ExampleA(), "a2", true)).isEmpty());
-		assertTrue(pool.addInstance(createComponent(new ExampleB(), "b0", true)).isEmpty());
-		assertTrue(pool.addInstance(createComponent(new ExampleB(), "b1", true)).isEmpty());
-		assertFalse(pool.addInstance(createComponent(new ExampleC(), "c0", true)).isEmpty());
+		assertFalse(pool.addInstance(createComponent(new ExampleA(), "a0", true)));
+		assertFalse(pool.addInstance(createComponent(new ExampleA(), "a1", true)));
+		assertFalse(pool.addInstance(createComponent(new ExampleA(), "a2", true)));
+		assertFalse(pool.addInstance(createComponent(new ExampleB(), "b0", true)));
+		assertFalse(pool.addInstance(createComponent(new ExampleB(), "b1", true)));
+		assertTrue(pool.addInstance(createComponent(new ExampleC(), "c0", true)));
 	}
 
 	@Test
 	public void testValidSystem1() {
-		assertTrue(pool.addInstance(createComponent(new ExampleB(), "b0", true)).isEmpty());
-		assertFalse(pool.addInstance(createComponent(new ExampleC(), "c0", true)).isEmpty());
-		assertFalse(pool.addInstance(createComponent(new ExampleC(), "c1", true)).isEmpty());
+		assertFalse(pool.addInstance(createComponent(new ExampleB(), "b0", true)));
+		assertTrue(pool.addInstance(createComponent(new ExampleC(), "c0", true)));
+		assertTrue(pool.addInstance(createComponent(new ExampleC(), "c1", true)));
 	}
 
 	@Test
 	public void testValidSystem2() {
-		assertFalse(pool.addInstance(createComponent(new ExampleC(), "c0", true)).isEmpty());
+		assertTrue(pool.addInstance(createComponent(new ExampleC(), "c0", true)));
 	}
 
 	@Test
 	public void testValidSystem3() {
-		assertFalse(pool.addInstance(createComponent(new ExampleE(), "e0", true)).isEmpty());
+		assertTrue(pool.addInstance(createComponent(new ExampleE(), "e0", true)));
 	}
 
 	@Test
 	public void testValidSystem4() {
-		assertTrue(pool.addInstance(createComponent(new ExampleD(), "d0", true)).isEmpty());
-		assertFalse(pool.addInstance(createComponent(new ExampleE(), "e0", true)).isEmpty());
+		assertFalse(pool.addInstance(createComponent(new ExampleD(), "d0", true)));
+		assertTrue(pool.addInstance(createComponent(new ExampleE(), "e0", true)));
 	}
 
 	@Test
 	public void testAddAfterValidSystemIsStillValid0() {
-		assertFalse(pool.addInstance(createComponent(new ExampleE(), "e0", true)).isEmpty());
-		assertFalse(pool.addInstance(createComponent(new ExampleD(), "d0", true)).isEmpty());
+		assertTrue(pool.addInstance(createComponent(new ExampleE(), "e0", true)));
+		assertTrue(pool.addInstance(createComponent(new ExampleD(), "d0", true)));
 	}
 
 	@Test
 	public void testAddAfterValidSystemIsStillValid1() {
-		assertFalse(pool.addInstance(createComponent(new ExampleE(), "e0", true)).isEmpty());
-		assertFalse(pool.addInstance(createComponent(new ExampleD(), "d0", true)).isEmpty());
-		assertFalse(pool.addInstance(createComponent(new ExampleA(), "a0", true)).isEmpty());
-		assertFalse(pool.addInstance(createComponent(new ExampleA(), "a1", true)).isEmpty());
-		assertFalse(pool.addInstance(createComponent(new ExampleB(), "b0", true)).isEmpty());
+		assertTrue(pool.addInstance(createComponent(new ExampleE(), "e0", true)));
+		assertTrue(pool.addInstance(createComponent(new ExampleD(), "d0", true)));
+		assertTrue(pool.addInstance(createComponent(new ExampleA(), "a0", true)));
+		assertTrue(pool.addInstance(createComponent(new ExampleA(), "a1", true)));
+		assertTrue(pool.addInstance(createComponent(new ExampleB(), "b0", true)));
 	}
 
 	/*
@@ -123,7 +122,7 @@ public class ComponentPoolTests {
 		BIPComponent a0 = createComponent(new ExampleA(), "a0", true);
 		
 		// ADD
-		assertTrue(pool.addInstance(a0).isEmpty());
+		assertFalse(pool.addInstance(a0));
 		
 		// REMOVE
 		assertFalse(pool.removeInstance(a0));
@@ -134,7 +133,7 @@ public class ComponentPoolTests {
 		BIPComponent a0 = createComponent(new ExampleA(), "a0", true);
 		
 		// ADD
-		assertTrue(pool.addInstance(a0).isEmpty());
+		assertFalse(pool.addInstance(a0));
 		assertFalse(pool.removeInstance(a0));
 		pool.removeInstance(a0);
 	}
@@ -147,12 +146,12 @@ public class ComponentPoolTests {
 		BIPComponent c0 = createComponent(new ExampleC(), "c0", true);
 		
 		// ADD
-		assertTrue(pool.addInstance(a0).isEmpty());
-		assertTrue(pool.addInstance(a1).isEmpty());
-		assertTrue(pool.addInstance(a2).isEmpty());
-		assertTrue(pool.addInstance(b0).isEmpty());
-		assertTrue(pool.addInstance(b1).isEmpty());
-		assertFalse(pool.addInstance(c0).isEmpty());
+		assertFalse(pool.addInstance(a0));
+		assertFalse(pool.addInstance(a1));
+		assertFalse(pool.addInstance(a2));
+		assertFalse(pool.addInstance(b0));
+		assertFalse(pool.addInstance(b1));
+		assertTrue(pool.addInstance(c0));
 		
 		// REMOVE
 		assertFalse(pool.removeInstance(c0));
@@ -168,12 +167,12 @@ public class ComponentPoolTests {
 		
 		// ADD
 		BIPComponent c0 = createComponent(new ExampleC(), "c0", true);
-		assertTrue(pool.addInstance(a0).isEmpty());
-		assertTrue(pool.addInstance(a1).isEmpty());
-		assertTrue(pool.addInstance(a2).isEmpty());
-		assertTrue(pool.addInstance(b0).isEmpty());
-		assertTrue(pool.addInstance(b1).isEmpty());
-		assertFalse(pool.addInstance(c0).isEmpty());
+		assertFalse(pool.addInstance(a0));
+		assertFalse(pool.addInstance(a1));
+		assertFalse(pool.addInstance(a2));
+		assertFalse(pool.addInstance(b0));
+		assertFalse(pool.addInstance(b1));
+		assertTrue(pool.addInstance(c0));
 		
 		// REMOVE
 		assertTrue(pool.removeInstance(b1));
@@ -191,16 +190,16 @@ public class ComponentPoolTests {
 		BIPComponent c0 = createComponent(new ExampleC(), "c0", true), c1 = createComponent(new ExampleC(), "c1", true);
 		
 		// ADD
-		assertTrue(pool.addInstance(a0).isEmpty());
-		assertTrue(pool.addInstance(a1).isEmpty());
-		assertTrue(pool.addInstance(a2).isEmpty());
-		assertTrue(pool.addInstance(a3).isEmpty());
-		assertTrue(pool.addInstance(a4).isEmpty());
-		assertTrue(pool.addInstance(b0).isEmpty());
-		assertTrue(pool.addInstance(b1).isEmpty());
-		assertTrue(pool.addInstance(b2).isEmpty());
-		assertFalse(pool.addInstance(c0).isEmpty());
-		assertFalse(pool.addInstance(c1).isEmpty());
+		assertFalse(pool.addInstance(a0));
+		assertFalse(pool.addInstance(a1));
+		assertFalse(pool.addInstance(a2));
+		assertFalse(pool.addInstance(a3));
+		assertFalse(pool.addInstance(a4));
+		assertFalse(pool.addInstance(b0));
+		assertFalse(pool.addInstance(b1));
+		assertFalse(pool.addInstance(b2));
+		assertTrue(pool.addInstance(c0));
+		assertTrue(pool.addInstance(c1));
 		
 		// REMOVE
 		assertTrue(pool.removeInstance(c1));
@@ -219,16 +218,16 @@ public class ComponentPoolTests {
 		BIPComponent c0 = createComponent(new ExampleC(), "c0", true), c1 = createComponent(new ExampleC(), "c1", true);
 		
 		// ADD
-		assertTrue(pool.addInstance(a0).isEmpty());
-		assertTrue(pool.addInstance(a1).isEmpty());
-		assertTrue(pool.addInstance(a2).isEmpty());
-		assertTrue(pool.addInstance(a3).isEmpty());
-		assertTrue(pool.addInstance(a4).isEmpty());
-		assertTrue(pool.addInstance(b0).isEmpty());
-		assertTrue(pool.addInstance(b1).isEmpty());
-		assertTrue(pool.addInstance(b2).isEmpty());
-		assertFalse(pool.addInstance(c0).isEmpty());
-		assertFalse(pool.addInstance(c1).isEmpty());
+		assertFalse(pool.addInstance(a0));
+		assertFalse(pool.addInstance(a1));
+		assertFalse(pool.addInstance(a2));
+		assertFalse(pool.addInstance(a3));
+		assertFalse(pool.addInstance(a4));
+		assertFalse(pool.addInstance(b0));
+		assertFalse(pool.addInstance(b1));
+		assertFalse(pool.addInstance(b2));
+		assertTrue(pool.addInstance(c0));
+		assertTrue(pool.addInstance(c1));
 		
 		// REMOVE
 		assertTrue(pool.removeInstance(c1));
@@ -248,16 +247,16 @@ public class ComponentPoolTests {
 		BIPComponent c0 = createComponent(new ExampleC(), "c0", true), c1 = createComponent(new ExampleC(), "c1", true);
 		
 		// ADD
-		assertTrue(pool.addInstance(a0).isEmpty());
-		assertTrue(pool.addInstance(a1).isEmpty());
-		assertTrue(pool.addInstance(a2).isEmpty());
-		assertTrue(pool.addInstance(a3).isEmpty());
-		assertTrue(pool.addInstance(a4).isEmpty());
-		assertTrue(pool.addInstance(b0).isEmpty());
-		assertTrue(pool.addInstance(b1).isEmpty());
-		assertTrue(pool.addInstance(b2).isEmpty());
-		assertFalse(pool.addInstance(c0).isEmpty());
-		assertFalse(pool.addInstance(c1).isEmpty());
+		assertFalse(pool.addInstance(a0));
+		assertFalse(pool.addInstance(a1));
+		assertFalse(pool.addInstance(a2));
+		assertFalse(pool.addInstance(a3));
+		assertFalse(pool.addInstance(a4));
+		assertFalse(pool.addInstance(b0));
+		assertFalse(pool.addInstance(b1));
+		assertFalse(pool.addInstance(b2));
+		assertTrue(pool.addInstance(c0));
+		assertTrue(pool.addInstance(c1));
 		
 		// REMOVE
 		assertTrue(pool.removeInstance(a0));
@@ -270,8 +269,8 @@ public class ComponentPoolTests {
 		assertFalse(pool.removeInstance(b2));
 		
 		// ADD
-		assertFalse(pool.addInstance(c0).isEmpty());
-		assertFalse(pool.addInstance(c1).isEmpty());
+		assertTrue(pool.addInstance(c0));
+		assertTrue(pool.addInstance(c1));
 	}
 	
 	@Test
@@ -279,9 +278,9 @@ public class ComponentPoolTests {
 		BIPComponent b0 = createComponent(new ExampleB(), "b0", true);
 		BIPComponent b1 = createComponent(new ExampleB(), "b1", true);
 		BIPComponent c0 = createComponent(new ExampleC(), "c0", true);
-		assertTrue(pool.addInstance(b0).isEmpty());
-		assertFalse(pool.addInstance(c0).isEmpty());
-		assertFalse(pool.addInstance(b1).isEmpty());
+		assertFalse(pool.addInstance(b0));
+		assertTrue(pool.addInstance(c0));
+		assertTrue(pool.addInstance(b1));
 		
 		// REMOVE
 		assertTrue(pool.removeInstance(b1));
@@ -294,9 +293,9 @@ public class ComponentPoolTests {
 		BIPComponent b0 = createComponent(new ExampleB(), "b0", true);
 		BIPComponent b1 = createComponent(new ExampleB(), "b1", true);
 		BIPComponent c0 = createComponent(new ExampleC(), "c0", true);
-		assertTrue(pool.addInstance(b0).isEmpty());
-		assertFalse(pool.addInstance(c0).isEmpty());
-		assertFalse(pool.addInstance(b1).isEmpty());
+		assertFalse(pool.addInstance(b0));
+		assertTrue(pool.addInstance(c0));
+		assertTrue(pool.addInstance(b1));
 		
 		// REMOVE
 		assertTrue(pool.removeInstance(b1));
@@ -309,7 +308,7 @@ public class ComponentPoolTests {
 		BIPComponent e = createComponent(new ExampleE(), "e", true);
 		
 		// ADD
-		assertFalse(pool.addInstance(e).isEmpty());
+		assertTrue(pool.addInstance(e));
 		
 		// REMOVE
 		assertFalse(pool.removeInstance(e));
@@ -321,8 +320,8 @@ public class ComponentPoolTests {
 		BIPComponent d = createComponent(new ExampleD(), "d", true);
 		
 		// ADD
-		assertFalse(pool.addInstance(e).isEmpty());
-		assertFalse(pool.addInstance(d).isEmpty());
+		assertTrue(pool.addInstance(e));
+		assertTrue(pool.addInstance(d));
 		
 		// REMOVE
 		assertFalse(pool.removeInstance(e));
@@ -337,13 +336,13 @@ public class ComponentPoolTests {
 		BIPComponent e0 = createComponent(new ExampleE(), "e0", true);
 		
 		// ADD
-		assertTrue(pool.addInstance(a0).isEmpty());
-		assertTrue(pool.addInstance(a1).isEmpty());
-		assertTrue(pool.addInstance(a2).isEmpty());
-		assertTrue(pool.addInstance(b0).isEmpty());
-		assertFalse(pool.addInstance(e0).isEmpty());
-		assertFalse(pool.addInstance(b1).isEmpty());
-		assertFalse(pool.addInstance(c0).isEmpty());
+		assertFalse(pool.addInstance(a0));
+		assertFalse(pool.addInstance(a1));
+		assertFalse(pool.addInstance(a2));
+		assertFalse(pool.addInstance(b0));
+		assertTrue(pool.addInstance(e0));
+		assertTrue(pool.addInstance(b1));
+		assertTrue(pool.addInstance(c0));
 		
 		// REMOVE
 		assertTrue(pool.removeInstance(c0));

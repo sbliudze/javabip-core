@@ -33,13 +33,13 @@ public class ComponentPoolTrackersPeersTests {
 	@Test
 	public void testAddTracker() {
 		BIPComponent tracker = createComponent(new Tracker(0), "t0", true);
-		assertTrue(pool.addInstance(tracker).isEmpty());
+		assertFalse(pool.addInstance(tracker));
 	}
 	
 	@Test
 	public void testAddPeer() {
 		BIPComponent peer = createComponent(new Peer(0), "p0", true);
-		assertTrue(pool.addInstance(peer).isEmpty());
+		assertFalse(pool.addInstance(peer));
 	}
 	
 	@Test
@@ -47,7 +47,7 @@ public class ComponentPoolTrackersPeersTests {
 		BIPComponent peer = createComponent(new Peer(0), "p0", true);
 		BIPComponent tracker = createComponent(new Tracker(0), "t0", true);
 		
-		assertTrue(pool.addInstance(peer).isEmpty());
-		assertFalse(pool.addInstance(tracker).isEmpty());
+		assertFalse(pool.addInstance(peer));
+		assertTrue(pool.addInstance(tracker));
 	}
 }

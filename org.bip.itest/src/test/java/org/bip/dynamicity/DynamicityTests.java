@@ -1,16 +1,18 @@
 package org.bip.dynamicity;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import static org.bip.dynamicity.HelperFunctions.createComponent;
+import static org.bip.dynamicity.HelperFunctions.createGlue;
 
+import org.bip.api.BIPComponent;
 import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
 import org.bip.engine.factory.EngineFactory;
-import org.bip.glue.GlueBuilder;
 import org.bip.spec.A;
 import org.bip.spec.B;
 import org.bip.spec.C;
+import org.bip.spec.ExampleA;
+import org.bip.spec.ExampleB;
+import org.bip.spec.ExampleC;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -53,7 +55,7 @@ public class DynamicityTests {
 			engine.register(bComponents[i], String.format("b%d", i), true);
 			engine.register(cComponents[i], String.format("c%d", i), true);
 		}
-
+		//
 		engine.start();
 
 		try {
@@ -69,28 +71,36 @@ public class DynamicityTests {
 		}
 
 		engine.stop();
-//		System.out.println(String.format("We have %d accept constraints", glue.getAcceptConstraints().size()));
-//		System.out.println(String.format("We have %d require constraints", glue.getRequiresConstraints().size()));
-//		System.out.println(bComponents[0].getResult());
-//		System.out.println(cComponents[0].getResult());
-//		System.out.println(a.getResult());
+		// System.out.println(String.format("We have %d accept constraints",
+		// glue.getAcceptConstraints().size()));
+		// System.out.println(String.format("We have %d require constraints",
+		// glue.getRequiresConstraints().size()));
+		// System.out.println(bComponents[0].getResult());
+		// System.out.println(cComponents[0].getResult());
+		// System.out.println(a.getResult());
 		engineFactory.destroy(engine);
 	}
 
-	private BIPGlue createGlue(String bipGlueFilename) {
-		BIPGlue bipGlue = null;
+	@Test
+	public void testEngineStartsAutomatically() {
+		BIPGlue glue = createGlue("src/test/resources/bipGlueExampleSystem.xml");
+		BIPEngine engine = engineFactory.create("myEngine", glue);
 
-		InputStream inputStream;
+		BIPComponent b0 = createComponent(new ExampleB(), "b0", true), b1 = createComponent(new ExampleB(), "b1", true);
+		BIPComponent c0 = createComponent(new ExampleC(), "c0", true);
+		
+		engine.register(new ExampleA(), "a0", true);
+		engine.register(new ExampleA(), "a1", true);
+		engine.register(new ExampleA(), "a2", true);
+		engine.register(new ExampleB(), "b0", true);
+		engine.register(new ExampleB(), "b1", true);
+		engine.register(new ExampleC(), "c0", true);
+		
 		try {
-			inputStream = new FileInputStream(bipGlueFilename);
-
-			bipGlue = GlueBuilder.fromXML(inputStream);
-
-		} catch (FileNotFoundException e) {
-
-			e.printStackTrace();
-		}
-		return bipGlue;
-
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {}
+		
+		engine.stop();
+		engineFactory.destroy(engine);
 	}
 }
