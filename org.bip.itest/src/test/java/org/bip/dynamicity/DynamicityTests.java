@@ -210,7 +210,7 @@ public class DynamicityTests {
 		engine.register(r2, "r2", false);
 
 		try {
-			Thread.sleep(3000);
+			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

@@ -7,8 +7,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.bip.engine.dynamicity.MultiHashMap;
-import org.bip.engine.dynamicity.MultiMap;
+import org.bip.engine.MultiHashMap;
+import org.bip.engine.MultiMap;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;

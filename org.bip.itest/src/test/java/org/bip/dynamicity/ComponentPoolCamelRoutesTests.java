@@ -7,7 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.bip.api.BIPComponent;
 import org.bip.api.BIPGlue;
-import org.bip.engine.dynamicity.ComponentPool;
+import org.bip.engine.ComponentPool;
 import org.bip.spec.RouteOnOffMonitor;
 import org.bip.spec.SwitchableRouteExecutableBehavior;
 import org.junit.After;

@@ -7,7 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.bip.api.BIPComponent;
 import org.bip.api.BIPGlue;
-import org.bip.engine.dynamicity.ComponentPool;
+import org.bip.engine.ComponentPool;
 import org.bip.exceptions.BIPEngineException;
 import org.bip.spec.ExampleA;
 import org.bip.spec.ExampleB;
