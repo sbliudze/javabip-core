@@ -136,10 +136,8 @@ public class DynamicityTests {
 		CamelContext context = new DefaultCamelContext();
 		r1.setCamelContext(context);
 
-		engine.register(r1, "r1", false);
 		final RoutePolicy route1Policy = createRoutePolicy();
 
-		engine.register(new RouteOnOffMonitor(10), "monitor", true);
 
 		RouteBuilder builder = new RouteBuilder() {
 			@Override
@@ -156,6 +154,9 @@ public class DynamicityTests {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		engine.register(r1, "r1", false);
+		engine.register(new RouteOnOffMonitor(10), "monitor", true);
 
 		try {
 			Thread.sleep(2000);
@@ -178,11 +179,9 @@ public class DynamicityTests {
 		r1.setCamelContext(context);
 		r2.setCamelContext(context);
 
-		engine.register(r1, "r1", false);
 		final RoutePolicy route1Policy = createRoutePolicy();
 		final RoutePolicy route2Policy = createRoutePolicy();
 
-		engine.register(new RouteOnOffMonitor(10), "monitor", true);
 
 		RouteBuilder builder = new RouteBuilder() {
 			@Override
@@ -201,6 +200,9 @@ public class DynamicityTests {
 			e.printStackTrace();
 		}
 
+		engine.register(r1, "r1", false);
+		engine.register(new RouteOnOffMonitor(2), "monitor", true);
+		
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
@@ -210,7 +212,7 @@ public class DynamicityTests {
 		engine.register(r2, "r2", false);
 
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(10000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
