@@ -56,7 +56,7 @@ public class DynamicityTrackersPeersTests {
 
 		engine.register(p1, "p1", true);
 		engine.register(t1, "t1", true);
+		
 		sleep(5);
 	}
-
 }

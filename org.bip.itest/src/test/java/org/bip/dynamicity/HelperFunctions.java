@@ -31,8 +31,8 @@ public final class HelperFunctions {
 
 			e.printStackTrace();
 		}
-		return bipGlue;
 
+		return bipGlue;
 	}
 
 	static <T> BIPComponent createComponent(T instance, String id, boolean useSpec) {
@@ -40,7 +40,6 @@ public final class HelperFunctions {
 	}
 
 	static RoutePolicy createRoutePolicy() {
-
 		return new RoutePolicy() {
 
 			public void onInit(Route route) {
@@ -73,9 +72,8 @@ public final class HelperFunctions {
 			public void onSuspend(Route arg0) {
 			}
 		};
-
 	}
-	
+
 	static void sleep(int s) {
 		try {
 			Thread.sleep(s * 1000);
@@ -83,32 +81,31 @@ public final class HelperFunctions {
 			e.printStackTrace();
 		}
 	}
-	
+
 	static void killEngine(EngineFactory factory, BIPEngine engine) {
 		engine.stop();
 		sleep(1);
 		factory.destroy(engine);
 	}
-	
-	static void setupCamelContext(CamelContext context, final int[] ids) {
 
+	static void setupCamelContext(CamelContext context, final int[] ids) {
 		RouteBuilder builder = new RouteBuilder() {
 			@Override
 			public void configure() throws Exception {
-				for( int i = 0; i < ids.length ; ++i) {
-					from("file:inputfolder"+i+"?delete=true").routeId(Integer.toString(i)).routePolicy(createRoutePolicy()).to("file:outputfolder"+i);
+				for (int i = 0; i < ids.length; ++i) {
+					from("file:inputfolder" + i + "?delete=true").routeId(Integer.toString(i))
+							.routePolicy(createRoutePolicy()).to("file:outputfolder" + i);
 				}
 			}
 		};
 
 		context.setAutoStartup(false);
 		try {
-			if(context.getStatus() != ServiceStatus.Started)
+			if (context.getStatus() != ServiceStatus.Started)
 				context.addRoutes(builder);
 			context.start();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
 }

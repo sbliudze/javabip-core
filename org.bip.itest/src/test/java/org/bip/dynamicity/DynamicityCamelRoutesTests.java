@@ -36,7 +36,7 @@ public class DynamicityCamelRoutesTests {
 		system = ActorSystem.create("CamelSystem");
 		engineFactory = new EngineFactory(system);
 	}
-	
+
 	@Before
 	public void setup() {
 		glue = createGlue("src/test/resources/bipGlueExecutableBehaviour.xml");
@@ -44,12 +44,11 @@ public class DynamicityCamelRoutesTests {
 		context = new DefaultCamelContext();
 	}
 
-
 	@AfterClass
 	public static void cleanup() {
 		system.shutdown();
 	}
-	
+
 	@After
 	public void teardown() {
 		killEngine(engineFactory, engine);
@@ -60,7 +59,7 @@ public class DynamicityCamelRoutesTests {
 		SwitchableRouteExecutableBehavior r1 = new SwitchableRouteExecutableBehavior("r1");
 		r1.setCamelContext(context);
 
-		setupCamelContext(context, new int[]{1});
+		setupCamelContext(context, new int[] { 1 });
 
 		engine.register(r1, "r1", false);
 		engine.register(new RouteOnOffMonitor(10), "monitor", true);
@@ -75,7 +74,7 @@ public class DynamicityCamelRoutesTests {
 		r1.setCamelContext(context);
 		r2.setCamelContext(context);
 
-		setupCamelContext(context, new int[]{1, 2});
+		setupCamelContext(context, new int[] { 1, 2 });
 
 		engine.register(r1, "r1", false);
 		engine.register(new RouteOnOffMonitor(2), "monitor", true);
@@ -96,8 +95,8 @@ public class DynamicityCamelRoutesTests {
 		r2.setCamelContext(context);
 		r3.setCamelContext(context);
 
-		setupCamelContext(context, new int[]{1, 2, 3});
-		
+		setupCamelContext(context, new int[] { 1, 2, 3 });
+
 		engine.register(r1, "r1", false);
 		engine.register(new RouteOnOffMonitor(3), "monitor", true);
 
@@ -111,7 +110,7 @@ public class DynamicityCamelRoutesTests {
 
 		sleep(5);
 	}
-	
+
 	@Test
 	public void testCamelRoutesAddRoutesAndMonitors() {
 		SwitchableRouteExecutableBehavior r1 = new SwitchableRouteExecutableBehavior("r1");
@@ -123,7 +122,7 @@ public class DynamicityCamelRoutesTests {
 		r2.setCamelContext(context);
 		r3.setCamelContext(context);
 
-		setupCamelContext(context, new int[]{1, 2, 3});
+		setupCamelContext(context, new int[] { 1, 2, 3 });
 
 		engine.register(r1, "r1", false);
 		engine.register(m1, "m1", true);
@@ -137,9 +136,9 @@ public class DynamicityCamelRoutesTests {
 		engine.register(r3, "r3", false);
 
 		sleep(5);
-		
+
 		engine.register(m2, "m2", true);
-		
+
 		sleep(4);
 	}
 }
