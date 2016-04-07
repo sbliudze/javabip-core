@@ -79,7 +79,6 @@ public class DynamicityTests {
 		engineFactory.destroy(engine);
 	}
 
-	// @Ignore
 	@Test
 	public void testEngineStartsAutomatically() {
 		BIPGlue glue = createGlue("src/test/resources/bipGlueExampleSystem.xml");
@@ -118,23 +117,7 @@ public class DynamicityTests {
 		CamelContext context = new DefaultCamelContext();
 		r1.setCamelContext(context);
 
-		final RoutePolicy route1Policy = createRoutePolicy();
-
-		RouteBuilder builder = new RouteBuilder() {
-			@Override
-			public void configure() throws Exception {
-				from("file:inputfolder1?delete=true").routeId("1").routePolicy(route1Policy).to("file:outputfolder1");
-			}
-
-		};
-
-		context.setAutoStartup(false);
-		try {
-			context.addRoutes(builder);
-			context.start();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		setupCamelContext(context, new int[]{1});
 
 		engine.register(r1, "r1", false);
 		engine.register(new RouteOnOffMonitor(10), "monitor", true);
@@ -155,25 +138,7 @@ public class DynamicityTests {
 		r1.setCamelContext(context);
 		r2.setCamelContext(context);
 
-		final RoutePolicy route1Policy = createRoutePolicy();
-		final RoutePolicy route2Policy = createRoutePolicy();
-
-		RouteBuilder builder = new RouteBuilder() {
-			@Override
-			public void configure() throws Exception {
-				from("file:inputfolder1?delete=true").routeId("1").routePolicy(route1Policy).to("file:outputfolder1");
-				from("file:inputfolder2?delete=true").routeId("2").routePolicy(route2Policy).to("file:outputfolder2");
-			}
-
-		};
-
-		context.setAutoStartup(false);
-		try {
-			context.addRoutes(builder);
-			context.start();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		setupCamelContext(context, new int[]{1, 2});
 
 		engine.register(r1, "r1", false);
 		engine.register(new RouteOnOffMonitor(2), "monitor", true);
@@ -200,28 +165,8 @@ public class DynamicityTests {
 		r2.setCamelContext(context);
 		r3.setCamelContext(context);
 
-		final RoutePolicy route1Policy = createRoutePolicy();
-		final RoutePolicy route2Policy = createRoutePolicy();
-		final RoutePolicy route3Policy = createRoutePolicy();
-
-		RouteBuilder builder = new RouteBuilder() {
-			@Override
-			public void configure() throws Exception {
-				from("file:inputfolder1?delete=true").routeId("1").routePolicy(route1Policy).to("file:outputfolder1");
-				from("file:inputfolder2?delete=true").routeId("2").routePolicy(route2Policy).to("file:outputfolder2");
-				from("file:inputfolder3?delete=true").routeId("3").routePolicy(route3Policy).to("file:outputfolder3");
-			}
-
-		};
-
-		context.setAutoStartup(false);
-		try {
-			context.addRoutes(builder);
-			context.start();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
+		setupCamelContext(context, new int[]{1, 2, 3});
+		
 		engine.register(r1, "r1", false);
 		engine.register(new RouteOnOffMonitor(3), "monitor", true);
 
@@ -253,27 +198,7 @@ public class DynamicityTests {
 		r2.setCamelContext(context);
 		r3.setCamelContext(context);
 
-		final RoutePolicy route1Policy = createRoutePolicy();
-		final RoutePolicy route2Policy = createRoutePolicy();
-		final RoutePolicy route3Policy = createRoutePolicy();
-
-		RouteBuilder builder = new RouteBuilder() {
-			@Override
-			public void configure() throws Exception {
-				from("file:inputfolder1?delete=true").routeId("1").routePolicy(route1Policy).to("file:outputfolder1");
-				from("file:inputfolder2?delete=true").routeId("2").routePolicy(route2Policy).to("file:outputfolder2");
-				from("file:inputfolder3?delete=true").routeId("3").routePolicy(route3Policy).to("file:outputfolder3");
-			}
-		};
-
-		context.setAutoStartup(false);
-		try {
-			if(context.getStatus() != ServiceStatus.Started)
-				context.addRoutes(builder);
-			context.start();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		setupCamelContext(context, new int[]{1, 2, 3});
 
 		engine.register(r1, "r1", false);
 		engine.register(m1, "m1", true);
@@ -307,5 +232,26 @@ public class DynamicityTests {
 		engine.stop();
 		sleep(1);
 		engineFactory.destroy(engine);
+	}
+	
+	private void setupCamelContext(CamelContext context, final int[] ids) {
+
+		RouteBuilder builder = new RouteBuilder() {
+			@Override
+			public void configure() throws Exception {
+				for( int i = 0; i < ids.length ; ++i) {
+					from("file:inputfolder"+i+"?delete=true").routeId(Integer.toString(i)).routePolicy(createRoutePolicy()).to("file:outputfolder"+i);
+				}
+			}
+		};
+
+		context.setAutoStartup(false);
+		try {
+			if(context.getStatus() != ServiceStatus.Started)
+				context.addRoutes(builder);
+			context.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
