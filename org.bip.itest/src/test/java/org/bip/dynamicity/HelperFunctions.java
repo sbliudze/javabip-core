@@ -4,11 +4,16 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
+import org.apache.camel.ServiceStatus;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.RoutePolicy;
 import org.bip.api.BIPComponent;
+import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
+import org.bip.engine.factory.EngineFactory;
 import org.bip.executor.ExecutorKernel;
 import org.bip.glue.GlueBuilder;
 
@@ -69,6 +74,41 @@ public final class HelperFunctions {
 			}
 		};
 
+	}
+	
+	static void sleep(int s) {
+		try {
+			Thread.sleep(s * 1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	static void killEngine(EngineFactory factory, BIPEngine engine) {
+		engine.stop();
+		sleep(1);
+		factory.destroy(engine);
+	}
+	
+	static void setupCamelContext(CamelContext context, final int[] ids) {
+
+		RouteBuilder builder = new RouteBuilder() {
+			@Override
+			public void configure() throws Exception {
+				for( int i = 0; i < ids.length ; ++i) {
+					from("file:inputfolder"+i+"?delete=true").routeId(Integer.toString(i)).routePolicy(createRoutePolicy()).to("file:outputfolder"+i);
+				}
+			}
+		};
+
+		context.setAutoStartup(false);
+		try {
+			if(context.getStatus() != ServiceStatus.Started)
+				context.addRoutes(builder);
+			context.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

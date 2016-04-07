@@ -1,6 +1,8 @@
 package org.bip.dynamicity;
 
 import static org.bip.dynamicity.HelperFunctions.createGlue;
+import static org.bip.dynamicity.HelperFunctions.sleep;
+import static org.bip.dynamicity.HelperFunctions.killEngine;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -64,21 +66,12 @@ public class GlueTesterTests {
 		}
 		engine.start();
 
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		sleep(2);
 
 		engine.execute();
 		
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		sleep(2);
 		
-		engine.stop();
-		engineFactory.destroy(engine);
+		killEngine(engineFactory, engine);
 	}
 }
