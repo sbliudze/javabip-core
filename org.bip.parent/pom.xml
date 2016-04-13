@@ -3,13 +3,6 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <!--<parent>
-    <groupId>io.xtech.cf</groupId>
-    <artifactId>cf-project-parent</artifactId>
-    <version>5.0.0-SNAPSHOT</version>
-  </parent>
--->
-
   <groupId>org.bip</groupId>
   <artifactId>org.bip.parent</artifactId>
   <version>0.1.0-SNAPSHOT</version>
@@ -19,7 +12,6 @@
 
   <properties>
 
-    <cf.version>5.0.0-SNAPSHOT</cf.version>
     <maven-resources-plugin.version>2.7</maven-resources-plugin.version>
     <akka.version>2.3.9</akka.version>
     <scala.binary.version>2.11</scala.binary.version>
@@ -32,7 +24,6 @@
     <org.osgi.core.version>4.2.0</org.osgi.core.version>
     <camel-core.version>2.15.3</camel-core.version>
     <org.bip.epfl.engine.version>0.1.0-SNAPSHOT</org.bip.epfl.engine.version>
-    <org.bip.lsr.version>0.1.0-SNAPSHOT</org.bip.lsr.version>
     <org.bip.executor.impl.version>0.1.0-SNAPSHOT</org.bip.executor.impl.version>
     <org.bip.api.version>0.1.0-SNAPSHOT</org.bip.api.version>
     <org.bip.executor.version>0.1.0-SNAPSHOT</org.bip.executor.version>
@@ -215,56 +206,7 @@
         <version>${camel-core.version}</version>
       </dependency>
 
-      <dependency>
-        <groupId>org.bip.epfl</groupId>
-        <artifactId>org.bip.lsr</artifactId>
-        <version>${org.bip.lsr.version}</version>
-      </dependency>
-
     </dependencies>
   </dependencyManagement>
-
-  <profiles>
-
-    <!--
-      deploy to local CF instance: `mvn clean install -Pdeploy -Ddeploy.dir=<cf-path>`
-    -->
-    <profile>
-      <id>deploy</id>
-      <properties>
-        <deploy.type>kar</deploy.type>
-        <deploy.local>true</deploy.local>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>local</id>
-                <phase>install</phase>
-                <configuration>
-                  <target if="${deploy.local}">
-                    <!--suppress MavenModelInspection -->
-                    <copy todir="${deploy.dir}">
-                      <fileset dir="${project.build.directory}">
-                        <exclude name="*-javadoc.${deploy.type}"/>
-                        <include name="*.${deploy.type}"/>
-                      </fileset>
-                    </copy>
-                  </target>
-                </configuration>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-  </profiles>
 
 </project>

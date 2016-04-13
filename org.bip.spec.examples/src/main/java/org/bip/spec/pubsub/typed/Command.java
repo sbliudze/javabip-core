@@ -1,6 +1,6 @@
 package org.bip.spec.pubsub.typed;
 
-import lsr.concurrence.provided.server.CommandID;
+import org.bip.spec.pubsub.CommandID;
 
 public class Command
 {
@@ -30,6 +30,6 @@ public class Command
    
 	public String getMessage() {
 		return this.message;
-    }    
+    }
 
 }

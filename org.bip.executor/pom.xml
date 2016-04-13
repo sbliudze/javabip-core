@@ -96,7 +96,6 @@
 						<Require-Bundle>${osgi.bundles}</Require-Bundle>
 						<Spring-Context>*;publish-context:=false;create-asynchronously:=true</Spring-Context>
 						<Embed-Dependency>${osgi.embed.depdendencies}</Embed-Dependency>
-						<!-- <Include-Resource>src/main/resources</Include-Resource> -->
 					</instructions>
 				</configuration>
 			</plugin>
@@ -126,31 +125,5 @@
 
 		</plugins>
 	</build>
-
-
-	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-	<!-- Remote repositories declarations -->
-	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-
-	<!-- N.B.: These should be properly declared in a master POM or in a maven 
-		settings.xml file. -->
-
-	<!--pluginRepositories> <pluginRepository> <id>maven-repo</id> <name>maven 
-		repo</name> <url>http://repo1.maven.org/maven2/</url> </pluginRepository> 
-		</pluginRepositories -->
-
-	<repositories>
-		<repository>
-			<id>maven-repo</id>
-			<name>maven repo</name>
-			<url>http://repo1.maven.org/maven2/</url>
-		</repository>
-		<repository>
-			<id>fusesource.releases</id>
-			<name>FuseSource Releases Repository</name>
-			<url>http://repo.fusesource.com/maven2/</url>
-		</repository>
-
-	</repositories>
 
 </project>

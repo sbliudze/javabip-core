@@ -26,8 +26,7 @@
 		<osgi.import>!sun.misc, org.springframework.beans.factory;version="[2.5,4)", *</osgi.import>
  		<osgi.export>org.bip.executor.springinosgi, org.bip.executor.impl.akka</osgi.export>
 		<osgi.dynamic.import></osgi.dynamic.import>
-		<osgi.bundles></osgi.bundles> 		
-<!-- 		<osgi.embed.depdendencies>akka-actor_2.10, akka-osgi_2.10, config, scala-library</osgi.embed.depdendencies> -->
+		<osgi.bundles></osgi.bundles>
 		<osgi.embed.depdendencies></osgi.embed.depdendencies>
  	</properties>
 	
@@ -84,8 +83,6 @@
     		<artifactId>akka-osgi_${scala.binary.version}</artifactId>
     	</dependency>
 
-    	
-
 	</dependencies>
 
 	<reporting>
@@ -119,7 +116,6 @@
 						<Require-Bundle>${osgi.bundles}</Require-Bundle>
 						<Spring-Context>*;publish-context:=false;create-asynchronously:=true</Spring-Context>
 						<Embed-Dependency>${osgi.embed.depdendencies}</Embed-Dependency>
-						<!-- <Include-Resource>src/main/resources</Include-Resource> -->
 					</instructions>
 				</configuration>
 			</plugin>
@@ -149,25 +145,6 @@
 
 		</plugins>
 	</build>
-
-
-	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-	<!-- Remote repositories declarations -->
-	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-
-	<!--
-	    N.B.: These should be properly declared in a
-	    master POM or in a maven settings.xml file.
-	-->
-
-	<!--pluginRepositories>
-		<pluginRepository>
-			<id>maven-repo</id>
-			<name>maven repo</name>
-			<url>http://repo1.maven.org/maven2/</url>
-		</pluginRepository>
-
-	</pluginRepositories-->
 
 	<repositories>
 		<repository>

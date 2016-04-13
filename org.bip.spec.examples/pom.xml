@@ -24,7 +24,7 @@
 	<properties>
 		<osgi.private>lsr.concurrence.provided.server</osgi.private>
 		<osgi.import>*</osgi.import>
-		<osgi.export>org.bip.spec, org.bip.spec.hanoi, org.bip.spec.diningphilosophers, org.bip.spec.seal, org.bip.spec.pubsub.typed, org.bip.spec.pubsub.untyped, org.bip.spec.telephonic</osgi.export>
+		<osgi.export>org.bip.spec, org.bip.spec.hanoi, org.bip.spec.diningphilosophers, org.bip.spec.seal, org.bip.spec.pubsub, org.bip.spec.pubsub.typed, org.bip.spec.pubsub.untyped, org.bip.spec.telephonic</osgi.export>
 		<osgi.dynamic.import></osgi.dynamic.import>
 		<osgi.bundles></osgi.bundles>
 	</properties>
@@ -67,12 +67,7 @@
 			<groupId>org.bip</groupId>
 			<artifactId>org.bip.api</artifactId>
 		</dependency>
-		
-		<dependency>
-			<groupId>org.bip.epfl</groupId>
-			<artifactId>org.bip.lsr</artifactId>
-		</dependency>
-		
+
 		<dependency>
 			<groupId>org.bip</groupId>
 			<artifactId>org.bip.glue</artifactId>
@@ -103,8 +98,6 @@
 						<DynamicImport-Package>${osgi.dynamic.import}</DynamicImport-Package>
 						<Private-Package>${osgi.private}</Private-Package>
 						<Require-Bundle>${osgi.bundles}</Require-Bundle>
-						<!--<Spring-Context>*;publish-context:=false;create-asynchronously:=true</Spring-Context>-->
-						<!--Include-Resource>src/main/resources</Include-Resource -->
 					</instructions>
 				</configuration>
 			</plugin>
@@ -128,34 +121,5 @@
 			</plugin>
 		</plugins>
 	</build>
-
-
-	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-	<!-- Remote repositories declarations -->
-	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-
-	<!-- These repositories should be declared in a parent POM or in a maven 
-		settings.xml file. -->
-
-	<!--pluginRepositories> <pluginRepository> <id>maven-repo</id> <name>maven 
-		repo</name> <url>http://repo1.maven.org/maven2/</url> </pluginRepository> 
-		</pluginRepositories -->
-
-<!--
-	<repositories>
-		<repository>
-			<id>maven-repo</id>
-			<name>maven repo</name>
-			<url>http://repo1.maven.org/maven2/</url>
-		</repository>
-
-		<repository>
-			<id>fusesource.releases</id>
-			<name>FuseSource Releases Repository</name>
-			<url>http://repo.fusesource.com/maven2/</url>
-		</repository>
-	</repositories>
--->
-
 
 </project>

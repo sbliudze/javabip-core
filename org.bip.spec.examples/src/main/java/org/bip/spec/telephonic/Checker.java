@@ -9,6 +9,8 @@ import org.bip.annotations.Port;
 import org.bip.annotations.Ports;
 import org.bip.annotations.Transition;
 import org.bip.api.PortType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Ports({ @Port(name = "dial", type = PortType.spontaneous),
 	 @Port(name = "wait", type = PortType.spontaneous), 
@@ -17,7 +19,9 @@ import org.bip.api.PortType;
 	 @Port(name = "error", type = PortType.spontaneous)})
 @ComponentType(initial = "s0", name = "org.bip.spec.telephonic.Checker")
 public class Checker {
-	
+
+	Logger logger = LoggerFactory.getLogger(Checker.class);
+
 	// checks that at each time a client talks only to one other client at a time
 	private boolean talkingToOne = true;
 	private boolean connectingingToEachOther = true;	
@@ -77,7 +81,7 @@ public class Checker {
 		dialwaitsNotified.set(dialerId-1, callNumber);
 		//if the client is waiting at the same time, panic
 		if (waits.get(dialerId-1)!=0) {
-			System.out.println("Something wrong during dialing a call. Call ids are "+ dialwaitsNotified
+			logger.error("Something wrong during dialing a call. Call ids are "+ dialwaitsNotified
 					+ ". Dials are" + dials 
 					+ ". Waits are" + waits +".\n Current is "+ dialerId + "-"+waiterId);
 			talkingToOne=false;
@@ -94,7 +98,7 @@ public class Checker {
 			//or if the call numbers of dial and wait do not correspond, panic
 					|| dialwaitsNotified.getAndSet(dialerId - 1, 0) != dialwaitsNotified
 							.getAndSet(waiterId - 1, 0)) {
-				System.out.println(callNumber + " dials: " + dials
+				logger.debug(callNumber + " dials: " + dials
 						+ ", waits: " + waits + " dialCall: " + i
 						+ " , waitCall: " + j);
 				connectingingToEachOther = false;
@@ -117,7 +121,7 @@ public class Checker {
 		dialwaitsNotified.set(waiterId-1, callNumber); 
 		//if the client is dialing at the same time, panic
 		if (dials.get(waiterId-1)!=0) {
-			System.out.println("Something wrong during waiting for a call. Call ids are "+ dialwaitsNotified
+			logger.error("Something wrong during waiting for a call. Call ids are "+ dialwaitsNotified
 					+ ". Dials are" + dials 
 					+ ". Waits are" + waits +".\n Current is "+ dialerId + "-"+waiterId);
 			talkingToOne=false;
@@ -134,7 +138,7 @@ public class Checker {
 			//or if the call numbers of dial and wait do not correspond, panic
 					|| dialwaitsNotified.getAndSet(dialerId - 1, 0) != dialwaitsNotified
 							.getAndSet(waiterId - 1, 0)) {
-				System.out.println(callNumber + " dials: " + dials
+				logger.debug(callNumber + " dials: " + dials
 						+ ", waits: " + waits + " dialCall: " + i
 						+ " , waitCall: " + j);
 				connectingingToEachOther = false;
@@ -164,7 +168,7 @@ public class Checker {
 			if (((voices.get(dialerId - 1) != waiterId && voices.get(waiterId - 1) != dialerId))
 					//or if the call numbers of dial and wait do not correspond, panic
 					|| voiceNotified.getAndSet(dialerId-1,0)!=voiceNotified.getAndSet(waiterId-1,0)) {
-			System.out.println("Something wrong during voicing of a call. Call ids are "+ voiceNotified
+			logger.error("Something wrong during voicing of a call. Call ids are "+ voiceNotified
 					+ ". Voices are" + voices 
 					+ ".\n Current is "+ dialerId + "-"+waiterId
 					+ ". dialCall: "+ i + " , waitCall: "+j);
@@ -191,7 +195,7 @@ public class Checker {
 			// if they are not the same, panic
 			if ((discs.get(waiterId - 1) != dialerId && discs.get(dialerId - 1) != waiterId)
 					|| discNotified.getAndSet(dialerId - 1, 0) != discNotified.getAndSet(waiterId - 1, 0)) {
-				System.out.println("disc: " + discs + dialerId + waiterId + " "
+				logger.debug("disc: " + discs + dialerId + waiterId + " "
 						+ discNotified);
 				discToEachOther = false;
 			}

@@ -11,10 +11,6 @@ package org.bip.spec.pubsub.untyped;
 import java.io.IOException;
 import java.net.Socket;
 
-import lsr.concurrence.provided.server.CommandID;
-import lsr.concurrence.provided.server.InputFormatException;
-import lsr.concurrence.provided.server.InputReader;
-
 import org.bip.annotations.ComponentType;
 import org.bip.annotations.Data;
 import org.bip.annotations.Guard;
@@ -23,6 +19,9 @@ import org.bip.annotations.Ports;
 import org.bip.annotations.Transition;
 import org.bip.api.BIPActor;
 import org.bip.api.PortType;
+import org.bip.spec.pubsub.CommandID;
+import org.bip.spec.pubsub.InputFormatException;
+import org.bip.spec.pubsub.InputReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,8 +1,7 @@
 package org.bip.spec.pubsub.untyped;
 
-import lsr.concurrence.provided.server.CommandID;
-
 import org.bip.api.BIPActor;
+import org.bip.spec.pubsub.CommandID;
 
 public class Command {
 
@@ -32,6 +31,6 @@ public class Command {
    
 	public String getMessage() {
 		return this.message;
-    }    
+    }
 
 }
