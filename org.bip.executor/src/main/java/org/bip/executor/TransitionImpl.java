@@ -8,9 +8,14 @@
 
 package org.bip.executor;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 
 import org.bip.api.Data;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class TransitionImpl {
 	
@@ -20,7 +25,10 @@ class TransitionImpl {
 	// Empty string represents that there is no guard associated to this transition.
 	protected String guard;
 	protected Method method;
+	protected MethodHandle methodHandle;
 	protected Iterable<Data<?>> dataRequired;
+	
+	private Logger logger = LoggerFactory.getLogger(TransitionImpl.class);
 
 	/**
 	 * Constructor to be used within a BIP Spec
@@ -40,6 +48,7 @@ class TransitionImpl {
 		this.target = target;
 		this.guard = guard;
 		this.method = method;
+		this.methodHandle = getMethodHandleForTransition();
 		this.dataRequired = dataRequired;
 	}
 	
@@ -60,5 +69,19 @@ class TransitionImpl {
 	public String target() {
 		return this.target;
 	}
-			
+		
+	private MethodHandle getMethodHandleForTransition() {
+		MethodType methodType;
+		MethodHandle methodHandle = null;
+		MethodHandles.Lookup lookup = MethodHandles.lookup();
+		methodType = MethodType.methodType(method.getReturnType(), method.getParameterTypes());// clazz - type of data being returned, method has no arguments
+		try {
+			methodHandle = lookup.findVirtual(method.getDeclaringClass(), method.getName(), methodType);
+		} catch (NoSuchMethodException e) {
+			ExceptionHelper.printExceptionTrace(logger, e);
+		} catch (IllegalAccessException e) {
+			ExceptionHelper.printExceptionTrace(logger, e);
+		}
+		return methodHandle;
+	}
 }

@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 @ComponentType(initial = "start", name = "org.bip.spec.PSSComponent")
 public class PSSComponent {
 
-	Logger logger = LoggerFactory.getLogger(SwitchableRoute.class);
+	Logger logger = LoggerFactory.getLogger(PSSComponent.class);
 
 	public int pCounter = 0;
 
@@ -40,11 +40,8 @@ public class PSSComponent {
 		this.needExternalEnable = needExternalEnable;
 	}
 
-	/*
-	 * Check what are the conditions for throwing the exception.
-	 */
 	@Transition(name = "p", source = "start", target = "start", guard = "isPEnabled")
-	public void enforceableP() throws Exception {
+	public void enforceableP() {
 		logger.debug("P transition is being executed.");
 		pCounter++;
 		pEnabled--;

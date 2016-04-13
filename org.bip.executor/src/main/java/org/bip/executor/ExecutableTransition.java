@@ -8,6 +8,7 @@
 
 package org.bip.executor;
 
+import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Method;
 import java.util.Map;
 
@@ -18,6 +19,8 @@ import org.bip.api.Transition;
 interface ExecutableTransition extends Transition {
 
 	public Method method();
+	
+	public MethodHandle methodHandle();
 
 	public Iterable<Data<?>> dataRequired();
 

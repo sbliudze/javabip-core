@@ -8,6 +8,7 @@
 
 package org.bip.api;
 
+import java.lang.invoke.MethodHandle;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -61,11 +62,11 @@ public interface ExecutableBehaviour extends Behaviour {
 	public boolean hasEnabledTransitionFromCurrentState(String portID, Map<String, Boolean> guardToValue);
 
 	/**
-	 * Gets the data out mapping.
+	 * Gets the method name to java method mapping for data out.
 	 *
 	 * @return the data out mapping
 	 */
-	public Map<String, Method> getDataOutMapping();
+	public Map<String, MethodHandle> getDataOutMapping();
 
 	/**
 	 * Check enabledness.

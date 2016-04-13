@@ -8,6 +8,9 @@
 
 package org.bip.executor;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -31,6 +34,7 @@ class GuardImpl implements Guard {
 
 	private String name;
 	private Method method;
+	private MethodHandle methodHandle;
 	
 	// The List is used here, because List interface maintains order of its items.
 	// The order is very important since one Guard may have multiple dataIn-s of the same type
@@ -40,6 +44,7 @@ class GuardImpl implements Guard {
 		this.name = name;
 		this.method = method;
 		this.dataRequired = dataRequired;
+		this.methodHandle = getMethodHandleForGuard();
 	}
 
 	public String name() {
@@ -50,6 +55,10 @@ class GuardImpl implements Guard {
 		return method;
 	}
 
+	public MethodHandle methodHandle() {
+		return this.methodHandle;
+	}
+	
 	public Collection<Data<?>> dataRequired() {
 		return dataRequired;
 	}
@@ -69,14 +78,37 @@ class GuardImpl implements Guard {
 
 		return result.toString();
 	}
-
-	public boolean evaluateGuard(Object component, Object... args) throws IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException {
-		logger.debug("For component {}:", component.getClass());
+	
+	// there is no component passed here, as the object on which the evaluation is performed 
+	// is passed as the first argument
+	public boolean evaluateGuard(Object... args) {
+		logger.debug("For component {}:", args[0].getClass());
 		logger.debug("Evaluation of guard {} with args {}.", this.name, args);
-		Object guardValue = method.invoke(component, args);
+		
+		Object guardValue = false; // initialization added because of the try catch
+		try {
+			guardValue = methodHandle.invokeWithArguments(args);
+		} catch (Throwable e) {
+			ExceptionHelper.printExceptionTrace(logger, e);
+		}
+		
 		// TODO TEST, create a test that will fail if somebody annotates not boolean function with bipguard annotation.
 		boolean res = (Boolean) guardValue;
 		return res;
+	}
+	
+	private MethodHandle getMethodHandleForGuard() {
+		MethodType methodType;
+		MethodHandle methodHandle = null;
+		MethodHandles.Lookup lookup = MethodHandles.lookup();
+		methodType = MethodType.methodType(method.getReturnType(), method.getParameterTypes());
+		try {
+			methodHandle = lookup.findVirtual(method.getDeclaringClass(), method.getName(), methodType);
+		} catch (NoSuchMethodException e) {
+			ExceptionHelper.printExceptionTrace(logger, e);
+		} catch (IllegalAccessException e) {
+			ExceptionHelper.printExceptionTrace(logger, e);
+		}
+		return methodHandle;
 	}
 }

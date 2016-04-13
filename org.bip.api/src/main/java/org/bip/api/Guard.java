@@ -49,7 +49,6 @@ public interface Guard {
 	 * @throws IllegalArgumentException     the illegal argument exception
 	 * @throws InvocationTargetException    the invocation target exception
 	 */
-	public boolean evaluateGuard(Object component, Object... args) throws IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException;
 
+	public boolean evaluateGuard(Object... args);
 }

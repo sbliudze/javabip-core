@@ -21,25 +21,22 @@ import org.slf4j.LoggerFactory;
 @ComponentType(initial = "start", name = "TestSpecEnforceableSpontaneous")
 public class TestSpecEnforceableSpontaneous {
 
-    Logger logger = LoggerFactory.getLogger(SwitchableRoute.class);
+    Logger logger = LoggerFactory.getLogger(TestSpecEnforceableSpontaneous.class);
 
     public int pCounter = 0;
     public int sCounter = 0;
 
     boolean pLast = false;
 
-    /*
-      * Check what are the conditions for throwing the exception.
-      */
     @Transition(name = "p", source = "start", target = "start", guard = "!isPLast")
-    public void enforceableP() throws Exception {
+    public void enforceableP() {
         logger.debug("P transition is being executed.");
         pCounter++;
         pLast = true;
     }
 
     @Transition(name = "s", source = "start", target = "start", guard = "isPLast")
-    public void spontaneousS() throws Exception {
+    public void spontaneousS() {
         logger.info("Received s notification ");
         sCounter++;
         pLast = false;

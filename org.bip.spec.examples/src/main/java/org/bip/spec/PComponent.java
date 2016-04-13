@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 @ComponentType(initial = "start", name = "org.bip.spec.PComponent")
 public class PComponent {
 
-    Logger logger = LoggerFactory.getLogger(SwitchableRoute.class);
+    Logger logger = LoggerFactory.getLogger(PComponent.class);
 
     public int pCounter = 0;
 
@@ -34,11 +34,8 @@ public class PComponent {
         this.needExternalEnable = needExternalEnable;
     }
 
-    /*
-      * Check what are the conditions for throwing the exception.
-      */
     @Transition(name = "p", source = "start", target = "start", guard = "isPEnabled")
-    public void enforceableP() throws Exception {
+    public void enforceableP() {
         logger.debug("P transition is being executed.");
         pCounter++;
         pEnabled = false;

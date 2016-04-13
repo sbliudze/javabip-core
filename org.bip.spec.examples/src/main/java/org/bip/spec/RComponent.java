@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 @ComponentType(initial = "start", name = "org.bip.spec.RComponent")
 public class RComponent {
 
-    Logger logger = LoggerFactory.getLogger(SwitchableRoute.class);
+    Logger logger = LoggerFactory.getLogger(RComponent.class);
 
     public int rCounter = 0;
 

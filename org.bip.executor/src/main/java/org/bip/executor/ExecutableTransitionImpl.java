@@ -1,6 +1,7 @@
 package org.bip.executor;
 
 
+import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Map;
@@ -42,10 +43,16 @@ class ExecutableTransitionImpl extends TransitionImpl implements ExecutableTrans
 		return this.portType;
 	}
 
+	// is used in BehaviourImpl in order to check that the method is called on the object it belongs to
+	// and also to get the number of parameters
+	// possible improvement: remove method() and add two other methods for actions described above
 	public Method method() {
 		return this.method;
 	}
 
+	public MethodHandle methodHandle() {
+		return this.methodHandle;
+	}
 	public String guard() {
 		return this.guard;
 	}

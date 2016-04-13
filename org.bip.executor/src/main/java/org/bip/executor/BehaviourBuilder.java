@@ -7,6 +7,9 @@
  */
 package org.bip.executor;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +25,8 @@ import org.bip.api.Guard;
 import org.bip.api.Port;
 import org.bip.api.PortType;
 import org.bip.exceptions.BIPException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // TODO DESCRIPTION all classes should have a header and description of its purpose for nice looking JavaDoc document.
 // For example check BIPSpecification for an example.
@@ -32,7 +37,7 @@ import org.bip.exceptions.BIPException;
  */
 public class BehaviourBuilder {
 
-	// private Logger logger = LoggerFactory.getLogger(BehaviourBuilder.class);
+	private Logger logger = LoggerFactory.getLogger(BehaviourBuilder.class);
 
 	public String componentType;
 	public String currentState;
@@ -42,7 +47,7 @@ public class BehaviourBuilder {
 	private Hashtable<String, Guard> guards;
 	private Object component;
 
-	private Hashtable<String, Method> dataOutName;
+	private Hashtable<String, MethodHandle> dataOutName;
 	private ArrayList<DataOutImpl<?>> dataOut;
 
 	public BehaviourBuilder(Object component) {
@@ -51,7 +56,7 @@ public class BehaviourBuilder {
 		allPorts = new Hashtable<String, Port>();
 		states = new HashSet<String>();
 		guards = new Hashtable<String, Guard>();
-		dataOutName = new Hashtable<String, Method>();
+		dataOutName = new Hashtable<String, MethodHandle>();
 		dataOut = new ArrayList<DataOutImpl<?>>();
 	}
 
@@ -120,7 +125,7 @@ public class BehaviourBuilder {
 		return transformedAllTransitions;
 		
 	}
-
+	
 	public void setComponentType(String type) {
 		this.componentType = type;
 	}
@@ -174,16 +179,13 @@ public class BehaviourBuilder {
 		addState(target);
 
 		allTransitions.add( new TransitionImpl(name, source, target, guard, method, data) );
-
-
 	}
-
+	
 	public void addTransition(String name, String source, 
 	  		   				  String target, String guard, 
 	  		   				  Method method) {			
 
 		addTransition(name, source, target, guard, method, ReflectionHelper.parseDataAnnotations(method));
-
 	}
 
 	public void addTransition(String name, String source, 
@@ -204,8 +206,8 @@ public class BehaviourBuilder {
 			throw new BIPException("Transition " + name + " is specifying target state " + target + " that has not been explicitly stated before.");
 
 		allTransitions.add( new TransitionImpl(name, source, target, guard, method, data) );
-
 	}	
+	
 
 	/**
 	 * It add a guard based on the provided method with the guard name equal to method name.
@@ -214,6 +216,7 @@ public class BehaviourBuilder {
 	public void addGuard(Method method) {
 		addGuard(method.getName(), method);
 	}
+
 	
 	/**
 	 * It adds the guard by providing directly the method parameter. The method 
@@ -236,16 +239,30 @@ public class BehaviourBuilder {
 		
 		DataOutImpl<?> data = ReflectionHelper.parseReturnDataAnnotation(method); 
 		dataOut.add( data );
-		dataOutName.put(data.name(), method);
-								
+		dataOutName.put(data.name(), getMethodHandleFromMethod(method));
 	}
 
 	public void addDataOut(Method method, org.bip.annotations.Data annotation) {		
 		
 		DataOutImpl<?> data = ReflectionHelper.parseReturnDataAnnotation(method, annotation); 
 		dataOut.add( data );
-		dataOutName.put(data.name(), method);
+		dataOutName.put(data.name(), getMethodHandleFromMethod(method));
 								
 	}
 
+	private MethodHandle getMethodHandleFromMethod(Method method) {
+		MethodType methodType;
+		MethodHandle methodHandle = null;
+		MethodHandles.Lookup lookup = MethodHandles.lookup();
+		methodType = MethodType.methodType(method.getReturnType(), method.getParameterTypes());
+		try {
+			methodHandle = lookup.findVirtual(component.getClass(), method.getName(), methodType);
+		} catch (NoSuchMethodException e) {
+			ExceptionHelper.printExceptionTrace(logger, e, "When building behaviour for component " + componentType);
+		} catch (IllegalAccessException e) {
+			ExceptionHelper.printExceptionTrace(logger, e, "When building behaviour for component " + componentType);
+		}
+		return methodHandle;
+	}
+	
 }

@@ -21,17 +21,14 @@ import org.slf4j.LoggerFactory;
 @ComponentType(initial = "start", name = "org.bip.spec.QComponent")
 public class QComponent {
 
-    Logger logger = LoggerFactory.getLogger(SwitchableRoute.class);
+    Logger logger = LoggerFactory.getLogger(QComponent.class);
 
     public int qCounter = 0;
 
     boolean qEnabled = false;
 
-    /*
-      * Check what are the conditions for throwing the exception.
-      */
     @Transition(name = "q", source = "start", target = "start", guard = "isQEnabled")
-    public void enforceableQ() throws Exception {
+    public void enforceableQ() {
         logger.debug("Q transition is being executed.");
         qCounter++;
         qEnabled = false;

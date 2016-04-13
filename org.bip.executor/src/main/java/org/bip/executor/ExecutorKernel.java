@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 /*
  * It is not a multi-thread safe executor kernel therefore it should never be directly used.
- * It needs to proxied to protect it from multi-thread access by for example Akka actor approach. 
+ * It needs to be proxied to protect it from multi-thread access by for example Akka actor approach. 
  */
 public class ExecutorKernel extends SpecificationParser implements OrchestratedExecutor, ComponentProvider {
 
@@ -71,15 +71,18 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 		this.id = id;
 	}
 	
-	// TODO, Proxy can be also obtained using this singleton 
-	// proxy = TypedActor.<OrchestratedExecutor>self();
-	// However, we tight ourselves to TypedActor singleton that can 
-	// be disastrous in OSGi setup. 
-	// However, at the same time any exception thrown from any function 
-	// in this class will cause the TypedActor to die and a new one respawn
-	// making this proxy obsolete thus not being able to progress any further.
-	// Maybe, this is actually is not bad as we may want to have guarantees that
-	// after exception is being thrown no more function calls follow to this object.
+	/*
+	 * TODO, Proxy can be also obtained using this singleton 
+	 * proxy = TypedActor.<OrchestratedExecutor>self(); 
+	 * However, we tight ourselves to TypedActor singleton 
+	 * that can be disastrous in OSGi setup. However, at
+	 * the same time any exception thrown from any function in this class will
+	 * cause the TypedActor to die and a new one respawn making this proxy
+	 * obsolete thus not being able to progress any further. Maybe, this is
+	 * actually is not bad as we may want to have guarantees that after
+	 * exception is being thrown no more function calls follow to this object.
+	 */
+	
 	public void setProxy(OrchestratedExecutor proxy) {
 		this.proxy = proxy;
 		if (bipComponent instanceof BIPActorAware) {
@@ -108,7 +111,7 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 	}
 
 	// Computed in guardToValue, used for checks in execute.
-	Map<String, Boolean> guardToValue;
+	private Map<String, Boolean> guardToValue;
 
 	/**
 	 * If no engine is registered it will exit immediately.
@@ -195,7 +198,7 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 			// that there are no transitions
 			// store this information and use it for the next cycles till you get something
 			// different. When this is done uncomment the next line.
-			waitingForSpontaneous = true;
+			 waitingForSpontaneous = true;
 			// engine.inform(proxy, behaviour.getCurrentState(), globallyDisabledPorts);
 			// Next step will be invoked upon receiving a spontaneous event. 
 			return;
@@ -260,7 +263,7 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 	@Override
 	public void inform(String portID, Map<String, Object> data) {
 
-		// TODO DESIGN DISCUSSION what if the port (spontaneous does not exist?). It should throw an exception or ignore it.
+		// TODO DESIGN DISCUSSION what if the port (spontaneous) does not exist?. It should throw an exception or ignore it.
 		if (portID == null || portID.isEmpty() || !behaviour.isSpontaneousPort(portID)) {
 			return;
 		}
@@ -277,8 +280,7 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 		}
 		
 	}
-
-
+	
 	public <T> T getData(String name, Class<T> clazz) {
 
 		if (name == null || name.isEmpty()) {
@@ -291,25 +293,20 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 		T result = null;
 
 		try {
-			logger.debug("Component {} getting data {}.",
+			logger.debug("Component {} providing data {}.",
 					behaviour.getComponentType(), name);
+			Object[] args = new Object[1];
+			args[0] = bipComponent;
 			Object methodResult = behaviour.getDataOutMapping().get(name)
-					.invoke(bipComponent);
+					.invokeWithArguments(args);
 			
 			if (!clazz.equals(Object.class) && !methodResult.getClass().isAssignableFrom(clazz)) {
 				result = getPrimitiveData(name, methodResult, clazz);
 			} else
 				result = clazz.cast(methodResult);
 
-		} catch (IllegalAccessException e) {
+		} catch (Throwable e) {
 			ExceptionHelper.printExceptionTrace(logger, e);
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			ExceptionHelper.printExceptionTrace(logger, e);
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			ExceptionHelper.printExceptionTrace(logger, e);
-			ExceptionHelper.printExceptionTrace(logger, e.getTargetException());
 			e.printStackTrace();
 		}
 		return result;

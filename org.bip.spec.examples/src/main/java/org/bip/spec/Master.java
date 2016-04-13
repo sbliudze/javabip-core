@@ -48,7 +48,7 @@ public class Master {
 	}
 
 	@Guard(name = "mySlaves")
-	public boolean mySlaves(@Data(name = "slaveID") String slave1ID, @Data(name = "slaveID") String slave2ID) {
+	public boolean mySlaves(@Data(name = "slaveID1") String slave1ID, @Data(name = "slaveID2") String slave2ID) {
 		boolean guardCheck = (slave1.equals(slave1ID) && slave2.equals(slave2ID))
 				|| (slave1.equals(slave2ID) && slave2.equals(slave1ID));
 		logger.debug("Slave1: " + slave1 + " Slave2: " + slave2 + " ID1: " + slave1ID + " ID2: " + slave2ID + " "
