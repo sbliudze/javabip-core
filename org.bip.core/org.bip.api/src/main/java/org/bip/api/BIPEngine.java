@@ -60,6 +60,8 @@ public interface BIPEngine {
 	 * It starts the BIP engine thread.
 	 */
 //	void start();
+	
+	void pause(BIPComponent component);
 
 	/**
 	 * It stops the BIP engine thread.
