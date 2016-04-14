@@ -5,6 +5,7 @@ import java.util.Hashtable;
 
 import org.bip.annotations.ComponentType;
 import org.bip.annotations.Data;
+import org.bip.annotations.Guard;
 import org.bip.annotations.Port;
 import org.bip.annotations.Ports;
 import org.bip.annotations.Transition;
@@ -13,6 +14,7 @@ import org.bip.api.DataOut.AccessType;
 
 @Ports({ @Port(name = "askResource", type = PortType.enforceable),
 		@Port(name = "getResource", type = PortType.enforceable),
+		@Port(name = "readData", type = PortType.enforceable),
 		@Port(name = "generate", type = PortType.enforceable),
 		@Port(name = "release", type = PortType.enforceable) })
 @ComponentType(initial = "0", name = "org.bip.spec.resources.KalrayTask")
@@ -21,6 +23,8 @@ public class KalrayTask extends RConsumerComponent {
 	private String dataToCreate;
 	private String memoryId;
 	private String name;
+	private boolean asked;
+	private boolean needsData;
 
 	public KalrayTask(String name, String utility, String dataCreated) {
 		super(utility); // "p=1 & m=1 & Dxx=1"
@@ -29,17 +33,23 @@ public class KalrayTask extends RConsumerComponent {
 		this.dataToCreate = dataCreated;
 		this.name = name;
 		this.memoryId = "";
+		this.asked = false;
+		this.needsData = false;
 	}
 	
 	public void setRequiredData(String requiredDataName) {
 		this.dataRelease.add(requiredDataName);
+		if (requiredDataName.startsWith("D")) {
+			this.needsData = true;
+		}
 	}
 
-	@Transition(name = "askResource", source = "0", target = "1", guard = "")
+	@Transition(name = "askResource", source = "0", target = "1", guard = "firstTime")
 	public void askResource() {
 		dataRelease.remove(dataRelease.size()-1);
 		dataRelease.add("-1");
 		System.err.println("Task " + this.name + " has asked for resources with utility " + utility);
+		asked = true;
 	}
 
 	@Transition(name = "getResource", source = "1", target = "2", guard = "")
@@ -61,8 +71,20 @@ public class KalrayTask extends RConsumerComponent {
 		if (this.memoryId==null)this.memoryId ="";
 		
 	}
+	
+	@Transition(name = "", source = "2", target = "3", guard = "noData")
+	public void noDataToGenerate() {
+		System.err.println("Task " + name + " does not generate data " + dataToCreate);
+	}
+	
+	@Transition(name = "readData", source = "2", target = "3", guard = "needsData")
+	public void readExternalData() {
+		System.err.println("Task " + name + " genarating data " + dataToCreate);
+		// this is synchronizing with KalrayMemory.read
+	}
 
-	@Transition(name = "generate", source = "2", target = "3", guard = "")
+
+	@Transition(name = "generate", source = "2", target = "3", guard = "!needsData")
 	public void createData() {
 		System.err.println("Task " + name + " genarating data " + dataToCreate);
 		// this is synchronizing with KalrayMemory.create
@@ -70,7 +92,7 @@ public class KalrayTask extends RConsumerComponent {
 
 	@Transition(name = "release", source = "3", target = "0", guard = "")
 	public void releaseResource() {
-		System.err.println("Releasing the resources: " + dataRelease);
+		System.err.println("Task " + name + " releasing the resources: " + dataRelease);
 	}
 	
 	@Transition(name = "", source = "-1", target = "0", guard = "")
@@ -105,5 +127,20 @@ public class KalrayTask extends RConsumerComponent {
 	@Data(name = "dataReadCount", accessTypePort = AccessType.any)
 	public int dataReadCount() {
 		return 1;
+	}
+	
+	@Guard(name="firstTime")
+	public boolean hasAsked() {
+		return !asked;
+	}
+	
+	@Guard(name="needsData")
+	public boolean needsData() {
+		return needsData;
+	}
+	
+	@Guard(name="noData")
+	public boolean noData() {
+		return dataToCreate=="";
 	}
 }

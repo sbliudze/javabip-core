@@ -25,7 +25,7 @@ public class BoundedResourceManager extends ResourceManager {
 
 	@Override
 	public void decreaseCost(String amount) {
-		logger.debug("The amount of deallocated bounded resource " + resourceName + " is " + amount);
+		logger.debug("The amount of allocated bounded resource " + resourceName + " is " + amount);
 		int taken = Integer.parseInt(amount);
 		this.currentCapacity -= taken;
 	}

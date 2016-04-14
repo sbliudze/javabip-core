@@ -207,7 +207,8 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 		// throw new BIPException("No transition of known type from state "
 		// + behaviour.getCurrentState() + " in component "
 		// + this.getId());
-
+		// TODO: in case that component has come to its final transition?
+		engine.inform(proxy, behaviour.getCurrentState(), globallyDisabledPorts);
 	}
 
 	/**

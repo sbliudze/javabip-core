@@ -214,18 +214,19 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 		solver.add(request.evaluate(nameToExpr)); // add the request constraint
 		logger.debug("Tokens of the dnet at initialisation are: " + placeTokens);
 		ArrayList<BoolExpr> dNetConstraints = dnet.run(placeVariables, placeTokens);
-		logger.debug("The dnet constraints are: " + dNetConstraints);
+		logger.debug("For component " + componentID +" The dnet constraints are: " + dNetConstraints);
 		for (BoolExpr constr : dNetConstraints) {
 			solver.add(constr);
 		}
 		addCost();
 		if (solver.check() != Status.SATISFIABLE) {
-			//System.err.println("Allocation for " + requestString + " IS NOT POSSIBLE.");
+			//System.err.println("Allocation for " + requestString + " in component " + componentID + " IS NOT POSSIBLE.");
+			//System.err.println("Constraints are " + solver);
 			return false;
 		}
 		//System.err.println("Allocation for " + requestString + " OK.");
 		Model model = solver.getModel();
-		//System.err.println("Allocation for " + requestString + ": "+ model);
+		//System.err.println("Allocation for " + requestString + " of " + componentID +  ": "+ model);
 		// there is no optimisation in not putting the same model several times, since the context and the Expressions change for each execution,
 		// and they should be coherent with the model
 		// we save the model so that we can use it during the allocation phase
