@@ -155,10 +155,10 @@ public class TCPAcceptor {
 			System.out.println("Before specify glue..");
 		engine.specifyGlue(bipGlue);
 			System.out.println("Before starting the engine..");
-		engine.start();
-
-
-		engine.execute();
+//		engine.start();
+//
+//
+//		engine.execute();
 			// assertEquals("Spontaneous wait on one component has blocked all the components",
 			// bComponent.counterA > 0, true);
 

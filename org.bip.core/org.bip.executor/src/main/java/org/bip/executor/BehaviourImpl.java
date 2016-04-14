@@ -331,6 +331,8 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 	//is it used by someone else than the engine? so - should it contain data for spontaneous ports as well?
 	public Set<Data<?>> portToDataInForGuard(Port port) {
+//		logger.debug("ports to data needed for guard {}", portToDataInForGuard);
+//		logger.debug("ports to data needed for transition {}", portToDataInForTransition);
 			return this.portToDataInForGuard.get(port);
 	}
 	

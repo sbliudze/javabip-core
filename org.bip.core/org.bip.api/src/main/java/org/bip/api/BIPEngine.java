@@ -59,7 +59,7 @@ public interface BIPEngine {
 	/**
 	 * It starts the BIP engine thread.
 	 */
-	void start();
+//	void start();
 
 	/**
 	 * It stops the BIP engine thread.
@@ -69,7 +69,7 @@ public interface BIPEngine {
 	/**
 	 * It starts the execution of BIP engine cycles for the registered BIP components.
 	 */
-	void execute();
+//	void execute();
 
 
 	void initialize();

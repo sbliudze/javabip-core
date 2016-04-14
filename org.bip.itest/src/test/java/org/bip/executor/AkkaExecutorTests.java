@@ -65,7 +65,7 @@ public class AkkaExecutorTests {
 		HanoiMonitor hanoiMonitor = new HanoiMonitor(3);
 		
 		BIPActor actor = engine.register(hanoiMonitor, "hanoiMonitor", false);
-		engine.start();
+//		engine.start();
 		assertNotNull("Actor Typed actor is not created properly", actor);
 
 		engine.stop();
@@ -136,9 +136,9 @@ public class AkkaExecutorTests {
 		final BIPActor executorM = engine.register(routeOnOffMonitor, "monitor", true);
 
 //		engine.specifyGlue(bipGlue);
-		engine.start();
-		
-		engine.execute();
+//		engine.start();
+//		
+//		engine.execute();
 		
 		try {
 			Thread.sleep(20000);
@@ -185,9 +185,9 @@ public class AkkaExecutorTests {
 		BIPActor actor5 = engine.register(leftMiddleHanoiPeg, "LeftMiddleHanoiPeg", false);				
 				
 		// engine.specifyGlue(bipGlue4Hanoi);
-		engine.start();
-
-		engine.execute();
+//		engine.start();
+//
+//		engine.execute();
 
 		try {
 			Thread.sleep(10000);
@@ -232,9 +232,9 @@ public class AkkaExecutorTests {
 		
 		// engine.specifyGlue(bipGlue4Hanoi);
 		
-		engine.start();
-		
-		engine.execute();
+//		engine.start();
+//		
+//		engine.execute();
 
 		try {
 			Thread.sleep(10000);
@@ -281,9 +281,9 @@ public class AkkaExecutorTests {
 		BIPActor actor4 = engine.register(rightHanoiPeg, "RightHanoiPeg", false);
 
 		// engine.specifyGlue(bipGlue4Hanoi);
-		engine.start();
-
-		engine.execute();
+//		engine.start();
+//
+//		engine.execute();
 
 		try {
 			Thread.sleep(2000);
@@ -329,9 +329,9 @@ public class AkkaExecutorTests {
 		BIPActor actor4 = engine.register(rightHanoiPeg, "RightHanoiPeg", false);
 
 		// engine.specifyGlue(bipGlue4Hanoi);
-		engine.start();
-
-		engine.execute();
+//		engine.start();
+//
+//		engine.execute();
 
 		try {
 			Thread.sleep(20000);
@@ -373,9 +373,9 @@ public class AkkaExecutorTests {
 		BIPActor actor4 = engine.register(rightHanoiPeg, "rightHanoi", false);
 
 		// engine.specifyGlue(bipGlue4Hanoi);
-		engine.start();
-
-		engine.execute();
+//		engine.start();
+//
+//		engine.execute();
 
 		try {
 			Thread.sleep(10000);
@@ -421,9 +421,9 @@ public class AkkaExecutorTests {
 		BIPActor actor4 = engine.register(rightHanoiPeg, "rightHanoi", false);
 
 		// engine.specifyGlue(bipGlue4Hanoi);
-		engine.start();
-
-		engine.execute();
+//		engine.start();
+//
+//		engine.execute();
 
 		try {
 			Thread.sleep(30000);
@@ -475,10 +475,10 @@ public class AkkaExecutorTests {
 		BIPActor cExecutor = engine.register(cComponent, "cCompE", true);
 		
 		// engine.specifyGlue(bipGlue);
-		engine.start();
-
-		
-		engine.execute();
+//		engine.start();
+//
+//		
+//		engine.execute();
 
 		try {
 			Thread.sleep(4000);
@@ -520,8 +520,7 @@ public class AkkaExecutorTests {
 
 
 		// engine.specifyGlue(bipGlue);
-		engine.start();
-		engine.execute();
+//		engine.ste();
 
 		try {
 			Thread.sleep(30000);
@@ -561,9 +560,9 @@ public class AkkaExecutorTests {
 		final BIPActor executor2b = engine.register( peer2b, "22", true);
 		
 		// engine.specifyGlue(bipGlue);
-		engine.start();
-		
-		engine.execute();
+//		engine.start();
+//		
+//		engine.execute();
 		
 		try {
 			Thread.sleep(10000);
@@ -599,9 +598,9 @@ public class AkkaExecutorTests {
 		BIPActor actor2 = engine.register(consumer, "consumer", true);
 		
 		// engine.specifyGlue(bipGlue);
-		engine.start();
-
-		engine.execute();
+//		engine.start();
+//
+//		engine.execute();
 		
 		try {
 			Thread.sleep(5000);
@@ -639,9 +638,9 @@ public class AkkaExecutorTests {
 		
 
 		// engine.specifyGlue(bipGlue);
-		engine.start();
-
-		engine.execute();
+//		engine.start();
+//
+//		engine.execute();
 
 		try {
 			Thread.sleep(5000);
@@ -711,9 +710,9 @@ public class AkkaExecutorTests {
 //		BIPActor executorSE = engine.register(slaveE, "slaveE", true);
 
 		// engine.specifyGlue(bipGlue);
-		engine.start();
-
-		engine.execute();
+//		engine.start();
+//
+//		engine.execute();
 
 		try {
 			Thread.sleep(5000);
@@ -761,9 +760,9 @@ public class AkkaExecutorTests {
 		BIPActor p3E = engine.register(p3, "p3E", true);
 
 		// engine.specifyGlue(bipGlue4Philosophers);
-		engine.start();
-
-		engine.execute();
+//		engine.start();
+//
+//		engine.execute();
 
 		try {
 			Thread.sleep(5000);
@@ -809,9 +808,9 @@ public class AkkaExecutorTests {
 		final BIPActor executorC = engine.register(componentC, "compC", true);
 
 		// engine.specifyGlue(bipGlue);
-		engine.start();
-
-		engine.execute();
+//		engine.start();
+//
+//		engine.execute();
 
 		try {
 			Thread.sleep(5000);
@@ -891,9 +890,9 @@ public class AkkaExecutorTests {
         final BIPActor executorM = engine.register(routeOnOffMonitor, "monitor", true);
 
         //engine.specifyGlue(bipGlue);
-        engine.start();
-
-        engine.execute();
+//        engine.start();
+//
+//        engine.execute();
 
         try {
             Thread.sleep(5000);

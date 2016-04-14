@@ -144,9 +144,9 @@ public class UntypedTCPAcceptor {
 
 
 		engine.specifyGlue(bipGlue);
-		engine.start();
+//		engine.start();
 
-		engine.execute();
+//		engine.execute();
 			try {
 				Thread.sleep(25000);
 			} catch (InterruptedException e3) {

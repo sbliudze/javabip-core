@@ -59,4 +59,32 @@ public class DynamicityTrackersPeersTests {
 		
 		sleep(5);
 	}
+	
+	@Test
+	public void testAddingTrackers() {
+		engine.register(new Tracker(0), "t0", true);
+		engine.register(new Peer(0), "p0", true);
+		
+		sleep(3);
+		
+		engine.register(new Tracker(1), "t1", true);
+		
+		sleep(2);
+		
+		engine.register(new Tracker(2), "t2", true);
+		
+		sleep(3);
+	}
+	
+	@Test
+	public void testAddingPeers() {
+		engine.register(new Tracker(0), "t0", true);
+		engine.register(new Peer(0), "p0", true);
+		
+		sleep(3);
+		
+		engine.register(new Peer(1), "p1", true);
+		
+		sleep(2);
+	}
 }

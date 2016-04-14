@@ -410,9 +410,9 @@ public class NewTCPAcceptor {
 			// e18.printStackTrace();
 			// }
 		engine.specifyGlue(bipGlue);
-		engine.start();
-
-		engine.execute();
+//		engine.start();
+//
+//		engine.execute();
 
 		try {
 				Thread.sleep(500000);

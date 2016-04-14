@@ -157,15 +157,15 @@ public class IntegrationTests {
 		}
 
 		engine.specifyGlue(bipGlue);
-		engine.start();
-
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
-		engine.execute();
+//		engine.start();
+//
+//		try {
+//			Thread.sleep(2000);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
+//
+//		engine.execute();
 		
 		try {
 			Thread.sleep(20000);
@@ -230,13 +230,13 @@ public class IntegrationTests {
 		}, "SW2");
 
 		engine.specifyGlue(bipGlue);
-		engine.start();
+//		engine.start();
 
 		threadSendingSpontaneousEvents.start();
 
 		int sleepCounter = 0;
 
-		engine.execute();
+//		engine.execute();
 
 		while (component1.getsCounter() < noSpontaneousToBeSend) {
 			final int internalSleep = 2000;
@@ -310,13 +310,13 @@ public class IntegrationTests {
 		}, "SW2");
 
 		engine.specifyGlue(bipGlue);
-		engine.start();
+//		engine.start();
 
 		t2.start();
 
 		int sleepCounter = 0;
 
-		engine.execute();
+//		engine.execute();
 
 		try {
 			Thread.sleep(30000);
@@ -451,11 +451,11 @@ public class IntegrationTests {
 		}, "TestDriver");
 
 		engine.specifyGlue(bipGlue);
-		engine.start();
+//		engine.start();
 
 		testDriver.start();
 
-		engine.execute();
+//		engine.execute();
 		
 		try {
 			Thread.sleep(40000);
@@ -556,11 +556,11 @@ public class IntegrationTests {
 		}, "TestDriver");
 
 		engine.specifyGlue(bipGlue);
-		engine.start();
+//		engine.start();
 
 		testDriver.start();
 
-		engine.execute();
+//		engine.execute();
 
 		try {
 			Thread.sleep(5000);
@@ -721,7 +721,7 @@ public class IntegrationTests {
 
 
 		engine.specifyGlue(bipGlue);
-		engine.start();
+//		engine.start();
 
 		testDriver1.start();
 		testDriver2.start();
@@ -730,7 +730,7 @@ public class IntegrationTests {
 
 		int sleepCounter = 0;
 
-		engine.execute();
+//		engine.execute();
 
 		while (pComponent.pCounter < noIterations) {
 			final int internalSleep = 20000;
@@ -866,14 +866,14 @@ public class IntegrationTests {
 
 		engine.specifyGlue(bipGlue);
 
-		engine.start();
+//		engine.start();
 
 		testDriver.start();
 		testDriver2.start();
 
 		int sleepCounter = 0;
 
-		engine.execute();
+//		engine.execute();
 
 		while (qComponent.qCounter < noIterations) {
 			final int internalSleep = 4000;

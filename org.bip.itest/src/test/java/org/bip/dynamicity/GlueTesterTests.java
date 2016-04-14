@@ -57,18 +57,18 @@ public class GlueTesterTests {
 		this.system = ActorSystem.create();
 		this.engineFactory = new EngineFactory(system);
 	}
-
+	
 	@Test
 	public void testGlueIsValid() {
 		BIPEngine engine = engineFactory.create("engine", glue);
 		for (int i = 0; i < ids.size(); i++) {
 			engine.register(instances.get(i), ids.get(i), true);
 		}
-		engine.start();
+//		engine.start();
 
 		sleep(2);
 
-		engine.execute();
+//		engine.execute();
 		
 		sleep(2);
 		
