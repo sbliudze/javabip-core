@@ -28,12 +28,14 @@ import org.bip.spec.QComponent;
 import org.bip.spec.RComponent;
 import org.bip.spec.resources.Bus;
 import org.bip.spec.resources.ComponentNeedingResource;
+import org.bip.spec.resources.DataMemoryManager;
 import org.bip.spec.resources.KalrayData;
 import org.bip.spec.resources.KalrayMemory;
 import org.bip.spec.resources.KalrayMemoryBank;
 import org.bip.spec.resources.KalrayResource;
 import org.bip.spec.resources.KalrayTask;
 import org.bip.spec.resources.KalrayTaskResource;
+import org.bip.spec.resources.MemoryManager;
 import org.bip.spec.resources.RouteUser;
 import org.bip.spec.resources.Memory;
 import org.bip.spec.resources.Processor;
@@ -325,10 +327,6 @@ public class ResourceTest {
 						AllocatorImpl.class, "provideResource");
 				synchron(KalrayTask.class, "readData").to(KalrayMemory.class,
 						"read");
-//				 synchron(KalrayTask.class, "generate").to(KalrayMemory.class,
-//						 "create");
-//				 synchron(KalrayMemory.class, "create").to(KalrayData.class,
-//						 "create");
 				port(KalrayTask.class, "generate").requires(KalrayMemory.class,
 						"create", KalrayData.class, "create");
 				port(KalrayMemory.class, "create").requires(KalrayData.class,
@@ -363,7 +361,7 @@ public class ResourceTest {
 		
 		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
 		
-		String dnetSpec = "src/test/resources/kalray_data";
+		String dnetSpec = "src/test/resources/kalray.txt";
 		AllocatorImpl alloc = new AllocatorImpl(dnetSpec);
 		
 		//RESOURCES
@@ -375,18 +373,23 @@ public class ResourceTest {
 		BoundedResourceManager p4 = new BoundedResourceManager("p4", 1);
 		
 		VirtualResourceManager m = new VirtualResourceManager("m");
-		BoundedResourceManager m1 = new BoundedResourceManager("m1", 1);
-		BoundedResourceManager m2 = new BoundedResourceManager("m2", 1);
-		BoundedResourceManager m3 = new BoundedResourceManager("m3", 1);
-		BoundedResourceManager m4 = new BoundedResourceManager("m4", 1);
+		MemoryManager m1 = new MemoryManager("m1", 1);
+		MemoryManager m2 = new MemoryManager("m2", 1);
+		MemoryManager m3 = new MemoryManager("m3", 1);
+		MemoryManager m4 = new MemoryManager("m4", 1);
 		// Now, the link between resource manager and memory is implicit in the names
 		// (we do not make any additional connections).
 		// Ideally, though,there should be one memory manager and several memories, no? 
-		KalrayMemory km1 = new KalrayMemory("m1");
-		KalrayMemory km2 = new KalrayMemory("m2");
-		KalrayMemory km3 = new KalrayMemory("m3");
-		KalrayMemory km4 = new KalrayMemory("m4");
+		KalrayMemory km1 = new KalrayMemory("m1", m1);
+		KalrayMemory km2 = new KalrayMemory("m2", m2);
+		KalrayMemory km3 = new KalrayMemory("m3", m3);
+		KalrayMemory km4 = new KalrayMemory("m4", m4);
 		//now, this resource manager should have a link to the memory resource (where the data is created)
+		DataMemoryManager dm1 = new DataMemoryManager("dm1", 1); m1.setDataMemoryManager(dm1);
+		DataMemoryManager dm2 = new DataMemoryManager("dm2", 1); m2.setDataMemoryManager(dm2);
+		DataMemoryManager dm3 = new DataMemoryManager("dm3", 1); m3.setDataMemoryManager(dm3);
+		DataMemoryManager dm4 = new DataMemoryManager("dm4", 1); m4.setDataMemoryManager(dm4);
+		
 		
 		VirtualResourceManager L1 = new VirtualResourceManager("L1");
 		VirtualResourceManager R1 = new VirtualResourceManager("R1");
@@ -408,8 +411,8 @@ public class ResourceTest {
 		String request = "p=1 & m=1";
 		KalrayTask T1 = new KalrayTask("T1", request, "D13"); T1.setRequiredData("-1"); 
 		KalrayTask T2 = new KalrayTask("T2", request, "D24"); T2.setRequiredData("-1"); // this is done in order to have a list of resources to be released
-		KalrayTask T3 = new KalrayTask("T3", "p=1 & m=1 & D13=1 & D53=1", "D34");  T3.setRequiredData("D13");  T3.setRequiredData("D53"); T3.setRequiredData("-1");
-		KalrayTask T4 = new KalrayTask("T4", "p=1 & m=1 & D24=1 & D34=1", ""); T4.setRequiredData("D24");  T4.setRequiredData("D34"); T4.setRequiredData("-1");
+		KalrayTask T3 = new KalrayTask("T3", "p=1 & m=1 & D13=13 & D53=53", "D34");  T3.setRequiredData("D13");  T3.setRequiredData("D53"); T3.setRequiredData("-1");
+		KalrayTask T4 = new KalrayTask("T4", "p=1 & m=1 & D24=24 & D34=34", ""); T4.setRequiredData("D24");  T4.setRequiredData("D34"); T4.setRequiredData("-1");
 		KalrayTask T5 = new KalrayTask("T5", request, "D53"); T5.setRequiredData("-1");
 		
 		BIPActor actor1 = engine.register(T1, "task1", true); 
@@ -429,6 +432,7 @@ public class ResourceTest {
 		
 		alloc.addResource(p);alloc.addResource(p1);alloc.addResource(p2);alloc.addResource(p3);alloc.addResource(p4);
 		alloc.addResource(m);alloc.addResource(m1);alloc.addResource(m2);alloc.addResource(m3);alloc.addResource(m4);
+		alloc.addResource(dm1);alloc.addResource(dm2);alloc.addResource(dm3);alloc.addResource(dm4);
 		alloc.addResource(R1);alloc.addResource(L1);alloc.addResource(R2);alloc.addResource(L2);
 		alloc.addResource(b12L);alloc.addResource(b34L);alloc.addResource(b12R);alloc.addResource(b34R);
 		alloc.addResource(D13);alloc.addResource(D24);alloc.addResource(D53);alloc.addResource(D34);

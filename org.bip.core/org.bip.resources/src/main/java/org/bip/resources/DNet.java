@@ -93,7 +93,7 @@ public class DNet implements ContextProvider {
 		for (Place place : outPlaces) {
 			outs.add(place.name());
 			if (!places.contains(place)) {
-				throw new DNetException("The postPlace " + place.name() + " of transition " + transitionName + "is not among the places of the DNet.");
+				throw new DNetException("The postPlace " + place.name() + " of transition " + transitionName + " is not among the places of the DNet.");
 			}
 		}
 		for (Place place : inPlaces) {

@@ -23,7 +23,7 @@ public class KalrayData extends SingleResourceManager {
 
 	@Transition(name = "create", source = "0", target = "1", guard = "idOK")
 	public void create() {
-		logger.info("The resource data " + this.resourceName
+		System.err.println("The resource data " + this.resourceName
 				+ " has been created.");
 		created = true;
 	}
@@ -36,7 +36,9 @@ public class KalrayData extends SingleResourceManager {
 	}
 
 	@Guard(name = "idOK")
+	//TODO looks like the guard is never called, because the data is not specified
 	public boolean interactionAllowed(@Data(name = "id") String givenId) {
+		System.out.println("Aaaa "+ givenId);
 		return this.resourceName == givenId;
 	}
 
@@ -44,6 +46,6 @@ public class KalrayData extends SingleResourceManager {
 	public String cost() {
 		if (!created)
 			return resourceName + "=0";
-		return resourceName + "=0 | " + resourceName + "=1";
+		return resourceName + "=0 | " + resourceName + "="+Integer.parseInt(name().substring(1));
 	}
 }

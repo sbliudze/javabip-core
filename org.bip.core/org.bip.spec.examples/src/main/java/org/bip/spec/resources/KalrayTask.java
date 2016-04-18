@@ -17,7 +17,7 @@ import org.bip.api.DataOut.AccessType;
 		@Port(name = "readData", type = PortType.enforceable),
 		@Port(name = "generate", type = PortType.enforceable),
 		@Port(name = "release", type = PortType.enforceable) })
-@ComponentType(initial = "0", name = "org.bip.spec.resources.KalrayTask")
+@ComponentType(initial = "init", name = "org.bip.spec.resources.KalrayTask")
 public class KalrayTask extends RConsumerComponent {
 
 	private String dataToCreate;
@@ -25,6 +25,7 @@ public class KalrayTask extends RConsumerComponent {
 	private String name;
 	private boolean asked;
 	private boolean needsData;
+	private ArrayList<String> dataMemories;
 
 	public KalrayTask(String name, String utility, String dataCreated) {
 		super(utility); // "p=1 & m=1 & Dxx=1"
@@ -35,6 +36,7 @@ public class KalrayTask extends RConsumerComponent {
 		this.memoryId = "";
 		this.asked = false;
 		this.needsData = false;
+		dataMemories = new ArrayList<String>();  
 	}
 	
 	public void setRequiredData(String requiredDataName) {
@@ -44,7 +46,7 @@ public class KalrayTask extends RConsumerComponent {
 		}
 	}
 
-	@Transition(name = "askResource", source = "0", target = "1", guard = "firstTime")
+	@Transition(name = "askResource", source = "init", target = "asked", guard = "firstTime")
 	public void askResource() {
 		dataRelease.remove(dataRelease.size()-1);
 		dataRelease.add("-1");
@@ -52,7 +54,7 @@ public class KalrayTask extends RConsumerComponent {
 		asked = true;
 	}
 
-	@Transition(name = "getResource", source = "1", target = "2", guard = "")
+	@Transition(name = "getResource", source = "asked", target = "got", guard = "")
 	public void getResource(@Data(name = "resourceArray") Hashtable<String, String> resources,
 			@Data(name = "resourceAmounts") Hashtable<String, Integer> resourceAmounts, @Data(name = "allocID") int allocID) {
 		System.err.println("Task " + this.name + " storing the resources: " + resourceAmounts);
@@ -63,39 +65,43 @@ public class KalrayTask extends RConsumerComponent {
 		dataRelease.add(ii.toString());
 		System.err.println("Task " + this.name + ": resources to release after alloc " + allocID + " are " + dataRelease);
 		for (String resourceName: resourceAmounts.keySet()) {
-			if (resourceName.contains("m") && resourceName.length()>1 && resourceAmounts.get(resourceName)>0) {
+			if (resourceName.startsWith("m") && resourceName.length()>1 && resourceAmounts.get(resourceName)>0) {
 				this.memoryId = resources.get(resourceName);
-				//return;
+				//System.err.println("Storing memory id " + memoryId);
+			}
+			else if (resourceName.startsWith("dm") && resourceAmounts.get(resourceName)>0) {
+				dataMemories.add(resources.get(resourceName));
+				//System.err.println("Storing datamemory id " + dataMemories.get(dataMemories.size() -1));
 			}
 		}
 		if (this.memoryId==null)this.memoryId ="";
 		
 	}
 	
-	@Transition(name = "", source = "2", target = "3", guard = "noData")
+	@Transition(name = "", source = "got", target = "3", guard = "noData")
 	public void noDataToGenerate() {
 		System.err.println("Task " + name + " does not generate data " + dataToCreate);
 	}
 	
-	@Transition(name = "readData", source = "2", target = "3", guard = "needsData")
+	@Transition(name = "readData", source = "got", target = "3", guard = "needsData")
 	public void readExternalData() {
-		System.err.println("Task " + name + " genarating data " + dataToCreate);
+		System.err.println("Task " + name + " reading data " + dataToCreate);
 		// this is synchronizing with KalrayMemory.read
 	}
 
 
-	@Transition(name = "generate", source = "2", target = "3", guard = "!needsData")
+	@Transition(name = "generate", source = "got", target = "3", guard = "!needsData")
 	public void createData() {
 		System.err.println("Task " + name + " genarating data " + dataToCreate);
 		// this is synchronizing with KalrayMemory.create
 	}
 
-	@Transition(name = "release", source = "3", target = "0", guard = "")
+	@Transition(name = "release", source = "3", target = "init", guard = "")
 	public void releaseResource() {
 		System.err.println("Task " + name + " releasing the resources: " + dataRelease);
 	}
 	
-	@Transition(name = "", source = "-1", target = "0", guard = "")
+	@Transition(name = "", source = "-1", target = "init", guard = "")
 	public void cleanUp() {
 		dataRelease.remove(dataRelease.size()-1);
 		dataRelease.add("-1");
@@ -112,6 +118,12 @@ public class KalrayTask extends RConsumerComponent {
 	@Data(name = "componentID", accessTypePort = AccessType.any)
 	public String componentID() {
 		return name;
+	}
+	
+	@Data(name = "dmemory", accessTypePort = AccessType.any)
+	public String dmemoryID() {
+		String dMemory = dataMemories.remove(0);
+		return dMemory;
 	}
 	
 	@Data(name = "memory", accessTypePort = AccessType.any)

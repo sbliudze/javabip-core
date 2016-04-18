@@ -24,16 +24,28 @@ public class KalrayMemory implements ResourceProxy {
 	private int counter;
 	private String id;
 
-	private ResourceManager rManager;
+	private MemoryManager rManager;
+	private DataMemoryManager dManager;
 
 	public KalrayMemory(String id) {
 		this.id = id;
 	}
 
-	public void setResourceManager(ResourceManager manager) {
+	public KalrayMemory(String id, MemoryManager manager) {
+		this.id = id;
 		this.rManager = manager;
 	}
 	
+	public KalrayMemory(String id, MemoryManager manager, DataMemoryManager dManager) {
+		this.id = id;
+		this.rManager = manager;
+		this.dManager = dManager;
+	}
+	
+//	public void setResourceManager(MemoryManager manager) {
+//		this.rManager = manager;
+//	}
+//	
 	
 	@Override
 	public String resourceID() {
@@ -48,6 +60,7 @@ public class KalrayMemory implements ResourceProxy {
 		System.err.println("Data " + storedDataName + " created in memory "
 				+ id);
 		//TODO once data is created, inform my manager that I am not available for usage other that for the data
+		rManager.notifyCreation(storedDataName, readCount);
 		// Q: how to understand the type of usage? how can I know, that m is asked because of D?
 		// doubling the data? m_x and md_x?
 		//or dynamically change the links? since we know there is a transition between D and m_x, we know there cannot be a transition between m and m_x ->
@@ -66,6 +79,7 @@ public class KalrayMemory implements ResourceProxy {
 	public void deleteData() {
 		this.data = "";
 		// TODO once data is deleted, inform my manager I am available again for any usage
+		rManager.notifyDeletion(data);
 	}
 
 	@Guard(name = "noUse")
@@ -75,7 +89,8 @@ public class KalrayMemory implements ResourceProxy {
 
 	@Guard(name = "idOK")
 	public boolean interactionAllowed(@Data(name = "id") String givenId) {
-		return this.id == givenId;
+		System.out.println("In memory " + this.id + " checking for allowance " + givenId);
+		return this.id == givenId || ("d" + this.id == givenId );
 	}
 
 }
