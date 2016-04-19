@@ -78,19 +78,20 @@ public class KalrayTask extends RConsumerComponent {
 		
 	}
 	
-	@Transition(name = "", source = "got", target = "3", guard = "noData")
+	@Transition(name = "", source = "got", target = "3", guard = "!needsData & noData")
 	public void noDataToGenerate() {
 		System.err.println("Task " + name + " does not generate data " + dataToCreate);
 	}
 	
-	@Transition(name = "readData", source = "got", target = "3", guard = "needsData")
+	@Transition(name = "readData", source = "got", target = "got", guard = "needsData")
 	public void readExternalData() {
-		System.err.println("Task " + name + " reading data " + dataToCreate);
+		System.err.println("Task " + name + " reading data " + dataMemories.remove(0));
+		//dataMemories.remove(0);
 		// this is synchronizing with KalrayMemory.read
 	}
 
 
-	@Transition(name = "generate", source = "got", target = "3", guard = "!needsData")
+	@Transition(name = "generate", source = "got", target = "3", guard = "!needsData & !noData")
 	public void createData() {
 		System.err.println("Task " + name + " genarating data " + dataToCreate);
 		// this is synchronizing with KalrayMemory.create
@@ -120,12 +121,6 @@ public class KalrayTask extends RConsumerComponent {
 		return name;
 	}
 	
-	@Data(name = "dmemory", accessTypePort = AccessType.any)
-	public String dmemoryID() {
-		String dMemory = dataMemories.remove(0);
-		return dMemory;
-	}
-	
 	@Data(name = "memory", accessTypePort = AccessType.any)
 	public String memoryID() {
 		return memoryId;
@@ -134,6 +129,15 @@ public class KalrayTask extends RConsumerComponent {
 	@Data(name = "dataName", accessTypePort = AccessType.any)
 	public String generatedDataName() {
 		return dataToCreate;
+	}
+	
+	@Data(name = "dataToRead", accessTypePort = AccessType.allowed, ports={"readData"})
+	public String dataToRead() {
+		if (dataMemories.size() > 0) {
+			//System.out.println(" Task " + this.name + " asks for mem " + dataMemories.get(0));
+			return dataMemories.get(0);
+		}
+		return "";
 	}
 
 	@Data(name = "dataReadCount", accessTypePort = AccessType.any)
@@ -148,7 +152,8 @@ public class KalrayTask extends RConsumerComponent {
 	
 	@Guard(name="needsData")
 	public boolean needsData() {
-		return needsData;
+		//System.out.println(needsData + " Task " + this.name + " needing mem " + dataMemories.get(0));
+		return needsData && !dataMemories.isEmpty();
 	}
 	
 	@Guard(name="noData")

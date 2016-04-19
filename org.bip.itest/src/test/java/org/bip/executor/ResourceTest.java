@@ -349,8 +349,11 @@ public class ResourceTest {
 				 //data(KalrayTask.class, "componentID").to(AllocatorImpl.class, "id");
 				 data(KalrayTask.class, "dataArray").to(AllocatorImpl.class, "request-id");
 				 
+				 data(KalrayMemory.class, "dataName").to(KalrayData.class, "id");
+				 data(KalrayTask.class, "dataName").to(KalrayData.class, "id");
 				 data(KalrayTask.class, "memory").to(KalrayMemory.class, "id");
 				 data(KalrayTask.class, "dataName").to(KalrayMemory.class, "data");
+				 data(KalrayTask.class, "dataToRead").to(KalrayMemory.class, "dataID");
 				 data(KalrayTask.class, "dataReadCount").to(KalrayMemory.class, "count");
 				 data(AllocatorImpl.class, "resources").to(KalrayTask.class, "resourceArray");
 				 data(AllocatorImpl.class, "amounts").to(KalrayTask.class, "resourceAmounts");

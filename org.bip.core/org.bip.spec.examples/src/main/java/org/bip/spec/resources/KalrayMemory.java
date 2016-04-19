@@ -8,6 +8,7 @@ import org.bip.annotations.Ports;
 import org.bip.annotations.Transition;
 import org.bip.api.PortType;
 import org.bip.api.ResourceProxy;
+import org.bip.api.DataOut.AccessType;
 import org.bip.resources.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +21,7 @@ public class KalrayMemory implements ResourceProxy {
 
 	Logger logger = LoggerFactory.getLogger(KalrayMemory.class);
 
-	private String data;
+	private String data = "";
 	private int counter;
 	private String id;
 
@@ -42,11 +43,6 @@ public class KalrayMemory implements ResourceProxy {
 		this.dManager = dManager;
 	}
 	
-//	public void setResourceManager(MemoryManager manager) {
-//		this.rManager = manager;
-//	}
-//	
-	
 	@Override
 	public String resourceID() {
 		return id;
@@ -59,7 +55,6 @@ public class KalrayMemory implements ResourceProxy {
 		this.counter = readCount;
 		System.err.println("Data " + storedDataName + " created in memory "
 				+ id);
-		//TODO once data is created, inform my manager that I am not available for usage other that for the data
 		rManager.notifyCreation(storedDataName, readCount);
 		// Q: how to understand the type of usage? how can I know, that m is asked because of D?
 		// doubling the data? m_x and md_x?
@@ -67,30 +62,37 @@ public class KalrayMemory implements ResourceProxy {
 		// not true if we allocate parts of resources.
 	}
 
-	@Transition(name = "read", source = "1", target = "1", guard = "idOK")
+	@Transition(name = "read", source = "1", target = "1", guard = "dataIdOK")
 	public void readData() {
 		counter--;
-		if (counter == 0) {
-			this.data = "";
-		}
 	}
 
 	@Transition(name = "deleteData", source = "1", target = "0", guard = "noUse")
 	public void deleteData() {
 		this.data = "";
-		// TODO once data is deleted, inform my manager I am available again for any usage
 		rManager.notifyDeletion(data);
 	}
 
 	@Guard(name = "noUse")
 	public boolean dataIsNotUsed() {
+		//System.err.println("noUse in " + this.id + " for data " + this.data + " " + (counter == 0));
 		return counter == 0;
 	}
 
 	@Guard(name = "idOK")
 	public boolean interactionAllowed(@Data(name = "id") String givenId) {
-		System.out.println("In memory " + this.id + " checking for allowance " + givenId);
+		//System.out.println("In memory " + this.id + " checking for allowance " + givenId);
 		return this.id == givenId || ("d" + this.id == givenId );
 	}
+	
+	@Guard(name = "dataIdOK")
+	public boolean dinteractionAllowed(@Data(name = "dataID") String givenId) {
+		return this.id.equals(givenId) || (givenId.equals("d" + this.id));
+	}
 
+	@Data(name = "dataName", accessTypePort = AccessType.allowed, ports = {"deleteData"})
+	public String generatedDataName() {
+		return data;
+	}
+	
 }

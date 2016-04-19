@@ -9,7 +9,7 @@ transition t5 from L2, p3, p4 to b34L constraint (b34L>0 & ((p3>0 & p4=0 & L2=3)
 transition t7 from R2, p1, p2 to b12R constraint (b12R>0 & ((p1>0 & p2=0 & R2=1) | (p2>0 & p1=0 & R2=2))) | (b12R=0 & R2=0) | (b12R=0 & p1=0 & p2=0);
 transition t8 from R2, p3, p4 to b34R constraint (b34R>0 & ((p3>0 & p4=0 & R2=3) | (p4>0 & p3=0 & R2=4))) | (b34R=0 & R2=0) | (b34R=0 & p3=0 & p4=0);
 
-transition  t9 from D13 to dm1, dm2, dm3, dm4 constraint (D13=dm1 & dm2>=0 & dm3>=0 & dm4>=0) | (D13=dm2 & dm1>=0 & dm3>=0 & dm4>=0) | (D13=dm3 & dm1>=0 & dm2>=0 & dm4>=0) | (D13=dm4 & dm1>=0 & dm2>=0 & dm3>=0);
-transition t10 from D24 to dm1, dm2, dm3, dm4 constraint (D24=dm1 & dm2>=0 & dm3>=0 & dm4>=0) | (D24=dm2 & dm1>=0 & dm3>=0 & dm4>=0) | (D24=dm3 & dm1>=0 & dm2>=0 & dm4>=0) | (D24=dm4 & dm1>=0 & dm2>=0 & dm3>=0);
-transition t11 from D34 to dm1, dm2, dm3, dm4 constraint (D34=dm1 & dm2>=0 & dm3>=0 & dm4>=0) | (D34=dm2 & dm1>=0 & dm3>=0 & dm4>=0) | (D34=dm3 & dm1>=0 & dm2>=0 & dm4>=0) | (D34=dm4 & dm1>=0 & dm2>=0 & dm3>=0);
-transition t12 from D53 to dm1, dm2, dm3, dm4 constraint (D53=dm1 & dm2>=0 & dm3>=0 & dm4>=0) | (D53=dm2 & dm1>=0 & dm3>=0 & dm4>=0) | (D53=dm3 & dm1>=0 & dm2>=0 & dm4>=0) | (D53=dm4 & dm1>=0 & dm2>=0 & dm3>=0);
+transition  t9 from D13 to dm1, dm2, dm3, dm4 constraint (D13=dm1 & dm2=0 & dm3=0 & dm4=0) | (D13=dm2 & dm1=0 & dm3=0 & dm4=0) | (D13=dm3 & dm1=0 & dm2=0 & dm4=0) | (D13=dm4 & dm1=0 & dm2=0 & dm3=0);
+transition t10 from D24 to dm1, dm2, dm3, dm4 constraint (D24=dm1 & dm2=0 & dm3=0 & dm4=0) | (D24=dm2 & dm1=0 & dm3=0 & dm4=0) | (D24=dm3 & dm1=0 & dm2=0 & dm4=0) | (D24=dm4 & dm1=0 & dm2=0 & dm3=0);
+transition t11 from D34 to dm1, dm2, dm3, dm4 constraint (D34=dm1 & dm2=0 & dm3=0 & dm4=0) | (D34=dm2 & dm1=0 & dm3=0 & dm4=0) | (D34=dm3 & dm1=0 & dm2=0 & dm4=0) | (D34=dm4 & dm1=0 & dm2=0 & dm3=0);
+transition t12 from D53 to dm1, dm2, dm3, dm4 constraint (D53=dm1 & dm2=0 & dm3=0 & dm4=0) | (D53=dm2 & dm1=0 & dm3=0 & dm4=0) | (D53=dm3 & dm1=0 & dm2=0 & dm4=0) | (D53=dm4 & dm1=0 & dm2=0 & dm3=0);

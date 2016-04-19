@@ -30,15 +30,15 @@ public class KalrayData extends SingleResourceManager {
 
 	@Transition(name = "delete", source = "1", target = "0", guard = "idOK")
 	public void deleteData() {
-		logger.info("The resource data " + this.resourceName
+		System.err.println("The resource data " + this.resourceName
 				+ " has been deleted.");
 		created = false;
 	}
 
 	@Guard(name = "idOK")
-	//TODO looks like the guard is never called, because the data is not specified
+	//TODO looks like the guard is never called, because the data wire is not specified
+	// and no exceptions are thrown - what is happening down there in executor-engine?
 	public boolean interactionAllowed(@Data(name = "id") String givenId) {
-		System.out.println("Aaaa "+ givenId);
 		return this.resourceName == givenId;
 	}
 
