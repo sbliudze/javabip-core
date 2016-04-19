@@ -141,4 +141,17 @@ public class DynamicityCamelRoutesTests {
 
 		sleep(4);
 	}
+
+	@Test
+	public void testCamelRoutesRoutePausesWhenNoEnforceableTransitions() {
+		SwitchableRouteExecutableBehavior r1 = new SwitchableRouteExecutableBehavior("r1");
+		RouteOnOffMonitor m1 = new RouteOnOffMonitor(3);
+		r1.setCamelContext(context);
+		setupCamelContext(context, new int[] { 1 });
+		
+		engine.register(r1, "r1", false);
+		engine.register(m1, "m1", true);
+		
+		sleep(4);
+	}
 }
