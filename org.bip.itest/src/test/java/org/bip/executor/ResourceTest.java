@@ -458,8 +458,10 @@ public class ResourceTest {
 		engineFactory.destroy(engine);
 		
 		assertEquals("The number of data created is wrong", 4, m1.dataCreationCount() + m2.dataCreationCount() + m3.dataCreationCount() + m4.dataCreationCount());
-		//assertEquals("The number of data deleted is wrong", 4, m1.dataDeletionCount() + m2.dataDeletionCount() + m3.dataDeletionCount() + m4.dataDeletionCount());
-		
+		assertEquals("The number of data deleted is wrong", 4, m1.dataDeletionCount() + m2.dataDeletionCount() + m3.dataDeletionCount() + m4.dataDeletionCount());
+		assertEquals("The number of data read in task is wrong", 4, T1.readCount() + T2.readCount() + T3.readCount() + T4.readCount()+ T5.readCount());
+		assertEquals("The number of data created in task is wrong", 4, T1.createDataCount() + T2.createDataCount() + T3.createDataCount() + T4.createDataCount()+ T5.createDataCount());
+			
 	}
 	
 	@SuppressWarnings("unused")

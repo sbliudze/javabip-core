@@ -30,10 +30,5 @@ public class DataMemoryManager extends BoundedResourceManager {
 	public void delete() {
 		isCreated = false;
 	}
-
-//	@Override
-//	public String providedResourceID() {
-//		return "m" + resourceName.charAt(resourceName.length()-1);
-//	}
 	
 }

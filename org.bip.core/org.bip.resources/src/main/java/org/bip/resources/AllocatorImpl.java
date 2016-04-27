@@ -298,7 +298,16 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 			//TODO the label is not necessarily place.name()
 			resourceLableToID.put(place.name(), placeToResource.get(place).providedResourceID());
 			// TODO this line makes it possible only for one item of each resource to be allocated which is maybe not what we want
-			resourceNameToGivenValue.put(place.name(), model.getConstInterp(func));
+			if (!resourceNameToGivenValue.containsKey(placeName)) {
+				resourceNameToGivenValue.put(placeName, model.getConstInterp(func));
+				resourceLableToAmount.put(place.name(), i_r);
+			}
+			else {
+				//TODO put a sum of two expressions here
+				resourceNameToGivenValue.put(place.name(), model.getConstInterp(func));
+				int prevValue = resourceLableToAmount.get(placeName);
+				resourceLableToAmount.put(placeName, i_r+prevValue);
+			}
 			resourceLableToAmount.put(place.name(), i_r);
 			logger.info("Resource " + place.name() +  ", variable " + tokenName +" allocated: " + allocAmount + " units");
 		}

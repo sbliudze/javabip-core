@@ -9,8 +9,8 @@ import org.bip.annotations.Guard;
 import org.bip.annotations.Port;
 import org.bip.annotations.Ports;
 import org.bip.annotations.Transition;
-import org.bip.api.PortType;
 import org.bip.api.DataOut.AccessType;
+import org.bip.api.PortType;
 
 @Ports({ @Port(name = "askResource", type = PortType.enforceable),
 		@Port(name = "getResource", type = PortType.enforceable),
@@ -20,12 +20,16 @@ import org.bip.api.DataOut.AccessType;
 @ComponentType(initial = "init", name = "org.bip.spec.resources.KalrayTask")
 public class KalrayTask extends RConsumerComponent {
 
+	// the name of the data that this component should create
 	private String dataToCreate;
 	private String memoryId;
 	private String name;
 	private boolean asked;
 	private boolean needsData;
+	// the memories that provide the data required by the component
 	private ArrayList<String> dataMemories;
+	private int readCount = 0;
+	private int createDataCount = 0;
 
 	public KalrayTask(String name, String utility, String dataCreated) {
 		super(utility); // "p=1 & m=1 & Dxx=1"
@@ -71,14 +75,14 @@ public class KalrayTask extends RConsumerComponent {
 			}
 			else if (resourceName.startsWith("dm") && resourceAmounts.get(resourceName)>0) {
 				dataMemories.add(resources.get(resourceName));
-				//System.err.println("Storing datamemory id " + dataMemories.get(dataMemories.size() -1));
+				System.err.println("Storing datamemory id " + dataMemories.get(dataMemories.size() -1));
 			}
 		}
 		if (this.memoryId==null)this.memoryId ="";
 		
 	}
 	
-	@Transition(name = "", source = "got", target = "3", guard = "!needsData & noData")
+	@Transition(name = "", source = "got", target = "3", guard = "!needsData & !generatesData")
 	public void noDataToGenerate() {
 		System.err.println("Task " + name + " does not generate data " + dataToCreate);
 	}
@@ -88,13 +92,15 @@ public class KalrayTask extends RConsumerComponent {
 		System.err.println("Task " + name + " reading data " + dataMemories.remove(0));
 		//dataMemories.remove(0);
 		// this is synchronizing with KalrayMemory.read
+		readCount++;
 	}
 
 
-	@Transition(name = "generate", source = "got", target = "3", guard = "!needsData & !noData")
+	@Transition(name = "generate", source = "got", target = "3", guard = "!needsData & generatesData")
 	public void createData() {
 		System.err.println("Task " + name + " genarating data " + dataToCreate);
 		// this is synchronizing with KalrayMemory.create
+		createDataCount++;
 	}
 
 	@Transition(name = "release", source = "3", target = "init", guard = "")
@@ -156,8 +162,16 @@ public class KalrayTask extends RConsumerComponent {
 		return needsData && !dataMemories.isEmpty();
 	}
 	
-	@Guard(name="noData")
-	public boolean noData() {
-		return dataToCreate=="";
+	@Guard(name="generatesData")
+	public boolean generatesData() {
+		return dataToCreate!="";
+	}
+	
+	public int readCount() {
+		return readCount;
+	}
+	
+	public int createDataCount() {
+		return createDataCount;
 	}
 }
