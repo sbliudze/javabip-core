@@ -27,6 +27,7 @@ import org.bip.spec.MemoryMonitor;
 import org.bip.spec.resources.Bus;
 import org.bip.spec.resources.ComponentNeedingResource;
 import org.bip.spec.resources.DataMemoryManager;
+import org.bip.spec.resources.KalrayBus;
 import org.bip.spec.resources.KalrayData;
 import org.bip.spec.resources.KalrayMemory;
 import org.bip.spec.resources.KalrayMemoryBank;
@@ -399,10 +400,10 @@ public class ResourceTest {
 		KalrayMemoryBank R2 = new KalrayMemoryBank("R2");
 		
 		// four buses
-		BoundedResourceManager b12L = new BoundedResourceManager("b12L", 1);
-		BoundedResourceManager b34L = new BoundedResourceManager("b34L", 1);
-		BoundedResourceManager b12R = new BoundedResourceManager("b12R", 1);
-		BoundedResourceManager b34R = new BoundedResourceManager("b34R", 1);
+		KalrayBus b12L = new KalrayBus("b12L");
+		KalrayBus b34L = new KalrayBus("b34L");
+		KalrayBus b12R = new KalrayBus("b12R");
+		KalrayBus b34R = new KalrayBus("b34R");
 		
 		// kalray data - fixed for the particular data dependencies.
 		// in order to change dependencies, change the data names here an in dnet spec,

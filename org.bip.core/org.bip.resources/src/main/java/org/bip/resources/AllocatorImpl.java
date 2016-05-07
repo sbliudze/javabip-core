@@ -308,7 +308,6 @@ public class AllocatorImpl implements ContextProvider, Allocator {
 				int prevValue = resourceLableToAmount.get(placeName);
 				resourceLableToAmount.put(placeName, i_r+prevValue);
 			}
-			resourceLableToAmount.put(place.name(), i_r);
 			logger.info("Resource " + place.name() +  ", variable " + tokenName +" allocated: " + allocAmount + " units");
 		}
 		System.err.println("----------");
