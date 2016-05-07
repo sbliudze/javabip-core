@@ -393,11 +393,9 @@ public class ResourceTest {
 		DataMemoryManager dm3 = new DataMemoryManager("dm3", 1); m3.setDataMemoryManager(dm3);
 		DataMemoryManager dm4 = new DataMemoryManager("dm4", 1); m4.setDataMemoryManager(dm4);
 		
-		// two memory banks, left and right. First (1) is used for the amount, second (2) for the bus constraint
+		// two memory banks, left and right. 
 		VirtualResourceManager L1 = new VirtualResourceManager("L1");
 		VirtualResourceManager R1 = new VirtualResourceManager("R1");
-		KalrayMemoryBank L2 = new KalrayMemoryBank("L2");
-		KalrayMemoryBank R2 = new KalrayMemoryBank("R2");
 		
 		// four buses
 		KalrayBus b12L = new KalrayBus("b12L");
@@ -442,7 +440,7 @@ public class ResourceTest {
 		alloc.addResource(p);alloc.addResource(p1);alloc.addResource(p2);alloc.addResource(p3);alloc.addResource(p4);
 		alloc.addResource(m);alloc.addResource(m1);alloc.addResource(m2);alloc.addResource(m3);alloc.addResource(m4);
 		alloc.addResource(dm1);alloc.addResource(dm2);alloc.addResource(dm3);alloc.addResource(dm4);
-		alloc.addResource(R1);alloc.addResource(L1);alloc.addResource(R2);alloc.addResource(L2);
+		alloc.addResource(R1);alloc.addResource(L1);
 		alloc.addResource(b12L);alloc.addResource(b34L);alloc.addResource(b12R);alloc.addResource(b34R);
 		alloc.addResource(D13);alloc.addResource(D24);alloc.addResource(D53);alloc.addResource(D34);
 		
