@@ -4,10 +4,23 @@ transition t1 from p to p1, p2, p3, p4 constraint (p=p1 & p2=0 & p3=0 & p4=0) | 
 transition t2 from m to L1, R1 constraint (m=L1 & R1=0) | (m=R1 & L1=0);
 transition t3 from L1 to m1, m2 constraint (L1=m1 & m2=0) | (L1=m2 & m1=0);
 transition t4 from R1 to m3, m4 constraint (R1=m3 & m4=0) | (R1=m4 & m3=0);
+
 transition t6 from L1, p1, p2 to b12L constraint (b12L>0 & L1>0 & ((p1>0 & p2=0) | (p2>0 & p1=0))) | (b12L=0 & L1=0) | (b12L=0 & p1=0 & p2=0);
 transition t5 from L1, p3, p4 to b34L constraint (b34L>0 & L1>0 & ((p3>0 & p4=0) | (p4>0 & p3=0))) | (b34L=0 & L1=0) | (b34L=0 & p3=0 & p4=0);
 transition t7 from R1, p1, p2 to b12R constraint (b12R>0 & R1>0 & ((p1>0 & p2=0) | (p2>0 & p1=0))) | (b12R=0 & R1=0) | (b12R=0 & p1=0 & p2=0);
 transition t8 from R1, p3, p4 to b34R constraint (b34R>0 & R1>0 & ((p3>0 & p4=0) | (p4>0 & p3=0))) | (b34R=0 & R1=0) | (b34R=0 & p3=0 & p4=0);
+
+transition t61 from dm1, p1, p2 to b12L constraint (b12L>0 & dm1>0 & ((p1>0 & p2=0) | (p2>0 & p1=0))) | (b12L=0 & dm1=0) | (b12L=0 & p1=0 & p2=0);
+transition t51 from dm1, p3, p4 to b34L constraint (b34L>0 & dm1>0 & ((p3>0 & p4=0) | (p4>0 & p3=0))) | (b34L=0 & dm1=0) | (b34L=0 & p3=0 & p4=0);
+
+transition t62 from dm2, p1, p2 to b12L constraint (b12L>0 & dm2>0 & ((p1>0 & p2=0) | (p2>0 & p1=0))) | (b12L=0 & dm2=0) | (b12L=0 & p1=0 & p2=0);
+transition t52 from dm2, p3, p4 to b34L constraint (b34L>0 & dm2>0 & ((p3>0 & p4=0) | (p4>0 & p3=0))) | (b34L=0 & dm2=0) | (b34L=0 & p3=0 & p4=0);
+
+transition t73 from dm3, p1, p2 to b12R constraint (b12R>0 & dm3>0 & ((p1>0 & p2=0) | (p2>0 & p1=0))) | (b12R=0 & dm3=0) | (b12R=0 & p1=0 & p2=0);
+transition t83 from dm3, p3, p4 to b34R constraint (b34R>0 & dm3>0 & ((p3>0 & p4=0) | (p4>0 & p3=0))) | (b34R=0 & dm3=0) | (b34R=0 & p3=0 & p4=0);
+
+transition t74 from dm4, p1, p2 to b12R constraint (b12R>0 & dm4>0 & ((p1>0 & p2=0) | (p2>0 & p1=0))) | (b12R=0 & dm4=0) | (b12R=0 & p1=0 & p2=0);
+transition t84 from dm4, p3, p4 to b34R constraint (b34R>0 & dm4>0 & ((p3>0 & p4=0) | (p4>0 & p3=0))) | (b34R=0 & dm4=0) | (b34R=0 & p3=0 & p4=0);
 
 transition  t9 from D13 to dm1, dm2, dm3, dm4 constraint (D13=dm1 & dm2=0 & dm3=0 & dm4=0) | (D13=dm2 & dm1=0 & dm3=0 & dm4=0) | (D13=dm3 & dm1=0 & dm2=0 & dm4=0) | (D13=dm4 & dm1=0 & dm2=0 & dm3=0);
 transition t10 from D24 to dm1, dm2, dm3, dm4 constraint (D24=dm1 & dm2=0 & dm3=0 & dm4=0) | (D24=dm2 & dm1=0 & dm3=0 & dm4=0) | (D24=dm3 & dm1=0 & dm2=0 & dm4=0) | (D24=dm4 & dm1=0 & dm2=0 & dm3=0);
