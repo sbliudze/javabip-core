@@ -51,11 +51,8 @@ public class DynamicityTrackersPeersTests {
 
 	@Test
 	public void testTrackersPeersStartsAutomatically() {
-		Tracker t1 = new Tracker(1);
-		Peer p1 = new Peer(1);
-
-		engine.register(p1, "p1", true);
-		engine.register(t1, "t1", true);
+		engine.register(new Peer(1), "p1", true);
+		engine.register(new Tracker(1), "t1", true);
 		
 		sleep(5);
 	}
@@ -77,6 +74,18 @@ public class DynamicityTrackersPeersTests {
 	}
 	
 	@Test
+	public void testAddingPeer() {
+		engine.register(new Tracker(0), "t0", true);
+		engine.register(new Peer(0), "p0", true);
+		
+		sleep(3);
+		
+		engine.register(new Peer(1), "p1", true);
+		
+		sleep(2);
+	}
+	
+	@Test
 	public void testAddingPeers() {
 		engine.register(new Tracker(0), "t0", true);
 		engine.register(new Peer(0), "p0", true);
@@ -84,6 +93,18 @@ public class DynamicityTrackersPeersTests {
 		sleep(3);
 		
 		engine.register(new Peer(1), "p1", true);
+		
+		sleep(2);
+		
+		engine.register(new Peer(2), "p2", true);
+		
+		sleep(1);
+		
+		engine.register(new Peer(3), "p3", true);
+		
+		sleep(3);
+		
+		engine.register(new Peer(4), "p4", true);
 		
 		sleep(2);
 	}

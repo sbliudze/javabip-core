@@ -30,6 +30,8 @@ public interface BIPEngine {
 	 * @param behaviour the behaviour
 	 */
 	BIPActor register(Object component, String id, boolean useSpec);
+	
+	void deregister(BIPComponent component);
 
 	// It only specifies the disabled ports with no data transfers, some ports with data
 	// transfers may have disabled status but this has to be obtain by querying BIPexecutor with the help
@@ -60,8 +62,6 @@ public interface BIPEngine {
 	 * It starts the BIP engine thread.
 	 */
 //	void start();
-	
-	void pause(BIPComponent component);
 
 	/**
 	 * It stops the BIP engine thread.
