@@ -31,7 +31,7 @@ public interface BIPEngine {
 	 */
 	BIPActor register(Object component, String id, boolean useSpec);
 	
-	void deregister(BIPComponent component);
+	void deregister(Object instance);
 
 	// It only specifies the disabled ports with no data transfers, some ports with data
 	// transfers may have disabled status but this has to be obtain by querying BIPexecutor with the help

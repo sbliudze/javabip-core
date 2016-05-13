@@ -6,6 +6,8 @@ import static org.bip.dynamicity.HelperFunctions.sleep;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.bip.api.BIPActor;
+import org.bip.api.BIPComponent;
 import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
 import org.bip.engine.factory.EngineFactory;
@@ -68,5 +70,13 @@ public class DynamicityExampleTests {
 		engine.register(new ExampleE(), "e", true);
 
 		sleep(2);
+	}
+	
+	@Test
+	public void testExampleDeregistration() {
+		ExampleE e0 = new ExampleE();
+		engine.register(e0, "e0", true);
+		sleep(2);
+		engine.deregister(e0);
 	}
 }

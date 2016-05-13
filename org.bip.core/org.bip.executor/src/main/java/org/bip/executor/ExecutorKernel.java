@@ -133,11 +133,11 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 				 behaviour.existInCurrentStateAndEnforceableWithData();
 		
 		// If no enforceable transitions, we can tell the engine to not wait for the component to continue to next cycle
-		if(!existEnforceableTransition) {
-			logger.warn("No enforceable transitions this cycle, telling the engine not to wait for us.");
-			engine.pause(proxy);
-		}
-		
+//		if(!existEnforceableTransition) {
+//			logger.warn("No enforceable transitions this cycle, telling the engine not to wait for us.");
+//			engine.pause(proxy);
+//		}
+//		
 		// we have to compute this in order to be able to raise an exception
 		boolean existInternalTransition = behaviour.existEnabledInternal(guardToValue);
 		
