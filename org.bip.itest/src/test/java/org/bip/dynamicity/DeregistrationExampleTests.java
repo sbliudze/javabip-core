@@ -21,7 +21,7 @@ import org.junit.Test;
 
 import akka.actor.ActorSystem;
 
-public class DynamicityExampleTests {
+public class DeregistrationExampleTests {
 
 	private static ActorSystem system;
 	private static EngineFactory engineFactory;
@@ -50,22 +50,39 @@ public class DynamicityExampleTests {
 	public void teardown() {
 		killEngine(engineFactory, engine);
 	}
-
+	
 	@Test
-	public void testExampleEngineStartsAutomatically() {
-		engine.register(new ExampleA(), "a0", true);
-		engine.register(new ExampleA(), "a1", true);
-		engine.register(new ExampleA(), "a2", true);
-		engine.register(new ExampleB(), "b0", true);
-		engine.register(new ExampleB(), "b1", true);
-		engine.register(new ExampleC(), "c0", true);
+	public void testExampleDeregistration() {
+		ExampleE e0 = new ExampleE();
+		engine.register(e0, "e0", true);
 
 		sleep(2);
+
+		engine.deregister(e0);
+
+		sleep(1);
 	}
 
 	@Test
-	public void testExampleEngineStartsAutomaticallyWithMicroSystem() {
-		engine.register(new ExampleE(), "e", true);
+	public void testExampleDeregisterUnnecessaryComponents() {
+		ExampleA a0 = new ExampleA(), a1 = new ExampleA(), a2 = new ExampleA();
+		ExampleB b0 = new ExampleB(), b1 = new ExampleB();
+		ExampleC c0 = new ExampleC();
+
+		engine.register(b0, "b0", true);
+		engine.register(a0, "a0", true);
+		engine.register(a2, "a2", true);
+		engine.register(c0, "c0", true);
+		engine.register(b1, "b1", true);
+		engine.register(a1, "a1", true);
+
+		sleep(4);
+
+		engine.deregister(a0);
+
+		sleep(2);
+
+		engine.deregister(b0);
 
 		sleep(2);
 	}
