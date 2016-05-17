@@ -48,12 +48,19 @@ public class DeregistrationTrackersPeersTests {
 	public void teardown() {
 		killEngine(engineFactory, engine);
 	}
-	
+
 	@Test
 	public void testTrackersPeersDeregistration() {
 		Tracker t0 = new Tracker(0);
 		Peer p0 = new Peer(0);
-		
+
 		engine.register(p0, "p0", true);
+		engine.register(t0, "t0", true);
+
+		sleep(3);
+
+		engine.deregister(p0);
+
+		sleep(1);
 	}
 }
