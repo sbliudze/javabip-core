@@ -316,6 +316,13 @@ public class ResourceTest {
 		BIPGlue bipGlue = new TwoSynchronGlueBuilder() {
 			@Override
 			public void configure() {
+				
+				//askResource -- request
+				// getResource -- provide
+				// read -- read
+				// generate -- create -- create (task, data, memory)
+				// delete -- delete
+				// release -- release
 
 				// TODO create glue function for making links between methods and data automatically
 				synchron(KalrayTask.class, "askResource").to(
@@ -332,16 +339,91 @@ public class ResourceTest {
 						"create", KalrayTask.class, "generate");
 				port(KalrayData.class, "create").requires(KalrayMemory.class,
 						"create", KalrayTask.class, "generate");
-				port(KalrayTask.class, "generate").accepts(KalrayMemory.class,
-						"create", KalrayData.class, "create");
+				//port(KalrayTask.class, "generate").accepts(KalrayMemory.class,
+				//		"create", KalrayData.class, "create", 
+				//		KalrayMemory.class, "deleteData", KalrayData.class, "delete");
 				port(KalrayMemory.class, "create").accepts(KalrayData.class,
-						"create", KalrayTask.class, "generate");
+						"create", KalrayTask.class, "generate", 
+						KalrayMemory.class, "deleteData", KalrayData.class, "delete");
 				port(KalrayData.class, "create").accepts(KalrayMemory.class,
-						"create", KalrayTask.class, "generate");
+						"create", KalrayTask.class, "generate", 
+						KalrayMemory.class, "deleteData", KalrayData.class, "delete");
 
 				synchron(KalrayMemory.class, "deleteData").to(KalrayData.class,
 						 "delete");
-				 
+				
+				
+				// Kalray task ACCEPTS
+				port(KalrayTask.class, "askResource").accepts(
+						KalrayMemory.class, "deleteData", KalrayMemory.class, "create", KalrayMemory.class, "read", 
+						KalrayTask.class, "generate", KalrayTask.class, "readData",
+						KalrayData.class, "create", KalrayData.class, "delete");
+				/*port(KalrayTask.class, "getResource").accepts(
+						KalrayMemory.class, "deleteData", KalrayMemory.class, "create", KalrayMemory.class, "read", 
+						KalrayTask.class, "generate", KalrayTask.class, "readData",
+						KalrayData.class, "create", KalrayData.class, "delete");
+				port(KalrayTask.class, "generate").accepts(
+						KalrayMemory.class, "deleteData", KalrayMemory.class, "create", KalrayMemory.class, "read", 
+						KalrayTask.class, "askResource", KalrayTask.class, "getResource", KalrayTask.class, "release", KalrayTask.class, "readData",
+						AllocatorImpl.class, "request", AllocatorImpl.class, "provideResource", AllocatorImpl.class, "release",
+						KalrayData.class, "create", KalrayData.class, "delete");
+				port(KalrayTask.class, "readData").accepts(
+						KalrayMemory.class, "deleteData", KalrayMemory.class, "create", KalrayMemory.class, "read", 
+						KalrayTask.class, "askResource", KalrayTask.class, "getResource", KalrayTask.class, "release", KalrayTask.class, "generate",
+						AllocatorImpl.class, "request", AllocatorImpl.class, "provideResource", AllocatorImpl.class, "release",
+						KalrayData.class, "create", KalrayData.class, "delete");
+				port(KalrayTask.class, "release").accepts(
+						KalrayMemory.class, "deleteData", KalrayMemory.class, "create", KalrayMemory.class, "read", 
+						KalrayTask.class, "generate", KalrayTask.class, "readData",
+						KalrayData.class, "create", KalrayData.class, "delete");
+				// Allocator ACCEPTS
+				port(AllocatorImpl.class, "request").accepts(
+						KalrayTask.class, "generate", KalrayTask.class, "readData",
+						KalrayMemory.class, "deleteData", KalrayMemory.class, "read", KalrayMemory.class, "create",
+						KalrayData.class, "create", KalrayData.class, "delete"
+						);
+				port(AllocatorImpl.class, "provideResource").accepts(
+						KalrayTask.class, "generate", KalrayTask.class, "readData",
+						KalrayMemory.class, "deleteData", KalrayMemory.class, "read", KalrayMemory.class, "create",
+						KalrayData.class, "create", KalrayData.class, "delete"
+						);
+				port(AllocatorImpl.class, "release").accepts(
+						KalrayTask.class, "generate", KalrayTask.class, "readData",
+						KalrayMemory.class, "deleteData", KalrayMemory.class, "read", KalrayMemory.class, "create",
+						KalrayData.class, "create", KalrayData.class, "delete"
+						);
+				// Memory ACCEPTS
+				port(KalrayMemory.class, "create").accepts(
+						KalrayTask.class, "askResource",KalrayTask.class, "getResource", KalrayTask.class, "release", KalrayTask.class, "generate", KalrayTask.class, "readData",
+						AllocatorImpl.class, "request", AllocatorImpl.class, "provideResource", AllocatorImpl.class, "release",
+						KalrayMemory.class, "read", KalrayMemory.class, "create",KalrayMemory.class, "deleteData",
+						KalrayData.class, "create", KalrayData.class, "delete"
+						);
+				port(KalrayMemory.class, "read").accepts(
+						KalrayTask.class, "askResource",KalrayTask.class, "getResource", KalrayTask.class, "release", KalrayTask.class, "generate", KalrayTask.class, "readData",
+						AllocatorImpl.class, "request", AllocatorImpl.class, "provideResource", AllocatorImpl.class, "release",
+						KalrayMemory.class, "read", KalrayMemory.class, "create",KalrayMemory.class, "deleteData",
+						KalrayData.class, "create", KalrayData.class, "delete"
+						);
+				port(KalrayMemory.class, "deleteData").accepts(
+						KalrayTask.class, "askResource",KalrayTask.class, "getResource", KalrayTask.class, "release", KalrayTask.class, "generate", KalrayTask.class, "readData",
+						AllocatorImpl.class, "request", AllocatorImpl.class, "provideResource", AllocatorImpl.class, "release",
+						KalrayMemory.class, "read", KalrayMemory.class, "create",
+						KalrayData.class, "create", KalrayData.class, "delete"
+						);
+				// Data ACCEPTS
+				port(KalrayData.class, "delete").accepts(KalrayTask.class, "askResource",KalrayTask.class, "getResource", KalrayTask.class, "release", KalrayTask.class, "generate", KalrayTask.class, "readData",
+						AllocatorImpl.class, "request", AllocatorImpl.class, "provideResource", AllocatorImpl.class, "release",
+						KalrayMemory.class, "read", KalrayMemory.class, "create",KalrayMemory.class, "deleteData",
+						KalrayData.class, "create", KalrayData.class, "delete"
+						);
+				port(KalrayData.class, "create").accepts(KalrayTask.class, "askResource",KalrayTask.class, "getResource", KalrayTask.class, "release", KalrayTask.class, "generate", KalrayTask.class, "readData",
+						AllocatorImpl.class, "request", AllocatorImpl.class, "provideResource", AllocatorImpl.class, "release",
+						KalrayMemory.class, "read", KalrayMemory.class, "create",KalrayMemory.class, "deleteData",
+						KalrayData.class, "create", KalrayData.class, "delete"
+						);
+				*/
+				 // --------- DATA -----------
 				 //data(KalrayTask.class, "utility").to(AllocatorImpl.class, "request");
 				 data(KalrayTask.class, "resourceUnit").to(AllocatorImpl.class, "resourceUnit");
 				 data(KalrayTask.class, "allocID").to(AllocatorImpl.class, "allocID");
