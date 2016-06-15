@@ -74,13 +74,13 @@ public class dNetParser extends Parser {
 		public Stack<ConstraintNode> stack = new Stack<ConstraintNode>();
 
 	  public void nwc(String s, ConstraintNode t){
-	  	ConstraintNode n = new ConstraintNode(s, net);
+	  	ConstraintNode n = new ConstraintNode(s);
 	  	t.attachToRight(n);
 	  	stack.push(n);
 	  }
 	  
 	  public void nwc2(String s, ConstraintNode left, ConstraintNode right) {
-		ConstraintNode n = new ConstraintNode(s, net);
+		ConstraintNode n = new ConstraintNode(s);
 		n.addChildren(right, left);
 	  	stack.push(n);
 	  }
@@ -502,7 +502,7 @@ public class dNetParser extends Parser {
 
 				 		if (!stack.empty()) {
 							net.addTransition((((TransitionContext)_localctx).tr!=null?((TransitionContext)_localctx).tr.getText():null), inPlaces, outPlaces,
-									new Constraint(stack.pop(), net));
+									new Constraint(stack.pop()));
 						} else {
 							net.addTransition((((TransitionContext)_localctx).tr!=null?((TransitionContext)_localctx).tr.getText():null), inPlaces, outPlaces);
 						}
@@ -906,14 +906,14 @@ public class dNetParser extends Parser {
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(169); ((IdContext)_localctx).var = match(ID);
-				stack.push(new ConstraintNode((((IdContext)_localctx).var!=null?((IdContext)_localctx).var.getText():null), net));
+				stack.push(new ConstraintNode((((IdContext)_localctx).var!=null?((IdContext)_localctx).var.getText():null)));
 				}
 				break;
 			case NUM:
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(171); ((IdContext)_localctx).var = match(NUM);
-				stack.push(new ConstraintNode((((IdContext)_localctx).var!=null?((IdContext)_localctx).var.getText():null), net));
+				stack.push(new ConstraintNode((((IdContext)_localctx).var!=null?((IdContext)_localctx).var.getText():null)));
 				}
 				break;
 			default:

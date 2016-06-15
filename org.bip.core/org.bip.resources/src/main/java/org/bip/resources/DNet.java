@@ -5,15 +5,15 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bip.constraint.ConstraintSolver;
+import org.bip.constraint.DnetConstraint;
+import org.bip.constraint.ExpressionCreator;
+import org.bip.constraint.PlaceVariable;
+import org.bip.constraint.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.microsoft.z3.ArithExpr;
-import com.microsoft.z3.BoolExpr;
-import com.microsoft.z3.Context;
-import com.microsoft.z3.IntExpr;
-
-public class DNet implements ContextProvider {
+public class DNet {
 
 	private Logger logger = LoggerFactory.getLogger(DNet.class);
 	
@@ -28,13 +28,10 @@ public class DNet implements ContextProvider {
 	public HashMap<String, Place> nameToPlace;
 	private ArrayList<InhibitorArc> inhibitors;
 	private ArrayList<Transition> firedTransitions;
-	Context ctx;
-
-	public ConstraintNode request;
+	ConstraintSolver solver;
+	private ExpressionCreator factory;
 	
-	/* do something with the context */
-
-	// ctx.dispose();
+	public ConstraintNode request;
 	
 	/**************** Constructors area *****************/
 
@@ -49,12 +46,8 @@ public class DNet implements ContextProvider {
 		transitionNameToPostplacesNames = new HashMap<String, ArrayList<String>>();
 		placeNameToPostplacesNames = new  HashMap<String, ArrayList<String>>();
 		firedTransitions = new ArrayList<Transition>();
+		
 	}
-
-	public void setContext(Context context) {
-		this.ctx = context;
-	}
-	
 	
 	public void checkIntegrity() {
 		// check that for all the places there is a resource with the same name
@@ -71,6 +64,13 @@ public class DNet implements ContextProvider {
 	
 	/**************** Creation area *****************/
 
+	public void setFactory(ExpressionCreator factory) {
+		this.factory = factory;
+		for (Transition t: transitions) {
+			t.setFactoryToContraint(factory);
+		}
+	}
+	
 	public Place addPlace(String placeName) {
 		if (!nameToPlace.containsKey(placeName)) {
 			Place place = new Place(placeName);
@@ -121,7 +121,7 @@ public class DNet implements ContextProvider {
 	}
 	
 	public void addTransition(String transitionName, ArrayList<Place> inPlaces, ArrayList<Place> outPlaces, Constraint constraint) throws DNetException {
-		constraint.addContext(ctx);
+		constraint.addFactory(factory);
 		createHelperStructures(transitionName, inPlaces, outPlaces);
 		Transition tr = new Transition(transitionName, inPlaces, outPlaces, constraint);
 		this.transitions.add(tr);
@@ -141,16 +141,14 @@ public class DNet implements ContextProvider {
 	
 	/******************* Running *******************/
 
-	public ArrayList<BoolExpr> run(HashMap<Place, ArrayList<IntExpr>> placeVariables, HashMap<Place, ArrayList<Transition>> placeTokens) throws DNetException {
-		ArrayList<BoolExpr> dependencyConstraints = new ArrayList<BoolExpr>();
+	public ArrayList<DnetConstraint> run(HashMap<Place, ArrayList<PlaceVariable>> placeVariables, HashMap<Place, ArrayList<Transition>> placeTokens) throws DNetException {
 		firedTransitions.clear();
 		ArrayList<Transition> disabled = new ArrayList<Transition>();
 		findEnabledAndFireWithoutConstraints(placeVariables, placeTokens, disabled);
 		return getConstraints(placeVariables, placeTokens);
-		//return findEnabledAndFire(placeVariables, placeTokens, dependencyConstraints, disabled);
 	}
 	
-	private void findEnabledAndFireWithoutConstraints(HashMap<Place, ArrayList<IntExpr>> placeVariables, HashMap<Place, ArrayList<Transition>> placeTokens,
+	private void findEnabledAndFireWithoutConstraints(HashMap<Place, ArrayList<PlaceVariable>> placeVariables, HashMap<Place, ArrayList<Transition>> placeTokens,
 		 ArrayList<Transition> disabled) throws DNetException {
 		for (Transition transition : transitions) {
 			if (!disabled.contains(transition)) {
@@ -165,7 +163,7 @@ public class DNet implements ContextProvider {
 						// add a new variable
 						String variableName = createVariableName(place, transition.name());
 
-						IntExpr var = createIntVariable(ctx, variableName);
+						PlaceVariable var = factory.createVariable(variableName);
 						placeVariables.get(place).add(var);
 					}
 					logger.debug("After firing of " + transition.name() + " the tokens are: " + placeTokens);
@@ -175,20 +173,17 @@ public class DNet implements ContextProvider {
 		}
 	}
 	
-	private ArrayList<BoolExpr> getConstraints(
-			HashMap<Place, ArrayList<IntExpr>> placeVariables,
+	private ArrayList<DnetConstraint> getConstraints(
+			HashMap<Place, ArrayList<PlaceVariable>> placeVariables,
 			HashMap<Place, ArrayList<Transition>> placeTokens)
 			throws DNetException {
-		ArrayList<BoolExpr> dependencyConstraints = new ArrayList<BoolExpr>();
+		ArrayList<DnetConstraint> dependencyConstraints = new ArrayList<DnetConstraint>();
 		for (Transition transition : firedTransitions) {
 			String tName = transition.name();
-			Map<String, ArithExpr> stringtoConstraintVar = new HashMap<String, ArithExpr>();
-			// does not work for the place which is a pre and post
-			// since we do not know whether to use the sum or only the generated tokens in the constraint
-			// and there will be only the sum token which overwrites the pre-token.
+			Map<String, VariableExpression> stringtoConstraintVar = new HashMap<String, VariableExpression>();
 			for (Place place : transition.postplaces()) {
-				for (IntExpr var : placeVariables.get(place)) {
-					String tokenName = var.getFuncDecl().getName().toString();
+				for (PlaceVariable var : placeVariables.get(place)) {
+					String tokenName = var.variableName();
 					if (tName.equals(tokenName.substring(tokenName.length()-tName.length()))) {
 						stringtoConstraintVar.put(place.name(), var);
 						break;
@@ -203,75 +198,21 @@ public class DNet implements ContextProvider {
 									+ place.name() + ", however, transition "
 									+ transition.name() + " has fired.");
 				}
-				ArithExpr placeSum = placeVariables.get(place).get(0);
+				
+				VariableExpression  placeSum = factory.sumTokens(placeVariables.get(place));
 
 				for (int i = 1; i < placeVariables.get(place).size(); i++) {
-					placeSum = getContext().mkAdd(placeSum,
-							placeVariables.get(place).get(i));
 
 					// TODO think about constraints on token variables which
 					// should be >=0
 					// in general, this might not always be the case that each
 					// variable is positive.
-					dependencyConstraints.add(getContext().mkGe(
-							placeVariables.get(place).get(i),
-							getContext().mkInt(0)));
+					dependencyConstraints.add(placeVariables.get(place).get(i).domainConstraint());
 				}
 				stringtoConstraintVar.put(place.name(), placeSum);
 			}
-			BoolExpr expr = transition.constraint(stringtoConstraintVar);
+			DnetConstraint expr = transition.constraintN(stringtoConstraintVar);
 			dependencyConstraints.add(expr);
-		}
-		return dependencyConstraints;
-	}
-	
-	//TODO check it works correctly
-	private ArrayList<BoolExpr> findEnabledAndFire(HashMap<Place, ArrayList<IntExpr>> placeVariables, HashMap<Place, ArrayList<Transition>> placeTokens,
-			ArrayList<BoolExpr> dependencyConstraints, ArrayList<Transition> disabled) throws DNetException {
-		for (Transition transition : transitions) {
-			if (!disabled.contains(transition)) {
-				if (transition.enabled(placeTokens)) {
-					transition.disable();
-					disabled.add(transition);
-					Map<String, ArithExpr> stringtoConstraintVar = new HashMap<String, ArithExpr>();
-					for (Place place : transition.postplaces()) {
-						// add a new token
-						placeTokens.get(place).add(transition);
-
-						// add a new variable
-						String variableName = createVariableName(place, transition.name());
-
-						IntExpr var = createIntVariable(ctx, variableName);
-						placeVariables.get(place).add(var);
-						stringtoConstraintVar.put(place.name(), var);
-
-						// TODO if a postplace is in the preplaces -?
-					}
-
-					for (Place place : transition.preplaces()) {
-						// if there is only one token variable
-						if (placeVariables.get(place).size() < 1) {
-							throw new DNetException("There are no place variables in place " + place.name() + ", however, transition " + transition.name()
-									+ " has fired.");
-						}
-						ArithExpr placeSum = placeVariables.get(place).get(0);
-
-						for (int i = 1; i < placeVariables.get(place).size(); i++) {
-							placeSum = getContext().mkAdd(placeSum, placeVariables.get(place).get(i));
-						
-							//TODO think about constraints on token variables which should be >=0
-							// in general, this might not always be the case that each variable is positive.
-							dependencyConstraints.add(getContext().mkGe(placeVariables.get(place).get(i), getContext().mkInt(0)));
-						}
-						stringtoConstraintVar.put(place.name(), placeSum);
-					}
-
-					BoolExpr expr = transition.constraint(stringtoConstraintVar);
-					dependencyConstraints.add(expr);
-					logger.debug("After firing of " + transition.name() + " the tokens are: " + placeTokens);
-					return findEnabledAndFire(placeVariables, placeTokens, dependencyConstraints, disabled);
-				}
-			}
 		}
 		return dependencyConstraints;
 	}
@@ -280,18 +221,10 @@ public class DNet implements ContextProvider {
 		return place.name() + "-" + transitionName;
 	}
 
-	private IntExpr createIntVariable(Context ctx, String name) {
-		return (IntExpr) ctx.mkConst(ctx.mkSymbol(name), ctx.getIntSort());
-	}
 	
 	/************************************************/
 
 	/******************* Getters ********************/
-
-	@Override
-	public Context getContext() {
-		return ctx;
-	}
 
 	public ArrayList<Place> places() {
 		return places;
@@ -324,4 +257,5 @@ public class DNet implements ContextProvider {
 			System.out.println(tr + " ");
 		}
 	}
+
 }

@@ -16,6 +16,8 @@ import org.bip.api.BIPActor;
 import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
 import org.bip.api.ResourceProvider;
+import org.bip.constraint.ConstraintSolver;
+import org.bip.constraints.z3.Z3Solver;
 import org.bip.engine.factory.EngineFactory;
 import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
 import org.bip.glue.TwoSynchronGlueBuilder;
@@ -79,7 +81,8 @@ public class ResourceTest {
 		 *  In this test, 5 allocations are being requested, four of them are satisfied.
 		 */
 		String dnetSpec = "src/test/resources/simple_kalray.txt";
-		AllocatorImpl alloc = new AllocatorImpl(dnetSpec);
+		ConstraintSolver z3Solver = new Z3Solver();
+		AllocatorImpl alloc = new AllocatorImpl(dnetSpec, z3Solver);
 		
 		KalrayResource p = new KalrayResource("p", 1, false);
 		KalrayResource p1 = new KalrayResource("p1", 1, true);
@@ -136,7 +139,8 @@ public class ResourceTest {
 		 * and the other (L2, R2) stores information about the processors already using the bank.
 		 */
 		String dnetSpec = "src/test/resources/kalray_LR";
-		AllocatorImpl alloc = new AllocatorImpl(dnetSpec);
+		ConstraintSolver z3Solver = new Z3Solver();
+		AllocatorImpl alloc = new AllocatorImpl(dnetSpec, z3Solver);
 		
 		KalrayResource p = new KalrayResource("p", 1, false);
 		KalrayResource p1 = new KalrayResource("p1", 1, true);
@@ -207,7 +211,8 @@ public class ResourceTest {
 		 * and the other (L2, R2) stores information about the processors already using the bank.
 		 */
 		String dnetSpec = "src/test/resources/kalray_data";
-		AllocatorImpl alloc = new AllocatorImpl(dnetSpec);
+		ConstraintSolver z3Solver = new Z3Solver();
+		AllocatorImpl alloc = new AllocatorImpl(dnetSpec, z3Solver);
 		
 		VirtualResourceManager p = new VirtualResourceManager("p");
 		BoundedResourceManager p1 = new BoundedResourceManager("p1", 1);
@@ -446,7 +451,8 @@ public class ResourceTest {
 		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
 		
 		String dnetSpec = "src/test/resources/kalray.txt";
-		AllocatorImpl alloc = new AllocatorImpl(dnetSpec);
+		ConstraintSolver z3Solver = new Z3Solver();
+		AllocatorImpl alloc = new AllocatorImpl(dnetSpec, z3Solver);
 		
 		//RESOURCES
 		
@@ -577,7 +583,8 @@ public class ResourceTest {
 		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
 		
 		String dnetSpec = "src/test/resources/dnet.txt";
-		AllocatorImpl alloc = new AllocatorImpl(dnetSpec); 
+		ConstraintSolver z3Solver = new Z3Solver();
+		AllocatorImpl alloc = new AllocatorImpl(dnetSpec, z3Solver);
 		
 		ComponentNeedingResource aComp = new ComponentNeedingResource(128);
 		ComponentNeedingResource bComp = new ComponentNeedingResource(100);
@@ -662,7 +669,8 @@ public class ResourceTest {
 		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
 		
 		String dnetSpec = "src/test/resources/simpleRouteDnet.txt";
-		AllocatorImpl alloc = new AllocatorImpl(dnetSpec); 
+		ConstraintSolver z3Solver = new Z3Solver();
+		AllocatorImpl alloc = new AllocatorImpl(dnetSpec, z3Solver);
 		
 		RouteUser routeUser1 = new RouteUser();
 
@@ -741,7 +749,8 @@ public class ResourceTest {
 		
 		//TODO create dnet
 		String dnetSpec = "src/test/resources/sortDnet.txt";
-		AllocatorImpl alloc = new AllocatorImpl(dnetSpec); 
+		ConstraintSolver z3Solver = new Z3Solver();
+		AllocatorImpl alloc = new AllocatorImpl(dnetSpec, z3Solver);
 		
 		CamelContext camelContext = new DefaultCamelContext();
 		camelContext.setAutoStartup(false);

@@ -54,13 +54,13 @@ public class dNetLexer extends Lexer {
 		public Stack<ConstraintNode> stack = new Stack<ConstraintNode>();
 
 	  public void nwc(String s, ConstraintNode t){
-	  	ConstraintNode n = new ConstraintNode(s, net);
+	  	ConstraintNode n = new ConstraintNode(s);
 	  	t.attachToRight(n);
 	  	stack.push(n);
 	  }
 	  
 	  public void nwc2(String s, ConstraintNode left, ConstraintNode right) {
-		ConstraintNode n = new ConstraintNode(s, net);
+		ConstraintNode n = new ConstraintNode(s);
 		n.addChildren(right, left);
 	  	stack.push(n);
 	  }

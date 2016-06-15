@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.microsoft.z3.ArithExpr;
-import com.microsoft.z3.BoolExpr;
-import com.microsoft.z3.Context;
-import com.microsoft.z3.IntExpr;
+import org.bip.constraint.DnetConstraint;
+import org.bip.constraint.ExpressionCreator;
+import org.bip.constraint.VariableExpression;
 
 public class ConstraintNode {
 
@@ -17,12 +16,8 @@ public class ConstraintNode {
 	public ConstraintNode parent;
 	public String data;
 	
-	//private HashMap<String, IntExpr> stringToConstraintVar;
-	
-	private ContextProvider ctxProvider;
-
 	private final String nameMatch = "[a-zA-Z][a-zA-Z0-9]*";
-	
+	private ExpressionCreator creator;
 	
 	public ConstraintNode(String value) {
 		this.data = value;
@@ -30,29 +25,30 @@ public class ConstraintNode {
 			this.attachToRight(parent);
 	}
 	
-	public void setContextProvider(ContextProvider ctxProvider) {
-		this.ctxProvider = ctxProvider;
-		if (rightChild != null) {
-			rightChild.setContextProvider(ctxProvider);
-		}
-		if (leftChild != null) {
-			leftChild.setContextProvider(ctxProvider);
-		}
-	}
-	
-	public ConstraintNode(String value, ConstraintNode parent, ContextProvider ctxProvider) {
-		this.ctxProvider = ctxProvider;
-		this.parent = parent;
+	public ConstraintNode(String value, ExpressionCreator factory) {
 		this.data = value;
+		this.creator = factory;
 		if (parent != null)
 			this.attachToRight(parent);
 	}
 
-	//the string name of the variable must start with a letter and can contain letters and symbols. 
-	public ConstraintNode(String value, ContextProvider ctxProvider) {
-		this.ctxProvider = ctxProvider;
-		this.parent = null;
+	public void addFactory(ExpressionCreator factory) {
+		this.creator = factory;
+		if (rightChild != null) {
+			rightChild.addFactory(factory);
+		}
+		if (leftChild != null) {
+			leftChild.addFactory(factory);
+		}
+
+	}
+	
+	public ConstraintNode(String value, ConstraintNode parent, ExpressionCreator factory) {
+		this.creator = factory;
+		this.parent = parent;
 		this.data = value;
+		if (parent != null)
+			this.attachToRight(parent);
 	}
 
 	public Boolean attachToRight(ConstraintNode parent) {
@@ -73,6 +69,30 @@ public class ConstraintNode {
 		return false;
 	}
 
+	public DnetConstraint evaluateN(Map<String, VariableExpression> stringToConstraintVar) throws DNetException {
+		// conjunction
+		if (this.data.equals("&"))
+			return creator.and(this.rightChild.evaluateN(stringToConstraintVar), this.leftChild.evaluateN(stringToConstraintVar));
+		// disjunction
+		else if (this.data.equals("|"))
+			return creator.or(this.rightChild.evaluateN(stringToConstraintVar), this.leftChild.evaluateN(stringToConstraintVar));
+		// negation
+		else if (this.data.equals("!")) {
+			return creator.not(this.rightChild.evaluateN(stringToConstraintVar));
+		} else if (this.data.equals("<")) {
+			return creator.createLess(this.rightChild.evaluateExprN(stringToConstraintVar), this.leftChild.evaluateExprN(stringToConstraintVar));
+		} else if (this.data.equals(">")) {
+			return creator.createGreater(this.rightChild.evaluateExprN(stringToConstraintVar), this.leftChild.evaluateExprN(stringToConstraintVar));
+		} else if (this.data.equals(">=")) {
+			return creator.createGreaterOrEqual(this.rightChild.evaluateExprN(stringToConstraintVar), this.leftChild.evaluateExprN(stringToConstraintVar));
+		} else if (this.data.equals("<=")) {
+			return creator.createLessOrEqual(this.rightChild.evaluateExprN(stringToConstraintVar), this.leftChild.evaluateExprN(stringToConstraintVar));
+		} else if (this.data.equals("=")) {
+			return creator.createEqual(this.rightChild.evaluateExprN(stringToConstraintVar), this.leftChild.evaluateExprN(stringToConstraintVar));
+		} else
+			throw new DNetException("Unknown element in constraint " + this.data);
+	}
+	
 	//all the constraints must use variables for which the value domain has been already defined.
 	//either it is the same variable used in the value domain restriction, or it should participate in there.
 	//as part of the sum
@@ -81,7 +101,7 @@ public class ConstraintNode {
 	//so far suppose there are only int variables
 
 	// This method evaluates boolean (&, |, !) and equality (=, <, >, <=, >=) operators
-	public BoolExpr evaluate(Map<String, ArithExpr> stringToConstraintVar) throws DNetException {
+	/*public BoolExpr evaluate(Map<String, ArithExpr> stringToConstraintVar) throws DNetException {
 
 		// conjunction
 		if (this.data.equals("&"))
@@ -93,7 +113,7 @@ public class ConstraintNode {
 		else if (this.data.equals("!")) {
 			return getContext().mkNot(this.rightChild.evaluate(stringToConstraintVar));
 		} else if (this.data.equals("<")) {
-			return getContext().mkLe(this.rightChild.evaluateExpr(stringToConstraintVar), this.leftChild.evaluateExpr(stringToConstraintVar));
+			return getContext().mkLt(this.rightChild.evaluateExpr(stringToConstraintVar), this.leftChild.evaluateExpr(stringToConstraintVar));
 		} else if (this.data.equals(">")) {
 			return getContext().mkGt(this.rightChild.evaluateExpr(stringToConstraintVar), this.leftChild.evaluateExpr(stringToConstraintVar));
 		} else if (this.data.equals(">=")) {
@@ -123,6 +143,23 @@ public class ConstraintNode {
 			return (stringToConstraintVar.get(this.data));
 		} else
 			throw new DNetException("Unknown element in constraint " + this.data);
+	}*/
+	
+	public VariableExpression evaluateExprN(Map<String, VariableExpression> stringToConstraintVar) throws DNetException {
+		if (this.data.equals("+"))
+			return creator.createAddition(this.rightChild.evaluateExprN(stringToConstraintVar), this.leftChild.evaluateExprN(stringToConstraintVar));
+		else if (this.data.equals("-"))
+			return creator.createSubstraction(this.rightChild.evaluateExprN(stringToConstraintVar), this.leftChild.evaluateExprN(stringToConstraintVar));
+		else if (this.data.equals("*"))
+			return creator.createMultiplication(this.rightChild.evaluateExprN(stringToConstraintVar), this.leftChild.evaluateExprN(stringToConstraintVar));
+		else if (this.data.equals("/"))
+			return creator.createDivision(this.rightChild.evaluateExprN(stringToConstraintVar), this.leftChild.evaluateExprN(stringToConstraintVar));
+		else if (this.data.matches("\\d+")) {
+			return creator.createNumber(this.data);
+		} else if (this.data.matches(nameMatch)) {
+			return (stringToConstraintVar.get(this.data));
+		} else
+			throw new DNetException("Unknown element in constraint " + this.data);
 	}
 	
 	public String toString() {
@@ -135,10 +172,6 @@ public class ConstraintNode {
 			result.append(leftChild.toString());
 		}
 		return result.toString();
-	}
-
-	private Context getContext() {
-		return ctxProvider.getContext();
 	}
 
 	public void addChildren(ConstraintNode right, ConstraintNode left) {
@@ -187,4 +220,5 @@ public class ConstraintNode {
 		}
 		return result;
 	}
+
 }

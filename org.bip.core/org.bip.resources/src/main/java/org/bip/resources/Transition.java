@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bip.constraint.DnetConstraint;
+import org.bip.constraint.ExpressionCreator;
+import org.bip.constraint.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -150,11 +153,16 @@ public class Transition {
 		return true;
 	}
 
-	public BoolExpr constraint(Map<String, ArithExpr> stringToConstraintVar) throws DNetException {
-		return this.constraint.constraintNode.evaluate(stringToConstraintVar);
+	public DnetConstraint constraintN(Map<String, VariableExpression> stringToConstraintVar) throws DNetException {
+		return this.constraint.constraintNode.evaluateN(stringToConstraintVar);
 	}
 
 	public void reInit() {
 		this.fired = false;
+	}
+
+	public void setFactoryToContraint(ExpressionCreator factory) {
+		this.constraint.addFactory(factory);
+		
 	}
 }
