@@ -1,6 +1,7 @@
 package org.bip.constraints.z3;
 
 import org.bip.constraint.VariableExpression;
+import org.jacop.core.IntVar;
 
 import com.microsoft.z3.ArithExpr;
 import com.microsoft.z3.Expr;
@@ -32,6 +33,12 @@ public class Z3VariableExpression implements VariableExpression {
 	@Override
 	public Expr expr() {
 		return expr;
+	}
+
+	@Override
+	public IntVar jVar() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

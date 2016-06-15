@@ -2,9 +2,12 @@ package org.bip.constraint;
 
 import java.util.ArrayList;
 
+import org.jacop.core.IntVar;
+import org.jacop.core.Store;
+
 public interface ExpressionCreator {
 	VariableExpression createAddition(VariableExpression v1, VariableExpression v2);
-	VariableExpression createSubstraction(VariableExpression v1, VariableExpression v2);
+	VariableExpression createSubtraction(VariableExpression v1, VariableExpression v2);
 	VariableExpression createMultiplication(VariableExpression v1, VariableExpression v2);
 	VariableExpression createDivision(VariableExpression v1, VariableExpression v2);
 	
@@ -19,7 +22,6 @@ public interface ExpressionCreator {
 	DnetConstraint not(DnetConstraint v);
 	
 	VariableExpression createNumber(String data);
-	PlaceVariable createInitialVariable(String name);
-	VariableExpression sumTokens(ArrayList<PlaceVariable> arrayList);
 	PlaceVariable createVariable(String variableName);
+	VariableExpression sumTokens(ArrayList<PlaceVariable> arrayList);
 }

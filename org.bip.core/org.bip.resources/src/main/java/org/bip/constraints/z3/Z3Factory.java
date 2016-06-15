@@ -20,33 +20,6 @@ public class Z3Factory implements ExpressionCreator {
 		provider = ctxProvider;
 	}
 
-	public PlaceVariable createVariable(String name) {
-		return new Z3PlaceVariable(provider.getContext(), name, provider);
-	}
-
-	public DnetConstraint creatNaturalConstraint(IntExpr variable) {
-		return new Z3BooleanConstraint(provider.getContext().mkGe(variable, provider.getContext().mkInt(0)));
-	}
-
-	public PlaceVariable createInitialVariable(String placeName) {
-		Context ctx = provider.getContext();
-		String name = placeName + "-*";
-		IntExpr e = (IntExpr) ctx.mkConst(ctx.mkSymbol(name), ctx.getIntSort());
-		return new Z3PlaceVariable(e, provider);
-	}
-
-	public VariableExpression sumTokens(ArrayList<PlaceVariable> placeTokens) {
-		Z3PlaceVariable var = (Z3PlaceVariable)placeTokens.get(0);
-		ArithExpr placeSum = var.aExpr();
-		Context ctx = provider.getContext();
-		for (int i = 1; i < placeTokens.size(); i++) {
-			Z3PlaceVariable nextVar = (Z3PlaceVariable) placeTokens.get(i);
-			placeSum = ctx.mkAdd(placeSum,
-					nextVar.aExpr());
-		}
-		return new Z3VariableExpression(placeSum);
-	}
-
 	@Override
 	public VariableExpression createAddition(VariableExpression v1,
 			VariableExpression v2) {Context ctx = provider.getContext();
@@ -54,7 +27,7 @@ public class Z3Factory implements ExpressionCreator {
 	}
 
 	@Override
-	public VariableExpression createSubstraction(VariableExpression v1,
+	public VariableExpression createSubtraction(VariableExpression v1,
 			VariableExpression v2) {Context ctx = provider.getContext();
 		return new Z3VariableExpression(ctx.mkSub(v1.aExpr(), v2.aExpr()));
 	}
@@ -104,12 +77,6 @@ public class Z3Factory implements ExpressionCreator {
 	}
 
 	@Override
-	public VariableExpression createNumber(String data) {
-		Context ctx = provider.getContext();
-		return new Z3VariableExpression(ctx.mkInt(Integer.parseInt(data)));
-	}
-
-	@Override
 	public DnetConstraint and(DnetConstraint v1, DnetConstraint v2) {
 		Context ctx = provider.getContext();
 		return new Z3BooleanConstraint( ctx.
@@ -129,5 +96,39 @@ public class Z3Factory implements ExpressionCreator {
 		return new Z3BooleanConstraint( ctx.
 				mkNot(v.z3expr()));
 	}
+	
+	@Override
+	public VariableExpression createNumber(String data) {
+		Context ctx = provider.getContext();
+		return new Z3VariableExpression(ctx.mkInt(Integer.parseInt(data)));
+	}
+
+	public PlaceVariable createVariable(String name) {
+		return new Z3PlaceVariable(provider.getContext(), name, provider);
+	}
+
+	public DnetConstraint creatNaturalConstraint(IntExpr variable) {
+		return new Z3BooleanConstraint(provider.getContext().mkGe(variable, provider.getContext().mkInt(0)));
+	}
+
+//	public PlaceVariable createInitialVariable(String placeName) {
+//		Context ctx = provider.getContext();
+//		String name = placeName + "-*";
+//		IntExpr e = (IntExpr) ctx.mkConst(ctx.mkSymbol(name), ctx.getIntSort());
+//		return new Z3PlaceVariable(e, provider);
+//	}
+
+	public VariableExpression sumTokens(ArrayList<PlaceVariable> placeTokens) {
+		Z3PlaceVariable var = (Z3PlaceVariable)placeTokens.get(0);
+		ArithExpr placeSum = var.aExpr();
+		Context ctx = provider.getContext();
+		for (int i = 1; i < placeTokens.size(); i++) {
+			Z3PlaceVariable nextVar = (Z3PlaceVariable) placeTokens.get(i);
+			placeSum = ctx.mkAdd(placeSum,
+					nextVar.aExpr());
+		}
+		return new Z3VariableExpression(placeSum);
+	}
+
 	
 }

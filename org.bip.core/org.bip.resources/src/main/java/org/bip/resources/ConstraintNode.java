@@ -149,7 +149,7 @@ public class ConstraintNode {
 		if (this.data.equals("+"))
 			return creator.createAddition(this.rightChild.evaluateExprN(stringToConstraintVar), this.leftChild.evaluateExprN(stringToConstraintVar));
 		else if (this.data.equals("-"))
-			return creator.createSubstraction(this.rightChild.evaluateExprN(stringToConstraintVar), this.leftChild.evaluateExprN(stringToConstraintVar));
+			return creator.createSubtraction(this.rightChild.evaluateExprN(stringToConstraintVar), this.leftChild.evaluateExprN(stringToConstraintVar));
 		else if (this.data.equals("*"))
 			return creator.createMultiplication(this.rightChild.evaluateExprN(stringToConstraintVar), this.leftChild.evaluateExprN(stringToConstraintVar));
 		else if (this.data.equals("/"))

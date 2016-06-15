@@ -1,6 +1,7 @@
 package org.bip.constraints.z3;
 
 import org.bip.constraint.DnetConstraint;
+import org.jacop.constraints.PrimitiveConstraint;
 
 import com.microsoft.z3.BoolExpr;
 
@@ -19,6 +20,11 @@ public class Z3BooleanConstraint implements DnetConstraint {
 	@Override
 	public BoolExpr z3expr() {
 		return constraint;
+	}
+
+	@Override
+	public PrimitiveConstraint cstr() {
+		return null;
 	}
 
 }

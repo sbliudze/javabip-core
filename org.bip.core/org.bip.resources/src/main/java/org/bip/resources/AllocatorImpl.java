@@ -207,7 +207,7 @@ public class AllocatorImpl implements Allocator {
 				Place place = dnet.nameToPlace.get(requestedResourceName);
 				place.addToken(new InitialTransition()); // probably we don't need this line (noone cares for places, we go through the map placeTokens)
 				placeTokens.get(place).add(new InitialTransition());
-				PlaceVariable var = factory.createInitialVariable(place.name());
+				PlaceVariable var = factory.createVariable(place.name() + "-*");
 				//createIntVariable(context, createVariableName(place, "*"));
 				placeVariables.get(place).add(var);
 				nameToExpr.put(requestedResourceName, var);
@@ -244,7 +244,7 @@ public class AllocatorImpl implements Allocator {
 					+ " given as data parameter for transition has not been accepted before as data given for the guard.");
 		}
 		ResourceAllocation model = requestToModel.get(componentID+requestString);
-		//System.out.println( "2 " +model.resourceAmounts());
+		System.out.println(model.resourceAmounts());
 		resourceLableToID.clear();
 		resourceLableToAmount.clear();
 		//HashMap<String, Expr> resourceNameToGivenValue = new HashMap<String, Expr>();

@@ -74,6 +74,12 @@
 			<artifactId>com.microsoft.z3</artifactId>
 			<version>v4.06</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.jacop</groupId>
+			<artifactId>jacop</artifactId>
+			<version>4.4.0</version>
+		</dependency>
 
 	</dependencies>
 

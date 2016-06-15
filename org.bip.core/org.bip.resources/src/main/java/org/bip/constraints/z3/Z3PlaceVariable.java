@@ -3,6 +3,7 @@ package org.bip.constraints.z3;
 import org.bip.constraint.DnetConstraint;
 import org.bip.constraint.PlaceVariable;
 import org.bip.resources.ContextProvider;
+import org.jacop.core.IntVar;
 
 import com.microsoft.z3.ArithExpr;
 import com.microsoft.z3.Context;
@@ -70,6 +71,12 @@ public class Z3PlaceVariable implements PlaceVariable {
 	@Override
 	public Expr expr() {
 		return variable;
+	}
+
+	@Override
+	public IntVar jVar() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
