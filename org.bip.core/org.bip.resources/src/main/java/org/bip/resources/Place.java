@@ -6,16 +6,14 @@ public class Place {
 
 	private String name;
 	public ConstraintNode cost;
-	private ArrayList<Transition> incomingTr;
-	private ArrayList<Transition> outgoingTr;
+	private ArrayList<Transition> incomingTransitions;
+	private ArrayList<Transition> outgoingTransitions;
 
-	private ArrayList<Transition> tokenVariables;
 
 	public Place(String placeName) {
 		this.name = placeName;
-		incomingTr = new ArrayList<Transition>();
-		outgoingTr = new ArrayList<Transition>();
-		tokenVariables = new ArrayList<Transition>();
+		incomingTransitions = new ArrayList<Transition>();
+		outgoingTransitions = new ArrayList<Transition>();
 	}
 
 	public String toString() {
@@ -26,27 +24,14 @@ public class Place {
 
 	public void setCost(ConstraintNode cost) {
 		this.cost = cost;
-		// cost.print();
 	}
 
 	public void addIncTransition(Transition transition) {
-		incomingTr.add(transition);
+		incomingTransitions.add(transition);
 	}
 
 	public void addOutgTransition(Transition transition) {
-		outgoingTr.add(transition);
-	}
-
-	public boolean hasTokens() {
-		return !tokenVariables.isEmpty();
-	}
-
-	public void addToken(Transition transition) {
-		tokenVariables.add(transition);
-	}
-
-	public ArrayList<Transition> tokens() {
-		return tokenVariables;
+		outgoingTransitions.add(transition);
 	}
 
 	public String name() {

@@ -17,6 +17,7 @@ import org.bip.api.BIPEngine;
 import org.bip.api.BIPGlue;
 import org.bip.api.ResourceProvider;
 import org.bip.constraint.ConstraintSolver;
+import org.bip.constraints.jacop.JacopSolver;
 import org.bip.constraints.z3.Z3Solver;
 import org.bip.engine.factory.EngineFactory;
 import org.bip.executor.impl.akka.OrchestratedExecutorFactory;
@@ -344,9 +345,9 @@ public class ResourceTest {
 						"create", KalrayTask.class, "generate");
 				port(KalrayData.class, "create").requires(KalrayMemory.class,
 						"create", KalrayTask.class, "generate");
-				//port(KalrayTask.class, "generate").accepts(KalrayMemory.class,
-				//		"create", KalrayData.class, "create", 
-				//		KalrayMemory.class, "deleteData", KalrayData.class, "delete");
+				port(KalrayTask.class, "generate").accepts(KalrayMemory.class,
+						"create", KalrayData.class, "create", 
+						KalrayMemory.class, "deleteData", KalrayData.class, "delete");
 				port(KalrayMemory.class, "create").accepts(KalrayData.class,
 						"create", KalrayTask.class, "generate", 
 						KalrayMemory.class, "deleteData", KalrayData.class, "delete");
@@ -359,11 +360,11 @@ public class ResourceTest {
 				
 				
 				// Kalray task ACCEPTS
-				port(KalrayTask.class, "askResource").accepts(
+				/*port(KalrayTask.class, "askResource").accepts(
 						KalrayMemory.class, "deleteData", KalrayMemory.class, "create", KalrayMemory.class, "read", 
 						KalrayTask.class, "generate", KalrayTask.class, "readData",
 						KalrayData.class, "create", KalrayData.class, "delete");
-				/*port(KalrayTask.class, "getResource").accepts(
+				port(KalrayTask.class, "getResource").accepts(
 						KalrayMemory.class, "deleteData", KalrayMemory.class, "create", KalrayMemory.class, "read", 
 						KalrayTask.class, "generate", KalrayTask.class, "readData",
 						KalrayData.class, "create", KalrayData.class, "delete");
@@ -431,8 +432,6 @@ public class ResourceTest {
 				 // --------- DATA -----------
 				 //data(KalrayTask.class, "utility").to(AllocatorImpl.class, "request");
 				 data(KalrayTask.class, "resourceUnit").to(AllocatorImpl.class, "resourceUnit");
-				 data(KalrayTask.class, "allocID").to(AllocatorImpl.class, "allocID");
-				 //data(KalrayTask.class, "componentID").to(AllocatorImpl.class, "id");
 				 data(KalrayTask.class, "dataArray").to(AllocatorImpl.class, "request-id");
 				 
 				 data(KalrayMemory.class, "dataName").to(KalrayData.class, "id");
@@ -452,7 +451,8 @@ public class ResourceTest {
 		
 		String dnetSpec = "src/test/resources/kalray.txt";
 		ConstraintSolver z3Solver = new Z3Solver();
-		AllocatorImpl alloc = new AllocatorImpl(dnetSpec, z3Solver);
+		ConstraintSolver jacopSolver = new JacopSolver();
+		AllocatorImpl alloc = new AllocatorImpl(dnetSpec, jacopSolver);
 		
 		//RESOURCES
 		

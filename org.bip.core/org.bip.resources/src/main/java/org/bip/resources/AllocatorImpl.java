@@ -93,11 +93,10 @@ public class AllocatorImpl implements Allocator {
 		allocationID = 0;
 	}
 
-	// if an allocator received a dnet and no context, it creates a context and parses the dnet
 	public AllocatorImpl(String dNetPath, ConstraintSolver solver) throws IOException, RecognitionException, DNetException {
 		this();
 		this.solver = solver;
-		factory = solver.expressionCreator();
+		this.factory = solver.expressionCreator();
 		parseAndInitializeDNet(dNetPath, factory);
 	}
 
@@ -112,13 +111,14 @@ public class AllocatorImpl implements Allocator {
 		initializeDNet();
 	}
 
-	// at the initialization phase of the dnet:
-	// the context of the dnet is specified,
-	// the variables and tokens are cleared and initialized with empty lists
-	// in case of reinitialization (list of resources is not empty), the resource cost is stored in a local map
-	// TODO the cost must be resend by resource, not asked by allocator
-	// however, in this case it might be ok since it is the allocator that reinitialises itself
 	private void initializeDNet() {
+		/*
+		 * At the initialization of the dnet, 
+		 * the variables and tokens are cleared and initialized with empty lists.
+		 * In case of reinitialisation (list of resources is not empty), the resource cost is stored in a local map.
+		 * TODO: optimize so that the resourceToCost is not regenerated every time, but updates only the values that were used.
+		 * Maybe do it by reversing the direction: the resource informs the allocator, but not the allocator asks the resource.
+		 */
 		this.dnet.reInit();
 		placeVariables.clear();
 		placeTokens.clear();
@@ -139,57 +139,47 @@ public class AllocatorImpl implements Allocator {
 		resourceToCost.put(resource, cost);
 	}
 
-
-
 	/**************** End of Initializing functions *****************/
 
 	/************************ Transitions ***************************/
-
-	public static final String ANSI_RESET = "\u001B[0m";
-	public static final String ANSI_BLACK = "\u001B[30m";
-	public static final String ANSI_RED = "\u001B[31m";
-	public static final String ANSI_GREEN = "\u001B[32m";
-	public static final String ANSI_YELLOW = "\u001B[33m";
-	public static final String ANSI_BLUE = "\u001B[34m";
-	public static final String ANSI_PURPLE = "\u001B[35m";
-	public static final String ANSI_CYAN = "\u001B[36m";
-	public static final String ANSI_WHITE = "\u001B[37m";
 	
 	@Guard(name = "canAllocate")
-	public boolean canAllocate(@Data(name = "request-id") ArrayList<String> ddd) throws DNetException {
-	//public boolean canAllocate(@Data(name = "request") String requestString, @Data(name = "id") String componentID) throws DNetException {
-		solver.newCycle(); initializeDNet();
-		String requestString = ddd.get(0);
-		String componentID = ddd.get(1);
+	public boolean canAllocate(@Data(name = "request-id") ArrayList<String> tempComponentData) throws DNetException {
+		solver.newCycle();
+		initializeDNet();
+		
+		// This part should be gone once the Allocator is remodelled as Resource Coordinator.
+		String requestString = tempComponentData.get(0);
+		String componentID = tempComponentData.get(1);
+
 		logger.debug("Allocator checking resource availabilities for request " + requestString);
 		ConstraintNode request = parseRequest(requestString);
 		ArrayList<String> resourcesRequested = request.resourceInConstraint(request);
 		checkRequestedResourcesExist(resourcesRequested, requestString);
 		logger.debug("The resources requested are " + resourcesRequested);
 
-		Map<String, VariableExpression> nameToExpr = createTokenVariables(resourcesRequested);
-		
-		//DnetConstraint dnc = request.evaluateN(nameToExpr);
-		//System.out.println("REQUEST " + dnc);
-		solver.addConstraint(request.evaluateN(nameToExpr)); // add the request constraint
+		Map<String, VariableExpression> nameToVariable = createInitialTokenVariables(resourcesRequested);
+		solver.addConstraint(request.evaluateN(nameToVariable));
 		logger.debug("Tokens of the dnet at initialisation are: " + placeTokens);
+
 		ArrayList<DnetConstraint> dNetConstraints = dnet.run(placeVariables, placeTokens);
-		logger.debug("For component " + componentID +" The dnet constraints are: " + dNetConstraints);
-		//System.err.println("################### " + requestString);
+		logger.debug("For component " + componentID + " The dnet constraints are: " + dNetConstraints);
 		for (DnetConstraint constr : dNetConstraints) {
 			solver.addConstraint(constr);
-		//	System.out.println(constr);
 		}
-		//System.err.println("################### ");
+
 		addCost();
-		if (!solver.isSolvable()) { 
+
+		if (!solver.isSolvable()) {
 			return false;
 		}
+
 		ResourceAllocation model = solver.getAllocation();
-		// there is no optimisation in not putting the same model several times, since the context and the Expressions change for each execution,
-		// and they should be coherent with the model
-		// we save the model so that we can use it during the allocation phase
-		requestToModel.put(componentID+requestString, model);
+		/* There is no possibility to optimize by putting the model to be used several times.
+		 * This is because the inner structure of the solver changes for each execution,
+		 * The model should be consistent with the solver, therefore, we save it for the round.
+		 */
+		requestToModel.put(componentID + requestString, model);
 		return true;
 	}
 
@@ -207,24 +197,27 @@ public class AllocatorImpl implements Allocator {
 		
 	}
 
-	// creates initial tokens in places corresponding to requested resources
-	private Map<String, VariableExpression> createTokenVariables(ArrayList<String> resourcesRequested) throws DNetException {
-		Map<String, VariableExpression> nameToExpr = new HashMap<String, VariableExpression>();
+	/**
+	 * Creates initial tokens in places corresponding to requested resources
+	 * @param resourcesRequested the list of resources requested by a component
+	 * @return a map resource name <-> created initial variable
+	 * @throws DNetException when there is no DNet place corresponding to the resource name
+	 */
+	private Map<String, VariableExpression> createInitialTokenVariables(ArrayList<String> resourcesRequested) throws DNetException {
+		Map<String, VariableExpression> nameToVariable = new HashMap<String, VariableExpression>();
 		for (String requestedResourceName : resourcesRequested) {
 			if (dnet.nameToPlace.containsKey(requestedResourceName)) {
 				Place place = dnet.nameToPlace.get(requestedResourceName);
-				place.addToken(new InitialTransition()); // probably we don't need this line (noone cares for places, we go through the map placeTokens)
 				placeTokens.get(place).add(new InitialTransition());
-				PlaceVariable var = factory.createVariable(place.name() + "-*");
-				//createIntVariable(context, createVariableName(place, "*"));
-				placeVariables.get(place).add(var);
-				nameToExpr.put(requestedResourceName, var);
+				PlaceVariable initialVariable = factory.createVariable(place.name() + "-*");
+				placeVariables.get(place).add(initialVariable);
+				nameToVariable.put(requestedResourceName, initialVariable);
 			} else {
 				throw new DNetException("The resource " + requestedResourceName
 						+ " does not belond to the space of resources described by the places of the DNet.");
 			}
 		}
-		return nameToExpr;
+		return nameToVariable;
 	}
 
 	private ConstraintNode parseRequest(String requestString) {
@@ -234,54 +227,49 @@ public class AllocatorImpl implements Allocator {
 		parser.constraint();
 		ConstraintNode request = parser.constraint;
 		request.addFactory(factory);
-		//request.setContextProvider(this);
 		return request;
 	}
 	
-	//TODO there is no sense in guarding place variables as they are different for different runs, and not necessarily
-	// the last run will be the one that was chosen
-	
-	// TODO rename to allocate?
 	@org.bip.annotations.Transition(name = "request", source = "0", target = "1", guard = "canAllocate")
-	//public void specifyRequest(@Data(name = "request") String requestString, @Data(name = "id") String componentID) throws DNetException {
-	public void specifyRequest(@Data(name = "request-id") ArrayList<String> ddd) throws DNetException {
-		String requestString = ddd.get(0);
-		String componentID = ddd.get(1);
-		if (!requestToModel.containsKey(componentID+requestString)) {
+	public void specifyRequest(@Data(name = "request-id") ArrayList<String> tempComponentData) throws DNetException {
+		String requestString = tempComponentData.get(0);
+		String componentID = tempComponentData.get(1);
+		
+		if (!requestToModel.containsKey(componentID + requestString)) {
 			throw new BIPException("The request " + requestString + " of component " + componentID
 					+ " given as data parameter for transition has not been accepted before as data given for the guard.");
 		}
-		ResourceAllocation model = requestToModel.get(componentID+requestString);
-		System.out.println(model.resourceAmounts());
+		
+		ResourceAllocation model = requestToModel.get(componentID + requestString);
 		resourceLableToID.clear();
 		resourceLableToAmount.clear();
-		//HashMap<String, Expr> resourceNameToGivenValue = new HashMap<String, Expr>();
 		System.err.println("----------");
-		//System.out.println(placeVariables);
-		for (String str : model.resourceAmounts().keySet()) {
-			String allocAmount = model.resourceAmount(str);
-			if (Integer.parseInt(allocAmount)!=0)	{System.err.println(str + "--" + allocAmount);}
-			placeNameToResource.get(str).decreaseCost(allocAmount);	
-			resourceLableToID.put(str, placeNameToResource.get(str).providedResourceID());
-			resourceLableToAmount.put(str, Integer.parseInt(allocAmount));
+		for (String resourceName : model.resourceAmounts().keySet()) {
+			String amountString = model.resourceAmount(resourceName);
+			if (Integer.parseInt(amountString) != 0) {
+				System.err.println(resourceName + "--" + amountString);
+			}
+			placeNameToResource.get(resourceName).decreaseCost(amountString);
+			resourceLableToID.put(resourceName, placeNameToResource.get(resourceName).providedResourceID());
+			resourceLableToAmount.put(resourceName, Integer.parseInt(amountString));
 		}
 		System.err.println("----------");
+		
 		allocations.put(allocationID, model);
 		allocationID++;
-	
 		requestToModel.remove(componentID+requestString);
 	}
 	
 	@org.bip.annotations.Transition(name = "provideResource", source = "1", target = "0", guard = "")
 	public void provideResource() throws DNetException {
-		//? no meaningful things to do
+		//? no meaningful things to do - just provide the data
 	}
 	
 
 	@Data(name = "resources", accessTypePort = AccessType.allowed, ports = { "provideResource" })
 	public Hashtable<String, String> resources() {
 		return resourceLableToID;
-		// TODO send only resources >0?
+		// Think if we should send all the resources or only those whose amounts are greater than 0
 	}
 	
 	@Data(name = "amounts", accessTypePort = AccessType.allowed, ports = { "provideResource" })
@@ -291,38 +279,36 @@ public class AllocatorImpl implements Allocator {
 	
 	@Data(name = "allocID", accessTypePort = AccessType.allowed, ports = { "provideResource" })
 	public int allocID() {
-		return allocationID-1;
+		return allocationID - 1;
 	}
 	
 	@org.bip.annotations.Transition(name = "release", source = "0", target = "0", guard = "canRelease")
-	public void releaseResource(@Data(name = "resourceUnit") ArrayList<String> unitNames, @Data(name = "allocID") int allocID) throws DNetException {
+	public void releaseResource(@Data(name = "resourceUnit") ArrayList<String> unitNames) throws DNetException {
 		logger.debug("Releasing resources: " + unitNames);
-		String alloc = unitNames.get(unitNames.size()-1);
-		int allocId = Integer.parseInt(alloc);
-		for (int i=0; i< unitNames.size()-1; i++) {
+		// The id of the allocation is passed as the last element of the unitNames
+		// This will be fixed once we have a Resource Coordinator.
+		String allocIdString = unitNames.get(unitNames.size() - 1);
+		int allocId = Integer.parseInt(allocIdString);
+		for (int i = 0; i < unitNames.size() - 1; i++) {
 			String unit = unitNames.get(i);
 			// release the amount allocated for the given resource
 			releaseResource(unit, allocId);
 
-			// for each place reachable from this place
-			if (!dnet.placeNameToPostplacesNames.containsKey(unit)) {
-				break;
+			// for each place reachable from this place, release those resources as well
+			if (dnet.placeNameToPostplacesNames.containsKey(unit)) {
+				recursiveRelease(allocId, unit);
 			}
-			recursiveRelease(allocId, unit);
 		}
-//		System.out.println("resources released " + ": " + allocID + " " + allocations.get(allocId));
-//		for (ResourceProvider provider: resources) {
-//			System.out.println(provider.name() + " " + provider.cost());
-//		}
 	}
 
-	private void recursiveRelease(int allocID, String unit) {
-		if (dnet.placeNameToPostplacesNames.get(unit)==null) return;
-		for (String placeName : dnet.placeNameToPostplacesNames.get(unit)) {
-			logger.debug("Releasing resource: " + placeName + " dependent on " + unit);
-			// TODO check the amount (token) only having come from the place released
-			// if the resource was allocated, release it
-			if (allocations.get(allocID).hasResource(unit)) {
+	private void recursiveRelease(int allocID, String resourceName) {
+		if (dnet.placeNameToPostplacesNames.get(resourceName) == null) {
+			return;
+		}
+		for (String placeName : dnet.placeNameToPostplacesNames.get(resourceName)) {
+			logger.debug("Releasing resource: " + placeName + " dependent on " + resourceName);
+			// TODO check the amount (token) only having come from the place released.
+			if (allocations.get(allocID).hasResource(resourceName)) {
 				releaseResource(placeName, allocID);
 				recursiveRelease(allocID, placeName);
 			}
@@ -330,77 +316,53 @@ public class AllocatorImpl implements Allocator {
 	}
 
 	private void releaseResource(String resourceName, int allocID) {
-		//System.out.println(placeNameToResource + ": " + allocID + " " + resourceName); 
-		String res = allocations.get(allocID).resourceAmount(resourceName);
-		// update cost with returning the value
-		logger.info("Releasing resource: " + resourceName + ", the amount allocated was " + res + ", the resource provider is " + placeNameToResource.get(resourceName));
-		//TODO remove a corresponding token as well? - why, no, there are no tokens saved between runs
-		
+		String amountToRelease = allocations.get(allocID).resourceAmount(resourceName);
+		logger.info("Releasing resource: " + resourceName + ", the amount allocated was " + amountToRelease + ", the resource provider is " + placeNameToResource.get(resourceName));
 		// update the cost after deallocating the resource
-		placeNameToResource.get(resourceName).augmentCost(res);
+		placeNameToResource.get(resourceName).augmentCost(amountToRelease);
 	}
 	
-	@Guard(name = "canRelease") //, @Data(name = "allocID") int allocID
+	@Guard(name = "canRelease") 
 	public boolean canRelease(@Data(name = "resourceUnit") ArrayList<String> unitNames) throws DNetException {
-		String alloc = unitNames.get(unitNames.size()-1);
-		int allocID = Integer.parseInt(alloc);
-		if (allocations.get(allocID)==null) return false;
-		//System.out.println(resourceNameToGivenValueInAllocation + ": " + allocID + " " + unitNames);
-		for (int i=0; i< unitNames.size()-1; i++) {
-			String unit = unitNames.get(i);
-			// TODO what if there are several items of the same resource, then we should also know the name - rather the id - of component?
-			// get the expression for the allocated amount for this resource
-			String res = allocations.get(allocID).resourceAmount(unit);
-			if (res == null) {
-				System.out.println("No release: " + allocID + " " + unit);
+		String allocIdString = unitNames.get(unitNames.size() - 1);
+		int allocID = Integer.parseInt(allocIdString);
+		if (allocations.get(allocID) == null)
+			return false;
+		for (int i = 0; i < unitNames.size() - 1; i++) {
+			String resourceToRelease = unitNames.get(i);
+			// TODO if there are several items of resource allocated, we should remember which amount was given to which component
+			String resourceAmoune = allocations.get(allocID).resourceAmount(resourceToRelease);
+			if (resourceAmoune == null) {
+				System.out.println("No release possible for allocation " + allocID + " and resource " + resourceToRelease);
 				return false;
 			}
 		}
 		return true;
 	}
 
-	// for each place which has tokens, add its cost - or should it be for each place in general (the case of !=0) ??
+	/**
+	 * We assume that by default 0 amount of the resource is allocated.
+	 * For each place that has tokens, we add its cost to the solver constraints
+	 */
 	public void addCost() throws DNetException {
-		
 		for (Place place : placeVariables.keySet()) {
 			Map<String, VariableExpression> stringtoConstraintVar = new HashMap<String, VariableExpression>();
 			if (placeVariables.get(place).size() > 0) {
-				//ArithExpr placeSum = placeVariables.get(place).get(0).variable();
-				// if there are several variables, we need to make a sum
-				// TODO TEST sum of the variables
-				VariableExpression sum = factory.sumTokens(placeVariables.get(place));
-//				for (int i = 1; i < placeVariables.get(place).size(); i++) {
-//					placeSum = getContext().mkAdd(placeSum, placeVariables.get(place).get(i).variable());
-//				}
-				stringtoConstraintVar.put(place.name(), sum);
-				logger.debug("For place " + place.name() + " the token variable names are " + stringtoConstraintVar + " and the constraint is "
-						+ resourceToCost.get(place.name()));
-				DnetConstraint costExpr = resourceToCost.get(place.name()).evaluateN(stringtoConstraintVar);
-				//System.err.println(place.name() +" "+ costExpr);
-				solver.addConstraint(costExpr);
+				VariableExpression sumVariable = factory.sumTokens(placeVariables.get(place));
+				stringtoConstraintVar.put(place.name(), sumVariable);
+				logger.debug("For place " + place.name() + " the token variable names are " + stringtoConstraintVar
+						+ " and the constraint is " + resourceToCost.get(place.name()));
+				DnetConstraint costConstraint = resourceToCost.get(place.name()).evaluateN(stringtoConstraintVar);
+				solver.addConstraint(costConstraint);
 			}
 		}
-		//System.err.println("################### ");
 	}
 
 	/**************** End of Transitions *****************/
 
-	/**************** End of Helper functions *****************/
 
 	/**************** Interface functions *****************/
 
-
-	@Override
-	public void request() {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void release() {
-		// TODO Auto-generated method stub
-	}
-
-	
 	/**
 	 * We assume that each resource provider has a place in the DNet with the same name.
 	 * We also assume that the DNet is provided to the Allocator before the resource providers are specified.
