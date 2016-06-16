@@ -1,7 +1,6 @@
 package org.bip.constraints.z3;
 
 import org.bip.constraint.VariableExpression;
-import org.jacop.core.IntVar;
 
 import com.microsoft.z3.ArithExpr;
 import com.microsoft.z3.Expr;
@@ -19,26 +18,14 @@ public class Z3VariableExpression implements VariableExpression {
 		this.expr = expr2;
 	}
 
-	@Override
-	public ArithExpr aExpr() {
+	protected ArithExpr arithExpr() {
 		return aExpr;
 	}
 	
 	public String toString() {
-		if (aExpr==null)
-		return expr.toString();
+		if (aExpr == null)
+			return expr.toString();
 		return aExpr.toString();
-	}
-
-	@Override
-	public Expr expr() {
-		return expr;
-	}
-
-	@Override
-	public IntVar jVar() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

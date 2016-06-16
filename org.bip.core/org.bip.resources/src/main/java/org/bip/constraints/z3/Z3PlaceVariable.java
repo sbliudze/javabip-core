@@ -50,33 +50,16 @@ public class Z3PlaceVariable implements PlaceVariable {
 	}
 
 	@Override
-	public Object value() {
-		return null;
-	}
-
-	@Override
 	public DnetConstraint domainConstraint() {
 		return factory.creatNaturalConstraint(variable);
 	}
 
-	@Override
-	public ArithExpr aExpr() {
+	protected ArithExpr arithExpr() {
 		return variable;
 	}
 	
 	public String toString () {
 		return variable.toString();
-	}
-
-	@Override
-	public Expr expr() {
-		return variable;
-	}
-
-	@Override
-	public IntVar jVar() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

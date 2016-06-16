@@ -12,19 +12,7 @@ public class JacopResourceAllocation implements ResourceAllocation {
 
 	public JacopResourceAllocation(IntVar[] variables, Domain[] solution) {
 		resources = new HashMap<String, Integer>();
-
 		generateResourceAmounts(variables, solution);
-
-		// System.err.println("%%%%%%%%%%%%%%%");
-
-		// if (variables[i].id.contains("-")) {
-		// int k = variables[i].id.indexOf("-");
-		// resources.put(variables[i].id.substring(0, k), Integer.parseInt(solution[i].toString()));
-		// // System.err.print(variables[i].id + " : ");
-		// // System.err.println(solution[i]);
-		// }
-		// }
-		// System.err.println("%%%%%%%%%%%%%%%");
 	}
 
 	private void generateResourceAmounts(IntVar[] variables, Domain[] solution) {
@@ -40,7 +28,6 @@ public class JacopResourceAllocation implements ResourceAllocation {
 			int i_r = Integer.parseInt(solution[i].toString());
 
 			if (!resources.containsKey(placeName)) {
-
 				resources.put(placeName, i_r);
 			} else {
 				int prevIntValue = resources.get(placeName);

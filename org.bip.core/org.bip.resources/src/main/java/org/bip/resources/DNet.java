@@ -28,9 +28,7 @@ public class DNet {
 	public HashMap<String, Place> nameToPlace;
 	private ArrayList<InhibitorArc> inhibitors;
 	private ArrayList<Transition> firedTransitions;
-	ConstraintSolver solver;
 	private ExpressionCreator factory;
-	
 	public ConstraintNode request;
 	
 	/**************** Constructors area *****************/
@@ -49,7 +47,7 @@ public class DNet {
 	}
 	
 	public void checkIntegrity() {
-		// check that for all the places there is a resource with the same name
+		// TODO perform all the necessary checks for the DNet
 		// all inhibitor arcs refer to existing transitions
 		// conflict-freedom
 	}
@@ -65,16 +63,16 @@ public class DNet {
 
 	public void setFactory(ExpressionCreator factory) {
 		this.factory = factory;
-		for (Transition t: transitions) {
-			t.setFactoryToContraint(factory);
+		for (Transition t : transitions) {
+			t.setFactoryToConstraint(factory);
 		}
 	}
-	
+
 	public Place addPlace(String placeName) {
 		if (!nameToPlace.containsKey(placeName)) {
 			Place place = new Place(placeName);
 			this.places.add(place);
-			nameToPlace.put(placeName, place);
+			this.nameToPlace.put(placeName, place);
 			return place;
 		}
 		return nameToPlace.get(placeName);
@@ -82,9 +80,9 @@ public class DNet {
 
 	public void addTransition(String transitionName, ArrayList<Place> inPlaces, ArrayList<Place> outPlaces) throws DNetException {
 		createHelperStructures(transitionName, inPlaces, outPlaces);
-		Transition tr = new Transition(transitionName, inPlaces, outPlaces);
-		this.transitions.add(tr);
-		this.nameToTransition.put(transitionName, tr);
+		Transition transition = new Transition(transitionName, inPlaces, outPlaces);
+		this.transitions.add(transition);
+		this.nameToTransition.put(transitionName, transition);
 	}
 
 	private void createHelperStructures(String transitionName, ArrayList<Place> inPlaces, ArrayList<Place> outPlaces) throws DNetException {
@@ -122,17 +120,17 @@ public class DNet {
 	public void addTransition(String transitionName, ArrayList<Place> inPlaces, ArrayList<Place> outPlaces, Constraint constraint) throws DNetException {
 		constraint.addFactory(factory);
 		createHelperStructures(transitionName, inPlaces, outPlaces);
-		Transition tr = new Transition(transitionName, inPlaces, outPlaces, constraint);
-		this.transitions.add(tr);
-		this.nameToTransition.put(transitionName, tr);
+		Transition transition = new Transition(transitionName, inPlaces, outPlaces, constraint);
+		this.transitions.add(transition);
+		this.nameToTransition.put(transitionName, transition);
 	}
 
 	public void addInhibitor(String placeName, String transitionName, ArrayList<String> refers) {
-		Transition tr = this.nameToTransition.get(transitionName);
+		Transition transition = this.nameToTransition.get(transitionName);
 		Place place = this.nameToPlace.get(placeName);
-		InhibitorArc inh = new InhibitorArc(place, tr, refers);
-		tr.addInhibitor(inh);
-		inhibitors.add(inh);
+		InhibitorArc inhibitor = new InhibitorArc(place, transition, refers);
+		transition.addInhibitor(inhibitor);
+		this.inhibitors.add(inhibitor);
 	}
 	
 	
@@ -201,14 +199,9 @@ public class DNet {
 				VariableExpression  placeSum = factory.sumTokens(placeVariables.get(place));
 
 				for (int i = 1; i < placeVariables.get(place).size(); i++) {
-
-					// TODO think about constraints on token variables which
-					// should be >=0
-					// in general, this might not always be the case that each
-					// variable is positive.
 					
-					// for z3 we add that it should be >0
-					// for jacop, it is already implied by variable definition -> we add null 
+					// for z3 we add that it should be > 0
+					// for jacop, the domain constraint is already implied through variable definition -> we add null 
 					dependencyConstraints.add(placeVariables.get(place).get(i).domainConstraint());
 				}
 				stringtoConstraintVar.put(place.name(), placeSum);

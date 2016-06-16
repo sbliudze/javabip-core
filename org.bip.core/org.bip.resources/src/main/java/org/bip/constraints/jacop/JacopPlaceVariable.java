@@ -24,30 +24,12 @@ public class JacopPlaceVariable implements PlaceVariable {
 		this.variable = var;
 		name = var.id;
 	}
-	
-	@Override
-	public ArithExpr aExpr() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Expr expr() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public void create(String name) {
 		this.name = name;
 		variable = new IntVar(store, name, 0, 1000);
 
-	}
-
-	@Override
-	public Object value() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -61,7 +43,6 @@ public class JacopPlaceVariable implements PlaceVariable {
 		return null;
 	}
 
-	@Override
 	public IntVar jVar() {
 		return variable;
 	}

@@ -161,7 +161,7 @@ public class Transition {
 		this.fired = false;
 	}
 
-	public void setFactoryToContraint(ExpressionCreator factory) {
+	public void setFactoryToConstraint(ExpressionCreator factory) {
 		this.constraint.addFactory(factory);
 		
 	}

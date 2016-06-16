@@ -6,7 +6,7 @@ import org.bip.constraint.ConstraintSolver;
 import org.bip.constraint.DnetConstraint;
 import org.bip.constraint.ExpressionCreator;
 import org.bip.constraint.ResourceAllocation;
-import org.jacop.constraints.Constraint;
+import org.bip.exceptions.BIPException;
 import org.jacop.core.IntVar;
 import org.jacop.core.Store;
 import org.jacop.search.DepthFirstSearch;
@@ -19,7 +19,6 @@ import org.jacop.search.SolutionListener;
 public class JacopSolver implements ConstraintSolver {
 
 	private JacopFactory factory;
-	private ResourceAllocation allocation;
 
 	/**
 	 * It contains all variables used within a specific example.
@@ -58,20 +57,21 @@ public class JacopSolver implements ConstraintSolver {
 	@Override
 	public ResourceAllocation getAllocation() {
 		SolutionListener<IntVar> sl = search.getSolutionListener();
-		//System.out.println("88888888888888888888888888888888888888888888");
-		for (Constraint cstr : store.getConstraints()) {
-		//	System.out.println(cstr);
-		}
-		//System.out.println("88888888888888888888888888888888888888888888");
 		return new JacopResourceAllocation(sl.getVariables(), search.getSolution());
 	}
 
 	@Override
 	public void addConstraint(DnetConstraint constraint) {
-		if (constraint != null)
-			store.impose(constraint.cstr());
-		// what about variables?
-
+		if (constraint == null) {
+			return;
+		}
+		if (constraint instanceof JacopConstraint) {
+			JacopConstraint jacopConstraint = (JacopConstraint) constraint;
+			store.impose(jacopConstraint.cstr());
+			// we do not need to add variables to vars, as they are already added upon creation
+			return;
+		}
+		throw new BIPException("The constraint " + constraint + "does not belong to Jacop solver.");
 	}
 
 	public void addVariable(IntVar e) {
