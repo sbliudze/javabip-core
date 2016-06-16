@@ -57,7 +57,7 @@ public class JacopPlaceVariable implements PlaceVariable {
 
 	@Override
 	public DnetConstraint domainConstraint() {
-		// TODO Auto-generated method stub
+		// variable is already defined with its domain, hence we do not need to add a new constraint
 		return null;
 	}
 

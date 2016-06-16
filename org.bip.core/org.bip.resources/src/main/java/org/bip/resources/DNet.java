@@ -46,7 +46,6 @@ public class DNet {
 		transitionNameToPostplacesNames = new HashMap<String, ArrayList<String>>();
 		placeNameToPostplacesNames = new  HashMap<String, ArrayList<String>>();
 		firedTransitions = new ArrayList<Transition>();
-		
 	}
 	
 	public void checkIntegrity() {
@@ -207,6 +206,9 @@ public class DNet {
 					// should be >=0
 					// in general, this might not always be the case that each
 					// variable is positive.
+					
+					// for z3 we add that it should be >0
+					// for jacop, it is already implied by variable definition -> we add null 
 					dependencyConstraints.add(placeVariables.get(place).get(i).domainConstraint());
 				}
 				stringtoConstraintVar.put(place.name(), placeSum);

@@ -34,53 +34,39 @@ import org.bip.resources.grammar.dNetParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-@Ports({ @Port(name = "request", type = PortType.enforceable), @Port(name = "release", type = PortType.enforceable), 
-	 @Port(name = "provideResource", type = PortType.enforceable)})
+@Ports({ @Port(name = "request", type = PortType.enforceable), @Port(name = "release", type = PortType.enforceable),
+		@Port(name = "provideResource", type = PortType.enforceable) })
 @ComponentType(initial = "0", name = "org.bip.resources.AllocatorImpl")
 public class AllocatorImpl implements Allocator {
 
 	private Logger logger = LoggerFactory.getLogger(AllocatorImpl.class);
 
 	private DNet dnet;
-	//private Context context;
 	private ConstraintSolver solver;
-	// TODO later change to hashmap for resources of the same type?
+	private ExpressionCreator factory;
 	// The list of all available resources
+	// So far the resource types are not used. If they are introduced, the list might have to be changed into hashmap
 	private ArrayList<ResourceProvider> resources;
-	// a map: resource name <-> resource provider
-	private HashMap<String, ResourceProvider> nameToResource;
-	// a map: dnet place corresponding to a resource <-> resource provider
-	private HashMap<Place, ResourceProvider> placeToResource;
-	// TODO a priori resource names and place names should be the same. what if not? CHECK THINK
-	// upd: this should be redundant. this map uses place.name(), the above map uses resource.name().
-	// therefore, TODO: check that for every resource there is a place and for every place there is a resource
-	// what if we have several resources for the same place? they should have still one provider, right, or?.. (see the very first todo line 47)
+	// a map: resource (place) name <-> resource provider
 	private HashMap<String, ResourceProvider> placeNameToResource;
-
 	// a map: dnet place <-> list of tokens contained in that place (=list of transition that have put tokens in there)
 	public HashMap<Place, ArrayList<Transition>> placeTokens;
 	// a map: dnet place <-> list of variables contained in that place (should be equal in size to the list of tokens)
 	public HashMap<Place, ArrayList<PlaceVariable>> placeVariables;
 	// a map: resource name <-> resource constraint (as provided by the resource and then parsed)
 	private HashMap<String, ConstraintNode> resourceToCost;
-	// a map: resource name <-> value produced by the solver (is used to find out how much we should release upon spontaneous release event)
-	// TODO it won't work this way if we have several components asking for the same resource - even if it is done in several times. or will I erase it? CHECK
-	//private HashMap<String, Expr> resourceNameToGivenValue;
-	//private HashMap<Integer, HashMap<String, Expr>> resourceNameToGivenValueInAllocation;
+	// a map: allocation number <-> allocation produced by the solver (is used to find out how much we should release upon spontaneous release event)
 	private HashMap<Integer, ResourceAllocation> allocations;
-	
-	// a map: request string <-> model provided by the solver. is used in order not to solve the thing twice during the guard evaluation and the actual
-	// allocation
+	// a map: request string <-> model provided by the solver.
+	// is used in order not to solve the thing twice during the guard evaluation and the actual allocation
 	private HashMap<String, ResourceAllocation> requestToModel;
 	/**
-	 * The id of the resource proxy that was allocated to an asking component. Must be updated at each allocation cycle.
-	 */
-	//private String currentResourceID;
-	/**
-	 * The map containing the requested resources in pairs: the lable of requested resource <-> the id of the provided resource proxy.
+	 * The map containing the requested resources in pairs: the label of requested resource <-> the id of the provided resource proxy.
 	 */
 	private Hashtable<String, String> resourceLableToID;
+	/**
+	 * The map containing the requested resources in pairs: the label of requested resource <-> the allocated amount of the resource.
+	 */
 	private Hashtable<String, Integer> resourceLableToAmount;
 	
 	/**
@@ -90,10 +76,7 @@ public class AllocatorImpl implements Allocator {
 	 */
 	private int allocationID;
 	
-	//private String componentID = "";
-	private  HashMap<String, HashMap<Place, ArrayList<PlaceVariable>>> requestToTokens; //placeVariables
-	
-	private ExpressionCreator factory;
+
 
 	/**************** Constructors *****************/
 
@@ -102,13 +85,9 @@ public class AllocatorImpl implements Allocator {
 		placeVariables = new HashMap<Place, ArrayList<PlaceVariable>>();
 		resourceToCost = new HashMap<String, ConstraintNode>();
 		resources = new ArrayList<ResourceProvider>();
-		nameToResource = new HashMap<String, ResourceProvider>();
-		placeToResource = new HashMap<Place, ResourceProvider>();
 		placeNameToResource = new HashMap<String, ResourceProvider>();
-		//resourceNameToGivenValueInAllocation = new HashMap<Integer, HashMap<String,Expr>>(); //new HashMap<String, Expr>();
 		allocations = new HashMap<Integer, ResourceAllocation>();
 		requestToModel = new HashMap<String, ResourceAllocation>();
-		requestToTokens = new HashMap<String, HashMap<Place,ArrayList<PlaceVariable>>>();
 		resourceLableToID = new Hashtable<String, String>();
 		resourceLableToAmount = new Hashtable<String, Integer>();
 		allocationID = 0;
@@ -166,7 +145,15 @@ public class AllocatorImpl implements Allocator {
 
 	/************************ Transitions ***************************/
 
-
+	public static final String ANSI_RESET = "\u001B[0m";
+	public static final String ANSI_BLACK = "\u001B[30m";
+	public static final String ANSI_RED = "\u001B[31m";
+	public static final String ANSI_GREEN = "\u001B[32m";
+	public static final String ANSI_YELLOW = "\u001B[33m";
+	public static final String ANSI_BLUE = "\u001B[34m";
+	public static final String ANSI_PURPLE = "\u001B[35m";
+	public static final String ANSI_CYAN = "\u001B[36m";
+	public static final String ANSI_WHITE = "\u001B[37m";
 	
 	@Guard(name = "canAllocate")
 	public boolean canAllocate(@Data(name = "request-id") ArrayList<String> ddd) throws DNetException {
@@ -177,16 +164,23 @@ public class AllocatorImpl implements Allocator {
 		logger.debug("Allocator checking resource availabilities for request " + requestString);
 		ConstraintNode request = parseRequest(requestString);
 		ArrayList<String> resourcesRequested = request.resourceInConstraint(request);
+		checkRequestedResourcesExist(resourcesRequested, requestString);
 		logger.debug("The resources requested are " + resourcesRequested);
 
 		Map<String, VariableExpression> nameToExpr = createTokenVariables(resourcesRequested);
+		
+		//DnetConstraint dnc = request.evaluateN(nameToExpr);
+		//System.out.println("REQUEST " + dnc);
 		solver.addConstraint(request.evaluateN(nameToExpr)); // add the request constraint
 		logger.debug("Tokens of the dnet at initialisation are: " + placeTokens);
 		ArrayList<DnetConstraint> dNetConstraints = dnet.run(placeVariables, placeTokens);
 		logger.debug("For component " + componentID +" The dnet constraints are: " + dNetConstraints);
+		//System.err.println("################### " + requestString);
 		for (DnetConstraint constr : dNetConstraints) {
 			solver.addConstraint(constr);
+		//	System.out.println(constr);
 		}
+		//System.err.println("################### ");
 		addCost();
 		if (!solver.isSolvable()) { 
 			return false;
@@ -197,6 +191,20 @@ public class AllocatorImpl implements Allocator {
 		// we save the model so that we can use it during the allocation phase
 		requestToModel.put(componentID+requestString, model);
 		return true;
+	}
+
+	/**
+	 * We assume that every resource required in the request has the same name as the places of the DNet.
+	 * If this is not the case, a BIPException is thrown
+	 * @param resourcesRequested an array of resources present in the request
+	 * @param requestString the request provided by a component which is being checked
+	 */
+	private void checkRequestedResourcesExist(ArrayList<String> resourcesRequested, String requestString) {
+		for (String resource: resourcesRequested) {
+			if (!placeNameToResource.containsKey(resource))
+				throw new BIPException("Resource " + resource + " asked in request " + requestString + " cannot be found among the resources of the system.");
+		}
+		
 	}
 
 	// creates initial tokens in places corresponding to requested resources
@@ -353,6 +361,7 @@ public class AllocatorImpl implements Allocator {
 
 	// for each place which has tokens, add its cost - or should it be for each place in general (the case of !=0) ??
 	public void addCost() throws DNetException {
+		
 		for (Place place : placeVariables.keySet()) {
 			Map<String, VariableExpression> stringtoConstraintVar = new HashMap<String, VariableExpression>();
 			if (placeVariables.get(place).size() > 0) {
@@ -367,9 +376,11 @@ public class AllocatorImpl implements Allocator {
 				logger.debug("For place " + place.name() + " the token variable names are " + stringtoConstraintVar + " and the constraint is "
 						+ resourceToCost.get(place.name()));
 				DnetConstraint costExpr = resourceToCost.get(place.name()).evaluateN(stringtoConstraintVar);
+				//System.err.println(place.name() +" "+ costExpr);
 				solver.addConstraint(costExpr);
 			}
 		}
+		//System.err.println("################### ");
 	}
 
 	/**************** End of Transitions *****************/
@@ -389,18 +400,19 @@ public class AllocatorImpl implements Allocator {
 		// TODO Auto-generated method stub
 	}
 
+	
+	/**
+	 * We assume that each resource provider has a place in the DNet with the same name.
+	 * We also assume that the DNet is provided to the Allocator before the resource providers are specified.
+	 */
 	@Override
 	public void addResource(ResourceProvider resource) {
 		resources.add(resource);
-		nameToResource.put(resource.name(), resource);
-		for (Place place : placeVariables.keySet()) {
-			if (place.name().equals(resource.name())) {
-				placeToResource.put(place, resource);
-				placeNameToResource.put(place.name(), resource);
-				break;
-			}
-		}
+		placeNameToResource.put(resource.name(), resource);
 		this.specifyCost(resource.name(), resource.cost());
+		if (!this.dnet.nameToPlace.keySet().contains(resource.name())) {
+			throw new BIPException("The resource provider " + resource + " does not have a corresponding place in the DNet.");
+		}
 	}
 	
 	/****************End of  Interface functions *****************/

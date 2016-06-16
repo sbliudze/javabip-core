@@ -26,15 +26,14 @@ public class JacopFactory implements ExpressionCreator {
 
 	Store store;
 	ArrayList<IntVar> vars;
-	
-	public JacopFactory (Store store, ArrayList<IntVar> vars) {
+
+	public JacopFactory(Store store, ArrayList<IntVar> vars) {
 		this.store = store;
 		this.vars = vars;
 	}
-	
+
 	@Override
-	public VariableExpression createAddition(VariableExpression v1,
-			VariableExpression v2) {
+	public VariableExpression createAddition(VariableExpression v1, VariableExpression v2) {
 		IntVar res = new IntVar(store, 0, 1000);
 		vars.add(res);
 		store.impose(new XplusYeqZ(v1.jVar(), v2.jVar(), res));
@@ -42,117 +41,120 @@ public class JacopFactory implements ExpressionCreator {
 	}
 
 	@Override
-	public VariableExpression createSubtraction(VariableExpression v1,
-			VariableExpression v2) {
-		IntVar res = new IntVar(store, 0, 1000);vars.add(res);
+	public VariableExpression createSubtraction(VariableExpression v1, VariableExpression v2) {
+		IntVar res = new IntVar(store, 0, 1000);
+		vars.add(res);
 		store.impose(new XplusYeqZ(res, v2.jVar(), v1.jVar()));
 		return new JacopPlaceVariable(res);
 	}
 
 	@Override
-	public VariableExpression createMultiplication(VariableExpression v1,
-			VariableExpression v2) {
-		IntVar res = new IntVar(store, 0, 1000);vars.add(res);
+	public VariableExpression createMultiplication(VariableExpression v1, VariableExpression v2) {
+		IntVar res = new IntVar(store, 0, 1000);
+		vars.add(res);
 		store.impose(new XmulYeqZ(v1.jVar(), v2.jVar(), res));
 		return new JacopPlaceVariable(res);
 	}
 
 	@Override
-	public VariableExpression createDivision(VariableExpression v1,
-			VariableExpression v2) {
-		IntVar res = new IntVar(store);vars.add(res);
+	public VariableExpression createDivision(VariableExpression v1, VariableExpression v2) {
+		IntVar res = new IntVar(store);
+		vars.add(res);
 		store.impose(new XdivYeqZ(v1.jVar(), v2.jVar(), res));
 		return new JacopPlaceVariable(res);
 	}
 
 	@Override
-	public DnetConstraint createGreater(VariableExpression v1,
-			VariableExpression v2) {
-		return new JacopConstraint( new XgtY (v1.jVar(), v2.jVar()));
+	public DnetConstraint createGreater(VariableExpression v1, VariableExpression v2) {
+		return new JacopConstraint(new XgtY(v1.jVar(), v2.jVar()));
 	}
 
 	@Override
-	public DnetConstraint createGreaterOrEqual(VariableExpression v1,
-			VariableExpression v2) {
-		return new JacopConstraint( new XgteqY (v1.jVar(), v2.jVar()));
+	public DnetConstraint createGreaterOrEqual(VariableExpression v1, VariableExpression v2) {
+		return new JacopConstraint(new XgteqY(v1.jVar(), v2.jVar()));
 	}
 
 	@Override
-	public DnetConstraint createLess(VariableExpression v1,
-			VariableExpression v2) {
-		return new JacopConstraint( new XltY (v1.jVar(), v2.jVar()));
+	public DnetConstraint createLess(VariableExpression v1, VariableExpression v2) {
+		return new JacopConstraint(new XltY(v1.jVar(), v2.jVar()));
 	}
 
 	@Override
-	public DnetConstraint createLessOrEqual(VariableExpression v1,
-			VariableExpression v2) {
-		return new JacopConstraint( new XlteqY (v1.jVar(), v2.jVar()));
+	public DnetConstraint createLessOrEqual(VariableExpression v1, VariableExpression v2) {
+		return new JacopConstraint(new XlteqY(v1.jVar(), v2.jVar()));
 	}
 
 	@Override
-	public DnetConstraint createEqual(VariableExpression v1,
-			VariableExpression v2) {
-		return new JacopConstraint( new XeqY(v1.jVar(), v2.jVar()));
+	public DnetConstraint createEqual(VariableExpression v1, VariableExpression v2) {
+		return new JacopConstraint(new XeqY(v1.jVar(), v2.jVar()));
 	}
 
 	@Override
 	public DnetConstraint and(DnetConstraint v1, DnetConstraint v2) {
-		return new JacopConstraint( new And(v1.cstr(), v2.cstr()));
+		return new JacopConstraint(new And(v1.cstr(), v2.cstr()));
 	}
 
 	@Override
 	public DnetConstraint or(DnetConstraint v1, DnetConstraint v2) {
-		return new JacopConstraint( new Or(v1.cstr(), v2.cstr()));
+		return new JacopConstraint(new Or(v1.cstr(), v2.cstr()));
 	}
 
 	@Override
 	public DnetConstraint not(DnetConstraint v) {
-		return new JacopConstraint( new Not(v.cstr()));
+		return new JacopConstraint(new Not(v.cstr()));
 	}
 
 	@Override
 	public VariableExpression createNumber(String data) {
-		IntVar res = new IntVar(store, data, 0, 1000);vars.add(res);
-		store.impose( new XeqC(res, Integer.parseInt(data)));
+		int num = Integer.parseInt(data);
+		IntVar res = new IntVar(store, data, num, num);
+		//vars.add(res);
+		store.impose(new XeqC(res, num));
 		return new JacopPlaceVariable(res);
 	}
 
 	@Override
 	public VariableExpression sumTokens(ArrayList<PlaceVariable> placeTokens) {
-		
-		if (placeTokens.size()==1) {
+
+		if (placeTokens.size() == 1) {
 			JacopPlaceVariable var = (JacopPlaceVariable) placeTokens.get(0);
 			return var;
 		}
-		
+
+		//JacopPlaceVariable var = (JacopPlaceVariable) placeTokens.get(0);
+//		IntVar var =  placeTokens.get(0).jVar();
+//		IntVar res = new IntVar(store, 0, 1000);
 //		for (int i = 1; i < placeTokens.size(); i++) {
-//			IntVar res = new IntVar(store, 0, 1000);vars.add(res);
-//			store.impose(new XplusYeqZ(res, v2.jVar(), v1.jVar()));
+//
+//			vars.add(res);
+//			
 //			JacopPlaceVariable nextVar = (JacopPlaceVariable) placeTokens.get(i);
-//			sumVars.add(nextVar.jVar());
+//			store.impose(new XplusYeqZ(var, nextVar.jVar(), res));
+//			var = res;
 //		}
-		
-		
+
 		ArrayList<IntVar> sumVars = new ArrayList<IntVar>();
 		for (int i = 0; i < placeTokens.size(); i++) {
 			JacopPlaceVariable nextVar = (JacopPlaceVariable) placeTokens.get(i);
 			sumVars.add(nextVar.jVar());
 		}
-		IntVar sum = new IntVar(store,"tokensum", 0, 1000);vars.add(sum);
-		new SumInt(store, sumVars, "==", sum);
+		IntVar sum = new IntVar(store, "tokensum", 0, 1000);
+		vars.add(sum);
+		store.impose(new SumInt(store, sumVars, "==", sum));
 		return new JacopPlaceVariable(sum);
 	}
 
 	@Override
 	public PlaceVariable createVariable(String variableName) {
-		IntVar res = new IntVar(store, variableName, 0, 1000);vars.add(res);
+		IntVar res = new IntVar(store, variableName, 0, 1000);
+		vars.add(res);
 		return new JacopPlaceVariable(res);
 	}
 
 	public void reinit(Store store2, ArrayList<IntVar> vars2) {
 		this.store = store2;
 		this.vars = vars2;
-		
+
 	}
 
 }
