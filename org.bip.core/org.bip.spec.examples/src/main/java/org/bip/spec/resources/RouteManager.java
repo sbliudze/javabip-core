@@ -63,8 +63,13 @@ public class RouteManager implements ResourceProvider {
 	}
 
 	@Override
-	public String cost() {
+	public String constraint() {
 		return this.cost;
+	}
+	
+	@Override
+	public String cost() {
+		return "0, "+this.cost + ";";
 	}
 
 	@Override

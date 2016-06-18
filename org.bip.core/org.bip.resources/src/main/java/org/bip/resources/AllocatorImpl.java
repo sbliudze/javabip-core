@@ -26,11 +26,14 @@ import org.bip.constraint.ExpressionCreator;
 import org.bip.constraint.PlaceVariable;
 import org.bip.constraint.ResourceAllocation;
 import org.bip.constraint.VariableExpression;
+import org.bip.constraints.jacop.JacopPlaceVariable;
 import org.bip.exceptions.BIPException;
 import org.bip.resources.grammar.constraintLexer;
 import org.bip.resources.grammar.constraintParser;
 import org.bip.resources.grammar.dNetLexer;
 import org.bip.resources.grammar.dNetParser;
+import org.jacop.constraints.XplusYeqZ;
+import org.jacop.core.IntVar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +57,8 @@ public class AllocatorImpl implements Allocator {
 	// a map: dnet place <-> list of variables contained in that place (should be equal in size to the list of tokens)
 	public HashMap<Place, ArrayList<PlaceVariable>> placeVariables;
 	// a map: resource name <-> resource constraint (as provided by the resource and then parsed)
-	private HashMap<String, ConstraintNode> resourceToCost;
+	private HashMap<String, ConstraintNode> resourceToConstraint;
+	private HashMap<String, Utility> resourceToCost;
 	// a map: allocation number <-> allocation produced by the solver (is used to find out how much we should release upon spontaneous release event)
 	private HashMap<Integer, ResourceAllocation> allocations;
 	// a map: request string <-> model provided by the solver.
@@ -76,6 +80,12 @@ public class AllocatorImpl implements Allocator {
 	 */
 	private int allocationID;
 	
+	/**
+	 * Variable specifying whether we use only constraints trying to satisfy them all,
+	 * or whether we also try to maximize [global utility = comp utility - cost sum]
+	 */
+	private boolean hasUtility = false;
+	private PlaceVariable uVar;
 
 
 	/**************** Constructors *****************/
@@ -83,7 +93,7 @@ public class AllocatorImpl implements Allocator {
 	public AllocatorImpl() {
 		placeTokens = new HashMap<Place, ArrayList<Transition>>();
 		placeVariables = new HashMap<Place, ArrayList<PlaceVariable>>();
-		resourceToCost = new HashMap<String, ConstraintNode>();
+		resourceToConstraint = new HashMap<String, ConstraintNode>();
 		resources = new ArrayList<ResourceProvider>();
 		placeNameToResource = new HashMap<String, ResourceProvider>();
 		allocations = new HashMap<Integer, ResourceAllocation>();
@@ -99,6 +109,11 @@ public class AllocatorImpl implements Allocator {
 		this.factory = solver.expressionCreator();
 		parseAndInitializeDNet(dNetPath, factory);
 	}
+	
+	public AllocatorImpl(String dNetPath, ConstraintSolver solver, boolean hasUtility) throws IOException, RecognitionException, DNetException {
+		this(dNetPath, solver);
+		this.hasUtility = hasUtility;
+	}
 
 	private void parseAndInitializeDNet(String dNetPath, ExpressionCreator factory) throws FileNotFoundException, IOException, DNetException {
 		FileInputStream stream = new FileInputStream(dNetPath);
@@ -111,7 +126,7 @@ public class AllocatorImpl implements Allocator {
 		initializeDNet();
 	}
 
-	private void initializeDNet() {
+	private void initializeDNet() throws DNetException {
 		/*
 		 * At the initialization of the dnet, 
 		 * the variables and tokens are cleared and initialized with empty lists.
@@ -127,16 +142,23 @@ public class AllocatorImpl implements Allocator {
 			placeVariables.put(place, new ArrayList<PlaceVariable>());
 		}
 		if (!resources.isEmpty()) {
-			resourceToCost.clear();
+			resourceToConstraint.clear();
 			for (ResourceProvider resource : resources) {
-				specifyCost(resource.name(), resource.cost());
+				specifyCost(resource.name(), resource.constraint());
 			}
 		}
 	}
 
-	private void specifyCost(String resource, String costString) {
-		ConstraintNode cost = parseRequest(costString);
-		resourceToCost.put(resource, cost);
+	private void specifyCost(String resource, String costString) throws DNetException {
+		if (!hasUtility) {
+			ConstraintNode cost = parseConstraint(costString);
+			resourceToConstraint.put(resource, cost);
+		} else {
+			if (hasUtility) {
+				Utility cost = parseCostOrUtility(costString);
+				resourceToCost.put(resource, cost);
+			}
+		}
 	}
 
 	/**************** End of Initializing functions *****************/
@@ -153,14 +175,7 @@ public class AllocatorImpl implements Allocator {
 		String componentID = tempComponentData.get(1);
 
 		logger.debug("Allocator checking resource availabilities for request " + requestString);
-		ConstraintNode request = parseRequest(requestString);
-		ArrayList<String> resourcesRequested = request.resourceInConstraint(request);
-		checkRequestedResourcesExist(resourcesRequested, requestString);
-		logger.debug("The resources requested are " + resourcesRequested);
-
-		Map<String, VariableExpression> nameToVariable = createInitialTokenVariables(resourcesRequested);
-		solver.addConstraint(request.evaluateN(nameToVariable));
-		logger.debug("Tokens of the dnet at initialisation are: " + placeTokens);
+		addRequest(requestString);
 
 		ArrayList<DnetConstraint> dNetConstraints = dnet.run(placeVariables, placeTokens);
 		logger.debug("For component " + componentID + " The dnet constraints are: " + dNetConstraints);
@@ -170,7 +185,7 @@ public class AllocatorImpl implements Allocator {
 
 		addCost();
 
-		if (!solver.isSolvable()) {
+		if (!solver.isSolvable(hasUtility)) {
 			return false;
 		}
 
@@ -181,6 +196,36 @@ public class AllocatorImpl implements Allocator {
 		 */
 		requestToModel.put(componentID + requestString, model);
 		return true;
+	}
+
+	private void addRequest(String requestString) throws DNetException {
+		ConstraintNode request = null;
+		Utility u = null;
+		
+		if (!hasUtility) {
+			request = parseConstraint(requestString);
+		} else {
+			// TODO create its own parser to move it to constraint parser instead of dnet parser
+			u = parseCostOrUtility(requestString);
+			// to get the request from the utility, we take the fist value of constraint, 
+			// assumption: for every utility value, all the resources are present
+			request = u.utility().values().iterator().next();
+		}
+		ArrayList<String> resourcesRequested = request.resourceInConstraint(request);
+		checkRequestedResourcesExist(resourcesRequested, requestString);
+		logger.debug("The resources requested are " + resourcesRequested);
+
+		Map<String, VariableExpression> nameToVariable = createInitialTokenVariables(resourcesRequested);
+		
+		logger.debug("Tokens of the dnet at initialisation are: " + placeTokens);
+		
+		if (hasUtility) {
+			uVar = factory.createUtilityVariable();
+			solver.addConstraint(factory.createUtilityConstraint(uVar, u.utility(), nameToVariable));
+		}
+		else {
+			solver.addConstraint(request.evaluateN(nameToVariable));
+		}
 	}
 
 	/**
@@ -220,14 +265,31 @@ public class AllocatorImpl implements Allocator {
 		return nameToVariable;
 	}
 
-	private ConstraintNode parseRequest(String requestString) {
-		constraintLexer lexer = new constraintLexer(new ANTLRInputStream(requestString));
-		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		constraintParser parser = new constraintParser(tokens);
-		parser.constraint();
-		ConstraintNode request = parser.constraint;
-		request.addFactory(factory);
-		return request;
+	private ConstraintNode parseConstraint(String requestString) throws DNetException {
+		if (!hasUtility) {
+			constraintLexer lexer = new constraintLexer(new ANTLRInputStream(requestString));
+			CommonTokenStream tokens = new CommonTokenStream(lexer);
+			constraintParser parser = new constraintParser(tokens);
+
+			parser.constraint();
+			ConstraintNode request = parser.constraint;
+			request.addFactory(factory);
+			return request;
+		}
+		throw new DNetException("The parseConstraint method was called for presumably a utility or cost string");
+	}
+
+	private Utility parseCostOrUtility(String costString) throws DNetException {
+		if (hasUtility) {
+			// TODO create its own parser or move it to constraint parser instead of dnet parser
+			dNetLexer lexer = new dNetLexer(new ANTLRInputStream(costString));
+			CommonTokenStream tokens = new CommonTokenStream(lexer);
+			dNetParser parser = new dNetParser(tokens);
+			parser.utility();
+			Utility u = parser.utility;
+			return u;
+		}
+		throw new DNetException("The parseCostOrUtility method was called for presumably a constraint string");
 	}
 	
 	@org.bip.annotations.Transition(name = "request", source = "0", target = "1", guard = "canAllocate")
@@ -275,6 +337,7 @@ public class AllocatorImpl implements Allocator {
 	@Data(name = "amounts", accessTypePort = AccessType.allowed, ports = { "provideResource" })
 	public Hashtable<String, Integer> amounts() {
 		return resourceLableToAmount;
+		//TODO add the return of the cost/utility to the demanding component
 	}
 	
 	@Data(name = "allocID", accessTypePort = AccessType.allowed, ports = { "provideResource" })
@@ -345,16 +408,33 @@ public class AllocatorImpl implements Allocator {
 	 * For each place that has tokens, we add its cost to the solver constraints
 	 */
 	public void addCost() throws DNetException {
+		
+		// this array containing cost variables is needed only if we have utility to maximize 
+		ArrayList<PlaceVariable> costs = new ArrayList<PlaceVariable>();
+		//PlaceVariable costVar = factory.createCostVariable(resource);
+		//solver.addConstraint(factory.createUtilityConstraint(uVar, u.utility(), nameToVariable));
 		for (Place place : placeVariables.keySet()) {
 			Map<String, VariableExpression> stringtoConstraintVar = new HashMap<String, VariableExpression>();
 			if (placeVariables.get(place).size() > 0) {
 				VariableExpression sumVariable = factory.sumTokens(placeVariables.get(place));
 				stringtoConstraintVar.put(place.name(), sumVariable);
 				logger.debug("For place " + place.name() + " the token variable names are " + stringtoConstraintVar
-						+ " and the constraint is " + resourceToCost.get(place.name()));
-				DnetConstraint costConstraint = resourceToCost.get(place.name()).evaluateN(stringtoConstraintVar);
-				solver.addConstraint(costConstraint);
+						+ " and the constraint is " + resourceToConstraint.get(place.name()));
+				if (!hasUtility) {
+					DnetConstraint costConstraint = resourceToConstraint.get(place.name()).evaluateN(stringtoConstraintVar);
+					solver.addConstraint(costConstraint);
+				} else {
+					Utility cost = resourceToCost.get(place.name());
+					solver.addConstraint(factory.createUtilityConstraint(sumVariable, cost.utility(), stringtoConstraintVar));
+					PlaceVariable costVar = factory.createCostVariable(place.name());
+					costs.add(costVar);
+				}
 			}
+		}
+		if (hasUtility) {
+			VariableExpression sumCost = factory.sumTokens(costs);
+			PlaceVariable bigCost = factory.createCostVariable("global");
+			solver.addCostConstraint(bigCost, sumCost, uVar);
 		}
 	}
 
@@ -366,12 +446,18 @@ public class AllocatorImpl implements Allocator {
 	/**
 	 * We assume that each resource provider has a place in the DNet with the same name.
 	 * We also assume that the DNet is provided to the Allocator before the resource providers are specified.
+	 * @throws DNetException 
 	 */
 	@Override
 	public void addResource(ResourceProvider resource) {
 		resources.add(resource);
 		placeNameToResource.put(resource.name(), resource);
-		this.specifyCost(resource.name(), resource.cost());
+		try {
+			this.specifyCost(resource.name(), resource.constraint());
+		} catch (DNetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if (!this.dnet.nameToPlace.keySet().contains(resource.name())) {
 			throw new BIPException("The resource provider " + resource + " does not have a corresponding place in the DNet.");
 		}

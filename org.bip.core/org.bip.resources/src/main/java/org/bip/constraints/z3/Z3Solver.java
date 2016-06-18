@@ -6,7 +6,9 @@ import java.util.HashMap;
 import org.bip.constraint.ConstraintSolver;
 import org.bip.constraint.DnetConstraint;
 import org.bip.constraint.ExpressionCreator;
+import org.bip.constraint.PlaceVariable;
 import org.bip.constraint.ResourceAllocation;
+import org.bip.constraint.VariableExpression;
 import org.bip.resources.ContextProvider;
 import org.bip.resources.Place;
 
@@ -84,7 +86,7 @@ public class Z3Solver implements ConstraintSolver, ContextProvider {
 	
 	
 	@Override
-	public boolean isSolvable() {
+	public boolean isSolvable(boolean hasUtility) {
 		if (solver.check() == Status.SATISFIABLE) {
 			this.model = solver.getModel();
 			this.allocation = new Z3ResourceAllocation(model, this);
@@ -112,6 +114,12 @@ public class Z3Solver implements ConstraintSolver, ContextProvider {
 	@Override
 	public ExpressionCreator expressionCreator() {
 		return factory;
+	}
+
+	@Override
+	public void addCostConstraint(PlaceVariable bigCost, VariableExpression sumCost, PlaceVariable uVar) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

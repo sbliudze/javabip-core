@@ -2,6 +2,8 @@ package org.bip.api;
 
 public interface ResourceProvider {
 
+	public String constraint();
+	
 	public String cost();
 
 	public String name();

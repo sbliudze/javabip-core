@@ -3,13 +3,14 @@
 package org.bip.resources.grammar;
 import java.util.*;
 import java.util.*;
-
-import org.bip.resources.Constraint;
 import org.bip.resources.ConstraintNode;
+import org.bip.resources.Transition;
+import org.bip.resources.Place;
 import org.bip.resources.DNet;
 import org.bip.resources.InhibitorArc;
-import org.bip.resources.Place;
-import org.bip.resources.Transition;
+import org.bip.resources.Constraint;
+import org.bip.resources.Utility;
+
 import org.antlr.v4.runtime.tree.*;
 import org.antlr.v4.runtime.Token;
 
@@ -65,11 +66,17 @@ public interface dNetListener extends ParseTreeListener {
 	void enterPlaces(dNetParser.PlacesContext ctx);
 	void exitPlaces(dNetParser.PlacesContext ctx);
 
+	void enterSubUtil(dNetParser.SubUtilContext ctx);
+	void exitSubUtil(dNetParser.SubUtilContext ctx);
+
 	void enterCost(dNetParser.CostContext ctx);
 	void exitCost(dNetParser.CostContext ctx);
 
 	void enterOut_place(dNetParser.Out_placeContext ctx);
 	void exitOut_place(dNetParser.Out_placeContext ctx);
+
+	void enterUtility(dNetParser.UtilityContext ctx);
+	void exitUtility(dNetParser.UtilityContext ctx);
 
 	void enterTransitions(dNetParser.TransitionsContext ctx);
 	void exitTransitions(dNetParser.TransitionsContext ctx);

@@ -1,6 +1,8 @@
 package org.bip.constraints.z3;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.bip.constraint.DnetConstraint;
 import org.bip.constraint.ExpressionCreator;
@@ -9,7 +11,9 @@ import org.bip.constraint.VariableExpression;
 import org.bip.constraints.jacop.JacopConstraint;
 import org.bip.constraints.jacop.JacopPlaceVariable;
 import org.bip.exceptions.BIPException;
+import org.bip.resources.ConstraintNode;
 import org.bip.resources.ContextProvider;
+import org.bip.resources.DNetException;
 import org.jacop.constraints.PrimitiveConstraint;
 import org.jacop.core.IntVar;
 
@@ -136,6 +140,25 @@ public class Z3Factory implements ExpressionCreator {
 			placeSum = ctx.mkAdd(placeSum, getArithExpr(placeTokens.get(i)));
 		}
 		return new Z3VariableExpression(placeSum);
+	}
+
+	@Override
+	public PlaceVariable createCostVariable(String resourceName) {
+		// cost functionality is not implemented for z3
+		return null;
+	}
+
+	@Override
+	public PlaceVariable createUtilityVariable() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public DnetConstraint createUtilityConstraint(VariableExpression uVar, HashMap<Integer, ConstraintNode> utility,
+			Map<String, VariableExpression> nameToVariable) throws DNetException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

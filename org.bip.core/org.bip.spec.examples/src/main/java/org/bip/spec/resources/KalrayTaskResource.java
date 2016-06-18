@@ -30,11 +30,17 @@ public class KalrayTaskResource  implements ResourceProvider{
 	}
 
 	@Override
-	public String cost() {
+	public String constraint() {
 		if (executed) return name + "=0";
 		return name + "=0 | " + name + "=1";
 	}
 
+	@Override
+	public String cost() {
+		if (executed) return "0, " + name + "=0;";
+		return "0, " + name + "=0 | " + name + "=1;";
+	}
+	
 	@Override
 	public void decreaseCost(String deltaCost) {
 		logger.debug("Cost of " + name + " decreased by " + deltaCost);

@@ -1,6 +1,11 @@
 package org.bip.constraint;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.bip.resources.ConstraintNode;
+import org.bip.resources.DNetException;
 
 public interface ExpressionCreator {
 	VariableExpression createAddition(VariableExpression v1, VariableExpression v2);
@@ -32,4 +37,10 @@ public interface ExpressionCreator {
 	PlaceVariable createVariable(String variableName);
 
 	VariableExpression sumTokens(ArrayList<PlaceVariable> arrayList);
+
+	PlaceVariable createCostVariable(String resourceName);
+
+	PlaceVariable createUtilityVariable();
+
+	DnetConstraint createUtilityConstraint(VariableExpression uVar, HashMap<Integer, ConstraintNode> utility, Map<String, VariableExpression> nameToVariable) throws DNetException;
 }

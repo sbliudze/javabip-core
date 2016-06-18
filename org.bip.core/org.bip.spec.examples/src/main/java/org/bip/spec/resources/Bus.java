@@ -17,8 +17,13 @@ public class Bus extends Resource {
 	}
 
 	@Override
-	public String cost() {
+	public String constraint() {
 		return cost;
+	}
+	
+	@Override
+	public String cost() {
+		return "0, " +cost + ";";
 	}
 
 	@Override

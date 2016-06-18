@@ -36,10 +36,17 @@ public class KalrayResource implements ResourceProvider  {
 	}
 
 	@Override
-	public String cost() {
+	public String constraint() {
 		if (bounded)
 		return name + ">=0 &" + name + "<=" + Integer.toString(currentCapacity);
 		return name + ">=0";
+	}
+	
+	@Override
+	public String cost() {
+		if (bounded)
+			return "0, " + name + ">=0 &" + name + "<=" + Integer.toString(currentCapacity) + ";";
+			return "0, " +name + ">=0;";
 	}
 
 	@Override

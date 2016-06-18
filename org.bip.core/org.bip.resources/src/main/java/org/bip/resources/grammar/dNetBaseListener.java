@@ -3,13 +3,15 @@
 package org.bip.resources.grammar;
 import java.util.*;
 import java.util.*;
-
-import org.bip.resources.Constraint;
 import org.bip.resources.ConstraintNode;
+import org.bip.resources.Transition;
+import org.bip.resources.Place;
 import org.bip.resources.DNet;
 import org.bip.resources.InhibitorArc;
-import org.bip.resources.Place;
-import org.bip.resources.Transition;
+import org.bip.resources.Constraint;
+import org.bip.resources.Utility;
+
+
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -67,11 +69,17 @@ public class dNetBaseListener implements dNetListener {
 	@Override public void enterPlaces(dNetParser.PlacesContext ctx) { }
 	@Override public void exitPlaces(dNetParser.PlacesContext ctx) { }
 
+	@Override public void enterSubUtil(dNetParser.SubUtilContext ctx) { }
+	@Override public void exitSubUtil(dNetParser.SubUtilContext ctx) { }
+
 	@Override public void enterCost(dNetParser.CostContext ctx) { }
 	@Override public void exitCost(dNetParser.CostContext ctx) { }
 
 	@Override public void enterOut_place(dNetParser.Out_placeContext ctx) { }
 	@Override public void exitOut_place(dNetParser.Out_placeContext ctx) { }
+
+	@Override public void enterUtility(dNetParser.UtilityContext ctx) { }
+	@Override public void exitUtility(dNetParser.UtilityContext ctx) { }
 
 	@Override public void enterTransitions(dNetParser.TransitionsContext ctx) { }
 	@Override public void exitTransitions(dNetParser.TransitionsContext ctx) { }

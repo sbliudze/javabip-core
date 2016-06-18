@@ -11,7 +11,7 @@ public class JacopConstraint implements DnetConstraint {
 		this.cstr = constraint;
 	}
 
-	protected PrimitiveConstraint cstr() {
+	public PrimitiveConstraint cstr() {
 		return cstr;
 	}
 	

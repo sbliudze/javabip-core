@@ -11,6 +11,7 @@ import org.bip.resources.Place;
 import org.bip.resources.DNet;
 import org.bip.resources.InhibitorArc;
 import org.bip.resources.Constraint;
+import org.bip.resources.Utility;
 }
 
 @members{
@@ -20,6 +21,7 @@ import org.bip.resources.Constraint;
 	private HashMap<String, Place> nameToPlace=new HashMap<String, Place>();;
 	private ArrayList<String> inhibitorRef;
 	public ConstraintNode req;
+	public Utility utility;
 	
 	public Stack<ConstraintNode> stack = new Stack<ConstraintNode>();
 
@@ -145,7 +147,7 @@ LEQ : '<=';
 
 WS : [ \t\r\n]+ -> skip;
 
-id : var=ID {stack.push(new ConstraintNode($var.text, net));} | var=NUM {stack.push(new ConstraintNode($var.text, net));};
+id : var=ID {stack.push(new ConstraintNode($var.text));} | var=NUM {stack.push(new ConstraintNode($var.text));};
 
 ident : eq | LPAREN ex=boolExpr RPAREN {};
 term : i=ident {} | NEGATION i=ident {nwc("!", stack.pop()); } ;
@@ -172,3 +174,9 @@ So actually, it is as follows:
 there is a map value - condition.
 Now the question is how we satisfy the global utility using z3 and if it is possible to do both (maximize and satisfy)*/
 
+utility returns   [Utility resUtil]: { utility = new Utility(); }
+	subUtil +
+	{$resUtil = utility; }
+	;
+	
+subUtil: NUM COMMA cstr SEMICOLON {utility.addValue($NUM.text, stack.pop());} ;

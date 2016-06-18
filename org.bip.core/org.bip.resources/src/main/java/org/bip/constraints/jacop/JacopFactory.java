@@ -1,12 +1,16 @@
 package org.bip.constraints.jacop;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.bip.constraint.DnetConstraint;
 import org.bip.constraint.ExpressionCreator;
 import org.bip.constraint.PlaceVariable;
 import org.bip.constraint.VariableExpression;
 import org.bip.exceptions.BIPException;
+import org.bip.resources.ConstraintNode;
+import org.bip.resources.DNetException;
 import org.jacop.constraints.And;
 import org.jacop.constraints.Not;
 import org.jacop.constraints.Or;
@@ -36,7 +40,7 @@ public class JacopFactory implements ExpressionCreator {
 
 	private IntVar getIntVar(VariableExpression variable) {
 		if (variable instanceof JacopPlaceVariable) {
-			return ((JacopPlaceVariable) variable).jVar();
+			return ((JacopPlaceVariable) variable).intVar();
 		}
 		throw new BIPException("The variable " + variable + " does not belong to Jacop solver, it belongs to " + variable.getClass());
 	}
@@ -141,7 +145,7 @@ public class JacopFactory implements ExpressionCreator {
 			sumVars.add(getIntVar(placeTokens.get(i)));
 		}
 		IntVar sum = new IntVar(store, "tokensum", 0, 1000);
-		vars.add(sum);
+		//vars.add(sum);
 		store.impose(new SumInt(store, sumVars, "==", sum));
 		return new JacopPlaceVariable(sum);
 	}
@@ -157,6 +161,41 @@ public class JacopFactory implements ExpressionCreator {
 		this.store = store2;
 		this.vars = vars2;
 
+	}
+
+	@Override
+	public PlaceVariable createCostVariable(String resourceName) {
+		IntVar costVar = new IntVar(store, resourceName + "cost", 0, 1000);
+		vars.add(costVar);
+		return new JacopPlaceVariable(costVar);
+	}
+
+	@Override
+	public PlaceVariable createUtilityVariable() {
+		IntVar uVar = new IntVar(store, "utility", 0, 1000);
+		vars.add(uVar);
+		return new JacopPlaceVariable(uVar);
+	}
+
+	@Override
+	public DnetConstraint createUtilityConstraint(VariableExpression uVar, HashMap<Integer, ConstraintNode> utility,
+			Map<String, VariableExpression> nameToVariable) throws DNetException {
+		PrimitiveConstraint previous = null;
+		// we go through each expression of the utility and add it as an or-value
+		JacopPlaceVariable var = (JacopPlaceVariable) uVar;
+		for (Integer costValue : utility.keySet()) {
+			PrimitiveConstraint costVarEqValue = new XeqC(var.intVar(), costValue);
+			ConstraintNode valueConstraint = utility.get(costValue);
+			valueConstraint.addFactory(this);
+			PrimitiveConstraint valueAndItsConstraint = new And(costVarEqValue, ((JacopConstraint) valueConstraint.evaluateN(nameToVariable)).cstr());
+			if (previous == null) {
+				previous = valueAndItsConstraint;
+				continue;
+			}
+			previous = new Or(previous, valueAndItsConstraint);
+		}
+		return new JacopConstraint(previous);
+		
 	}
 
 }

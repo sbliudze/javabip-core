@@ -7,7 +7,7 @@ public class VirtualResourceManager extends ResourceManager {
 	}
 	
 	@Override
-	public String cost() {
+	public String constraint() {
 		return  resourceName + ">=0";
 	}
 
@@ -19,6 +19,12 @@ public class VirtualResourceManager extends ResourceManager {
 	@Override
 	public void decreaseCost(String deltaCost) {
 		logger.debug("The amount of allocated virtual resource " + resourceName + " is " + deltaCost);
+	}
+	
+	@Override
+	public String cost() {
+		return "0, " + resourceName + ">=0" + ";";
+		
 	}
 
 }

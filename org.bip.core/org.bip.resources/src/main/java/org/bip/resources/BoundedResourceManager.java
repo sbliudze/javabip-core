@@ -12,7 +12,7 @@ public class BoundedResourceManager extends ResourceManager {
 	}
 	
 	@Override
-	public String cost() {
+	public String constraint() {
 		return resourceName + ">=0 &" + resourceName + "<=" + Integer.toString(currentCapacity);
 	}
 
@@ -28,6 +28,11 @@ public class BoundedResourceManager extends ResourceManager {
 		logger.debug("The amount of allocated bounded resource " + resourceName + " is " + amount);
 		int taken = Integer.parseInt(amount);
 		this.currentCapacity -= taken;
+	}
+
+	@Override
+	public String cost() {
+		return "0, "+resourceName + ">=0 &" + resourceName + "<=" + Integer.toString(currentCapacity) + ";";
 	}
 	
 }

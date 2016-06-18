@@ -43,7 +43,7 @@ public class JacopPlaceVariable implements PlaceVariable {
 		return null;
 	}
 
-	public IntVar jVar() {
+	public IntVar intVar() {
 		return variable;
 	}
 

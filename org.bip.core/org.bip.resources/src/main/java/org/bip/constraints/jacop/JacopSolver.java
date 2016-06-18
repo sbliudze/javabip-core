@@ -5,8 +5,12 @@ import java.util.ArrayList;
 import org.bip.constraint.ConstraintSolver;
 import org.bip.constraint.DnetConstraint;
 import org.bip.constraint.ExpressionCreator;
+import org.bip.constraint.PlaceVariable;
 import org.bip.constraint.ResourceAllocation;
+import org.bip.constraint.VariableExpression;
 import org.bip.exceptions.BIPException;
+import org.jacop.constraints.XplusYeqC;
+import org.jacop.constraints.XplusYeqZ;
 import org.jacop.core.IntVar;
 import org.jacop.core.Store;
 import org.jacop.search.DepthFirstSearch;
@@ -33,6 +37,7 @@ public class JacopSolver implements ConstraintSolver {
 	 * It specifies the search procedure used by a given example.
 	 */
 	private Search<IntVar> search;
+	private IntVar bigCost;
 
 	public JacopSolver() {
 		store = new Store();
@@ -41,16 +46,27 @@ public class JacopSolver implements ConstraintSolver {
 	}
 
 	@Override
-	public boolean isSolvable() {
-
+	public boolean isSolvable(boolean hasUtility) {
+		boolean result;
+		
 		SelectChoicePoint<IntVar> select = new SimpleSelect<IntVar>(vars.toArray(new IntVar[1]), null,
 				new IndomainMin<IntVar>());
 
 		search = new DepthFirstSearch<IntVar>();
 		search.setPrintInfo(false);
+
+		if (hasUtility) {
+			IntVar negCost = new IntVar(store, "negCost", -1000, 1000);
+			store.impose(new XplusYeqC(bigCost, negCost, 0));
+			vars.add(negCost);
+
+			result = search.labeling(store, select, negCost);
+		}
+		else {
 		// a-ha. not necessarily the last search was the one that is required for the allocation as chosen by the engine.
 		// not true - the allocator stores the corresponding resource allocation right away
-		boolean result = search.labeling(store, select);
+			result = search.labeling(store, select);
+		}
 		return result;
 	}
 
@@ -88,6 +104,15 @@ public class JacopSolver implements ConstraintSolver {
 		store = new Store();
 		vars.clear();
 		factory.reinit(store, vars);
+	}
+
+	@Override
+	public void addCostConstraint(PlaceVariable bigCost, VariableExpression sumCost, PlaceVariable uVar) {
+		JacopPlaceVariable bigCostJ = (JacopPlaceVariable) bigCost;
+		JacopPlaceVariable sumCostJ = (JacopPlaceVariable) sumCost;
+		JacopPlaceVariable uVarJ = (JacopPlaceVariable) uVar;
+		store.impose(new XplusYeqZ(bigCostJ.intVar(), sumCostJ.intVar(), uVarJ.intVar()));
+		this.bigCost = bigCostJ.intVar();
 	}
 
 }

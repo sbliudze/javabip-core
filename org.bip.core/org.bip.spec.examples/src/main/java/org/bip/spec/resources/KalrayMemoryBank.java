@@ -33,9 +33,15 @@ public class KalrayMemoryBank implements ResourceProvider  {
 	}
 
 	@Override
-	public String cost() {
+	public String constraint() {
 		return name + ">=0";
 	}
+	
+	@Override
+	public String cost() {
+		return "0, "+name + ">=0;";
+	}
+
 
 	@Override
 	public void decreaseCost(String deltaCost) {
