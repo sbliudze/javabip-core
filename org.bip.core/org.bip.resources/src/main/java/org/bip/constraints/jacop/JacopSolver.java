@@ -9,6 +9,7 @@ import org.bip.constraint.PlaceVariable;
 import org.bip.constraint.ResourceAllocation;
 import org.bip.constraint.VariableExpression;
 import org.bip.exceptions.BIPException;
+import org.jacop.constraints.Constraint;
 import org.jacop.constraints.XplusYeqC;
 import org.jacop.constraints.XplusYeqZ;
 import org.jacop.core.IntVar;
@@ -56,10 +57,12 @@ public class JacopSolver implements ConstraintSolver {
 		search.setPrintInfo(false);
 
 		if (hasUtility) {
+			search.getSolutionListener().searchAll(true);
+			search.getSolutionListener().recordSolutions(true);
 			IntVar negCost = new IntVar(store, "negCost", -1000, 1000);
 			store.impose(new XplusYeqC(bigCost, negCost, 0));
 			vars.add(negCost);
-
+			vars.add(bigCost);
 			result = search.labeling(store, select, negCost);
 		}
 		else {

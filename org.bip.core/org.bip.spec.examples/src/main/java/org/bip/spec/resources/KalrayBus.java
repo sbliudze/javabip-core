@@ -34,7 +34,7 @@ public class KalrayBus implements ResourceProvider {
 	
 	@Override
 	public String cost() {
-		if (resourceTaken) return name + "=0";
+		if (resourceTaken) return "0,"+name + "=0;";
 		return "0,"+name + ">=0;";
 	}
 

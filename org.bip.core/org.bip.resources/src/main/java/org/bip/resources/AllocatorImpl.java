@@ -26,14 +26,11 @@ import org.bip.constraint.ExpressionCreator;
 import org.bip.constraint.PlaceVariable;
 import org.bip.constraint.ResourceAllocation;
 import org.bip.constraint.VariableExpression;
-import org.bip.constraints.jacop.JacopPlaceVariable;
 import org.bip.exceptions.BIPException;
 import org.bip.resources.grammar.constraintLexer;
 import org.bip.resources.grammar.constraintParser;
 import org.bip.resources.grammar.dNetLexer;
 import org.bip.resources.grammar.dNetParser;
-import org.jacop.constraints.XplusYeqZ;
-import org.jacop.core.IntVar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,6 +97,7 @@ public class AllocatorImpl implements Allocator {
 		requestToModel = new HashMap<String, ResourceAllocation>();
 		resourceLableToID = new Hashtable<String, String>();
 		resourceLableToAmount = new Hashtable<String, Integer>();
+		resourceToCost = new HashMap<String, Utility>();
 		allocationID = 0;
 	}
 
@@ -111,8 +109,11 @@ public class AllocatorImpl implements Allocator {
 	}
 	
 	public AllocatorImpl(String dNetPath, ConstraintSolver solver, boolean hasUtility) throws IOException, RecognitionException, DNetException {
-		this(dNetPath, solver);
+		this();
+		this.solver = solver;
+		this.factory = solver.expressionCreator();
 		this.hasUtility = hasUtility;
+		parseAndInitializeDNet(dNetPath, factory);
 	}
 
 	private void parseAndInitializeDNet(String dNetPath, ExpressionCreator factory) throws FileNotFoundException, IOException, DNetException {
@@ -143,21 +144,24 @@ public class AllocatorImpl implements Allocator {
 		}
 		if (!resources.isEmpty()) {
 			resourceToConstraint.clear();
+			resourceToCost.clear();
 			for (ResourceProvider resource : resources) {
+				if (!hasUtility) {
 				specifyCost(resource.name(), resource.constraint());
+				} else {
+					specifyCost(resource.name(), resource.cost());
+				}
 			}
 		}
 	}
 
 	private void specifyCost(String resource, String costString) throws DNetException {
 		if (!hasUtility) {
-			ConstraintNode cost = parseConstraint(costString);
-			resourceToConstraint.put(resource, cost);
+			ConstraintNode resourceConstraint = parseConstraint(costString);
+			resourceToConstraint.put(resource, resourceConstraint);
 		} else {
-			if (hasUtility) {
-				Utility cost = parseCostOrUtility(costString);
-				resourceToCost.put(resource, cost);
-			}
+			Utility cost = parseCostOrUtility(costString);
+			resourceToCost.put(resource, cost);
 		}
 	}
 
@@ -270,7 +274,6 @@ public class AllocatorImpl implements Allocator {
 			constraintLexer lexer = new constraintLexer(new ANTLRInputStream(requestString));
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
 			constraintParser parser = new constraintParser(tokens);
-
 			parser.constraint();
 			ConstraintNode request = parser.constraint;
 			request.addFactory(factory);
@@ -411,8 +414,6 @@ public class AllocatorImpl implements Allocator {
 		
 		// this array containing cost variables is needed only if we have utility to maximize 
 		ArrayList<PlaceVariable> costs = new ArrayList<PlaceVariable>();
-		//PlaceVariable costVar = factory.createCostVariable(resource);
-		//solver.addConstraint(factory.createUtilityConstraint(uVar, u.utility(), nameToVariable));
 		for (Place place : placeVariables.keySet()) {
 			Map<String, VariableExpression> stringtoConstraintVar = new HashMap<String, VariableExpression>();
 			if (placeVariables.get(place).size() > 0) {
@@ -425,9 +426,9 @@ public class AllocatorImpl implements Allocator {
 					solver.addConstraint(costConstraint);
 				} else {
 					Utility cost = resourceToCost.get(place.name());
-					solver.addConstraint(factory.createUtilityConstraint(sumVariable, cost.utility(), stringtoConstraintVar));
 					PlaceVariable costVar = factory.createCostVariable(place.name());
 					costs.add(costVar);
+					solver.addConstraint(factory.createUtilityConstraint(costVar, cost.utility(), stringtoConstraintVar));
 				}
 			}
 		}
@@ -453,7 +454,11 @@ public class AllocatorImpl implements Allocator {
 		resources.add(resource);
 		placeNameToResource.put(resource.name(), resource);
 		try {
-			this.specifyCost(resource.name(), resource.constraint());
+			if (!hasUtility) {
+				this.specifyCost(resource.name(), resource.constraint());
+			} else {
+				this.specifyCost(resource.name(), resource.cost());
+			}
 		} catch (DNetException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -13,11 +13,19 @@ public class DataMemoryManager extends BoundedResourceManager {
 	}
 
 	@Override
-	public String cost() {
+	public String constraint() {
 		if (!isCreated) {
 			return (resourceName + "=0");
 		}
 		return resourceName + "=0 |" + resourceName + "=" + data;
+	}
+	
+	@Override
+	public String cost() {
+		if (!isCreated) {
+			return ("0, " + resourceName + "=0 ;");
+		}
+		return "0, " + resourceName + " = 0 |" + resourceName + "=" + data + " ;";
 	}
 
 	public void create(String dataName) {

@@ -31,12 +31,23 @@ public class MemoryManager extends BoundedResourceManager {
 	}
 	
 	@Override
-	public String cost() {
+	public String constraint() {
 		// in case when memory stores data, its cost changes:
 		// the part where memory is stored is not available
 		// (in our case it is the whole memory)
 		if (hasData) {
 			return (resourceName + "=0");
+		}
+		return super.constraint();
+	}
+	
+	@Override
+	public String cost() {
+		// in case when memory stores data, its cost changes:
+		// the part where memory is stored is not available
+		// (in our case it is the whole memory)
+		if (hasData) {
+			return ("0, " + resourceName + "=0 ;");
 		}
 		return super.cost();
 	}

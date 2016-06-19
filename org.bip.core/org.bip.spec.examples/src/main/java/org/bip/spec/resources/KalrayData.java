@@ -45,6 +45,13 @@ public class KalrayData extends SingleResourceManager {
 	@Override
 	public String cost() {
 		if (!created)
+			return "0, " + resourceName + "=0;";
+		return "0, " + resourceName + "=0 | " + resourceName + "="+Integer.parseInt(name().substring(1)) + ";";
+	}
+	
+	@Override
+	public String constraint() {
+		if (!created)
 			return resourceName + "=0";
 		return resourceName + "=0 | " + resourceName + "="+Integer.parseInt(name().substring(1));
 	}

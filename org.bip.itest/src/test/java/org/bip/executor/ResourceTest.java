@@ -653,9 +653,8 @@ public class ResourceTest {
 		BIPEngine engine = engineFactory.create("myEngine", bipGlue);
 		
 		String dnetSpec = "src/test/resources/kalray.txt";
-		ConstraintSolver z3Solver = new Z3Solver();
 		ConstraintSolver jacopSolver = new JacopSolver();
-		AllocatorImpl alloc = new AllocatorImpl(dnetSpec, jacopSolver);
+		AllocatorImpl alloc = new AllocatorImpl(dnetSpec, jacopSolver, true);
 		
 		//RESOURCES
 		
@@ -706,11 +705,12 @@ public class ResourceTest {
 		
 		// each task is initialized with a request and the single data it creates.
 		// in order for the task to have a list of resources to be released, we need to call setRequiredData method
-		String request = "0, p=0 & m=0; 1, p=1 & m=1;";
+		String request = " 1, p=1 & m=1;";
+		//TODO if we add a 0 there, then T2 can ask when T1 has not released yet and get 0 resources, then everything stucks
 		KalrayTask T1 = new KalrayTask("T1", request, "D13"); T1.setRequiredData("-1"); 
 		KalrayTask T2 = new KalrayTask("T2", request, "D24"); T2.setRequiredData("-1"); 
 		KalrayTask T3 = new KalrayTask("T3", "1, p=1 & m=1 & D13=13 & D53=53;", "D34");  T3.setRequiredData("D13");  T3.setRequiredData("D53"); T3.setRequiredData("-1");
-		KalrayTask T4 = new KalrayTask("T4", "1,p=1 & m=1 & D24=24 & D34=34;", ""); T4.setRequiredData("D24");  T4.setRequiredData("D34"); T4.setRequiredData("-1");
+		KalrayTask T4 = new KalrayTask("T4", "1, p=1 & m=1 & D24=24 & D34=34;", ""); T4.setRequiredData("D24");  T4.setRequiredData("D34"); T4.setRequiredData("-1");
 		KalrayTask T5 = new KalrayTask("T5", request, "D53"); T5.setRequiredData("-1");
 		
 		BIPActor actor1 = engine.register(T1, "task1", true); 
