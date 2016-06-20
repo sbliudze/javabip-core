@@ -31,6 +31,11 @@ public interface BIPEngine {
 	 */
 	BIPActor register(Object component, String id, boolean useSpec);
 	
+	/**
+	 * Completely and definitely removes a component from the system.
+	 * 
+	 * @param instance the component to remove from the system
+	 */
 	void deregister(Object instance);
 
 	// It only specifies the disabled ports with no data transfers, some ports with data
