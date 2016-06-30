@@ -27,7 +27,7 @@
 			org.bip.api, *
 		</osgi.import>
 		<osgi.export>
-			org.bip.resources 
+			org.bip.resources, org.bip.constraint, org.bip.constraints.z3, org.bip.constraints.jacop   
 		</osgi.export>
 		<osgi.dynamic.import></osgi.dynamic.import>
 		<osgi.bundles></osgi.bundles>
