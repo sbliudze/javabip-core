@@ -22,4 +22,12 @@ public class ResourceReqImpl {
 		result.append(", utility=" + utility);
 		return result.toString();
 	}
+	
+	public String name() {
+		return name;
+	}
+	
+	public ResourceType type() {
+		return type;
+	}
 }

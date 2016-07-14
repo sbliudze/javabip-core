@@ -9,6 +9,7 @@ import org.bip.api.BIPEngine;
 import org.bip.api.Executor;
 import org.bip.api.PortBase;
 import org.bip.api.Publishable;
+import org.bip.api.ResourceHandle;
 import org.bip.exceptions.BIPException;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -102,6 +103,12 @@ public class ExecutorOSGiImpl implements BundleContextAware, Publishable, Execut
 	public void inform(String portID, Map<String, Object> data) {
 		executor.inform(portID, data);
 
+	}
+
+	@Override
+	public void provideAllocation(String resourceName,
+			ResourceHandle resourceHandle) {
+		executor.provideAllocation(resourceName, resourceHandle);
 	}
 
 }

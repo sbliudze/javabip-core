@@ -15,6 +15,7 @@ import java.lang.reflect.Method;
 import org.bip.annotations.ComponentType;
 import org.bip.annotations.Data;
 import org.bip.annotations.Ports;
+import org.bip.annotations.ResourceRelease;
 import org.bip.annotations.ResourceRequired;
 import org.bip.annotations.ResourceUtility;
 import org.bip.annotations.ResourcesRequired;
@@ -90,6 +91,7 @@ public abstract class SpecificationParser implements ComponentProvider {
 			builder.setComponentType( componentTypeAnnotation.name() );
 			specType = componentTypeAnnotation.name();
 			builder.setInitialState( componentTypeAnnotation.initial() );
+			builder.setResourceName(componentTypeAnnotation.resourceName());
 		} else {
 			throw new BIPException("ComponentType annotation is not specified.");
 		}
@@ -168,10 +170,21 @@ public abstract class SpecificationParser implements ComponentProvider {
 					addResourceUtility(method, (org.bip.annotations.ResourceUtility) annotation, builder);
 
 				}
+				
+				else if (annotation instanceof org.bip.annotations.ResourceRelease) {
+					
+					addResourceRelease(method, (org.bip.annotations.ResourceRelease) annotation, builder);
+
+				}
 			}
 
 		}
 		return builder;
+	}
+
+	private void addResourceRelease(Method method, ResourceRelease releaseAnnotation, BehaviourBuilder builder) {
+		builder.addResourceRelease(method, releaseAnnotation.resources());	
+		
 	}
 
 	private void addResourceUtility(Method method, ResourceUtility bipUtilityAnnotation, BehaviourBuilder builder) {

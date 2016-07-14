@@ -131,4 +131,7 @@ public interface ExecutableBehaviour extends Behaviour {
 	 * @return the hashtable
 	 */
 	public Map<String, Boolean> computeGuardsWithoutData(String currentState);
+
+	public void provideAllocation(String resourceName,
+			ResourceHandle resourceHandle);
 }

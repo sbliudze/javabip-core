@@ -30,4 +30,11 @@ public @interface ComponentType {
 	 * @return the name of the initial state.
 	 */
 	String initial();
+	
+    /**
+     * It returns the name of the managed resource for the Resource Manager component
+     * and an empty string for a regular component.
+     * @return the name of the managed resource
+     */
+    String resourceName() default "";
 }

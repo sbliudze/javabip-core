@@ -8,6 +8,7 @@
 
 package org.bip.api;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -100,5 +101,15 @@ public interface Behaviour {
 	public String getCurrentState();
 
 	public Iterable<Port> getAllPorts();
+	
+	public String getRequest(Port port);
+
+	public Set<Port> getPortsRequestingResources();
+
+	public Set<Port> getPortsReleasingResources();
+
+	public ArrayList<String> getReleasedAmounts(Port port);
+
+	public String getResourceName();
 
 }

@@ -51,6 +51,9 @@ class ReflectionHelper {
 					break;
 				}
 				else if (annotation instanceof org.bip.annotations.ResourceRequired) {
+					//TODO make a decision about resources and data.
+					// they should not be tangled in one method, 
+					//should be either one or another
 					resourceParamCount++;
 				}
 			}

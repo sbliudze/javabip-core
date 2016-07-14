@@ -52,5 +52,8 @@ public interface BIPComponent extends Identifiable, BIPActor {
 	 * @param value it specifies the value of the data identified by dataName parameter.
 	 */
 	public void setData(String dataName, Object value);
+	
+	
+	public void provideAllocation(String resourceName, ResourceHandle resourceHandle);
 
 }

@@ -25,6 +25,7 @@ import org.bip.api.ComponentProvider;
 import org.bip.api.OrchestratedExecutor;
 import org.bip.api.Port;
 import org.bip.api.PortBase;
+import org.bip.api.ResourceHandle;
 import org.bip.exceptions.BIPException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +49,7 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 	private Logger logger = LoggerFactory.getLogger(ExecutorKernel.class);
 	
 	private Map<String, Object> dataEvaluation = new Hashtable<String, Object>();
+	private Map<String, ResourceHandle> resourceAllocation = new Hashtable<String, ResourceHandle>();
 	
 	boolean waitingForSpontaneous = false;
 	
@@ -126,6 +128,7 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 			return;
 		
 		dataEvaluation.clear();
+		resourceAllocation.clear();
 
 		guardToValue = behaviour.computeGuardsWithoutData(behaviour.getCurrentState());
 
@@ -218,7 +221,7 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 
 		if (portID != null) {
 
-			if (dataEvaluation.isEmpty()) {
+			if (dataEvaluation.isEmpty() && resourceAllocation.isEmpty()) {
 				
 				logger.debug("Execution of {} in component {} without data",portID, id);
 
@@ -233,7 +236,7 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 					behaviour.executePort(portID);
 				}
 			}
-			else {
+			else if (!dataEvaluation.isEmpty() && resourceAllocation.isEmpty())  {
 
 				// Performing a check that all data provided make the transition enabled.
 				List<Map<String, Object>> parameter = new ArrayList<Map<String, Object>>();
@@ -252,6 +255,14 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 //					throw new BIPException(e);
 //				}
 
+				behaviour.execute(portID, dataEvaluation);
+			}
+			else if (dataEvaluation.isEmpty() && !resourceAllocation.isEmpty())  {
+				// TODO right now this is treated as data (ResourceHandle -> Object)
+				behaviour.execute(portID, resourceAllocation);
+			}
+			else {
+				dataEvaluation.putAll(resourceAllocation);
 				behaviour.execute(portID, dataEvaluation);
 			}
 		}
@@ -289,43 +300,6 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 	}
 	
 	public <T> T getData(String name, Class<T> clazz) {
-
-//		if (name == null || name.isEmpty()) {
-//			throw new IllegalArgumentException(
-//					"The name of the required data variable from the component "
-//							+ bipComponent.getClass().getName()
-//							+ " cannot be null or empty.");
-//		}
-//
-//		T result = null;
-//
-//		try {
-//			logger.debug("Component {} getting data {}.",
-//					behaviour.getComponentType(), name);
-//			Object methodResult = behaviour.getDataOutMapping().get(name)
-//					.invoke(bipComponent);
-//			
-//			if (!clazz.equals(Object.class) && !methodResult.getClass().isAssignableFrom(clazz)) {
-//				result = getPrimitiveData(name, methodResult, clazz);
-//			} else
-//				result = clazz.cast(methodResult);
-//
-//		} catch (IllegalAccessException e) {
-//			ExceptionHelper.printExceptionTrace(logger, e);
-//			e.printStackTrace();
-//		} catch (IllegalArgumentException e) {
-//			ExceptionHelper.printExceptionTrace(logger, e);
-//			e.printStackTrace();
-//		} catch (InvocationTargetException e) {
-//			ExceptionHelper.printExceptionTrace(logger, e);
-//			ExceptionHelper.printExceptionTrace(logger, e.getTargetException());
-//			e.printStackTrace();
-//		}
-//		return result;
-		return getData2(name, clazz);
-	}
-	
-	public <T> T getData2(String name, Class<T> clazz) {
 
 		if (name == null || name.isEmpty()) {
 			throw new IllegalArgumentException(
@@ -441,6 +415,18 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 	@Override
 	public BIPEngine engine() {
 		return engine;
+	}
+
+	@Override
+	public void provideAllocation(String resourceName, ResourceHandle resourceHandle) {
+		if (resourceName == null || resourceName.isEmpty()) {
+			throw new IllegalArgumentException(
+					"The name of the required resource for the component "
+							+ bipComponent.getClass().getName()
+							+ " cannot be null or empty.");
+		}
+		logger.debug("Setting resource allocation for "+ resourceName + " in component "+ this.behaviour.getComponentType());
+		this.resourceAllocation.put(resourceName, resourceHandle);
 	}
 
 }

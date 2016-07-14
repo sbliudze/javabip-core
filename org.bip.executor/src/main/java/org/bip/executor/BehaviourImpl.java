@@ -25,6 +25,7 @@ import org.bip.api.ExecutableBehaviour;
 import org.bip.api.Guard;
 import org.bip.api.Port;
 import org.bip.api.PortType;
+import org.bip.api.ResourceHandle;
 import org.bip.api.Transition;
 import org.bip.exceptions.BIPException;
 import org.slf4j.Logger;
@@ -82,9 +83,12 @@ class BehaviourImpl implements ExecutableBehaviour {
 	 */
 
 	private ArrayList<ResourceReqImpl> resources;// do we need a method? actually no, but we need a transition along...
-	private Hashtable<TransitionImpl,  ArrayList<ResourceReqImpl>> transitionResources;
-
-	private Hashtable<TransitionImpl, String> transitionRequest;
+	//private Hashtable<TransitionImpl,  ArrayList<ResourceReqImpl>> transitionResources;
+	private Hashtable<Port,  ArrayList<ResourceReqImpl>> portRequiredResources;
+	private Hashtable<Port,  ArrayList<String>> portReleasedResources;
+	private Hashtable<Port,  String> portRequestUtility;
+	
+	//private Hashtable<TransitionImpl, String> transitionRequest;
 
 	private Hashtable<String, MethodHandle> dataOutName;
 	
@@ -96,6 +100,9 @@ class BehaviourImpl implements ExecutableBehaviour {
 	private Class<?> componentClass;
 
 	private Logger logger = LoggerFactory.getLogger(BehaviourImpl.class);
+
+	//if this is the behaviour of a RM
+	private String resourceName;
 
 	//******************************** Constructors *********************************************
 	
@@ -288,25 +295,45 @@ class BehaviourImpl implements ExecutableBehaviour {
 			ArrayList<Port> componentPorts, HashSet<String> states,
 			Collection<Guard> guards, ArrayList<DataOutImpl<?>> dataOut,
 			Hashtable<String, MethodHandle> dataOutName, Object component,
-			ArrayList<ResourceReqImpl> resources2) {
+			ArrayList<ResourceReqImpl> resourcesRequired) {
 		this(type, currentState, allTransitions, 
 				 componentPorts, states, guards, dataOut, dataOutName, component);
-		this.resources = resources2;
+		this.resources = resourcesRequired;
+}
+
+	//TODO think: we consider that the RM does not need other resources, hence no corresponding constructor
+	public BehaviourImpl(String type, String resourceName, String currentState,
+			ArrayList<ExecutableTransition> allTransitions,
+			ArrayList<Port> componentPorts, HashSet<String> states,
+			Collection<Guard> guards, ArrayList<DataOutImpl<?>> dataOut,
+			Hashtable<String, MethodHandle> dataOutName, Object component) {
+		this(type, currentState, allTransitions, 
+				 componentPorts, states, guards, dataOut, dataOutName, component);
+		this.resourceName = resourceName;
 }
 
 
-	//creation of behaviour with a map <transition, resource> and a map <transition, request>
+	//creation of behaviour with a map <port, resource> and a map <port, request>
 	public BehaviourImpl(String type, String currentState, ArrayList<ExecutableTransition> allTransitions, ArrayList<Port> componentPorts,
 			HashSet<String> states, Collection<Guard> guards, ArrayList<DataOutImpl<?>> dataOut, 
 			Hashtable<String, MethodHandle> dataOutName, Object component, Hashtable<TransitionImpl,  ArrayList<ResourceReqImpl>> transitionResources,
-			Hashtable<TransitionImpl, String> transitionRequest) {
+			Hashtable<TransitionImpl,  ArrayList<String>> transitionReleases, Hashtable<TransitionImpl, String> transitionRequest) {
 		this(type, currentState, allTransitions, componentPorts, states, guards, dataOut, dataOutName, component);
-		this.transitionResources = transitionResources;
-		this.transitionRequest = transitionRequest;
+		for (TransitionImpl transition: transitionResources.keySet()) {
+			portRequiredResources.put(transitionToPort.get(transition), transitionResources.get(transition));
+		}
+		for (TransitionImpl transition: transitionReleases.keySet()) {
+			portReleasedResources.put(transitionToPort.get(transition), transitionReleases.get(transition));
+		}
+		for (TransitionImpl transition: transitionRequest.keySet()) {
+			portRequestUtility.put(transitionToPort.get(transition), transitionRequest.get(transition));
+		}
+		
 
-		System.err.println(transitionResources + "\n" + transitionRequest);
+		System.err.println(portRequiredResources + "\n" + portReleasedResources+ "\n" + portRequestUtility);
 	}
 
+	
 	//*************************** End of Constructors *******************************************
 	
 
@@ -672,6 +699,20 @@ class BehaviourImpl implements ExecutableBehaviour {
 				args[i] = value;
 				i++;
 			}
+			/*
+			 * ASSUMPTION: if there is data transfer and resource usage,
+			 * first the data parameters are there, and then the resource parameters.
+			 * TODO resource parameters must be in List, not in Set
+			 */
+			for (ResourceReqImpl res: portRequiredResources.get(transitionToPort.get(transition))) {
+				// name parameter can not be null as it is enforced by the constructor.
+				Object value = data.get(res.name());
+				// TODO, CHECK, value can be null if the map is not properly constructed. Throw more informative exception.
+				// TODO we can check here for the type of the expected value
+				// if it is a string/int, send the getID(), otherwise send the getObject()
+				args[i] = value;
+				i++;
+			}
 			logger.debug("In component " + this.componentType + " INVOCATION of " + transition.name() + " with args " + data);
 
 			//if the method is not static, the first param to invokeExact should be treated as instance where to look for the method
@@ -704,6 +745,39 @@ class BehaviourImpl implements ExecutableBehaviour {
 								   " instead of state " + transition.source());
 		}
 		currentState = transition.target();
+	}
+
+	@Override
+	public String getRequest(Port port) {
+		return portRequestUtility.get(port);
+	}
+
+	@Override
+	public Set<Port> getPortsRequestingResources() {
+		return portRequiredResources.keySet();
+	}
+
+	@Override
+	public Set<Port> getPortsReleasingResources() {
+		return portReleasedResources.keySet();
+	}
+
+	@Override
+	public ArrayList<String> getReleasedAmounts(Port port) {
+		return portReleasedResources.get(port);
+	}
+
+	@Override
+	public String getResourceName() {
+		return resourceName;
+	}
+
+	
+	
+	@Override
+	public void provideAllocation(String resourceName,	ResourceHandle resourceHandle) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	//****************************** End of Execution *******************************************

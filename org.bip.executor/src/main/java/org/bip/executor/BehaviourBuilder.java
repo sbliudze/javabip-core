@@ -12,6 +12,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -52,14 +53,17 @@ public class BehaviourBuilder {
 
 	private ArrayList<DataOutImpl<?>> dataOut;
 	private ArrayList<ResourceReqImpl> resources;
-	private Hashtable<TransitionImpl,  ArrayList<ResourceReqImpl>> transitionResources;
-	private Hashtable<TransitionImpl, String> transitionRequest;
-	//helper map in needed to construct resources to transition map
-	private Hashtable<Method, ArrayList<ResourceReqImpl>> methodResources;
+
+	//helper map in needed to construct required resources to transition map
+	private Hashtable<Method, ArrayList<ResourceReqImpl>> methodReqResources;
+	//helper map in needed to construct releasedresources to transition map
+	private Hashtable<Method, ArrayList<String>> methodReleaseResources;
 	//helper map in needed to construct transition to utility map
 	private Hashtable<Method, String> methodUtility;
 	//helper map to construct resource to transition map
 	private Hashtable<Method, TransitionImpl> methodToTransition;
+    // the name of the managed resource for the Resource Manager, empty for a regular component
+    private String resourceName;
 	
 	public BehaviourBuilder(Object component) {
 		this.component = component;
@@ -70,9 +74,7 @@ public class BehaviourBuilder {
 		dataOutName = new Hashtable<String, MethodHandle>();
 		dataOut = new ArrayList<DataOutImpl<?>>();
 		resources = new ArrayList<ResourceReqImpl>();
-		transitionResources = new Hashtable<TransitionImpl,  ArrayList<ResourceReqImpl>>();
-		transitionRequest = new Hashtable<TransitionImpl, String>();
-		methodResources = new Hashtable<Method, ArrayList<ResourceReqImpl>>();
+		methodReqResources = new Hashtable<Method, ArrayList<ResourceReqImpl>>();
 		methodUtility = new Hashtable<Method, String>();
 		methodToTransition = new Hashtable<Method, TransitionImpl>();
 	}
@@ -97,6 +99,11 @@ public class BehaviourBuilder {
 		if (component == null) {
 			throw new NullPointerException("The component object of type " + componentType + " cannot be null.");
 		}
+		
+		 Hashtable<TransitionImpl,  ArrayList<ResourceReqImpl>> transitionResources = new Hashtable<TransitionImpl,  ArrayList<ResourceReqImpl>>();
+		 Hashtable<TransitionImpl, String> transitionRequest = new Hashtable<TransitionImpl, String>();
+		 Hashtable<TransitionImpl,  ArrayList<String>> transitionRelease = new Hashtable<TransitionImpl,  ArrayList<String>>();
+		 
 
 		ArrayList<Port> componentPorts = new ArrayList<Port>();
 		// We need to create new ports here as there was no provider information available when the specification was parsed.
@@ -114,11 +121,12 @@ public class BehaviourBuilder {
 			data.computeAllowedPort(allEnforceablePorts);
 		}
 
-		for (Method method : methodResources.keySet()) {
-			transitionResources.put(methodToTransition.get(method), methodResources.get(method));
+		for (Method method : methodReqResources.keySet()) {
+			transitionResources.put(methodToTransition.get(method), methodReqResources.get(method));
 			transitionRequest.put(methodToTransition.get(method), methodUtility.get(method));
+			transitionRelease.put(methodToTransition.get(method), methodReleaseResources.get(method));
 		}
-		if (methodResources.size() != methodUtility.size()) {
+		if (methodReqResources.size() != methodUtility.size()) {
 			throw new BIPException("There is a transition where either the required resources or the utility function is not specified");
 		}
 		
@@ -126,25 +134,10 @@ public class BehaviourBuilder {
 		{
 			return new BehaviourImpl(componentType, currentState, transformIntoExecutableTransition(), 
 					 componentPorts, states, guards.values(), dataOut, dataOutName, component,
-					 transitionResources, transitionRequest);
+					 transitionResources, transitionRelease, transitionRequest);
 		}
-		
-		for (Method method : methodResources.keySet()) {
-			transitionResources.put(methodToTransition.get(method), methodResources.get(method));
-			transitionRequest.put(methodToTransition.get(method), methodUtility.get(method));
-		}
-		if (methodResources.size() != methodUtility.size()) {
-			throw new BIPException("There is a transition where either the required resources or the utility function is not specified");
-		}
-		
-		if (!resources.isEmpty())
-		{
-			return new BehaviourImpl(componentType, currentState, transformIntoExecutableTransition(), 
-					 componentPorts, states, guards.values(), dataOut, dataOutName, component,
-					 transitionResources, transitionRequest);
-		}
-		
-		return new BehaviourImpl(componentType, currentState, transformIntoExecutableTransition(), 
+				
+		return new BehaviourImpl(componentType, currentState, resourceName, transformIntoExecutableTransition(), 
 								 componentPorts, states, guards.values(), dataOut, dataOutName, component);
 	}
 	
@@ -184,6 +177,10 @@ public class BehaviourBuilder {
 		this.currentState = state;
 		states.add(state);
 	}
+
+    public void setResourceName(String resourceName) {
+            this.resourceName = resourceName;
+    }
 
 	public void addPort(String id, PortType type, Class<?> specificationType) {
 		Port port = new PortImpl(id, type, specificationType);
@@ -320,16 +317,21 @@ public class BehaviourBuilder {
 		// TODO R remove utility from here?
 		ResourceReqImpl r = new ResourceReqImpl(label, type, utility);
 		resources.add(r);
-		ArrayList<ResourceReqImpl> methodReqResources = new ArrayList<ResourceReqImpl>();
-		if (methodResources.containsKey(method)) {
-			methodReqResources = methodResources.get(method);
+		ArrayList<ResourceReqImpl> methodResources = new ArrayList<ResourceReqImpl>();
+		if (methodReqResources.containsKey(method)) {
+			methodResources = methodReqResources.get(method);
 		}
-		methodReqResources.add(r);
-		methodResources.put(method, methodReqResources);
+		methodResources.add(r);
+		methodReqResources.put(method, methodResources);
 	}
 
 	public void addResourceUtility(Method method, String utility) {
 		methodUtility.put(method, utility);
+	}
+
+	public void addResourceRelease(Method method, String[] resourcesToRelease) {
+		ArrayList<String> methodResources = new ArrayList<String>(Arrays.asList(resourcesToRelease));
+		methodReleaseResources.put(method, methodResources);
 	}
 	
 }

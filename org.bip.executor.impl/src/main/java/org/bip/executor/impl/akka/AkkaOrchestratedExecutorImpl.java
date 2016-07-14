@@ -6,6 +6,7 @@ import java.util.Map;
 import org.bip.api.BIPEngine;
 import org.bip.api.OrchestratedExecutor;
 import org.bip.api.PortBase;
+import org.bip.api.ResourceHandle;
 
 import akka.actor.ActorSystem;
 import akka.actor.TypedActor;
@@ -93,6 +94,12 @@ public class AkkaOrchestratedExecutorImpl implements AkkaOrchestratedExecutor {
 	@Override
 	public void inform(String portID, Map<String, Object> data) {
 		executor.inform(portID, data);
+	}
+
+	@Override
+	public void provideAllocation(String resourceName,
+			ResourceHandle resourceHandle) {
+		executor.provideAllocation(resourceName, resourceHandle);
 	}
 
 
