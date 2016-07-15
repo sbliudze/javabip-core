@@ -429,4 +429,33 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 		this.resourceAllocation.put(resourceName, resourceHandle);
 	}
 
+	@Override
+	public String constraint() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String cost() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String resourceName() {
+		return behaviour.getResourceName();
+	}
+
+	@Override
+	public void augmentCost(String amount) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ResourceHandle decreaseCost(String amount) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

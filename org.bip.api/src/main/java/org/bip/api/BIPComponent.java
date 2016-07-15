@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * It specifies the functionality of BIP component in BIP framework. 
  */
-public interface BIPComponent extends Identifiable, BIPActor {
+public interface BIPComponent extends Identifiable, BIPActor, ResourceManager {
 
 	/**
 	 * It enforces the execution of a given enforceable transition associated to a given port id.
