@@ -9,7 +9,6 @@ import org.bip.annotations.Transition;
 import org.bip.api.DataOut.AccessType;
 import org.bip.api.PortType;
 import org.bip.api.ResourceProxy;
-import org.bip.spec.resources.MemoryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -2,12 +2,8 @@ package org.bip.constraints.jacop;
 
 import org.bip.constraint.DnetConstraint;
 import org.bip.constraint.PlaceVariable;
-import org.jacop.core.IntDomain;
 import org.jacop.core.IntVar;
 import org.jacop.core.Store;
-
-import com.microsoft.z3.ArithExpr;
-import com.microsoft.z3.Expr;
 
 public class JacopPlaceVariable implements PlaceVariable {
 

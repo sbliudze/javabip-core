@@ -1,17 +1,15 @@
 package org.bip.spec.resources;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 
 import org.bip.annotations.ComponentType;
-import org.bip.annotations.Data;
 import org.bip.annotations.Port;
 import org.bip.annotations.Ports;
+import org.bip.annotations.ResourceRelease;
 import org.bip.annotations.ResourceRequired;
 import org.bip.annotations.ResourceUtility;
 import org.bip.annotations.ResourcesRequired;
 import org.bip.annotations.Transition;
-import org.bip.api.DataOut.AccessType;
 import org.bip.api.PortType;
 import org.bip.api.ResourceType;
 import org.slf4j.Logger;
@@ -33,13 +31,13 @@ public class ComponentNeedingResource {
 		this.utility =  "p=1 & m="+ memory;
 	}
 
-	// TODO utility should use the resource labels, but not other names
+	// utility should use the resource labels, but not other names
 	private final String utility;// = "p=1 & m=128";
 
 	@Transition(name = "getResource", source = "0", target = "1", guard = "")
-//	@ResourcesRequired({ @ResourceRequired(label = "m1", type = ResourceType.memory, utility = "mFunc"),
-//			@ResourceRequired(label = "p1", type = ResourceType.processor, utility = "pFunc") })
-	//@ResourceUtility(utility = "p=1 & m=128") 
+	@ResourcesRequired({ @ResourceRequired(label = "m1", type = ResourceType.memory),
+			@ResourceRequired(label = "p1", type = ResourceType.processor) })
+	@ResourceUtility(utility = "128, p=1 & m=128") 
 	// public void aTransition(@ResourceRequired(label = "m1", type = ResourceType.memory, utility = "mFunc") Memory m, @ResourceRequired(label = "p1", type =
 	// ResourceType.processor, utility = "pFunc")Processor p) {
 	public void getResource() {
@@ -48,28 +46,28 @@ public class ComponentNeedingResource {
 	}
 
 	@Transition(name = "process", source = "1", target = "2", guard = "")
-	public void process(@Data(name="resourceArray") Hashtable<String, String> resources, @Data(name="allocID") int allocID) {
+	public void process() {
 		// here we must be using a resource
-		this.allocID = allocID;
-		System.err.println("Processing something using resources: "+ resources);
+		System.err.println("Processing something using resources: ");
 	}
 
 	@Transition(name = "release", source = "2", target = "0", guard = "")
+	@ResourceRelease(resources= {"p1", "m1"})
 	public void release() {
 		System.err.println("Releasing resources");
 	}
 
-	@Data(name = "utility", accessTypePort = AccessType.any)
+	//@Data(name = "utility", accessTypePort = AccessType.any)
 	public String utility() {
 		return utility;
 	}
 	
-	@Data(name = "allocID", accessTypePort = AccessType.any)
+	//@Data(name = "allocID", accessTypePort = AccessType.any)
 	public int allocID() {
 		return allocID;
 	}
 
-	@Data(name = "resourceUnit", accessTypePort = AccessType.any)
+	//@Data(name = "resourceUnit", accessTypePort = AccessType.any)
 	public ArrayList<String> releasedResources() {
 		ArrayList<String> dataRelease = new ArrayList<String>();
 		dataRelease.add("p");

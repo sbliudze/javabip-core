@@ -1,4 +1,4 @@
-package org.bip.spec.resources;
+package org.bip.spec.kalray;
 
 import org.bip.resources.BoundedResourceManager;
 

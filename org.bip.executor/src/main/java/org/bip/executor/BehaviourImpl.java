@@ -252,6 +252,11 @@ class BehaviourImpl implements ExecutableBehaviour {
 			stateports.add(port);
 
 		}
+		
+		portRequiredResources = new Hashtable<Port, ArrayList<ResourceReqImpl>>();
+		portReleasedResources = new Hashtable<Port, ArrayList<String>>();
+		portRequestUtility = new Hashtable<Port, String>();
+		resources = new ArrayList<ResourceReqImpl>();
 	}
 
 	private void updatePortsNeedingData(Port port, Data<?> data) {
@@ -302,7 +307,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 }
 
 	//TODO think: we consider that the RM does not need other resources, hence no corresponding constructor
-	public BehaviourImpl(String type, String resourceName, String currentState,
+	public BehaviourImpl(String type, String currentState, String resourceName,
 			ArrayList<ExecutableTransition> allTransitions,
 			ArrayList<Port> componentPorts, HashSet<String> states,
 			Collection<Guard> guards, ArrayList<DataOutImpl<?>> dataOut,
@@ -533,7 +538,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 	public Map<String, Boolean> computeGuardsWithoutData(String currentState) {
 		// TODO BUG DESIGN compute only guards needed for this current state, as other 
 		// guards not guaranteed to compute properly if executed in the wrong state.
-
+		
 		Hashtable<String, Boolean> guardToValue = new Hashtable<String, Boolean>();
 		ArrayList<ExecutableTransition> transitionsFromState = stateTransitions.get(currentState);
 		for (ExecutableTransition transition : transitionsFromState) {

@@ -122,19 +122,17 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 	 * @throws BIPException
 	 */
 	public void step() throws BIPException {
-		
 		// if the actor was deregistered then it no longer does any steps.
 		if (!registered)
 			return;
 		
 		dataEvaluation.clear();
 		resourceAllocation.clear();
-
+		
 		guardToValue = behaviour.computeGuardsWithoutData(behaviour.getCurrentState());
 
 		// we have to compute this in order to be able to raise an exception
 		boolean existInternalTransition = behaviour.existEnabledInternal(guardToValue);
-		
 		if (existInternalTransition) {
 			logger.debug("About to execute internal transition for component {}", id);
 			behaviour.executeInternal(guardToValue);
@@ -146,7 +144,6 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 		};
 
 		boolean existSpontaneousTransition = behaviour.existInCurrentStateAndEnabledSpontaneous(guardToValue);
-
 		if (existSpontaneousTransition && !notifiers.isEmpty()) {
 
 			for (int i = 0; i < notifiers.size(); i++) {

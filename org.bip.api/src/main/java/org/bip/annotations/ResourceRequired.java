@@ -21,11 +21,4 @@ public @interface ResourceRequired {
 	 * @return resource type.
 	 */
 	ResourceType type();
-	
-	/**
-	 * Provides name of the utility function, containing in it the resource request.
-	 *
-	 * @return the name of the utility function.
-	 */
-	String utility();
 }

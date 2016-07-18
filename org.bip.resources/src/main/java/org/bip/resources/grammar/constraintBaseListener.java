@@ -1,13 +1,9 @@
 // Generated from constraint.g by ANTLR 4.0
 
 package org.bip.resources.grammar;
-import java.util.*;
-import org.bip.resources.ConstraintNode;
-import org.bip.resources.Constraint;
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.tree.TerminalNode;
 import org.antlr.v4.runtime.tree.ErrorNode;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class constraintBaseListener implements constraintListener {
 	@Override public void enterIdent1(constraintParser.Ident1Context ctx) { }

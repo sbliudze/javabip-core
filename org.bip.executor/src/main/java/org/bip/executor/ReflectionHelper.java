@@ -83,7 +83,7 @@ class ReflectionHelper {
 				if (annotation instanceof org.bip.annotations.ResourceRequired) {
 					ResourceRequired resourceAnnotation = (ResourceRequired) annotation;
 					//do we need param types here? I guess we do....
-					ResourceReqImpl resourceReq = createResourceRequest(resourceAnnotation.label(), resourceAnnotation.type(), resourceAnnotation.utility(), paramTypes[i]);
+					ResourceReqImpl resourceReq = createResourceRequest(resourceAnnotation.label(), resourceAnnotation.type(), paramTypes[i]);
 					resourcesRequired.add(resourceReq);
 					break;
 				}
@@ -93,8 +93,8 @@ class ReflectionHelper {
 		return resourcesRequired;
 	}
 	
-	private static ResourceReqImpl createResourceRequest(String label, ResourceType type, String utility, Class<?> class1) {
-		return new ResourceReqImpl(label, type, utility);
+	private static ResourceReqImpl createResourceRequest(String label, ResourceType type, Class<?> class1) {
+		return new ResourceReqImpl(label, type);
 	}
 
 	public static <T> Data<T> createData(String dataName, Class<T> type) {

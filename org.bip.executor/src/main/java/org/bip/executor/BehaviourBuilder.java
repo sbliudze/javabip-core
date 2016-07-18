@@ -75,6 +75,7 @@ public class BehaviourBuilder {
 		dataOut = new ArrayList<DataOutImpl<?>>();
 		resources = new ArrayList<ResourceReqImpl>();
 		methodReqResources = new Hashtable<Method, ArrayList<ResourceReqImpl>>();
+		methodReleaseResources = new Hashtable<Method, ArrayList<String>>();
 		methodUtility = new Hashtable<Method, String>();
 		methodToTransition = new Hashtable<Method, TransitionImpl>();
 	}
@@ -121,9 +122,13 @@ public class BehaviourBuilder {
 			data.computeAllowedPort(allEnforceablePorts);
 		}
 
+		ArrayList<ExecutableTransition> transformedTransitions = transformIntoExecutableTransition();
+		
 		for (Method method : methodReqResources.keySet()) {
 			transitionResources.put(methodToTransition.get(method), methodReqResources.get(method));
 			transitionRequest.put(methodToTransition.get(method), methodUtility.get(method));
+		}
+		for (Method method : methodReleaseResources.keySet()) {
 			transitionRelease.put(methodToTransition.get(method), methodReleaseResources.get(method));
 		}
 		if (methodReqResources.size() != methodUtility.size()) {
@@ -132,12 +137,12 @@ public class BehaviourBuilder {
 		
 		if (!resources.isEmpty())
 		{
-			return new BehaviourImpl(componentType, currentState, transformIntoExecutableTransition(), 
+			return new BehaviourImpl(componentType, currentState, transformedTransitions, 
 					 componentPorts, states, guards.values(), dataOut, dataOutName, component,
 					 transitionResources, transitionRelease, transitionRequest);
 		}
 				
-		return new BehaviourImpl(componentType, currentState, resourceName, transformIntoExecutableTransition(), 
+		return new BehaviourImpl(componentType, currentState, resourceName, transformedTransitions, 
 								 componentPorts, states, guards.values(), dataOut, dataOutName, component);
 	}
 	
@@ -161,8 +166,9 @@ public class BehaviourBuilder {
 			
 			PortType transitionPortType = mapIdToPort.get(transition.name()).getType();
 			
-			transformedAllTransitions.add( new ExecutableTransitionImpl(transition, transitionPortType, guards) );
-			
+			ExecutableTransitionImpl t = new ExecutableTransitionImpl(transition, transitionPortType, guards) ;
+			transformedAllTransitions.add( t);
+			methodToTransition.put(t.method, t);
 		}
 		
 		return transformedAllTransitions;
@@ -226,6 +232,7 @@ public class BehaviourBuilder {
 		addState(target);
 
 		allTransitions.add( new TransitionImpl(name, source, target, guard, method, data) );
+		
 	}
 	
 	public void addTransition(String name, String source, 
@@ -252,7 +259,7 @@ public class BehaviourBuilder {
 		if (!states.contains(target))
 			throw new BIPException("Transition " + name + " is specifying target state " + target + " that has not been explicitly stated before.");
 
-		allTransitions.add( new TransitionImpl(name, source, target, guard, method, data) );
+		allTransitions.add( new TransitionImpl(name, source, target, guard, method, data));
 	}	
 	
 
@@ -313,9 +320,9 @@ public class BehaviourBuilder {
 		return methodHandle;
 	}
 
-	public void addResource(Method method, String label, ResourceType type, String utility) {
+	public void addResource(Method method, String label, ResourceType type) {
 		// TODO R remove utility from here?
-		ResourceReqImpl r = new ResourceReqImpl(label, type, utility);
+		ResourceReqImpl r = new ResourceReqImpl(label, type);
 		resources.add(r);
 		ArrayList<ResourceReqImpl> methodResources = new ArrayList<ResourceReqImpl>();
 		if (methodReqResources.containsKey(method)) {

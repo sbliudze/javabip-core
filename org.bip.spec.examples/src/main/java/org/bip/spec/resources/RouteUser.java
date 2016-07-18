@@ -32,7 +32,7 @@ public class RouteUser {
 	}
 	
 	@Transition(name = "askRoute", source = "0", target = "1", guard = "")
-	@ResourceRequired(label = "r1", type = ResourceType.route, utility = "routeUtility")
+	@ResourceRequired(label = "r1", type = ResourceType.route)
 	@ResourceUtility(utility = "r=1")
 	public void askRoute() {
 		System.err.println("Asking for a ROUTE");

@@ -8,10 +8,9 @@ public class ResourceReqImpl {
 	private String name;
 	private String utility;
 
-	public ResourceReqImpl(String name, ResourceType type, String utility) {
+	public ResourceReqImpl(String name, ResourceType type) {
 		this.name = name;
 		this.type = type;
-		this.utility = utility;
 	}
 
 	
@@ -19,7 +18,6 @@ public class ResourceReqImpl {
 		StringBuilder result = new StringBuilder();
 		result.append("Resource name=" + name);
 		result.append(", type =" + type);
-		result.append(", utility=" + utility);
 		return result.toString();
 	}
 	

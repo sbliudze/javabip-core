@@ -10,9 +10,6 @@ import org.bip.constraint.VariableExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.microsoft.z3.ArithExpr;
-import com.microsoft.z3.BoolExpr;
-
 public class Transition {
 
 	private String transitionName;

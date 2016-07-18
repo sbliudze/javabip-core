@@ -111,4 +111,29 @@ public class ExecutorOSGiImpl implements BundleContextAware, Publishable, Execut
 		executor.provideAllocation(resourceName, resourceHandle);
 	}
 
+	@Override
+	public String constraint() {
+		return executor.constraint();
+	}
+
+	@Override
+	public String cost() {
+		return executor.cost();
+	}
+
+	@Override
+	public String resourceName() {
+		return executor.resourceName();
+	}
+
+	@Override
+	public void augmentCost(String amount) {
+		executor.augmentCost(amount);
+	}
+
+	@Override
+	public ResourceHandle decreaseCost(String amount) {
+		return executor.decreaseCost(amount);
+	}
+
 }

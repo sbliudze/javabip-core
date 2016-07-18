@@ -1,11 +1,7 @@
 // Generated from constraint.g by ANTLR 4.0
 
 package org.bip.resources.grammar;
-import java.util.*;
-import org.bip.resources.ConstraintNode;
-import org.bip.resources.Constraint;
-import org.antlr.v4.runtime.tree.*;
-import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 public interface constraintListener extends ParseTreeListener {
 	void enterIdent1(constraintParser.Ident1Context ctx);

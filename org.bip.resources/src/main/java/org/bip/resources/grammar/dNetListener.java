@@ -1,18 +1,7 @@
 // Generated from dNet.g by ANTLR 4.0
 
 package org.bip.resources.grammar;
-import java.util.*;
-import java.util.*;
-import org.bip.resources.ConstraintNode;
-import org.bip.resources.Transition;
-import org.bip.resources.Place;
-import org.bip.resources.DNet;
-import org.bip.resources.InhibitorArc;
-import org.bip.resources.Constraint;
-import org.bip.resources.Utility;
-
-import org.antlr.v4.runtime.tree.*;
-import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 public interface dNetListener extends ParseTreeListener {
 	void enterIdent1(dNetParser.Ident1Context ctx);

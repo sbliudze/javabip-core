@@ -9,7 +9,6 @@
 package org.bip.executor;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.bip.annotations.ComponentType;
@@ -115,6 +114,7 @@ public abstract class SpecificationParser implements ComponentProvider {
 		Method[] componentMethods = componentClass.getMethods();
 		for (Method method : componentMethods) {
 			Annotation[] annotations = method.getAnnotations();
+			
 			for (Annotation annotation : annotations) {
 				if (annotation instanceof org.bip.annotations.Transition) {
 					
@@ -168,13 +168,10 @@ public abstract class SpecificationParser implements ComponentProvider {
 				else if (annotation instanceof org.bip.annotations.ResourceUtility) {
 					
 					addResourceUtility(method, (org.bip.annotations.ResourceUtility) annotation, builder);
-
 				}
 				
 				else if (annotation instanceof org.bip.annotations.ResourceRelease) {
-					
 					addResourceRelease(method, (org.bip.annotations.ResourceRelease) annotation, builder);
-
 				}
 			}
 
@@ -192,7 +189,7 @@ public abstract class SpecificationParser implements ComponentProvider {
 	}
 
 	private void addResource(Method method, ResourceRequired bipResourceAnnotation, BehaviourBuilder builder) {
-		builder.addResource(method, bipResourceAnnotation.label(), bipResourceAnnotation.type(), bipResourceAnnotation.utility());
+		builder.addResource(method, bipResourceAnnotation.label(), bipResourceAnnotation.type());
 	}
 
 	private void addGuard(Method method, 
