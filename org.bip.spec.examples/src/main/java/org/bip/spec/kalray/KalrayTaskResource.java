@@ -1,55 +1,52 @@
-package org.bip.spec.resources;
+package org.bip.spec.kalray;
 
-import java.util.HashSet;
-import java.util.Set;
 
 import org.bip.api.ResourceProvider;
 import org.bip.api.ResourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class KalrayMemoryBank implements ResourceProvider  {
-
+public class KalrayTaskResource  implements ResourceProvider{
 	private final String name;
 	private final String resourceID;
-	Set<Integer> processors;
+	private boolean executed;
+	private KalrayData dataKalray;
 	
 	private Logger logger = LoggerFactory.getLogger(KalrayMemoryBank.class);
 
-	public KalrayMemoryBank(String name) {
+	public KalrayTaskResource(String name) {
 		this.name = name;
 		this.resourceID = name;
-		processors = new HashSet<Integer>();
+		this.executed = false;
 	}
 
+	public void setData(KalrayData dataKalray) {
+		this.dataKalray = dataKalray;
+	}
 	
 	@Override
 	public void augmentCost(String deltaCost) {
 		logger.debug("Cost of " + name + " increased by " + deltaCost);
-		int taken = Integer.parseInt(deltaCost);
-		processors.remove(taken);
-		//this.currentCapacity += taken;
-		//System.err.println("cost is now (+) " + cost);
 	}
 
 	@Override
 	public String constraint() {
-		return name + ">=0";
+		if (executed) return name + "=0";
+		return name + "=0 | " + name + "=1";
 	}
-	
+
 	@Override
 	public String cost() {
-		return "0, "+name + ">=0;";
+		if (executed) return "0, " + name + "=0;";
+		return "0, " + name + "=0 | " + name + "=1;";
 	}
-
-
+	
 	@Override
 	public void decreaseCost(String deltaCost) {
 		logger.debug("Cost of " + name + " decreased by " + deltaCost);
 		int taken = Integer.parseInt(deltaCost);
-		//this.currentCapacity -= taken;
-		processors.add(taken);
-		//System.err.println("cost is now (-) " + cost);
+		if (taken>0){	this.executed = true;}
+		if (dataKalray!=null & taken>0) dataKalray.create();
 	}
 
 	@Override
@@ -66,5 +63,4 @@ public class KalrayMemoryBank implements ResourceProvider  {
 	public ResourceType type() {
 		return ResourceType.custom;
 	}
-
 }

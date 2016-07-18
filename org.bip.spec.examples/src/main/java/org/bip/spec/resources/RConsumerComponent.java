@@ -10,7 +10,7 @@ public abstract class RConsumerComponent implements ResourceConsumer {
 
 	protected String utility;
 	protected int allocID;
-	ArrayList<String> dataRelease = new ArrayList<String>();
+	protected ArrayList<String> dataRelease = new ArrayList<String>();
 	
 	public RConsumerComponent(String utility) {
 		this.utility = utility;

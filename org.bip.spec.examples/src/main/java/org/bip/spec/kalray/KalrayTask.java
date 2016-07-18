@@ -1,4 +1,4 @@
-package org.bip.spec.resources;
+package org.bip.spec.kalray;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -11,6 +11,7 @@ import org.bip.annotations.Ports;
 import org.bip.annotations.Transition;
 import org.bip.api.DataOut.AccessType;
 import org.bip.api.PortType;
+import org.bip.spec.resources.RConsumerComponent;
 
 @Ports({ @Port(name = "askResource", type = PortType.enforceable),
 		@Port(name = "getResource", type = PortType.enforceable),
