@@ -434,8 +434,9 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 
 	@Override
 	public String cost() {
+		return "0, " + behaviour.getResourceName()  + ">0;";
 		// TODO Auto-generated method stub
-		return null;
+		//return behaviour.resourceInvoke(this.getClass().getEnclosingMethod().getName());;
 	}
 
 	@Override
@@ -445,14 +446,15 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 
 	@Override
 	public void augmentCost(String amount) {
-		// TODO Auto-generated method stub
+		//behaviour.resourceInvoke(this.getClass().getEnclosingMethod().getName(), amount);
 		
 	}
 
 	@Override
 	public ResourceHandle decreaseCost(String amount) {
-		// TODO Auto-generated method stub
 		return null;
+		// TODO Auto-generated method stub
+		//return behaviour.resourceInvoke(this.getClass().getEnclosingMethod().getName(), amount);;
 	}
 
 }

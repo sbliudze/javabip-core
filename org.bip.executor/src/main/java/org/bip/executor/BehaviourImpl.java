@@ -67,7 +67,9 @@ class BehaviourImpl implements ExecutableBehaviour {
 	private ArrayList<ExecutableTransition> internalTransitions;
 	private ArrayList<ExecutableTransition> spontaneousTransitions;
 	private ArrayList<ExecutableTransition> enforceableTransitions;
-	// for each enforceable transition get its port instance
+	/**
+	 * A map between enforceable transitions and corresponding ports
+	 */
 	private Hashtable<ExecutableTransition, Port> transitionToPort;
 
 	// the list of guards whose evaluation does not depend on data
@@ -708,15 +710,20 @@ class BehaviourImpl implements ExecutableBehaviour {
 			 * ASSUMPTION: if there is data transfer and resource usage,
 			 * first the data parameters are there, and then the resource parameters.
 			 * TODO resource parameters must be in List, not in Set
+			 * TODO it does not work for spontaneous events - there is no port for transition. or is there?
 			 */
-			for (ResourceReqImpl res: portRequiredResources.get(transitionToPort.get(transition))) {
-				// name parameter can not be null as it is enforced by the constructor.
-				Object value = data.get(res.name());
-				// TODO, CHECK, value can be null if the map is not properly constructed. Throw more informative exception.
-				// TODO we can check here for the type of the expected value
-				// if it is a string/int, send the getID(), otherwise send the getObject()
-				args[i] = value;
-				i++;
+				
+			if (!portRequiredResources.isEmpty() && transition.getType().equals(PortType.enforceable)) {
+				ArrayList<ResourceReqImpl> resourcePorts = portRequiredResources.get(transitionToPort.get(transition));
+				for (ResourceReqImpl res : resourcePorts) {
+					// name parameter can not be null as it is enforced by the constructor.
+					Object value = data.get(res.name());
+					// TODO, CHECK, value can be null if the map is not properly constructed. Throw more informative exception.
+					// TODO we can check here for the type of the expected value
+					// if it is a string/int, send the getID(), otherwise send the getObject()
+					args[i] = value;
+					i++;
+				}
 			}
 			logger.debug("In component " + this.componentType + " INVOCATION of " + transition.name() + " with args " + data);
 
@@ -783,6 +790,12 @@ class BehaviourImpl implements ExecutableBehaviour {
 	public void provideAllocation(String resourceName,	ResourceHandle resourceHandle) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public Object resourceInvoke(String methodName) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	//****************************** End of Execution *******************************************

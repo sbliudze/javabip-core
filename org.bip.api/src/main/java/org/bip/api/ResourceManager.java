@@ -5,6 +5,7 @@ public interface ResourceManager {
 	
 	public String cost();
 
+	//we should not need this, as the resource name is given in the component type annotation
 	public String resourceName();
 
 	//public ResourceType type();

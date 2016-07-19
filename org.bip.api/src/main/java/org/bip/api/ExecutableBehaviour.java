@@ -134,4 +134,6 @@ public interface ExecutableBehaviour extends Behaviour {
 
 	public void provideAllocation(String resourceName,
 			ResourceHandle resourceHandle);
+
+	public Object resourceInvoke(String methodName);
 }

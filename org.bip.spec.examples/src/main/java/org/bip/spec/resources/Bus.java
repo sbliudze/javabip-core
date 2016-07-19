@@ -1,8 +1,16 @@
 package org.bip.spec.resources;
 
-import org.bip.api.ResourceType;
+import org.bip.annotations.ComponentType;
+import org.bip.annotations.Guard;
+import org.bip.annotations.Port;
+import org.bip.annotations.Transition;
+import org.bip.api.PortType;
+import org.bip.api.ResourceHandle;
+import org.bip.api.ResourceManager;
 
-public class Bus extends Resource {
+@Port(name = "bPort", type = PortType.enforceable)
+@ComponentType(initial = "0", name = "org.bip.spec.BusResource", resourceName = "b")
+public class Bus implements ResourceManager {
 
 	private final String name = "b";
 	private final String resourceID= "bus";
@@ -15,6 +23,16 @@ public class Bus extends Resource {
 		this.currentCapacity = capacity;
 		this.cost = costString();
 	}
+	
+	@Transition(name = "bPort", source = "0", target = "0", guard = "g")
+	public void aTransition() {
+		System.out.println("b transition is executing");
+	}
+	
+	@Guard(name="g")
+	public boolean aGuard() {
+		return false;
+	}
 
 	@Override
 	public String constraint() {
@@ -24,21 +42,6 @@ public class Bus extends Resource {
 	@Override
 	public String cost() {
 		return "0, " +cost + ";";
-	}
-
-	@Override
-	public String name() {
-		return name;
-	}
-
-	@Override
-	public ResourceType type() {
-		return ResourceType.bus;
-	}
-	
-	@Override
-	public String providedResourceID() {
-		return resourceID;
 	}
 
 	// we suppose that the allocator sends us the new value (or maybe rather the difference?)
@@ -51,6 +54,37 @@ public class Bus extends Resource {
 
 	private String costString() {
 		return "b>=0 & b<=" + Integer.toString(currentCapacity);
+	}
+
+	@Override
+	public String resourceName() {
+		// TODO Auto-generated method stub
+		return "b";
+	}
+
+	@Override
+	public void augmentCost(String deltaCost) {
+		int taken = Integer.parseInt(deltaCost);
+		this.currentCapacity += taken;
+		
+	}
+
+	@Override
+	public ResourceHandle decreaseCost(String deltaCost) {
+		int taken = Integer.parseInt(deltaCost);
+		this.currentCapacity -= taken;
+return new ResourceHandle() {
+			
+			@Override
+			public String resourceID() {
+				return "simpleB";
+			}
+			
+			@Override
+			public Object resource() {
+				return null;
+			}
+		};
 	}
 
 }

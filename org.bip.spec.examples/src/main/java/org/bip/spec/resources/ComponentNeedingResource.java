@@ -37,7 +37,7 @@ public class ComponentNeedingResource {
 	@Transition(name = "getResource", source = "0", target = "1", guard = "")
 	@ResourcesRequired({ @ResourceRequired(label = "m1", type = ResourceType.memory),
 			@ResourceRequired(label = "p1", type = ResourceType.processor) })
-	@ResourceUtility(utility = "128, p=1 & m=128") 
+	@ResourceUtility(utility = "128, p=1 & m=128;") 
 	// public void aTransition(@ResourceRequired(label = "m1", type = ResourceType.memory, utility = "mFunc") Memory m, @ResourceRequired(label = "p1", type =
 	// ResourceType.processor, utility = "pFunc")Processor p) {
 	public void getResource() {

@@ -96,18 +96,29 @@ public abstract class SpecificationParser implements ComponentProvider {
 		}
 
 		// get ports
+		boolean noPorts = true;
 		classAnnotation = componentClass.getAnnotation(Ports.class);
 		if (classAnnotation instanceof Ports) {
 			Ports ports = (Ports) classAnnotation;
 			org.bip.annotations.Port[] portArray = ports.value();
+			noPorts = false;
 			for (org.bip.annotations.Port bipPortAnnotation : portArray) {
 				
 				if (bipPortAnnotation instanceof org.bip.annotations.Port)
 					addPort((org.bip.annotations.Port) bipPortAnnotation, specType, builder);
 
 			}
-		} else {
-			throw new BIPException("Port information for the BIP component is not specified.");
+		} 
+		
+		classAnnotation = componentClass.getAnnotation(org.bip.annotations.Port.class);
+		if (classAnnotation != null) {
+			noPorts = false;
+			addPort((org.bip.annotations.Port) classAnnotation, specType, builder);
+		}
+
+		if (noPorts) {
+			throw new BIPException("Port information for the BIP component "
+					+ specType + " is not specified.");
 		}
 
 		// get transitions & guards & data & resources
