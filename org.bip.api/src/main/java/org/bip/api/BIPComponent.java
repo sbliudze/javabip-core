@@ -56,4 +56,11 @@ public interface BIPComponent extends Identifiable, BIPActor, ResourceManager {
 	
 	public void provideAllocation(String resourceName, ResourceHandle resourceHandle);
 
+	/**
+	 * Provides a map of resource names and their corresponding amounts released by the specified port
+	 * @param port port releasing resources
+	 * @return
+	 */
+	public Map<String, String> getReleasedAmounts(Port port);
+
 }

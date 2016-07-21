@@ -457,4 +457,10 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 		//return behaviour.resourceInvoke(this.getClass().getEnclosingMethod().getName(), amount);;
 	}
 
+	@Override
+	public Map<String, String> getReleasedAmounts(Port port) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

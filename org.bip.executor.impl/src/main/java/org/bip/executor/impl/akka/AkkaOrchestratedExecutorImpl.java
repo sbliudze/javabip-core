@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.bip.api.BIPEngine;
 import org.bip.api.OrchestratedExecutor;
+import org.bip.api.Port;
 import org.bip.api.PortBase;
 import org.bip.api.ResourceHandle;
 
@@ -124,6 +125,12 @@ public class AkkaOrchestratedExecutorImpl implements AkkaOrchestratedExecutor {
 
 	@Override
 	public ResourceHandle decreaseCost(String amount) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, String> getReleasedAmounts(Port port) {
 		// TODO Auto-generated method stub
 		return null;
 	}

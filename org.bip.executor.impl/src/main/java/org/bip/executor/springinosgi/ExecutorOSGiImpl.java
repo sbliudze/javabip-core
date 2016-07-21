@@ -7,6 +7,7 @@ import java.util.Map;
 import org.bip.api.BIPComponent;
 import org.bip.api.BIPEngine;
 import org.bip.api.Executor;
+import org.bip.api.Port;
 import org.bip.api.PortBase;
 import org.bip.api.Publishable;
 import org.bip.api.ResourceHandle;
@@ -134,6 +135,12 @@ public class ExecutorOSGiImpl implements BundleContextAware, Publishable, Execut
 	@Override
 	public ResourceHandle decreaseCost(String amount) {
 		return executor.decreaseCost(amount);
+	}
+
+	@Override
+	public Map<String, String> getReleasedAmounts(Port port) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
