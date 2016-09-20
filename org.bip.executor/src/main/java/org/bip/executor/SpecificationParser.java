@@ -9,7 +9,6 @@
 package org.bip.executor;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.bip.annotations.ComponentType;
@@ -98,8 +97,12 @@ public abstract class SpecificationParser implements ComponentProvider {
 			org.bip.annotations.Port[] portArray = ports.value();
 			for (org.bip.annotations.Port bipPortAnnotation : portArray) {
 				
-				if (bipPortAnnotation instanceof org.bip.annotations.Port)
+				if (bipPortAnnotation instanceof org.bip.annotations.Port) {
+					if (bipPortAnnotation.name().equals("reserved_final")) {
+						throw new BIPException("reserved_final is a reserved state name");
+					}
 					addPort((org.bip.annotations.Port) bipPortAnnotation, specType, builder);
+				}
 
 			}
 		} else {

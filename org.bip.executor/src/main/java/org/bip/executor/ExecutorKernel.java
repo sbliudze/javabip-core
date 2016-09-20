@@ -128,7 +128,16 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 		dataEvaluation.clear();
 
 		guardToValue = behaviour.computeGuardsWithoutData(behaviour.getCurrentState());
-
+		
+		boolean existEnforceableTransition = behaviour.existInCurrentStateAndEnabledEnforceableWithoutData(guardToValue) ||
+				 behaviour.existInCurrentStateAndEnforceableWithData();
+		
+		// If no enforceable transitions, we can tell the engine to not wait for the component to continue to next cycle
+//		if(!existEnforceableTransition) {
+//			logger.warn("No enforceable transitions this cycle, telling the engine not to wait for us.");
+//			engine.pause(proxy);
+//		}
+//		
 		// we have to compute this in order to be able to raise an exception
 		boolean existInternalTransition = behaviour.existEnabledInternal(guardToValue);
 		
@@ -174,8 +183,7 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 
 		}
 
-		boolean existEnforceableTransition = behaviour.existInCurrentStateAndEnabledEnforceableWithoutData(guardToValue) ||
-											 behaviour.existInCurrentStateAndEnforceableWithData();
+		
 		
 		Set<Port> globallyDisabledPorts = behaviour.getGloballyDisabledEnforceablePortsWithoutDataTransfer(guardToValue);
 

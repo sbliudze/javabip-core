@@ -65,5 +65,9 @@ class PortBaseImpl implements PortBase {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return specType+":"+id;
+	}
 	
 }
