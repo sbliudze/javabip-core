@@ -184,11 +184,11 @@
       </dependency>
 
 
-      <dependency>
+  <!--    <dependency>
         <groupId>org.bip.epfl</groupId>
         <artifactId>org.bip.engine</artifactId>
         <version>${org.bip.epfl.engine.version}</version>
-      </dependency>
+      </dependency> -->
 
       <dependency>
         <groupId>org.bip</groupId>
@@ -215,11 +215,11 @@
         <version>${camel-core.version}</version>
       </dependency>
 
-      <dependency>
+      <!-- <dependency>
         <groupId>org.bip.epfl</groupId>
         <artifactId>org.bip.lsr</artifactId>
         <version>${org.bip.lsr.version}</version>
-      </dependency>
+      </dependency>-->
 
     </dependencies>
   </dependencyManagement>
