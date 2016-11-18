@@ -8,6 +8,7 @@
 
   <name>BIP :: Core </name>
 
+	<!--TODO: change to github-->
 	<scm>
 		<developerConnection>scm:git:git@git.xtech.io:bip/org.bip.core.git</developerConnection>
 		<url>https://git.xtech.io/academy/bip.git</url>
@@ -21,7 +22,6 @@
   <modules>
 	<module>org.bip.parent</module>
 	<module>org.bip.api</module>
-	<module>org.bip.jmx</module>
 	<module>org.bip.glue</module>
 	<module>org.bip.executor</module>
 	<module>org.bip.executor.impl</module>
