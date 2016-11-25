@@ -1,6 +1,6 @@
 /*
- * Copyright 2012-2016 Ecole Polytechnique Federal de Lausanne (EPFL), Switzerland
- * Copyright 2012-2016 Crossing-Tech TM Switzerland
+ * Copyright 2012-2016 École polytechnique fédérale de Lausanne (EPFL), Switzerland
+ * Copyright 2012-2016 Crossing-Tech SA, Switzerland
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Author: Simon Bliudze, Alina Zolotukhina, Anastasia Mavridou, and Radoslaw Szymanek
- * Date: 10/15/12
+ * Author: Simon Bliudze, Anastasia Mavridou, Radoslaw Szymanek and Alina Zolotukhina
+ * Date: 15.10.12
  */
 
 package org.bip.annotations;
@@ -28,17 +28,17 @@ import java.lang.annotation.RetentionPolicy;
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ComponentType {
-	
+
 	/**
 	 * It returns the name of the type of the component.
-	 *
+	 * 
 	 * @return the type of the BIP component.
 	 */
 	String name();
-	
+
 	/**
-	 * It returns the name of the initial state in which the BIP spec is in after instantiation.
-	 *
+	 * It returns the name of the initial state in which the BIP specification is in after instantiation.
+	 * 
 	 * @return the name of the initial state.
 	 */
 	String initial();

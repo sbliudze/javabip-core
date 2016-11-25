@@ -1,14 +1,25 @@
 /*
- * Copyright (c) 2012 Crossing-Tech TM Switzerland. All right reserved.
- * Copyright (c) 2012, RiSD Laboratory, EPFL, Switzerland.
+ * Copyright 2012-2016 École polytechnique fédérale de Lausanne (EPFL), Switzerland
+ * Copyright 2012-2016 Crossing-Tech SA, Switzerland
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
- * Author: Simon Bliudze, Alina Zolotukhina, Anastasia Mavridou, and Radoslaw Szymanek
- * Date: 10/15/12
+ * Author: Simon Bliudze, Anastasia Mavridou, Radoslaw Szymanek and Alina Zolotukhina
+ * Date: 15.10.12
  */
 
 package org.bip.api;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
 /**
@@ -26,28 +37,23 @@ public interface Guard {
 	/**
 	 * It returns the collection of specifications of data that is required by this guard in order to be evaluated.
 	 * 
-	 * @return the collection
+	 * @return the collection of data required for guard evaluation.
 	 */
 	public Collection<Data<?>> dataRequired();
 
 	/**
 	 * It returns true if guard requires data for its evaluation.
 	 * 
-	 * @return the boolean true if guard requires data and false otherwise.
+	 * @return true if guard requires data, false otherwise.
 	 */
 	public Boolean hasData();
 
-	// TODO DISCUSSION maybe any exception that can be thrown by a given implementation 
-	// of the guard should be simply wrapped in BIP Exception?
 	/**
-	 * Evaluate guard.
+	 * Given the data arguments, evaluates the guard.
 	 * 
-	 * @param component		the component
-	 * @param args          the args
-	 * @return true, if successful
-	 * @throws IllegalAccessException		the illegal access exception
-	 * @throws IllegalArgumentException     the illegal argument exception
-	 * @throws InvocationTargetException    the invocation target exception
+	 * @param args
+	 *            the component is passed as the first argument, then the data valuations required by the guard.
+	 * @return the result of the guard evaluation.
 	 */
 
 	public boolean evaluateGuard(Object... args);
