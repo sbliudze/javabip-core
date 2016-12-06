@@ -25,6 +25,8 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * It annotates the function with implementing a guard. The function must return a boolean value.
+ * 
+ * @author Alina Zolotukhina
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Guard {

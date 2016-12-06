@@ -1,9 +1,20 @@
 /*
- * Copyright (c) 2012 Crossing-Tech TM Switzerland. All right reserved.
- * Copyright (c) 2012, RiSD Laboratory, EPFL, Switzerland.
+ * Copyright 2012-2016 École polytechnique fédérale de Lausanne (EPFL), Switzerland
+ * Copyright 2012-2016 Crossing-Tech SA, Switzerland
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
- * Author: Simon Bliudze, Alina Zolotukhina, Anastasia Mavridou, and Radoslaw Szymanek
- * Date: 10/15/12
+ * Author: Simon Bliudze, Anastasia Mavridou, Radoslaw Szymanek and Alina Zolotukhina
  */
 
 package org.bip.executor;
@@ -46,7 +57,7 @@ class PortImpl implements Port {
 	private ComponentProvider componentProvider;
 
 	public PortImpl(String id, PortType type, Class<?> specificationType) {
-		this (id, type, specificationType.getCanonicalName());
+		this(id, type, specificationType.getCanonicalName());
 		if (specificationType.getCanonicalName() == null)
 			throw new IllegalArgumentException("The provided class " + specificationType + "has no cannonical name");
 	}
@@ -54,15 +65,12 @@ class PortImpl implements Port {
 	public PortImpl(String id, PortType type, String specificationType) {
 		if (id == null) {
 			if (specificationType != null)
-				throw new IllegalArgumentException(
-						"Port id cannot be null for specification "
-						+ specificationType);
+				throw new IllegalArgumentException("Port id cannot be null for specification " + specificationType);
 			else
 				throw new IllegalArgumentException("Port id cannot be null for specification ");
 		}
 		if (specificationType == null) {
-				throw new IllegalArgumentException(
-						"Port spec portType cannot be null for port id " + id);
+			throw new IllegalArgumentException("Port spec portType cannot be null for port id " + id);
 		}
 		if (type == null) {
 			throw new IllegalArgumentException("Port portType cannot be null for port id " + id);
@@ -98,31 +106,31 @@ class PortImpl implements Port {
 	}
 
 	public boolean equals(Object o) {
-		
+
 		if (this == o)
 			return true;
-		
+
 		if (!(o instanceof Port)) {
 			return false;
 		}
-		
+
 		Port compareTo = (Port) o;
-		
-		if ( !this.getType().equals(compareTo.getType()))
+
+		if (!this.getType().equals(compareTo.getType()))
 			return false;
 
-		if ( !this.getId().equals(compareTo.getId()))
+		if (!this.getId().equals(compareTo.getId()))
 			return false;
 
-		if ( !this.getSpecType().equals(compareTo.getSpecType()))
+		if (!this.getSpecType().equals(compareTo.getSpecType()))
 			return false;
-		
-		if ( !this.component().equals(compareTo.component()))
+
+		if (!this.component().equals(compareTo.component()))
 			return false;
-				
+
 		return true;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		int result = id.hashCode();

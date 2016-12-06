@@ -32,6 +32,8 @@ import org.bip.api.DataOut.AccessType;
  * Data can be specified as annotations within BIP Specification class. Even if behavior spec is specified
  * programmatically it is still possible to use data annotation parser. If no data information is provided then the name
  * is assumed to be equal to Method.name() + SEPARATOR + parameter.no
+ * 
+ * @author Alina Zolotukhina
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Data {

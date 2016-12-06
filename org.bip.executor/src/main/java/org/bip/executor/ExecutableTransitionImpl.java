@@ -1,5 +1,22 @@
+/*
+ * Copyright 2012-2016 École polytechnique fédérale de Lausanne (EPFL), Switzerland
+ * Copyright 2012-2016 Crossing-Tech SA, Switzerland
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Author: Simon Bliudze, Anastasia Mavridou, Radoslaw Szymanek and Alina Zolotukhina
+ */
 package org.bip.executor;
-
 
 import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Method;
@@ -18,7 +35,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Extends Transition and provides information about a transition relevant to an executor. It has additional guard information.
+ * Extends Transition and provides information about a transition relevant to an executor. It has additional guard
+ * information.
+ * 
+ * @author Alina Zolotukhina
  * 
  */
 class ExecutableTransitionImpl extends TransitionImpl implements ExecutableTransition {
@@ -33,8 +53,8 @@ class ExecutableTransitionImpl extends TransitionImpl implements ExecutableTrans
 		this.portType = portType;
 		if (hasGuard()) {
 			this.guardTree = parseANTLR(guard);
-            if (this.guardTree == null)
-                throw new BIPException("Guard expression " + guard + " does not have proper syntax.");
+			if (this.guardTree == null)
+				throw new BIPException("Guard expression " + guard + " does not have proper syntax.");
 			this.guardTree.createGuardList(guards);
 		}
 	}
@@ -43,9 +63,11 @@ class ExecutableTransitionImpl extends TransitionImpl implements ExecutableTrans
 		return this.portType;
 	}
 
-	// is used in BehaviourImpl in order to check that the method is called on the object it belongs to
-	// and also to get the number of parameters
-	// possible improvement: remove method() and add two other methods for actions described above
+	/*
+	 * This method is used in BehaviourImpl in order to check that the method is called on the object it belongs to and
+	 * also to get the number of parameters. Possible improvement: remove method() and add two other methods for actions
+	 * described above.
+	 */
 	public Method method() {
 		return this.method;
 	}
@@ -53,6 +75,7 @@ class ExecutableTransitionImpl extends TransitionImpl implements ExecutableTrans
 	public MethodHandle methodHandle() {
 		return this.methodHandle;
 	}
+
 	public String guard() {
 		return this.guard;
 	}
@@ -65,8 +88,7 @@ class ExecutableTransitionImpl extends TransitionImpl implements ExecutableTrans
 		return dataRequired;
 	}
 
-	public Collection<Guard> transitionGuards()
-	{
+	public Collection<Guard> transitionGuards() {
 		return this.guardTree.guardList();
 	}
 
@@ -129,6 +151,6 @@ class ExecutableTransitionImpl extends TransitionImpl implements ExecutableTrans
 
 	@Override
 	public boolean hasData() {
-		return dataRequired.iterator()==null;
+		return dataRequired.iterator() == null;
 	}
 }

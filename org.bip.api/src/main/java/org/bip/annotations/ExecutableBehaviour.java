@@ -28,6 +28,8 @@ import java.lang.annotation.RetentionPolicy;
  * Behavior for the BIP Specification.
  * 
  * Function must return BehaviourBuilder class and require no parameters.
+ * 
+ * @author Alina Zolotukhina
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ExecutableBehaviour {

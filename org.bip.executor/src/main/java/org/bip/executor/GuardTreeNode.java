@@ -1,3 +1,21 @@
+/*
+ * Copyright 2012-2016 École polytechnique fédérale de Lausanne (EPFL), Switzerland
+ * Copyright 2012-2016 Crossing-Tech SA, Switzerland
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Author: Simon Bliudze, Anastasia Mavridou, Radoslaw Szymanek and Alina Zolotukhina
+ */
 package org.bip.executor;
 
 import java.util.ArrayList;
@@ -8,7 +26,12 @@ import org.bip.api.Guard;
 import org.bip.exceptions.BIPException;
 
 // TODO DESIGN do we have to keep this class public?, make it private refactor guardparser into this package.
-// TODO DESCRIPTION missing, explain this class purpose and document functions.
+/**
+ * Represents the tree of a guard expression for a transition.
+ * 
+ * @author Alina Zolotukhina
+ * 
+ */
 public class GuardTreeNode {
 
 	public ArrayList<GuardTreeNode> children = new ArrayList<GuardTreeNode>();
@@ -40,6 +63,13 @@ public class GuardTreeNode {
 		return !this.children.isEmpty();
 	}
 
+	/**
+	 * Attaches a child node to the parent one.
+	 * 
+	 * @param parent
+	 *            the parent node
+	 * @return the updated tree
+	 */
 	public Boolean attachToNode(GuardTreeNode parent) {
 		if (parent != null) {
 			if (parent.addChildren(this)) {
@@ -50,10 +80,24 @@ public class GuardTreeNode {
 		return false;
 	}
 
+	/**
+	 * Getter for a list of guards used in the guard expression of this transition.
+	 * 
+	 * @return the list of guards used in the guard expression
+	 */
 	public Collection<Guard> guardList() {
 		return this.guardList;
 	}
 
+	/**
+	 * Computes the guard expression value given the evaluation of guards.
+	 * 
+	 * @param nameToValue
+	 *            a mapping between the guard name ant its value
+	 * @return the guard expression value
+	 * @throws BIPException
+	 *             when there is a guard which does not have an evaluation
+	 */
 	public Boolean evaluate(Map<String, Boolean> nameToValue) throws BIPException {
 		if (this.data.equals("&"))
 			return this.children.get(0).evaluate(nameToValue) && this.children.get(1).evaluate(nameToValue);
@@ -73,7 +117,8 @@ public class GuardTreeNode {
 	 * Given a list of all guards, build a list of guards used in this guard expression
 	 * 
 	 * @param guardList
-	 * @return
+	 *            a mapping between guard name and guard instance
+	 * @return a collection of guards used in this particular transition
 	 * @throws BIPException
 	 */
 	public Collection<Guard> createGuardList(Map<String, Guard> guardList) throws BIPException {
@@ -87,11 +132,10 @@ public class GuardTreeNode {
 		if (!(this.data.equals("&") || this.data.equals("|") || this.data.equals("!"))) {
 
 			this.guard = guardList.get(this.data);
-			
-			if (this.guard != null) {				
+
+			if (this.guard != null) {
 				usedGuards.add(guard);
-			}
-			else {
+			} else {
 				throw new BIPException("Cannot find publicly accessible guard function " + this.data);
 			}
 		}

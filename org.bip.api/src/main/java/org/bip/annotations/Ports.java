@@ -25,6 +25,8 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * It specifies/aggregates the ports for a given BIP specification.
+ * 
+ * @author Alina Zolotukhina
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Ports {

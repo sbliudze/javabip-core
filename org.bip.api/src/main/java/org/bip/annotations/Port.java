@@ -27,6 +27,8 @@ import org.bip.api.PortType;
 
 /**
  * It specifies the name and the type of the port.
+ * 
+ * @author Alina Zolotukhina
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Port {

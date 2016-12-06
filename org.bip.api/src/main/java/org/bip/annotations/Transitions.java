@@ -25,6 +25,8 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * It makes it possible to assign multiple transition annotations within one function.
+ * 
+ * @author Alina Zolotukhina
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Transitions {

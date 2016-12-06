@@ -25,6 +25,8 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * It specifies the type of the BIP component.
+ * 
+ * @author Alina Zolotukhina
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ComponentType {

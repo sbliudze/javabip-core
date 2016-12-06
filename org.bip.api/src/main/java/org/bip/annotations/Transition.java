@@ -25,6 +25,8 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * It annotates function with information about transition it is performing.
+ * 
+ * @author Alina Zolotukhina
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Transition {
