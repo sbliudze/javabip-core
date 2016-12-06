@@ -1,9 +1,20 @@
 /*
- * Copyright (c) 2012 Crossing-Tech TM Switzerland. All right reserved.
- * Copyright (c) 2012, RiSD Laboratory, EPFL, Switzerland.
+ * Copyright 2012-2016 École polytechnique fédérale de Lausanne (EPFL), Switzerland
+ * Copyright 2012-2016 Crossing-Tech SA, Switzerland
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
- * Author: Simon Bliudze, Alina Zolotukhina, Anastasia Mavridou, and Radoslaw Szymanek
- * Date: 10/15/12
+ * Author: Simon Bliudze, Anastasia Mavridou, Radoslaw Szymanek and Alina Zolotukhina
  */
 
 package org.bip.spec;
@@ -26,29 +37,15 @@ import org.springframework.beans.factory.InitializingBean;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * [DONE] ensure guards atomicity There is a potential problem that isFinished
- * and notFinished are executing on alive separate thread and they both can give
- * answer true if called in order notFinished, isFinished and in between the
- * calls the thread changes. How we can protect against it, or discover the
- * situation and re-evaluate guards again? State machine assumes some invariants
- * among guards which may be violated due to race conditions and unstable state
- * of Camel context when queried.
- * 
- */
-
-@Ports({ @Port(name = "end", type = PortType.spontaneous),
-         @Port(name = "error", type = PortType.spontaneous),
-         @Port(name = "functional", type = PortType.spontaneous),
-		 @Port(name = "on", type = PortType.enforceable), 
-		 @Port(name = "off", type = PortType.enforceable), 
-		 @Port(name = "finished", type = PortType.enforceable) })
+@Ports({ @Port(name = "end", type = PortType.spontaneous), @Port(name = "error", type = PortType.spontaneous),
+		@Port(name = "functional", type = PortType.spontaneous), @Port(name = "on", type = PortType.enforceable),
+		@Port(name = "off", type = PortType.enforceable), @Port(name = "finished", type = PortType.enforceable) })
 @ComponentType(initial = "off", name = "org.bip.spec.SwitchableRoute")
 public class SwitchableRouteErrorException implements CamelContextAware, InitializingBean, DisposableBean {
 
-    public int noOfEnforcedTransitions;
+	public int noOfEnforcedTransitions;
 
-    public int noOfErrors;
+	public int noOfErrors;
 
 	public ModelCamelContext camelContext;
 
@@ -60,7 +57,7 @@ public class SwitchableRouteErrorException implements CamelContextAware, Initial
 	private RoutePolicy notifier;
 
 	public void setCamelContext(CamelContext camelContext) {
-		this.camelContext = (ModelCamelContext)camelContext;
+		this.camelContext = (ModelCamelContext) camelContext;
 	}
 
 	public void setExecutor(Executor executor) {
@@ -77,7 +74,7 @@ public class SwitchableRouteErrorException implements CamelContextAware, Initial
 
 	public SwitchableRouteErrorException(String routeId, CamelContext camelContext) {
 		this.routeId = routeId;
-		this.camelContext = (ModelCamelContext)camelContext;
+		this.camelContext = (ModelCamelContext) camelContext;
 	}
 
 	/**
@@ -96,20 +93,20 @@ public class SwitchableRouteErrorException implements CamelContextAware, Initial
 	public void stopRoute() throws Exception {
 		logger.debug("Stop transition handler for {} is being executed.", routeId);
 		camelContext.suspendRoute(routeId);
-        noOfEnforcedTransitions++;
+		noOfEnforcedTransitions++;
 	}
 
-    @Transition(name = "error", source = "on", target = "error")
-    public void errorHandler() throws Exception {
-        logger.debug("Error transition handler for {} is being executed.", routeId);
-        camelContext.suspendRoute(routeId);
-        noOfErrors++;
-    }
+	@Transition(name = "error", source = "on", target = "error")
+	public void errorHandler() throws Exception {
+		logger.debug("Error transition handler for {} is being executed.", routeId);
+		camelContext.suspendRoute(routeId);
+		noOfErrors++;
+	}
 
-    @Transition(name="functional", source = "nonfunctional", target = "off", guard = "")
-    public void spontaneousFunctional() throws Exception {
-        logger.info("Received functional notification for the route {}.", routeId);
-    }
+	@Transition(name = "functional", source = "nonfunctional", target = "off", guard = "")
+	public void spontaneousFunctional() throws Exception {
+		logger.info("Received functional notification for the route {}.", routeId);
+	}
 
 	@Transition(name = "end", source = "wait", target = "done", guard = "!isFinished")
 	public void spontaneousEnd() throws Exception {
@@ -121,20 +118,18 @@ public class SwitchableRouteErrorException implements CamelContextAware, Initial
 		logger.info("Transitioning to done state directly since work within {} is already finished.", routeId);
 	}
 
-    @Transitions( {
-	@Transition(name = "finished", source = "done", target = "off", guard = ""),
-    @Transition(name = "finished", source = "error", target = "nonfunctional", guard = "")
-            })
+	@Transitions({ @Transition(name = "finished", source = "done", target = "off", guard = ""),
+			@Transition(name = "finished", source = "error", target = "nonfunctional", guard = "") })
 	public void finishedTransition() throws Exception {
 		logger.debug("Finished Transition for route {}.", routeId);
-        noOfEnforcedTransitions++;
+		noOfEnforcedTransitions++;
 	}
 
 	@Transition(name = "on", source = "off", target = "on", guard = "")
 	public void startRoute() throws Exception {
 		logger.debug("Start transition handler for {} is being executed.", routeId);
 		camelContext.resumeRoute(routeId);
-        noOfEnforcedTransitions++;
+		noOfEnforcedTransitions++;
 	}
 
 	@Guard(name = "isFinished")
@@ -146,11 +141,13 @@ public class SwitchableRouteErrorException implements CamelContextAware, Initial
 		RouteDefinition routeDefinition = camelContext.getRouteDefinition(routeId);
 
 		if (routeDefinition == null)
-			throw new IllegalStateException("The route with a given id " + routeId + " can not be found in the CamelContext.");
+			throw new IllegalStateException("The route with a given id " + routeId
+					+ " can not be found in the CamelContext.");
 
 		if (executor == null)
-			throw new IllegalStateException("BIP Executor for handling this bip spec has not been injected thus no spontaneous even notification can be established.");
-		
+			throw new IllegalStateException(
+					"BIP Executor for handling this bip spec has not been injected thus no spontaneous even notification can be established.");
+
 		List<RoutePolicy> routePolicyList = routeDefinition.getRoutePolicies();
 
 		if (routePolicyList == null) {
@@ -162,7 +159,7 @@ public class SwitchableRouteErrorException implements CamelContextAware, Initial
 			public void onInit(Route route) {
 			}
 
-            public void onExchangeBegin(Route route, Exchange exchange) {
+			public void onExchangeBegin(Route route, Exchange exchange) {
 			}
 
 			public void onExchangeDone(Route route, Exchange exchange) {
@@ -170,7 +167,7 @@ public class SwitchableRouteErrorException implements CamelContextAware, Initial
 			}
 
 			@Override
-			public void onRemove(Route arg0) {			
+			public void onRemove(Route arg0) {
 			}
 
 			@Override

@@ -1,9 +1,20 @@
 /*
- * Copyright (c) 2012 Crossing-Tech TM Switzerland. All right reserved.
- * Copyright (c) 2012, RiSD Laboratory, EPFL, Switzerland.
+ * Copyright 2012-2016 École polytechnique fédérale de Lausanne (EPFL), Switzerland
+ * Copyright 2012-2016 Crossing-Tech SA, Switzerland
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
- * Author: Simon Bliudze, Alina Zolotukhina, Anastasia Mavridou, and Radoslaw Szymanek
- * Date: 10/15/12
+ * Author: Simon Bliudze, Anastasia Mavridou, Radoslaw Szymanek and Alina Zolotukhina
  */
 
 package org.bip.spec;
@@ -21,31 +32,31 @@ import org.slf4j.LoggerFactory;
 @ComponentType(initial = "start", name = "org.bip.spec.RComponent")
 public class RComponent {
 
-    Logger logger = LoggerFactory.getLogger(RComponent.class);
+	Logger logger = LoggerFactory.getLogger(RComponent.class);
 
-    public int rCounter = 0;
+	public int rCounter = 0;
 
-    boolean rEnabled = false;
+	boolean rEnabled = false;
 
-    /*
-      * Check what are the conditions for throwing the exception.
-      */
-    @Transition(name = "r", source = "start", target = "start", guard = "isREnabled")
-    public void enforceableR() throws Exception {
-        logger.debug("R transition is being executed.");
-        rCounter++;
-        rEnabled = false;
-    }
+	/*
+	 * Check what are the conditions for throwing the exception.
+	 */
+	@Transition(name = "r", source = "start", target = "start", guard = "isREnabled")
+	public void enforceableR() throws Exception {
+		logger.debug("R transition is being executed.");
+		rCounter++;
+		rEnabled = false;
+	}
 
-    @Guard(name = "isREnabled")
-    public boolean isREnabled() {
-        return rEnabled;
-    }
+	@Guard(name = "isREnabled")
+	public boolean isREnabled() {
+		return rEnabled;
+	}
 
-    @Transition(name = "s", source = "start", target = "start", guard = "!isREnabled")
-    public void enableR() {
-    	logger.debug("S transition is being executed.");
-        rEnabled = true;
-    }
+	@Transition(name = "s", source = "start", target = "start", guard = "!isREnabled")
+	public void enableR() {
+		logger.debug("S transition is being executed.");
+		rEnabled = true;
+	}
 
 }

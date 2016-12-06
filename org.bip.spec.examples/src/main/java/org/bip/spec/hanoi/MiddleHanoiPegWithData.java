@@ -19,10 +19,10 @@
  */
 package org.bip.spec.hanoi;
 
-public class LeftHanoiPeg extends HanoiPeg {
+public class MiddleHanoiPegWithData extends HanoiPegWithData {
 
-	public LeftHanoiPeg(int size) {
-		super(size, false);
+	public MiddleHanoiPegWithData(int size) {
+		super(size, true);
 	}
 
 }

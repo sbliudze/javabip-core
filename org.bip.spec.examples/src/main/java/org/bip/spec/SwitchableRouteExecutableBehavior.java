@@ -1,9 +1,20 @@
 /*
- * Copyright (c) 2012 Crossing-Tech TM Switzerland. All right reserved.
- * Copyright (c) 2012, RiSD Laboratory, EPFL, Switzerland.
+ * Copyright 2012-2016 École polytechnique fédérale de Lausanne (EPFL), Switzerland
+ * Copyright 2012-2016 Crossing-Tech SA, Switzerland
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
- * Author: Simon Bliudze, Alina Zolotukhina, Anastasia Mavridou, and Radoslaw Szymanek
- * Date: 10/15/12
+ * Author: Simon Bliudze, Anastasia Mavridou, Radoslaw Szymanek and Alina Zolotukhina
  */
 
 package org.bip.spec;
@@ -27,145 +38,141 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
-/**
- * [DONE] ensure guards atomicity There is a potential problem that isFinished
- * and notFinished are executing on alive separate thread and they both can give
- * answer true if called in order notFinished, isFinished and in between the
- * calls the thread changes. How we can protect against it, or discover the
- * situation and re-evaluate guards again? State machine assumes some invariants
- * among guards which may be violated due to race conditions and unstable state
- * of Camel context when queried.
- */
-
 public class SwitchableRouteExecutableBehavior implements CamelContextAware, InitializingBean, DisposableBean {
 
 	@ExecutableBehaviour
-    public BehaviourBuilder getExecutableBehavior() throws NoSuchMethodException {
+	public BehaviourBuilder getExecutableBehavior() throws NoSuchMethodException {
 
 		BehaviourBuilder behaviourBuilder = new BehaviourBuilder(this);
-				
+
 		behaviourBuilder.setComponentType(this.getClass().getCanonicalName());
 
-        String currentState = "off";
+		String currentState = "off";
 
-        behaviourBuilder.setInitialState(currentState);
+		behaviourBuilder.setInitialState(currentState);
 
-        behaviourBuilder.addPort("end", PortType.spontaneous, this.getClass());
-        behaviourBuilder.addPort("on", PortType.enforceable, this.getClass());
-        behaviourBuilder.addPort("off", PortType.enforceable, this.getClass());
-        behaviourBuilder.addPort("finished", PortType.enforceable, this.getClass());
-        
-        behaviourBuilder.addTransitionAndStates("on","off", "on",  "", SwitchableRouteExecutableBehavior.class.getMethod("startRoute"));
-        behaviourBuilder.addTransitionAndStates("off","on", "wait",  "", SwitchableRouteExecutableBehavior.class.getMethod("stopRoute"));
-        behaviourBuilder.addTransitionAndStates("end","wait", "done",  "!isFinished", SwitchableRouteExecutableBehavior.class.getMethod("spontaneousEnd"));
-        behaviourBuilder.addTransitionAndStates("","wait", "done",  "isFinished", SwitchableRouteExecutableBehavior.class.getMethod("internalEnd"));
-        behaviourBuilder.addTransitionAndStates( "finished","done", "off", "", SwitchableRouteExecutableBehavior.class.getMethod("finishedTransition"));
+		behaviourBuilder.addPort("end", PortType.spontaneous, this.getClass());
+		behaviourBuilder.addPort("on", PortType.enforceable, this.getClass());
+		behaviourBuilder.addPort("off", PortType.enforceable, this.getClass());
+		behaviourBuilder.addPort("finished", PortType.enforceable, this.getClass());
 
-        // [off, on, wait, done]
-        
-        behaviourBuilder.addState("off");
-        behaviourBuilder.addState("on");
-        behaviourBuilder.addState("wait");
-        behaviourBuilder.addState("done");
+		behaviourBuilder.addTransitionAndStates("on", "off", "on", "",
+				SwitchableRouteExecutableBehavior.class.getMethod("startRoute"));
+		behaviourBuilder.addTransitionAndStates("off", "on", "wait", "",
+				SwitchableRouteExecutableBehavior.class.getMethod("stopRoute"));
+		behaviourBuilder.addTransitionAndStates("end", "wait", "done", "!isFinished",
+				SwitchableRouteExecutableBehavior.class.getMethod("spontaneousEnd"));
+		behaviourBuilder.addTransitionAndStates("", "wait", "done", "isFinished",
+				SwitchableRouteExecutableBehavior.class.getMethod("internalEnd"));
+		behaviourBuilder.addTransitionAndStates("finished", "done", "off", "",
+				SwitchableRouteExecutableBehavior.class.getMethod("finishedTransition"));
+
+		// [off, on, wait, done]
+
+		behaviourBuilder.addState("off");
+		behaviourBuilder.addState("on");
+		behaviourBuilder.addState("wait");
+		behaviourBuilder.addState("done");
 
 		behaviourBuilder.addGuard("isFinished", this.getClass().getMethod("isFinished"));
-				
-        return behaviourBuilder;
-    }
 
+		return behaviourBuilder;
+	}
 
-    public ModelCamelContext camelContext;
+	public ModelCamelContext camelContext;
 
-    public String routeId;
+	public String routeId;
 
-    Logger logger = LoggerFactory.getLogger(SwitchableRouteExecutableBehavior.class);
+	Logger logger = LoggerFactory.getLogger(SwitchableRouteExecutableBehavior.class);
 
-    private Executor executor;
-    private RoutePolicy notifier;
+	private Executor executor;
+	private RoutePolicy notifier;
 
 	public int noOfEnforcedTransitions;
 
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = (ModelCamelContext)camelContext;
-    }
+	public void setCamelContext(CamelContext camelContext) {
+		this.camelContext = (ModelCamelContext) camelContext;
+	}
 
-    public void setExecutor(Executor executor) {
-        this.executor = executor;
-    }
+	public void setExecutor(Executor executor) {
+		this.executor = executor;
+	}
 
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
+	public CamelContext getCamelContext() {
+		return camelContext;
+	}
 
-    public SwitchableRouteExecutableBehavior(String routeId) {
-        this.routeId = routeId;
-    }
+	public SwitchableRouteExecutableBehavior(String routeId) {
+		this.routeId = routeId;
+	}
 
-    /**
-     * In some cases you may want to execute
-     */
-    public void workDone() {
-        logger.debug("Port handler for end port is executing.");
-    }
+	/**
+	 * In some cases you may want to execute
+	 */
+	public void workDone() {
+		logger.debug("Port handler for end port is executing.");
+	}
 
-    /*
-      * Check what are the conditions for throwing the exception.
-      */
-    public void stopRoute() throws Exception {
-        logger.debug("Stop transition handler for {} is being executed.", routeId);
-        camelContext.suspendRoute(routeId);
-    	noOfEnforcedTransitions++;
-    }
+	/*
+	 * Check what are the conditions for throwing the exception.
+	 */
+	public void stopRoute() throws Exception {
+		logger.debug("Stop transition handler for {} is being executed.", routeId);
+		camelContext.suspendRoute(routeId);
+		noOfEnforcedTransitions++;
+	}
 
-    public void spontaneousEnd() throws Exception {
-        logger.info("Received end notification for the route {}.", routeId);
-    }
+	public void spontaneousEnd() throws Exception {
+		logger.info("Received end notification for the route {}.", routeId);
+	}
 
-    public void internalEnd() throws Exception {
-        logger.info("Transitioning to done state directly since work within {} is already finished.", routeId);
-    }
+	public void internalEnd() throws Exception {
+		logger.info("Transitioning to done state directly since work within {} is already finished.", routeId);
+	}
 
-    public void finishedTransition() throws Exception {
-        logger.debug("Transitioning to off state from done for {}.", routeId);
-    	noOfEnforcedTransitions++;
-    }
+	public void finishedTransition() throws Exception {
+		logger.debug("Transitioning to off state from done for {}.", routeId);
+		noOfEnforcedTransitions++;
+	}
 
-    public void startRoute() throws Exception {
-    	noOfEnforcedTransitions++;
-        logger.debug("Start transition handler for {} is being executed.", routeId);
-        camelContext.resumeRoute(routeId);
-    }
+	public void startRoute() throws Exception {
+		noOfEnforcedTransitions++;
+		logger.debug("Start transition handler for {} is being executed.", routeId);
+		camelContext.resumeRoute(routeId);
+	}
 
-    public boolean isFinished() {
-        return camelContext.getInflightRepository().size(routeId) == 0;
-    }
+	public boolean isFinished() {
+		return camelContext.getInflightRepository().size(routeId) == 0;
+	}
 
-    public void afterPropertiesSet() throws Exception {
-        RouteDefinition routeDefinition = camelContext.getRouteDefinition(routeId);
+	public void afterPropertiesSet() throws Exception {
+		RouteDefinition routeDefinition = camelContext.getRouteDefinition(routeId);
 
-        if (routeDefinition == null)
-            throw new IllegalStateException("The route with a given id " + routeId + " can not be found in the CamelContext.");
+		if (routeDefinition == null)
+			throw new IllegalStateException("The route with a given id " + routeId
+					+ " can not be found in the CamelContext.");
 
 		if (executor == null)
-			throw new IllegalStateException("BIP Executor for handling this bip spec has not been injected thus no spontaneous even notification can be established.");
+			throw new IllegalStateException(
+					"BIP Executor for handling this bip spec has not been injected thus no spontaneous even notification can be established.");
 
-        List<RoutePolicy> routePolicyList = routeDefinition.getRoutePolicies();
+		List<RoutePolicy> routePolicyList = routeDefinition.getRoutePolicies();
 
-        if (routePolicyList == null) {
-            routePolicyList = new ArrayList<RoutePolicy>();
-        }
-        final Executor finalExecutor = executor;
-        notifier = new RoutePolicy() {
+		if (routePolicyList == null) {
+			routePolicyList = new ArrayList<RoutePolicy>();
+		}
+		final Executor finalExecutor = executor;
+		notifier = new RoutePolicy() {
 
-            public void onInit(Route route) {
-            }
+			public void onInit(Route route) {
+			}
 
-            public void onExchangeBegin(Route route, Exchange exchange) {
-            }
+			public void onExchangeBegin(Route route, Exchange exchange) {
+			}
 
-            public void onExchangeDone(Route route, Exchange exchange) {
-                finalExecutor.inform("end");
-            }
+			public void onExchangeDone(Route route, Exchange exchange) {
+				finalExecutor.inform("end");
+			}
 
 			@Override
 			public void onRemove(Route arg0) {
@@ -186,26 +193,26 @@ public class SwitchableRouteExecutableBehavior implements CamelContextAware, Ini
 			@Override
 			public void onSuspend(Route arg0) {
 			}
-        };
+		};
 
-        routePolicyList.add(notifier);
-        routeDefinition.setRoutePolicies(routePolicyList);
+		routePolicyList.add(notifier);
+		routeDefinition.setRoutePolicies(routePolicyList);
 
-    }
+	}
 
-    public void destroy() throws Exception {
+	public void destroy() throws Exception {
 
-        RouteDefinition routeDefinition = camelContext.getRouteDefinition(routeId);
+		RouteDefinition routeDefinition = camelContext.getRouteDefinition(routeId);
 
-        if (routeDefinition != null) {
+		if (routeDefinition != null) {
 
-            List<RoutePolicy> routePolicyList = routeDefinition.getRoutePolicies();
+			List<RoutePolicy> routePolicyList = routeDefinition.getRoutePolicies();
 
-            routePolicyList.remove(notifier);
-            routeDefinition.setRoutePolicies(routePolicyList);
+			routePolicyList.remove(notifier);
+			routeDefinition.setRoutePolicies(routePolicyList);
 
-        }
+		}
 
-    }
+	}
 
 }

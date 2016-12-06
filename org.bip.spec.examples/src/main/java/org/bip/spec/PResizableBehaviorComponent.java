@@ -1,9 +1,20 @@
 /*
- * Copyright (c) 2012 Crossing-Tech TM Switzerland. All right reserved.
- * Copyright (c) 2012, RiSD Laboratory, EPFL, Switzerland.
+ * Copyright 2012-2016 École polytechnique fédérale de Lausanne (EPFL), Switzerland
+ * Copyright 2012-2016 Crossing-Tech SA, Switzerland
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
- * Author: Simon Bliudze, Alina Zolotukhina, Anastasia Mavridou, and Radoslaw Szymanek
- * Date: 10/15/12
+ * Author: Simon Bliudze, Anastasia Mavridou, Radoslaw Szymanek and Alina Zolotukhina
  */
 
 package org.bip.spec;
@@ -17,9 +28,8 @@ import org.bip.executor.BehaviourBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Ports({ @Port(name = "sr", type = PortType.spontaneous), 
-		 @Port(name = "se", type = PortType.spontaneous), 
-		 @Port(name = "p", type = PortType.enforceable) })
+@Ports({ @Port(name = "sr", type = PortType.spontaneous), @Port(name = "se", type = PortType.spontaneous),
+		@Port(name = "p", type = PortType.enforceable) })
 @ComponentType(initial = "state0", name = "org.bip.spec.PComponent")
 public class PResizableBehaviorComponent {
 
@@ -50,21 +60,19 @@ public class PResizableBehaviorComponent {
 	public BehaviourBuilder initializeBehavior(int size) throws NoSuchMethodException {
 
 		BehaviourBuilder behaviourBuilder = new BehaviourBuilder(this);
-		
+
 		behaviourBuilder.setComponentType(this.getClass().getCanonicalName());
-		
-		//String componentType = this.getClass().getCanonicalName();
 
 		String currentState = "state0";
 
 		behaviourBuilder.setInitialState(currentState);
 		behaviourBuilder.addState(currentState);
-		
+
 		// [off, on, wait, done]
-		/*ArrayList<String> states = new ArrayList<String>();
-		states.add(currentState);
-		ArrayList<TransitionImpl> allTransitions = new ArrayList<TransitionImpl>();
-*/
+		/*
+		 * ArrayList<String> states = new ArrayList<String>(); states.add(currentState); ArrayList<TransitionImpl>
+		 * allTransitions = new ArrayList<TransitionImpl>();
+		 */
 
 		// [Port=(id = sr, specType = null, type = spontaneous),
 		behaviourBuilder.addPort("sr", PortType.spontaneous, this.getClass());
@@ -77,32 +85,17 @@ public class PResizableBehaviorComponent {
 
 			behaviourBuilder.addState("state" + (i + 1));
 
-			// ExecutorTransition=(name = on, source = off -> target = on, guard
-			// = , method = public void
-			// org.bip.spec.SwitchableRoute.startRoute() throws
-			// java.lang.Exception),
-			behaviourBuilder.addTransitionAndStates("p", "state" + (i), "state" + (i + 1), "isPEnabled", PResizableBehaviorComponent.class.getMethod("enforceableP"));
+			behaviourBuilder.addTransitionAndStates("p", "state" + (i), "state" + (i + 1), "isPEnabled",
+					PResizableBehaviorComponent.class.getMethod("enforceableP"));
 
-			// ExecutorTransition=(name = off, source = on -> target = wait,
-			// guard = , method = public void
-			// org.bip.spec.SwitchableRoute.stopRoute() throws
-			// java.lang.Exception),
-			behaviourBuilder.addTransitionAndStates("sr", "state" + (i + 1), "state" + (i), "", PResizableBehaviorComponent.class.getMethod("rollbackP"));
+			behaviourBuilder.addTransitionAndStates("sr", "state" + (i + 1), "state" + (i), "",
+					PResizableBehaviorComponent.class.getMethod("rollbackP"));
 
-			// ExecutorTransition=(name = end, source = wait -> target = done,
-			// guard = !isFinished, method = public void
-			// org.bip.spec.SwitchableRoute.spontaneousEnd() throws
-			// java.lang.Exception),
-			behaviourBuilder.addTransitionAndStates("se", "state" + (i), "state" + (i), "", PResizableBehaviorComponent.class.getMethod("enableP"));
+			behaviourBuilder.addTransitionAndStates("se", "state" + (i), "state" + (i), "",
+					PResizableBehaviorComponent.class.getMethod("enableP"));
 
 		}
 
-
-
-		// [Guard=(name = isFinished, method = isFinished)]
-		//ArrayList<Guard> guards = new ArrayList<Guard>();
-		//guards.add(new GuardImpl("isPEnabled", this.getClass().getMethod("isPEnabled")));
-		
 		behaviourBuilder.addGuard("isPEnabled", this.getClass().getMethod("isPEnabled"));
 
 		return behaviourBuilder;
@@ -111,14 +104,14 @@ public class PResizableBehaviorComponent {
 	/*
 	 * Check what are the conditions for throwing the exception.
 	 */
-//	@Transition(name = "p", source = "start", target = "start", guard = "isPEnabled")
+	// @Transition(name = "p", source = "start", target = "start", guard = "isPEnabled")
 	public void enforceableP() throws Exception {
 		logger.debug("P transition is being executed.");
 		pCounter++;
 		pEnabled--;
 	}
 
-//	@Guard(name = "isPEnabled")
+	// @Guard(name = "isPEnabled")
 	public boolean isPEnabled() {
 		return !needExternalEnable || pEnabled > 0;
 	}

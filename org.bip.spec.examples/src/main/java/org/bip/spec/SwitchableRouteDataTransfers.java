@@ -1,8 +1,20 @@
 /*
- * Copyright (c) 2012 Crossing-Tech TM Switzerland. All right reserved.
- * Copyright (c) 2012, RiSD Laboratory, EPFL, Switzerland.
+ * Copyright 2012-2016 École polytechnique fédérale de Lausanne (EPFL), Switzerland
+ * Copyright 2012-2016 Crossing-Tech SA, Switzerland
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
- * Author: Simon Bliudze, Alina Zolotukhina, Anastasia Mavridou, and Radoslaw Szymanek
+ * Author: Simon Bliudze, Anastasia Mavridou, Radoslaw Szymanek and Alina Zolotukhina
  * Date: 10/15/12
  */
 
@@ -33,23 +45,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
-/**
- * [DONE] ensure guards atomicity There is a potential problem that isFinished and notFinished are executing on alive separate thread and they both
- * can give answer true if called in order notFinished, isFinished and in between the calls the thread changes. How we can protect against it, or
- * discover the situation and re-evaluate guards again? State machine assumes some invariants among guards which may be violated due to race
- * conditions and unstable state of Camel context when queried.
- * 
- */
-
 // TODO DESIGN, DISCUSS, should all the BIP specs implement MutableIdentification
 
-@Ports({ @Port(name = "end", type = PortType.spontaneous), @Port(name = "on", type = PortType.enforceable), 
-		 @Port(name = "off", type = PortType.enforceable), @Port(name = "finished", type = PortType.enforceable) })
+@Ports({ @Port(name = "end", type = PortType.spontaneous), @Port(name = "on", type = PortType.enforceable),
+		@Port(name = "off", type = PortType.enforceable), @Port(name = "finished", type = PortType.enforceable) })
 @ComponentType(initial = "off", name = "org.bip.spec.SwitchableRouteDataTransfers")
 public class SwitchableRouteDataTransfers implements CamelContextAware, InitializingBean, DisposableBean, BIPSpec {
 
 	public int noOfEnforcedTransitions;
-	
+
 	public ModelCamelContext camelContext;
 
 	public String routeId;
@@ -122,7 +126,7 @@ public class SwitchableRouteDataTransfers implements CamelContextAware, Initiali
 	@Guard(name = "isFinished")
 	public boolean isFinished() {
 		if (camelContext == null)
-			throw new IllegalStateException( "Camel Context has not been properly setup for route " + routeId);
+			throw new IllegalStateException("Camel Context has not been properly setup for route " + routeId);
 		return camelContext.getInflightRepository().size(routeId) == 0;
 	}
 
@@ -137,10 +141,12 @@ public class SwitchableRouteDataTransfers implements CamelContextAware, Initiali
 		RouteDefinition routeDefinition = camelContext.getRouteDefinition(routeId);
 
 		if (routeDefinition == null)
-			throw new IllegalStateException("The route with a given id " + routeId + " can not be found in the CamelContext.");
+			throw new IllegalStateException("The route with a given id " + routeId
+					+ " can not be found in the CamelContext.");
 
 		if (executor == null)
-			throw new IllegalStateException("BIP Executor for handling this bip spec has not been injected thus no spontaneous even notification can be established.");
+			throw new IllegalStateException(
+					"BIP Executor for handling this bip spec has not been injected thus no spontaneous even notification can be established.");
 
 		List<RoutePolicy> routePolicyList = routeDefinition.getRoutePolicies();
 

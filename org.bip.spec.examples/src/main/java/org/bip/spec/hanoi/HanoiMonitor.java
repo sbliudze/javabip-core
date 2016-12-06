@@ -45,15 +45,15 @@ import org.bip.executor.BehaviourBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HanoiOptimalMonitor {
+public class HanoiMonitor {
 
-	Logger logger = LoggerFactory.getLogger(HanoiOptimalMonitor.class);
+	Logger logger = LoggerFactory.getLogger(HanoiMonitor.class);
 
 	private int size;
 
 	int numberOfMoves = 0;
 
-	public HanoiOptimalMonitor(int size) {
+	public HanoiMonitor(int size) {
 		this.size = size;
 	}
 
@@ -95,17 +95,17 @@ public class HanoiOptimalMonitor {
 			// ExecutorTransition=(name = on, source = off -> target = on, guard = , method = public void
 			// org.bip.spec.SwitchableRoute.startRoute() throws java.lang.Exception),
 			behaviourBuilder.addTransitionAndStates("ab", "state-AB", "state-AC", "",
-					HanoiOptimalMonitor.class.getMethod("moveAB"));
+					HanoiMonitor.class.getMethod("moveAB"));
 
 			// ExecutorTransition=(name = off, source = on -> target = wait, guard = , method = public void
 			// org.bip.spec.SwitchableRoute.stopRoute() throws java.lang.Exception),
 			behaviourBuilder.addTransitionAndStates("ac", "state-AC", "state-BC", "",
-					HanoiOptimalMonitor.class.getMethod("moveAC"));
+					HanoiMonitor.class.getMethod("moveAC"));
 
 			// ExecutorTransition=(name = end, source = wait -> target = done, guard = !isFinished, method = public void
 			// org.bip.spec.SwitchableRoute.spontaneousEnd() throws java.lang.Exception),
 			behaviourBuilder.addTransitionAndStates("bc", "state-BC", "state-AB", "",
-					HanoiOptimalMonitor.class.getMethod("moveBC"));
+					HanoiMonitor.class.getMethod("moveBC"));
 
 		} else {
 
@@ -121,17 +121,17 @@ public class HanoiOptimalMonitor {
 			// ExecutorTransition=(name = off, source = on -> target = wait, guard = , method = public void
 			// org.bip.spec.SwitchableRoute.stopRoute() throws java.lang.Exception),
 			behaviourBuilder.addTransitionAndStates("ac", "state-AC", "state-AB", "",
-					HanoiOptimalMonitor.class.getMethod("moveAC"));
+					HanoiMonitor.class.getMethod("moveAC"));
 
 			// ExecutorTransition=(name = on, source = off -> target = on, guard = , method = public void
 			// org.bip.spec.SwitchableRoute.startRoute() throws java.lang.Exception),
 			behaviourBuilder.addTransitionAndStates("ab", "state-AB", "state-BC", "",
-					HanoiOptimalMonitor.class.getMethod("moveAB"));
+					HanoiMonitor.class.getMethod("moveAB"));
 
 			// ExecutorTransition=(name = end, source = wait -> target = done, guard = !isFinished, method = public void
 			// org.bip.spec.SwitchableRoute.spontaneousEnd() throws java.lang.Exception),
 			behaviourBuilder.addTransitionAndStates("bc", "state-BC", "state-AC", "",
-					HanoiOptimalMonitor.class.getMethod("moveBC"));
+					HanoiMonitor.class.getMethod("moveBC"));
 
 		}
 
