@@ -85,8 +85,7 @@ public interface Behaviour {
 	 * @return the sets of data required by the guard to the given transition associated with a given port.
 	 */
 	public Set<Data<?>> portToDataInForGuard(Port port);
-
-	// TODO NOW why one function returns a set, another one returns an iterable?
+	//It is used as a set by DataCoordinator
 
 	/**
 	 * Gets the set of Data required for the execution of a transition corresponding to the specified port.
@@ -122,8 +121,6 @@ public interface Behaviour {
 	 * @return the list of all transitions.
 	 */
 	public List<Transition> getAllTransitions();
-
-	// TODO NOW can it be iterable instead of list?
 
 	/**
 	 * Gets the current state of the component specified by this behaviour.

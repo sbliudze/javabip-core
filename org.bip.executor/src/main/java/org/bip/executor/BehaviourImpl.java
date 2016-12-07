@@ -414,7 +414,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 	}
 
 	@Override
-	public boolean existInCurrentStateAndEnabledSpontaneous(Map<String, Boolean> guardToValue) throws BIPException {
+	public boolean existInCurrentStateAndEnabledSpontaneous(Map<String, Boolean> guardToValue) {
 
 		for (ExecutableTransition transition : spontaneousTransitions) {
 			if (isInCurrentStateAndEnabled(transition, guardToValue)) {
@@ -455,8 +455,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 
 	// ************************************** Enabledness ****************************************
 
-	private boolean isInCurrentStateAndEnabled(ExecutableTransition transition, Map<String, Boolean> guardToValue)
-			throws BIPException {
+	private boolean isInCurrentStateAndEnabled(ExecutableTransition transition, Map<String, Boolean> guardToValue) {
 
 		if (!transition.source().equals(currentState)) {
 			return false;
@@ -527,6 +526,7 @@ class BehaviourImpl implements ExecutableBehaviour {
 		ExecutableTransition transition = getTransition(currentState, port);
 		// TODO DESIGN, find out why this can happen if the guard is not there,
 		// it does not need data, any data is good, no need to do check Enabledness?
+		// -- I think it does not happen, but it's here just in case
 		if (!transition.hasGuard()) {
 			for (int i = data.size(); i > 0; i--) {
 				result.add(true);

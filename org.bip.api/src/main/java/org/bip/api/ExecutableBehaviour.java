@@ -133,7 +133,6 @@ public interface ExecutableBehaviour extends Behaviour {
 	 * @return true if transition has data on guard but does not require data for execution, otherwise false.
 	 * @throws BIPException
 	 */
-	// TODO NOW Check implementation
 	public boolean transitionNoDataGuardData(String port) throws BIPException;
 
 	/**
@@ -142,10 +141,8 @@ public interface ExecutableBehaviour extends Behaviour {
 	 * @param guardToValue
 	 *            the map of guard valuations.
 	 * @return true if there is an enabled spontaneous transition, false otherwise.
-	 * @throws BIPException
-	 *             TODO check the throw condition
 	 */
-	public boolean existInCurrentStateAndEnabledSpontaneous(Map<String, Boolean> guardToValue) throws BIPException;
+	public boolean existInCurrentStateAndEnabledSpontaneous(Map<String, Boolean> guardToValue);
 
 	/**
 	 * It returns true if there is an enabled internal transition.
@@ -154,7 +151,7 @@ public interface ExecutableBehaviour extends Behaviour {
 	 *            the map of guard valuations.
 	 * @return true if there is an enabled internal transition, false otherwise.
 	 * @throws BIPException
-	 *             TODO check the throw condition
+	 *             when there are two enabled internal transitions from the same state.
 	 */
 	public boolean existEnabledInternal(Map<String, Boolean> guardToValue) throws BIPException;
 

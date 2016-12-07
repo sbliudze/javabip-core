@@ -21,7 +21,6 @@ package org.bip.exceptions;
 
 /**
  * It specifies the exception specific to BIP Engine functionality.
- * TODO NOW should it extend BIP exception?
  */
 public class BIPEngineException extends RuntimeException {
 
