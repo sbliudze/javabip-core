@@ -12,4 +12,5 @@ bin/
 *.html
 *.java~
 RemoteSystemsTempFiles/
+.DS_Store
 *~

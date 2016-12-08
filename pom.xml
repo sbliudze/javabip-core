@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.bip</groupId>
-  <artifactId>org.bip.core</artifactId>
+  <groupId>org.javabip</groupId>
+  <artifactId>org.javabip.core</artifactId>
   <version>0.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
@@ -20,12 +20,12 @@
   
 
   <modules>
-	<module>org.bip.parent</module>
-	<module>org.bip.api</module>
-	<module>org.bip.glue</module>
-	<module>org.bip.executor</module>
-	<module>org.bip.executor.impl</module>
-	<module>org.bip.spec.examples</module>
+	<module>org.javabip.parent</module>
+	<module>org.javabip.api</module>
+	<module>org.javabip.glue</module>
+	<module>org.javabip.executor</module>
+	<module>org.javabip.executor.impl</module>
+	<module>org.javabip.spec.examples</module>
   </modules>
    
 </project>

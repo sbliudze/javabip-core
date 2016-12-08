@@ -1,0 +1,70 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.javabip</groupId>
+		<artifactId>org.javabip.parent</artifactId>
+		<version>0.1.0-SNAPSHOT</version>
+		<relativePath>../org.javabip.parent/pom.xml</relativePath>
+	</parent>
+
+	<groupId>org.javabip</groupId>
+	<artifactId>org.javabip.glue</artifactId>
+	<version>0.1.0-SNAPSHOT</version>
+
+	<name>BIP :: Core :: Glue</name>
+
+	<description>It contains glue related classes.</description>
+
+	<packaging>bundle</packaging>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.javabip</groupId>
+			<artifactId>org.javabip.api</artifactId>
+		</dependency>
+
+	</dependencies>
+
+	<properties>
+		<osgi.private></osgi.private>
+		<osgi.import>*</osgi.import>
+		<osgi.export>org.javabip.glue</osgi.export>
+		<osgi.dynamic.import></osgi.dynamic.import>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Embed-Transitive>true</Embed-Transitive>
+						<Bundle-Name>${project.name}</Bundle-Name>
+						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+						<Export-Package>${osgi.export}</Export-Package>
+						<Import-Package>${osgi.import}</Import-Package>
+						<DynamicImport-Package>${osgi.dynamic.import}</DynamicImport-Package>
+						<Private-Package>${osgi.private}</Private-Package>
+					</instructions>
+				</configuration>
+			</plugin>
+
+		</plugins>
+
+	</build>
+
+
+</project>

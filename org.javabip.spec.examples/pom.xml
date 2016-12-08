@@ -1,0 +1,124 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.javabip</groupId>
+		<artifactId>org.javabip.parent</artifactId>
+		<version>0.1.0-SNAPSHOT</version>
+		<relativePath>../org.javabip.parent/pom.xml</relativePath>
+	</parent>
+
+	<groupId>org.javabip</groupId>
+	<artifactId>org.javabip.spec.examples</artifactId>
+	<version>0.1.0-SNAPSHOT</version>
+
+	<name>BIP :: Core :: Spec :: Examples</name>
+
+	<description>It contains examples of the specs.</description>
+
+	<packaging>bundle</packaging>
+
+	<properties>
+		<osgi.private></osgi.private>
+		<osgi.import>*</osgi.import>
+		<osgi.export>org.javabip.spec, org.javabip.spec.hanoi, org.javabip.spec.diningphilosophers, org.javabip.spec.seal</osgi.export>
+		<osgi.dynamic.import></osgi.dynamic.import>
+		<osgi.bundles></osgi.bundles>
+	</properties>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.javabip</groupId>
+			<artifactId>org.javabip.api</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.javabip</groupId>
+			<artifactId>org.javabip.glue</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.javabip</groupId>
+			<artifactId>org.javabip.executor</artifactId>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Embed-Transitive>true</Embed-Transitive>
+						<Bundle-Name>${project.name}</Bundle-Name>
+						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+						<Export-Package>${osgi.export}</Export-Package>
+						<Import-Package>${osgi.import}</Import-Package>
+						<DynamicImport-Package>${osgi.dynamic.import}</DynamicImport-Package>
+						<Private-Package>${osgi.private}</Private-Package>
+						<Require-Bundle>${osgi.bundles}</Require-Bundle>
+						<!--<Spring-Context>*;publish-context:=false;create-asynchronously:=true</Spring-Context>-->
+						<!--Include-Resource>src/main/resources</Include-Resource -->
+					</instructions>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<includes>
+						<include>**/com/javabip/examplespec.camelroute/*Tests.class</include>
+					</includes>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
