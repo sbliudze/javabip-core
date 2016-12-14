@@ -21,6 +21,10 @@ package org.javabip.api;
 
 import java.util.Map;
 
+/**
+ * Specifies the actor functionality of the BIP component. This functionality focuses on asynchronous/spontaneous events. 
+ *
+ */
 public interface BIPActor {
 	/**
 	 * It informs BIP component that a given spontaneous event associated with a port id has occurred.

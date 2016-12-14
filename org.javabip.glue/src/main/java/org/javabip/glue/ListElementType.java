@@ -23,6 +23,10 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
+/**
+ * Helper class used by XmlGenericListAdapter.
+ * 
+ */
 class ListElementType<T extends List<PortBaseImpl>> {
 
 	private T value;

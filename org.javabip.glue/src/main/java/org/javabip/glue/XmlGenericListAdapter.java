@@ -23,6 +23,11 @@ import java.util.List;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
+/**
+ * Helper class needed by JAXB to transform BIP glue java object into xml file. It is used for implementing require
+ * macro as it is represented as lists of lists.
+ * 
+ */
 class XmlGenericListAdapter<T extends List<PortBaseImpl>> extends XmlAdapter<ListType<T>, List<T>> {
 
 	@Override

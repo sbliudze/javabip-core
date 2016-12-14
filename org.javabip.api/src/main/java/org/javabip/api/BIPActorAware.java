@@ -19,8 +19,19 @@
 
 package org.javabip.api;
 
+/**
+ * Allows to provide the reference to Executor (BIP Actor part) so that the specification can send the spontaneous
+ * events to itself through executor.
+ * 
+ */
 public interface BIPActorAware {
 
+	/**
+	 * Sets the BIP Actor.
+	 * 
+	 * @param actor
+	 *            the BIP actor to set
+	 */
 	void setBIPActor(BIPActor actor);
 
 }

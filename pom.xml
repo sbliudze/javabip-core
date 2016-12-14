@@ -24,7 +24,6 @@
 	<module>org.javabip.api</module>
 	<module>org.javabip.glue</module>
 	<module>org.javabip.executor</module>
-	<module>org.javabip.executor.impl</module>
 	<module>org.javabip.spec.examples</module>
   </modules>
    

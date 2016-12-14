@@ -28,7 +28,7 @@
     <org.javabip.api.version>0.1.0-SNAPSHOT</org.javabip.api.version>
     <org.javabip.executor.version>0.1.0-SNAPSHOT</org.javabip.executor.version>
     <org.javabip.glue.version>0.1.0-SNAPSHOT</org.javabip.glue.version>
-    <org.javabip.executor.springinosgi.version>0.1.0-SNAPSHOT</org.javabip.executor.springinosgi.version>
+     <!--<org.javabip.executor.springinosgi.version>0.1.0-SNAPSHOT</org.javabip.executor.springinosgi.version>-->
     <org.javabip.spec.examples.version>0.1.0-SNAPSHOT</org.javabip.spec.examples.version>
  	 <javabdd.version>1.0b2</javabdd.version>
  	 <org.javabip.engine.api.version>0.1.0-SNAPSHOT</org.javabip.engine.api.version>

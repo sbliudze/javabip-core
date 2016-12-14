@@ -42,6 +42,11 @@ import org.javabip.exceptions.BIPException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * It allows to propagate interfaces that specify asynchronous/spontaneous events from BIP Spec to Executor. This makes
+ * it possible to interact with executor in a typed manner without using inform function to send the events.
+ * 
+ */
 public class TunellingExecutorHandler implements InvocationHandler {
 
 	private Logger logger = LoggerFactory.getLogger(TunellingExecutorHandler.class);

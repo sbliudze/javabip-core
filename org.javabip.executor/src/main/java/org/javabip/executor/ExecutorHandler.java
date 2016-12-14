@@ -28,6 +28,13 @@ import org.javabip.api.Executor;
 import org.javabip.api.Identifiable;
 import org.javabip.api.OrchestratedExecutor;
 
+/**
+ * It allows to propagate interfaces that specify asynchronous/spontaneous events from BIP Spec to Executor. This makes
+ * it possible to interact with executor in a typed manner without using inform function to send the events.
+ * 
+ * TODO: Used only in tests and might be replaced by TunellingExecutorHandler.
+ * 
+ */
 public class ExecutorHandler implements InvocationHandler {
 
 	private OrchestratedExecutor internalExecutor;

@@ -33,9 +33,9 @@ public interface Identifiable {
 	public String getId();
 
 	/**
-	 * Gets the type of the entity.
+	 * Gets the type of the component.
 	 * 
-	 * @return the type.
+	 * @return the component type.
 	 */
 	public String getType();
 
