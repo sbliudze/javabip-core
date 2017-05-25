@@ -1,13 +1,12 @@
-# BIP Core Project
+# JavaBIP Core Project
 
-BEFORE you can build this project you need to build org.bip.epfl project in 
-../org.bip.epfl directory.
+This is the JavaBIP core project that provides BIP API, BIP executors and behaviour, BIP Glue and BIP specification examples.
 
-This is the BIP core project that provides BIP executors, BIP API, BIP Glue, ...
-
-To deploy to a local CF while building, use Maven profile `deploy`:
+You can build this project just by executing the command below. 
  
 ```
-mvn clean install -Pdeploy -Ddeploy.dir=<cf-path>
+mvn clean install 
 
 ```
+
+
