@@ -36,12 +36,19 @@ public class RouteOnOffMonitor {
 	@Transitions({ @Transition(name = "add", source = "0", target = "1", guard = "hasCapacity"),
 			@Transition(name = "add", source = "1", target = "2", guard = "hasCapacity") })
 	public void addRoute() {
+
 		routeOnCounter++;
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Transitions({ @Transition(name = "rm", source = "2", target = "1", guard = "hasRouteRunning"),
 			@Transition(name = "rm", source = "1", target = "0", guard = "hasRouteRunning") })
 	public void removeRoute() {
+
 		routeOnCounter--;
 	}
 
