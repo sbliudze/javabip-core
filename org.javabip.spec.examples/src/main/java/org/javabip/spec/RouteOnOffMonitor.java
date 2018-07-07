@@ -21,20 +21,32 @@ package org.javabip.spec;
 import org.javabip.annotations.*;
 import org.javabip.api.PortType;
 
-@Ports({ @Port(name = "add", type = PortType.enforceable), @Port(name = "rm", type = PortType.enforceable) })
+@Ports({
+		@Port(name = "add", type = PortType.enforceable),
+		@Port(name = "rm", type = PortType.enforceable),
+		@Port(name = "switch", type = PortType.spontaneous)
+})
 @ComponentType(initial = "0", name = "org.bip.spec.RouteOnOffMonitor")
 public class RouteOnOffMonitor {
 
 	final private int routeLimit;
 
 	private int routeOnCounter = 0;
+	private boolean workAllowed = true;
 
 	public RouteOnOffMonitor(int routeLimit) {
 		this.routeLimit = routeLimit;
 	}
 
-	@Transitions({ @Transition(name = "add", source = "0", target = "1", guard = "hasCapacity"),
-			@Transition(name = "add", source = "1", target = "2", guard = "hasCapacity") })
+	public RouteOnOffMonitor (int routeLimit, boolean workAllowed) {
+		this.routeLimit = routeLimit;
+		this.workAllowed = workAllowed;
+	}
+
+	@Transitions({
+			@Transition(name = "add", source = "0", target = "1", guard = "hasCapacity&canWork"),
+			@Transition(name = "add", source = "1", target = "2", guard = "hasCapacity&canWork")
+	})
 	public void addRoute() {
 
 		routeOnCounter++;
@@ -43,13 +55,33 @@ public class RouteOnOffMonitor {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+        System.out.printf(" routeOnCounter = %d,%n workAllowed = %b%n", routeOnCounter, workAllowed);
 	}
 
-	@Transitions({ @Transition(name = "rm", source = "2", target = "1", guard = "hasRouteRunning"),
-			@Transition(name = "rm", source = "1", target = "0", guard = "hasRouteRunning") })
+	@Transitions({
+			@Transition(name = "rm", source = "2", target = "1", guard = "hasRouteRunning"),
+			@Transition(name = "rm", source = "1", target = "0", guard = "hasRouteRunning")
+	})
 	public void removeRoute() {
 
 		routeOnCounter--;
+        System.out.printf(" routeOnCounter = %d,%n workAllowed = %b%n", routeOnCounter, workAllowed);
+	}
+
+	@Transitions({
+			@Transition(name = "switch", source = "0", target = "0", guard = ""),
+			@Transition(name = "switch", source = "1", target = "1", guard = ""),
+			@Transition(name = "switch", source = "2", target = "2", guard = "")
+	})
+	public void switchWorkAllowed() {
+
+		workAllowed = !workAllowed;
+        System.out.printf("Switch transition handler for Route Monitor is being executed.%n workAllowed = %b%n", workAllowed);
+	}
+
+	@Guard(name = "canWork")
+	public boolean canWork() {
+		return workAllowed;
 	}
 
 	@Guard(name = "hasCapacity")
@@ -62,3 +94,4 @@ public class RouteOnOffMonitor {
 		return routeOnCounter > 0;
 	}
 }
+
