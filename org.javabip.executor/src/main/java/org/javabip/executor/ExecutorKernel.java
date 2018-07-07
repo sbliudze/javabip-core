@@ -407,4 +407,9 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 		return engine;
 	}
 
+	@Override
+	public String getState() {
+		return behaviour.getCurrentState();
+	}
+
 }
