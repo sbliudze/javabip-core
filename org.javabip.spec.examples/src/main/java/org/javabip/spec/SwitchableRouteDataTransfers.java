@@ -47,8 +47,12 @@ import org.springframework.beans.factory.InitializingBean;
 
 // TODO DESIGN, DISCUSS, should all the BIP specs implement MutableIdentification
 
-@Ports({ @Port(name = "end", type = PortType.spontaneous), @Port(name = "on", type = PortType.enforceable),
-		@Port(name = "off", type = PortType.enforceable), @Port(name = "finished", type = PortType.enforceable) })
+@Ports({
+		@Port(name = "end", type = PortType.spontaneous),
+		@Port(name = "on", type = PortType.enforceable),
+		@Port(name = "off", type = PortType.enforceable),
+		@Port(name = "finished", type = PortType.enforceable)
+})
 @ComponentType(initial = "off", name = "org.bip.spec.SwitchableRouteDataTransfers")
 public class SwitchableRouteDataTransfers implements CamelContextAware, InitializingBean, DisposableBean, BIPSpec {
 

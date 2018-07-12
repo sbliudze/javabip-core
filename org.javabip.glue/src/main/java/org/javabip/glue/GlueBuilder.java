@@ -122,7 +122,7 @@ public abstract class GlueBuilder {
 
 	}
 
-	private void addRequire(Class<?> spec, String portId, List<PortBase> causes) {
+	protected void addRequire(Class<?> spec, String portId, List<PortBase> causes) {
 
 		RequireImpl requires;
 
@@ -144,7 +144,7 @@ public abstract class GlueBuilder {
 		}
 	}
 
-	private String getComponentType(Class<?> spec) {
+	protected String getComponentType(Class<?> spec) {
 
 		Annotation classAnnotation = spec.getAnnotation(ComponentType.class);
 		// get component type
@@ -157,7 +157,7 @@ public abstract class GlueBuilder {
 
 	}
 
-	private void addAccept(Class<?> spec, String portId, Collection<PortBase> causes) {
+	protected void addAccept(Class<?> spec, String portId, Collection<PortBase> causes) {
 
 		AcceptImpl accepts;
 
@@ -271,7 +271,7 @@ public abstract class GlueBuilder {
 
 	}
 
-	private ArrayList<PortBase> parseCauses(Class<?> currentSpec, Object... args) {
+	protected ArrayList<PortBase> parseCauses(Class<?> currentSpec, Object... args) {
 
 		ArrayList<PortBase> result = new ArrayList<PortBase>();
 

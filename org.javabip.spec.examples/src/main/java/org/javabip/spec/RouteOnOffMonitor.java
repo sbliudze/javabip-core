@@ -30,9 +30,9 @@ import org.javabip.api.PortType;
 public class RouteOnOffMonitor {
 
 	final private int routeLimit;
+	private boolean workAllowed = true;
 
 	private int routeOnCounter = 0;
-	private boolean workAllowed = true;
 
 	public RouteOnOffMonitor(int routeLimit) {
 		this.routeLimit = routeLimit;

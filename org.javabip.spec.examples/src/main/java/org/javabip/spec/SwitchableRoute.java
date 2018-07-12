@@ -31,6 +31,7 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RoutePolicy;
 import org.javabip.annotations.*;
+import org.javabip.api.DataOut;
 import org.javabip.api.Executor;
 import org.javabip.api.PortType;
 import org.slf4j.Logger;
@@ -83,8 +84,8 @@ public class SwitchableRoute implements CamelContextAware, InitializingBean, Dis
 	 */
 	@Transition(name = "off", source = "on", target = "wait", guard = "")
 	public void stopRoute() throws Exception {
-//		logger.debug("Stop transition handler for {} is being executed.", routeId);
-		System.out.printf("Stop transition handler for %s is being executed.%n", routeId);
+//		logger.debug("Off transition handler for route {} is being executed.", routeId);
+		System.out.printf("'Off' transition handler for %s is being executed.%n", routeId);
 		camelContext.suspendRoute(routeId);
 		noOfEnforcedTransitions++;
 	}
@@ -92,26 +93,27 @@ public class SwitchableRoute implements CamelContextAware, InitializingBean, Dis
 	@Transition(name = "end", source = "wait", target = "done", guard = "!isFinished")
 	public void spontaneousEnd() throws Exception {
 //		logger.info("Received end notification for the route {}.", routeId);
-		System.out.printf("Received end notification for the route %s.%n", routeId);
+		System.out.printf("Received 'end' notification for the route %s.%n", routeId);
 	}
 
 	@Transition(name = "", source = "wait", target = "done", guard = "isFinished")
 	public void internalEnd() throws Exception {
-//		logger.info("Transitioning to done state directly since work within {} is already finished.", routeId);
-		System.out.printf("Transitioning to done state directly since work within %s is already finished.%n", routeId);
+//		logger.info("Transitioning to done state directly since work within the route {} is already finished.", routeId);
+		System.out.printf("Transitioning to done state directly (internal) since work within %s is already finished.%n", routeId);
 	}
 
 	@Transition(name = "finished", source = "done", target = "off", guard = "")
 	public void finishedTransition() throws Exception {
 		noOfEnforcedTransitions++;
 //		logger.debug("Transitioning to off state from done for {}.", routeId);
-		System.out.printf("Transitioning to off state from done for %s.%n", routeId);
+		System.out.printf("'Finished' transition handler is being executed " +
+				"(transitioning directly to off state from done) for route %s.%n", routeId);
 	}
 
 	@Transition(name = "on", source = "off", target = "on", guard = "")
 	public void startRoute() throws Exception {
 //		logger.debug("Start transition handler for {} is being executed.", routeId);
-		System.out.printf("Start transition handler for %s is being executed.%n", routeId);
+		System.out.printf("'On' transition handler for route %s is being executed.%n", routeId);
 		camelContext.resumeRoute(routeId);
 		noOfEnforcedTransitions++;
 
@@ -125,6 +127,13 @@ public class SwitchableRoute implements CamelContextAware, InitializingBean, Dis
 	@Guard(name = "isFinished")
 	public boolean isFinished() {
 		return camelContext.getInflightRepository().size(routeId) == 0;
+	}
+
+	// It is inferred that this is Data Out as the annotation is provided within a function that returns smth.
+	// The type of the DataOut is the type of the return.
+	@Data(name = "id", accessTypePort = DataOut.AccessType.any)
+	public String getRouteId() {
+		return routeId;
 	}
 
 	public void afterPropertiesSet() throws Exception {
@@ -182,7 +191,7 @@ public class SwitchableRoute implements CamelContextAware, InitializingBean, Dis
 
 	}
 
-	public void destroy() throws Exception {
+	public void destroy() {
 
 		RouteDefinition routeDefinition = camelContext.getRouteDefinition(routeId);
 
@@ -198,3 +207,5 @@ public class SwitchableRoute implements CamelContextAware, InitializingBean, Dis
 	}
 
 }
+
+
