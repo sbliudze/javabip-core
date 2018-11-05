@@ -22,7 +22,7 @@ import javafx.util.Pair;
 import org.javabip.api.PortBase;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
+//import java.util.stream.Collectors;
 
 /**
  * Glue builder allowing to create synchronous connections between ports.

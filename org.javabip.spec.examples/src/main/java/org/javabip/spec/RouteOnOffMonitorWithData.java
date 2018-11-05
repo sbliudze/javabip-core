@@ -32,12 +32,7 @@ public class RouteOnOffMonitorWithData {
     }
 
     public RouteOnOffMonitorWithData(boolean workAllowed) {
-        compatible = new HashMap<String, String> ();
-        compatible.put("1", "3");
-        compatible.put("2", "4");
-        compatible.put("3", "1");
-        compatible.put("4", "2");
-
+        this();
         this.workAllowed = workAllowed;
     }
 
