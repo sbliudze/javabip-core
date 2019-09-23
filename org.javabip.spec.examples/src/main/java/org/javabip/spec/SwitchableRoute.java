@@ -88,6 +88,7 @@ public class SwitchableRoute implements CamelContextAware, InitializingBean, Dis
 		System.out.printf("'Off' transition handler for %s is being executed.%n", routeId);
 		camelContext.suspendRoute(routeId);
 		noOfEnforcedTransitions++;
+		System.out.printf("'Off' transition handler for %s done.%n", routeId);
 	}
 
 	@Transition(name = "end", source = "wait", target = "done", guard = "!isFinished")
