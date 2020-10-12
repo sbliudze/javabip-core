@@ -13,7 +13,7 @@
   <properties>
 
     <maven-resources-plugin.version>2.7</maven-resources-plugin.version>
-    <akka.version>2.3.9</akka.version>
+    <akka.version>2.5.31</akka.version>
     <scala.binary.version>2.11</scala.binary.version>
     <log4j.version>1.2.16</log4j.version>
     <junit.version>4.13.1</junit.version>
