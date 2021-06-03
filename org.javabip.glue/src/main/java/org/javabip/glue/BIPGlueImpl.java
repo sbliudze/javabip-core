@@ -18,8 +18,10 @@
  */
 package org.javabip.glue;
 
-import java.io.OutputStream;
-import java.util.ArrayList;
+import org.javabip.api.Accept;
+import org.javabip.api.BIPGlue;
+import org.javabip.api.DataWire;
+import org.javabip.api.Require;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -27,11 +29,8 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.javabip.api.Accept;
-import org.javabip.api.BIPGlue;
-import org.javabip.api.DataWire;
-import org.javabip.api.Require;
+import java.io.OutputStream;
+import java.util.ArrayList;
 
 /**
  * Class implementing the functionality of the BIP Glue.
@@ -72,7 +71,7 @@ class BIPGlueImpl implements BIPGlue {
 
 		this.dataWires = new ArrayList<DataWireImpl>();
 		for (DataWire dataWire : dataWires) {
-			this.dataWires.add(new DataWireImpl(dataWire.getFrom(), dataWire.getTo()));
+			this.dataWires.add(new DataWireImpl(dataWire.getFrom(), dataWire.getTo(), dataWire.isCopy()));
 		}
 
 	}
