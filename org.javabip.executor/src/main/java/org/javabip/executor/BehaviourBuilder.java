@@ -18,26 +18,16 @@
  */
 package org.javabip.executor;
 
+import org.javabip.api.*;
+import org.javabip.exceptions.BIPException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-
-import org.javabip.api.ComponentProvider;
-import org.javabip.api.Data;
-import org.javabip.api.ExecutableBehaviour;
-import org.javabip.api.Guard;
-import org.javabip.api.Port;
-import org.javabip.api.PortType;
-import org.javabip.exceptions.BIPException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.*;
 
 // TODO, EXTENSION autoboxing between for example int and Integer may be a good feature to help wire data from multiple components.
 
@@ -220,21 +210,21 @@ public class BehaviourBuilder {
 
 	/**
 	 * Adds a transition without data and its source and target states.
-	 * 
-	 * @param name
+	 *  @param name
 	 *            transition name
 	 * @param source
 	 *            source state
 	 * @param target
-	 *            target state
+ *            target state
 	 * @param guard
-	 *            the guard expression
+*            the guard expression
+	 * @param pre
+	 * @param post
 	 * @param method
-	 *            the method representing the transition
 	 */
-	public void addTransitionAndStates(String name, String source, String target, String guard, Method method) {
+	public void addTransitionAndStates(String name, String source, String target, String guard, String pre, String post, Method method) {
 
-		addTransitionAndStates(name, source, target, guard, method, ReflectionHelper.parseDataAnnotations(method));
+		addTransitionAndStates(name, source, target, guard, pre, post, method, ReflectionHelper.parseDataAnnotations(method));
 
 	}
 
@@ -254,7 +244,7 @@ public class BehaviourBuilder {
 	 * @param data
 	 *            the list of data required by the transition
 	 */
-	public void addTransitionAndStates(String name, String source, String target, String guard, Method method,
+	public void addTransitionAndStates(String name, String source, String target, String guard, String pre, String post, Method method,
 			List<Data<?>> data) {
 
 		if (!allPorts.containsKey(name)) {
@@ -269,7 +259,7 @@ public class BehaviourBuilder {
 		addState(source);
 		addState(target);
 
-		allTransitions.add(new TransitionImpl(name, source, target, guard, method, data));
+		allTransitions.add(new TransitionImpl(name, source, target, guard, pre, post, method, data));
 	}
 
 	/**
@@ -286,9 +276,8 @@ public class BehaviourBuilder {
 	 * @param method
 	 *            the method representing the transition
 	 */
-	public void addTransition(String name, String source, String target, String guard, Method method) {
-
-		addTransition(name, source, target, guard, method, ReflectionHelper.parseDataAnnotations(method));
+	public void addTransition(String name, String source, String target, String guard, String pre, String post, Method method) {
+		addTransition(name, source, target, guard, pre, post, method, ReflectionHelper.parseDataAnnotations(method));
 	}
 
 	/**
@@ -307,7 +296,7 @@ public class BehaviourBuilder {
 	 * @param data
 	 *            the list of data required by the transition
 	 */
-	public void addTransition(String name, String source, String target, String guard, Method method, List<Data<?>> data) {
+	public void addTransition(String name, String source, String target, String guard, String pre, String post, Method method, List<Data<?>> data) {
 
 		if (!allPorts.containsKey(name)) {
 			if (name == null)
@@ -326,7 +315,7 @@ public class BehaviourBuilder {
 			throw new BIPException("Transition " + name + " is specifying target state " + target
 					+ " that has not been explicitly stated before.");
 
-		allTransitions.add(new TransitionImpl(name, source, target, guard, method, data));
+		allTransitions.add(new TransitionImpl(name, source, target, guard, pre, post, method, data));
 	}
 
 	/**

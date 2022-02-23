@@ -18,11 +18,6 @@
  */
 package org.javabip.executor;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Map;
-
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.javabip.api.Data;
@@ -33,6 +28,11 @@ import org.javabip.executor.guardparser.boolLexer;
 import org.javabip.executor.guardparser.boolParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.lang.invoke.MethodHandle;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * Extends Transition and provides information about a transition relevant to an executor. It has additional guard
@@ -78,6 +78,14 @@ class ExecutableTransitionImpl extends TransitionImpl implements ExecutableTrans
 
 	public String guard() {
 		return this.guard;
+	}
+
+	public String pre() {
+		return this.pre;
+	}
+
+	public String post() {
+		return this.post;
 	}
 
 	public GuardTreeNode guardTree() {
