@@ -86,13 +86,13 @@ public class PResizableBehaviorComponent {
 			behaviourBuilder.addState("state" + (i + 1));
 
 			behaviourBuilder.addTransitionAndStates("p", "state" + (i), "state" + (i + 1), "isPEnabled",
-					PResizableBehaviorComponent.class.getMethod("enforceableP"));
+					"", "", PResizableBehaviorComponent.class.getMethod("enforceableP"));
 
 			behaviourBuilder.addTransitionAndStates("sr", "state" + (i + 1), "state" + (i), "",
-					PResizableBehaviorComponent.class.getMethod("rollbackP"));
+					"", "", PResizableBehaviorComponent.class.getMethod("rollbackP"));
 
 			behaviourBuilder.addTransitionAndStates("se", "state" + (i), "state" + (i), "",
-					PResizableBehaviorComponent.class.getMethod("enableP"));
+					"", "", PResizableBehaviorComponent.class.getMethod("enableP"));
 
 		}
 

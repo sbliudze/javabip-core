@@ -28,6 +28,8 @@ import org.javabip.api.PortType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.security.PermitAll;
+
 // Used in DataAvailabilityTest
 
 @Ports({ @Port(name = "a", type = PortType.enforceable), @Port(name = "b", type = PortType.spontaneous) })
@@ -44,6 +46,7 @@ public class ComponentA {
 		this.memoryLimit = memoryLimit;
 	}
 
+	@PermitAll
 	@Transition(name = "a", source = "zero", target = "zero", guard = "hasCapacity")
 	public void enforceableOfA(@Data(name = "memoryUsage") Integer deltaMemory) {
 		currentCapacity += deltaMemory;
