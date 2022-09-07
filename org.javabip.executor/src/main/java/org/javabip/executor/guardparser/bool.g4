@@ -1,9 +1,8 @@
 grammar bool;
 @header
 {
-package org.bip.util.GuardsParser;
 import java.util.*;
-import org.bip.util.Node;
+import org.javabip.executor.GuardTreeNode;
 }
 
 @members{
@@ -32,7 +31,7 @@ NEGATION : '!';
 
 WS : [ \t\r\n]+ -> skip;
 
-ident : var=ID {stack.push(new Node($var.text));} | LPAREN ex=expr RPAREN {};
+ident : var=ID {stack.push(new GuardTreeNode($var.text));} | LPAREN ex=expr RPAREN {};
 term : id=ident {} | NEGATION id=ident {nwc("!", stack.pop()); } ;
 manom : t=term {} | t=term INTERSECTION m=manom {nwc2("&", stack.pop(), stack.pop());};
 expr_inner : m=manom {} | m=manom UNION e=expr_inner {nwc2("|", stack.pop(), stack.pop());};
