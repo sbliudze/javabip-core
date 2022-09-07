@@ -130,7 +130,7 @@ public abstract class SpecificationParser implements ComponentProvider {
 
         Invariant invariant = componentClass.getAnnotation(Invariant.class);
         if (invariant != null){
-            builder.buildInvariant(invariant.expr());
+            builder.buildInvariant(invariant.value());
         }
 
         StatePredicates statePredicates = componentClass.getAnnotation(StatePredicates.class);

@@ -14,7 +14,7 @@ import static org.javabip.spec.ringelection.Constants.*;
 })
 
 @ComponentType(initial = INITIAL, name = PROCESS)
-@Invariant(expr = "isLeader == false || processID == 0")
+@Invariant("isLeader == false || processID == 0")
 public class ProcessSpec {
     private int processID;
     private boolean isActive;

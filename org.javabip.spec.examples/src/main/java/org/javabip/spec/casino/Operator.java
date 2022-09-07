@@ -17,7 +17,7 @@ import static org.javabip.spec.casino.Constants.*;
 })
 
 @ComponentType(initial = WORKING, name = OPERATOR_SPEC)
-@Invariant(expr = "pot >= 0")
+@Invariant("pot >= 0")
 @StatePredicate(state = IDLE, expr = "pot == 0")
 public class Operator {
     final Integer id;

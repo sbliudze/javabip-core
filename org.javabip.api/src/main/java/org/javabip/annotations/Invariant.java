@@ -32,7 +32,7 @@ public @interface Invariant {
 	/**
 	 * expr is a string containing plain Java expressions
 	 * it must hold after construction of the component, can be assumed to hold before a transition, and must hold after a transition
-	 * @return expr
+	 * @return value
 	 */
-	String expr();
+	String value();
 }

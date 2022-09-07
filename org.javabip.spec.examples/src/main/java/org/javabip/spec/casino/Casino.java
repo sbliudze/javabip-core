@@ -18,7 +18,7 @@ import static org.javabip.spec.casino.Constants.*;
 })
 
 @ComponentType(initial = IDLE, name = CASINO_SPEC)
-@Invariant(expr = "bet >= 0 && pot >= bet")
+@Invariant("bet >= 0 && pot >= bet")
 @StatePredicates({
         @StatePredicate(state = IDLE, expr = "false"),
         @StatePredicate(state = GAME_AVAILABLE, expr = "true"),
