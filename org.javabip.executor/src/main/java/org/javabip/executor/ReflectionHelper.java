@@ -20,14 +20,14 @@
 
 package org.javabip.executor;
 
+import org.javabip.api.Data;
+import org.javabip.api.DataOut.AccessType;
+import org.javabip.exceptions.BIPException;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.javabip.api.Data;
-import org.javabip.api.DataOut.AccessType;
-import org.javabip.exceptions.BIPException;
 
 /**
  * A helper class providing functionality to parse the data-related information, such as annotations to method and

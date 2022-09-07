@@ -28,7 +28,7 @@ public interface StatePredicate {
 	/**
 	 * @return the name of the predicate
 	 */
-	public String name();
+	public String state();
 
 	/**
 	 * @return the expression

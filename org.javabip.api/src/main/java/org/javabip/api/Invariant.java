@@ -28,7 +28,7 @@ public interface Invariant {
 	/**
 	 * @return the invariant expression
 	 */
-	public String expr();
+	String expression();
 
-	public boolean evaluateInvariant();
+	boolean evaluateInvariant(Class<?> componentClass, Object bipComponent);
 }

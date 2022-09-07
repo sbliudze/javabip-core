@@ -8,6 +8,7 @@
 
 package org.javabip.executor;
 
+import javafx.util.Pair;
 import org.javabip.api.*;
 import org.javabip.exceptions.BIPException;
 import org.slf4j.Logger;
@@ -97,7 +98,7 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 	 * It registers the engine within given ExecutorKernel. The function setProxy must be called before with properly
 	 * constructed proxy or an exception will occur.
 	 */
-	public void register(BIPEngine engine) {
+	public void register(BIPEngine engine) throws BIPException {
 		if (proxy == null) {
 			throw new BIPException("Proxy to provide multi-thread safety was not provided.");
 		}
@@ -125,7 +126,6 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 	 * @throws BIPException
 	 */
 	public void step() throws BIPException {
-
 		// if the actor was deregistered then it no longer does any steps.
 		if (!registered)
 			return;
@@ -134,19 +134,35 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 
 		guardToValue = behaviour.computeGuardsWithoutData(behaviour.getCurrentState());
 
+		//check invariant before transition
+		//System.out.println("Invariant check before a transition.");
+		checkInvariant();
+
 		// we have to compute this in order to be able to raise an exception
 		boolean existInternalTransition = behaviour.existEnabledInternal(guardToValue);
 
 		if (existInternalTransition) {
 			logger.debug("About to execute internal transition for component {}", id);
+
+			//compute invariant before
+			behaviour.checkInvariant();
+
 			behaviour.executeInternal(guardToValue);
 			logger.debug("Issuing next step message for component {}", id);
+
+			//informing engine
+			engine.informInteral(proxy, behaviour.getCurrentState());
+
 			// Scheduling the next execution step.
 			proxy.step();
 			logger.debug("Finishing current step that has executed an internal transition for component {}", id);
+
+			//check invariant after transition
+			System.out.println("Invariant check after an internal transition.");
+			checkInvariant();
+
 			return;
 		}
-		;
 
 		boolean existSpontaneousTransition = behaviour.existInCurrentStateAndEnabledSpontaneous(guardToValue);
 
@@ -170,11 +186,19 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 						behaviour.execute(port, data);
 					}
 
+					//informing engine
+					engine.informSpontaneous(proxy, behaviour.getCurrentState());
 					logger.debug("Issuing next step message for component {}", id);
+
 					// Scheduling the next execution step.
 					proxy.step();
 					logger.debug("Finishing current step that has executed a spontaneous transition for component {}",
 							id);
+
+					//check invariant after transition
+					System.out.println("Invariant check after a spontaneous transition.");
+					checkInvariant();
+
 					return;
 				}
 			}
@@ -192,6 +216,12 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 			logger.debug("About to execute engine inform for component {}", id);
 			engine.inform(proxy, behaviour.getCurrentState(), globallyDisabledPorts);
 			// Next step will be invoked upon finishing treatment of the message execute.
+
+			//TODO not sure it is a good place, since the transition might be still not executed
+			//check invariant after transition
+			//System.out.println("Invariant check after an enforceable transition.");
+			//checkInvariant();
+
 			return;
 		}
 
@@ -218,6 +248,22 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 		// + behaviour.getCurrentState() + " in component "
 		// + this.getId());
 
+	}
+
+	private void checkInvariant() {
+		try {
+			Pair<Boolean, String> result = behaviour.checkInvariant();
+			if ( !result.getKey()) {
+				//logger.error("INVARIANT VIOLATION!");
+				System.out.println("INVARIANT VIOLATION: " + result.getValue());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void checkStatePredicate(){
+		behaviour.checkStatePredicate(behaviour.getCurrentState());
 	}
 
 	/**
@@ -264,16 +310,13 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 	}
 
 	public void inform(String portID) {
-
 		inform(portID, null);
-
 	}
 
 	@Override
 	public void inform(String portID, Map<String, Object> data) {
 
-		// TODO DESIGN DISCUSSION what if the port (spontaneous) does not exist?. It should throw an exception or ignore
-		// it.
+		// TODO DESIGN DISCUSSION what if the port (spontaneous) does not exist?. It should throw an exception or ignore it.
 		if (portID == null || portID.isEmpty() || !behaviour.isSpontaneousPort(portID)) {
 			return;
 		}
@@ -288,7 +331,6 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 			waitingForSpontaneous = false;
 			proxy.step();
 		}
-
 	}
 
 	public <T> T getData(String name, Class<T> clazz) {

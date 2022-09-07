@@ -21,6 +21,8 @@
 package org.javabip.executor;
 
 import org.javabip.api.Invariant;
+import org.javabip.verification.ast.ParsedJavaExpression;
+import org.javabip.verification.visitors.PJEEvaluateVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,28 +30,33 @@ class InvariantImpl implements Invariant {
 
 	private Logger logger = LoggerFactory.getLogger(InvariantImpl.class);
 
-	private String expr;
+	private final String expression;
 
-	public InvariantImpl(String expr) {
-		this.expr = expr;
+	private ParsedJavaExpression parsedExpression;
+
+	Object bipComponent;
+
+	public InvariantImpl(String expression, ParsedJavaExpression invariantParsedExpression, Object bipComponent) {
+		this.expression = expression;
+		this.parsedExpression = invariantParsedExpression;
+		this.bipComponent = bipComponent;
 	}
 
-	public String expr() {
-		return expr;
+	public String expression() {
+		return expression;
 	}
 
 	public String toString() {
-
 		StringBuilder result = new StringBuilder();
-
-		result.append("Invariant=(");
-		result.append("expr = " + expr());
-		result.append(")");
+		result
+				.append("Invariant=(expr = ")
+				.append(expression())
+				.append(")");
 
 		return result.toString();
 	}
 
-	public boolean evaluateInvariant() {
-		throw new UnsupportedOperationException();
+	public boolean evaluateInvariant( Class<?> componentClass, Object bipComponent ) {
+		return (Boolean) parsedExpression.accept(new PJEEvaluateVisitor());
 	}
 }

@@ -100,6 +100,8 @@ public abstract class SpecificationParser implements ComponentProvider {
         String specType = "";
         // TODO: Add simple test that forgets the componentType annotation to see whether the
         // Exception (else part) is thrown.
+
+
         Annotation classAnnotation = componentClass.getAnnotation(ComponentType.class);
         // get component name and type
         if (classAnnotation instanceof ComponentType) {
@@ -124,6 +126,25 @@ public abstract class SpecificationParser implements ComponentProvider {
             }
         } else {
             throw new BIPException("Port information for the BIP component is not specified.");
+        }
+
+        Invariant invariant = componentClass.getAnnotation(Invariant.class);
+        if (invariant != null){
+            builder.buildInvariant(invariant.expr());
+        }
+
+        StatePredicates statePredicates = componentClass.getAnnotation(StatePredicates.class);
+        if (statePredicates != null){
+            for (StatePredicate statePredicate : statePredicates.value()){
+                builder.buildStatePredicate(statePredicate.expr(), statePredicate.state());
+
+            }
+            //builder.buildStatePredicate(statePredicate.expr(), behaviour.getCurrentState());
+        }
+
+        StatePredicate statePredicate = componentClass.getAnnotation(StatePredicate.class);
+        if (statePredicate != null){
+            builder.buildStatePredicate(statePredicate.expr(), statePredicate.state());
         }
 
         // get transitions & guards & data
@@ -172,14 +193,12 @@ public abstract class SpecificationParser implements ComponentProvider {
                     addPort((org.javabip.annotations.Port) annotation, componentClass, builder);
 
                 }
-				else if (annotation instanceof Invariant) {
-					throw new UnsupportedOperationException();
-				}
+
 				else if (annotation instanceof Pure) {
-					throw new UnsupportedOperationException();
+					//throw new UnsupportedOperationException();
 				}
 				else if (annotation instanceof StatePredicate) {
-					throw new UnsupportedOperationException();
+					//throw new UnsupportedOperationException();
 				}
             }
         }

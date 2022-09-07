@@ -27,6 +27,7 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 /**
  * Stores the transition information about name, source state, target state, guard, method and required data.
@@ -39,7 +40,7 @@ class TransitionImpl {
 	protected String name;
 	protected String source;
 	protected String target;
-	// Empty string represents that there is no guard associated to this transition.
+	// Empty string represents that there is no guard (pre- or post-condition) associated to this transition.
 	protected String guard;
 	protected String pre;
 	protected String post;
@@ -108,5 +109,18 @@ class TransitionImpl {
 			ExceptionHelper.printExceptionTrace(logger, e);
 		}
 		return methodHandle;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof TransitionImpl)) return false;
+		TransitionImpl that = (TransitionImpl) o;
+		return name.equals(that.name) && source.equals(that.source) && target.equals(that.target) && Objects.equals(guard, that.guard) && Objects.equals(pre, that.pre) && Objects.equals(post, that.post) && Objects.equals(method, that.method);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, source, target, guard, pre, post, method);
 	}
 }
