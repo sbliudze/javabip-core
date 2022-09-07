@@ -7,12 +7,17 @@ import org.javabip.verification.ast.*;
 import org.javabip.verification.parser.JavaParser;
 import org.javabip.verification.parser.JavaParserBaseVisitor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ExpressionASTBuilder extends JavaParserBaseVisitor {
+    Object component;
+
+    public ExpressionASTBuilder(Object component) {
+        this.component = component;
+    }
 
     public ParsedJavaExpression build(ParseTree t) {
         return (ParsedJavaExpression) t.accept(this);
@@ -43,7 +48,8 @@ public class ExpressionASTBuilder extends JavaParserBaseVisitor {
     @Override
     public ParsedJavaExpression visitExpression(JavaParser.ExpressionContext ctx) {
         List<ParseTree> children = ctx.children;
-        if (children == null){
+        if (children == null) {
+            System.out.println();
             //TODO exception
         }
 
@@ -57,6 +63,12 @@ public class ExpressionASTBuilder extends JavaParserBaseVisitor {
                 return buildPreAndPostfixExpression(children);
             }
             case 3: {
+                //case: dot-separated expression
+                ParseTree pt = children.get(1);
+                if (pt instanceof TerminalNodeImpl && pt.getText().equals(".")) {
+                    return buildDotSeparatedExpression(children);
+                }
+
                 //case: binary expressions
                 return buildBinaryExpression(children);
 
@@ -79,6 +91,17 @@ public class ExpressionASTBuilder extends JavaParserBaseVisitor {
         }
         return null;
         //TODO throw an exception
+    }
+
+    private ParsedJavaExpression buildDotSeparatedExpression(List<ParseTree> children) {
+        ParsedJavaExpression left = build(children.get(0));
+        ParsedJavaExpression right = build(children.get(2));
+        if (right instanceof AfterDotExpression){
+            return new DotSeparatedExpression(left, (AfterDotExpression) right);
+        } else {
+            //TODO throw exception
+            return null;
+        }
     }
 
     @Override
@@ -145,11 +168,40 @@ public class ExpressionASTBuilder extends JavaParserBaseVisitor {
     public ParsedJavaExpression visitIdentifier(JavaParser.IdentifierContext ctx) {
         TerminalNode identifier = ctx.IDENTIFIER();
         if (identifier != null) {
-            return new IdentifierExpression(identifier.getText());
+            String identifierName = identifier.getText();
+            Optional<Field> field = checkFieldExists(identifierName);
+            if (field.isPresent()) {
+                try {
+                    return new IdentifierExpression(identifierName, field.get(), component);
+                } catch (Exception e) {
+
+                }
+            } else {
+                Optional<Method> method = checkMethodExists(identifierName);
+                if (method.isPresent()){
+                    return new MethodIdentifierExpression(identifierName, method.get(), component);
+                }
+            }
+            //TODO exception, malformed, no assosiated field or method
         }
 
         return null;
         //TODO should throw error since we are not interested in any other terminals that identifier
+
+    }
+
+    private Optional<Field> checkFieldExists(String fieldName) {
+        try {
+            return Optional.of(component.getClass().getDeclaredField(fieldName));
+        } catch (NoSuchFieldException e) {
+            //e.printStackTrace();
+            return Optional.empty();
+        }
+    }
+
+    private Optional<Method> checkMethodExists(String methodName) {
+        Method[] declaredMethods = component.getClass().getDeclaredMethods();
+        return Arrays.stream(declaredMethods).filter(m -> m.getName().equals(methodName)).findFirst();
     }
 
     @Override
@@ -267,7 +319,7 @@ public class ExpressionASTBuilder extends JavaParserBaseVisitor {
                 case "<":
                 case ">":
                 case "<=":
-                case "=>": {
+                case ">=": {
                     return new RelationalExpression(left, right, value);
                 }
                 case "+":
@@ -297,27 +349,27 @@ public class ExpressionASTBuilder extends JavaParserBaseVisitor {
     private ParsedJavaExpression buildPreAndPostfixExpression(List<ParseTree> children) {
         Utils utils = new Utils();
         ParseTree partOne = children.get(0);
-        if (partOne instanceof TerminalNodeImpl){ //its prefix
+        if (partOne instanceof TerminalNodeImpl) { //its prefix
             String value = partOne.getText();
             if (utils.inPrefixes(value)) {
                 ParsedJavaExpression partTwo = (ParsedJavaExpression) children.get(1).accept(this);
                 return new PrefixExpression(partTwo, value);
-            } else{
+            } else {
                 //TODO wrong prefix, error
             }
         } else {
             ParseTree partTwo = children.get(1);
-                if (partTwo instanceof TerminalNodeImpl) { //its postfix
-                    String value = partTwo.getText();
-                    if (utils.inPostfixes(value)) {
-                        ParsedJavaExpression partOneExpression = (ParsedJavaExpression) partOne.accept(this);
-                        return new PrefixExpression(partOneExpression, value);
+            if (partTwo instanceof TerminalNodeImpl) { //its postfix
+                String value = partTwo.getText();
+                if (utils.inPostfixes(value)) {
+                    ParsedJavaExpression partOneExpression = (ParsedJavaExpression) partOne.accept(this);
+                    return new PrefixExpression(partOneExpression, value);
 
-                    } else {
-                        //otherwise it is malformed
-                        //TODO error
-                    }
+                } else {
+                    //otherwise it is malformed
+                    //TODO error
                 }
+            }
         }
 
         //TODO error

@@ -1,12 +1,10 @@
 package org.javabip.verification.ast;
 
-import org.javabip.verification.visitors.PJEEvaluateNumericVisitor;
 import org.javabip.verification.visitors.PJEEvaluateVisitor;
 
 public class EqualityExpression extends BinaryExpression implements ParsedJavaExpression {
     public EqualityExpression(ParsedJavaExpression left, ParsedJavaExpression right, String separator){
         super(left, right, separator);
-        //separators = new HashSet<String>(){{add("!=");add("==");}};
     }
 
     @Override
@@ -28,10 +26,5 @@ public class EqualityExpression extends BinaryExpression implements ParsedJavaEx
                 return null;
             }
         }
-    }
-
-    @Override
-    public Number accept(PJEEvaluateNumericVisitor v) {
-        return null;
     }
 }

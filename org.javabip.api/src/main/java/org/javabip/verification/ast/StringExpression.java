@@ -1,6 +1,5 @@
 package org.javabip.verification.ast;
 
-import org.javabip.verification.visitors.PJEEvaluateNumericVisitor;
 import org.javabip.verification.visitors.PJEEvaluateVisitor;
 
 public class StringExpression implements Literal {
@@ -16,10 +15,5 @@ public class StringExpression implements Literal {
     @Override
     public String accept(PJEEvaluateVisitor v) {
         return value;
-    }
-
-    @Override
-    public Number accept(PJEEvaluateNumericVisitor v) {
-        return null;
     }
 }

@@ -2,15 +2,12 @@ package org.javabip.verification.visitors.test;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.javabip.annotations.*;
 import org.javabip.verification.ast.*;
 import org.javabip.verification.parser.JavaLexer;
 import org.javabip.verification.parser.JavaParser;
 import org.javabip.verification.visitors.ExpressionASTBuilder;
 import org.javabip.verification.visitors.PJEEvaluateVisitor;
 import org.junit.Test;
-
-import java.util.ArrayList;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -20,7 +17,8 @@ public class PJEEvaluateVisitorTest {
         JavaLexer lexer = new JavaLexer(CharStreams.fromString(test));
         JavaParser parser = new JavaParser(new CommonTokenStream(lexer));
         JavaParser.ExpressionContext expression = parser.expression();
-        ExpressionASTBuilder v = new ExpressionASTBuilder();
+        FakeSpecification f = new FakeSpecification(2,1,1,"1", true, new Double[]{1.0, 2.0});
+        ExpressionASTBuilder v = new ExpressionASTBuilder(f);
         ParsedJavaExpression invariantParsedExpression = v.build(expression);
 
         FakeInvariantImpl invariant = new FakeInvariantImpl(test, invariantParsedExpression);
@@ -49,66 +47,6 @@ public class PJEEvaluateVisitorTest {
 
         public Boolean evaluateInvariant() {
             return (Boolean) parsedExpression.accept(new PJEEvaluateVisitor());
-        }
-
-        public Boolean evaluateInvariant(Class<?> componentClass, Object bipComponent) {
-            return (Boolean) parsedExpression.accept(new PJEEvaluateVisitor());
-        }
-    }
-
-    static class FakeSpecification {
-        Float bet;
-        Integer operator;
-        int pot;
-        String secretNumber;
-        Boolean win;
-
-        public FakeSpecification(Float bet, Integer operator, int pot, String secretNumber, Boolean win) {
-            this.bet = bet;
-            this.operator = operator;
-            this.pot = pot;
-            this.secretNumber = secretNumber;
-            this.win = win;
-        }
-
-        public Float getBet() {
-            return bet;
-        }
-
-        public void setBet(Float bet) {
-            this.bet = bet;
-        }
-
-        public Integer getOperator() {
-            return operator;
-        }
-
-        public void setOperator(Integer operator) {
-            this.operator = operator;
-        }
-
-        public int getPot() {
-            return pot;
-        }
-
-        public void setPot(int pot) {
-            this.pot = pot;
-        }
-
-        public String getSecretNumber() {
-            return secretNumber;
-        }
-
-        public void setSecretNumber(String secretNumber) {
-            this.secretNumber = secretNumber;
-        }
-
-        public Boolean getWin() {
-            return win;
-        }
-
-        public void setWin(Boolean win) {
-            this.win = win;
         }
     }
 
@@ -199,6 +137,8 @@ public class PJEEvaluateVisitorTest {
     //region Field Accessing Tests
     @Test
     public void testIdentifierExpression() {
+        String test = "bet == 1";
+        assertFalse(go(test));
     }
 
     @Test
@@ -209,30 +149,30 @@ public class PJEEvaluateVisitorTest {
 
     @Test
     public void testThisExpression() {
-        //TODO
         // in fact "this.value" is just a syntactic sugar for "value"
-        String test = "this.value";
-        assertFalse(go(test));
+        String test = "this.win";
+        assertTrue(go(test));
     }
 
     @Test
     public void testMethodCallExpression() {
-    }
-
-    @Test
-    public void testDotSeparatedExpression() {
+        String test = "this.win";
+        assertTrue(go(test));
     }
 
     @Test
     public void testArrayExpression() {
+        //TODO
     }
 
     @Test
     public void testPostfixExpression() {
+        // Not supported
     }
 
     @Test
     public void testPrefixExpression() {
+        // Not supported
     }
     //endregion
 }
