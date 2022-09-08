@@ -24,6 +24,21 @@
 			<groupId>org.javabip</groupId>
 			<artifactId>org.javabip.api</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>javax.annotation-api</artifactId>
+			<version>1.3.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-base</artifactId>
+			<version>17-ea+11</version>
+		</dependency>
 
 	</dependencies>
 

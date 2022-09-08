@@ -40,6 +40,13 @@ public interface DataWire {
 	public PortBase getTo();
 
 	/**
+	 * Gets the port to which the data is being sent to.
+	 *
+	 * @return the port to which the data is being sent to.
+	 */
+	public Boolean isCopy();
+
+	/**
 	 * Checks if the given input data of the given component type is at the incoming end of the wire. The function is
 	 * used by the BIP Engine.
 	 * 

@@ -44,4 +44,9 @@ public interface BIPActor {
 	 */
 	void inform(String portID, Map<String, Object> data);
 
+	/**
+	 * It returns the control state of the BIP component that Executor runs.
+	 */
+	String getState ();
+
 }
