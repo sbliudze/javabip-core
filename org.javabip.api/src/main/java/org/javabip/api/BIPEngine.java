@@ -83,7 +83,7 @@ public interface BIPEngine {
 	/**
 	 * It starts the BIP engine thread.
 	 */
-	void start();
+	void start() throws Exception;
 
 	/**
 	 * It stops the BIP engine thread.

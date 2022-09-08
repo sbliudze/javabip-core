@@ -8,26 +8,14 @@
 
 package org.javabip.executor;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.javabip.api.BIPActorAware;
-import org.javabip.api.BIPComponent;
-import org.javabip.api.BIPEngine;
-import org.javabip.api.Behaviour;
-import org.javabip.api.ComponentProvider;
-import org.javabip.api.OrchestratedExecutor;
-import org.javabip.api.Port;
-import org.javabip.api.PortBase;
+import org.javabip.api.*;
 import org.javabip.exceptions.BIPException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.lang.reflect.InvocationTargetException;
+import java.time.LocalDateTime;
+import java.util.*;
 
 /**
  * The Kernel Executor which performs the execution of the corresponding BIP Component via its Behaviour. It is not a
@@ -262,6 +250,7 @@ public class ExecutorKernel extends SpecificationParser implements OrchestratedE
 								+ " that requires data is not enabled for the received data");
 					}
 				} catch (Exception e) {
+					System.out.println("start" + LocalDateTime.now());
 					throw new BIPException(e);
 				}
 

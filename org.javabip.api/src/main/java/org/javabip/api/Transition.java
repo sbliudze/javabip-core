@@ -34,6 +34,20 @@ public interface Transition {
 	public String guard();
 
 	/**
+	 * It gets the string containing the pre expression of the transition.
+	 *
+	 * @return the pre expression.
+	 */
+	public String pre();
+
+	/**
+	 * It gets the string containing the post expression of the transition.
+	 *
+	 * @return the post expression.
+	 */
+	public String post();
+
+	/**
 	 * It returns the name of transition.
 	 * 
 	 * @return the name of transition.
