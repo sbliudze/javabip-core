@@ -81,6 +81,22 @@ public interface BIPEngine {
 			Map<BIPComponent, Set<Port>> disabledCombinations);
 
 	/**
+	 * informInternal is served for notifying the engine on the internal transition happened on the component
+	 * needed for the monitoring
+	 * @param decidingComponent
+	 * @param currentState
+	 */
+	void informInteral(BIPComponent decidingComponent, String currentState);
+
+	/**
+	 * informSpontaneous is served for notifying the engine on the spontaneous transition happened on the component
+	 * needed for the monitoring
+	 * @param decidingComponent
+	 * @param currentState
+	 */
+	void informSpontaneous(BIPComponent decidingComponent, String currentState);
+
+	/**
 	 * It starts the BIP engine thread.
 	 */
 	void start();

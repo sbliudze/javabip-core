@@ -19,14 +19,15 @@
  */
 package org.javabip.executor;
 
+import org.javabip.api.Data;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
-
-import org.javabip.api.Data;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Objects;
 
 /**
  * Stores the transition information about name, source state, target state, guard, method and required data.
@@ -39,8 +40,10 @@ class TransitionImpl {
 	protected String name;
 	protected String source;
 	protected String target;
-	// Empty string represents that there is no guard associated to this transition.
+	// Empty string represents that there is no guard (pre- or post-condition) associated to this transition.
 	protected String guard;
+	protected String pre;
+	protected String post;
 	protected Method method;
 	protected MethodHandle methodHandle;
 	protected Iterable<Data<?>> dataRequired;
@@ -63,21 +66,21 @@ class TransitionImpl {
 	 * @param dataRequired
 	 *            a list of data items that are required by the transition, parameters in the method signature.
 	 */
-	public TransitionImpl(String name, String source, String target, String guard, Method method,
+	public TransitionImpl(String name, String source, String target, String guard, String pre, String post, Method method,
 			Iterable<Data<?>> dataRequired) {
-		if (guard == null)
-			guard = "";
 		this.name = name;
 		this.source = source;
 		this.target = target;
-		this.guard = guard;
+		this.guard = guard == null? "" : guard;
+		this.pre = pre == null? "" : pre;
+		this.post = post == null? "" : post;
 		this.method = method;
 		this.methodHandle = getMethodHandleForTransition();
 		this.dataRequired = dataRequired;
 	}
 
 	public TransitionImpl(TransitionImpl transition) {
-		this(transition.name, transition.source, transition.target, transition.guard, transition.method,
+		this(transition.name, transition.source, transition.target, transition.guard, transition.pre, transition.post, transition.method,
 				transition.dataRequired);
 	}
 
@@ -106,5 +109,18 @@ class TransitionImpl {
 			ExceptionHelper.printExceptionTrace(logger, e);
 		}
 		return methodHandle;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof TransitionImpl)) return false;
+		TransitionImpl that = (TransitionImpl) o;
+		return name.equals(that.name) && source.equals(that.source) && target.equals(that.target) && Objects.equals(guard, that.guard) && Objects.equals(pre, that.pre) && Objects.equals(post, that.post) && Objects.equals(method, that.method);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, source, target, guard, pre, post, method);
 	}
 }

@@ -18,10 +18,10 @@
  */
 package org.javabip.glue;
 
-import javax.xml.bind.annotation.XmlElement;
-
 import org.javabip.api.DataWire;
 import org.javabip.api.PortBase;
+
+import javax.xml.bind.annotation.XmlElement;
 
 /**
  * Class implementing the data wire functionality. Data wires are sued to specify the data connections between different
@@ -36,12 +36,15 @@ class DataWireImpl implements DataWire {
 	@XmlElement(name = "to")
 	private PortBaseImpl to;
 
+	private Boolean isCopy;
+
 	public DataWireImpl() {
 	}
 
-	public DataWireImpl(PortBase from, PortBase to) {
+	public DataWireImpl(PortBase from, PortBase to, Boolean copy) {
 		this.from = new PortBaseImpl(from.getId(), from.getSpecType());
 		this.to = new PortBaseImpl(to.getId(), to.getSpecType());
+		this.isCopy = copy;
 	}
 
 	public PortBase getFrom() {
@@ -50,6 +53,16 @@ class DataWireImpl implements DataWire {
 
 	public PortBase getTo() {
 		return to;
+	}
+
+	/**
+	 * Gets the boolean value indicating if the data shall be copied or passed by reference
+	 *
+	 * @return true if the value shall be copied, false otherwise
+	 */
+	@Override
+	public Boolean isCopy() {
+		return isCopy;
 	}
 
 	/**

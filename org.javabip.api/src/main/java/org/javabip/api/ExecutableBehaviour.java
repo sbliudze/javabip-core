@@ -20,13 +20,14 @@
 
 package org.javabip.api;
 
+import javafx.util.Pair;
+import org.javabip.exceptions.BIPException;
+
 import java.lang.invoke.MethodHandle;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.javabip.exceptions.BIPException;
 
 /**
  * It provides an executable behavior that makes it possible to execute transitions within the behavior.
@@ -171,4 +172,10 @@ public interface ExecutableBehaviour extends Behaviour {
 	 * @return the map between guard names and their boolean values.
 	 */
 	public Map<String, Boolean> computeGuardsWithoutData(String currentState);
+
+	Pair<Boolean, String> checkInvariant() throws BIPException;
+
+	Pair<Boolean, String> checkTransitionCondition(Object transition, Boolean pre);
+
+	Pair<Boolean, String> checkStatePredicate(String currentState);
 }

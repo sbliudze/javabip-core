@@ -74,6 +74,14 @@
 			<groupId>org.javabip</groupId>
 			<artifactId>org.javabip.executor</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.typesafe.akka</groupId>
+			<artifactId>akka-actor_2.11</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.javabip</groupId>
+			<artifactId>org.javabip.engine.factory</artifactId>
+		</dependency>
 
 	</dependencies>
 
@@ -118,7 +126,15 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
-		</plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+        </plugins>
 	</build>
 
 </project>

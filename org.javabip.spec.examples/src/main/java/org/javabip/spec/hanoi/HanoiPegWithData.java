@@ -76,10 +76,10 @@ public class HanoiPegWithData {
 
 		// TRANSITIONS
 
-		behaviourBuilder.addTransitionAndStates("pieceAdd", initialState, initialState, "isPieceAddable", this
+		behaviourBuilder.addTransitionAndStates("pieceAdd", initialState, initialState, "isPieceAddable", "", "", this
 				.getClass().getMethod("addPiece", int.class));
 
-		behaviourBuilder.addTransitionAndStates("pieceRemove", initialState, initialState, "isPieceRemovable", this
+		behaviourBuilder.addTransitionAndStates("pieceRemove", initialState, initialState, "isPieceRemovable", "", "", this
 				.getClass().getMethod("removePiece"));
 
 		// GUARDS

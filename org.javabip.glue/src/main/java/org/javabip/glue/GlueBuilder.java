@@ -18,24 +18,17 @@
  */
 package org.javabip.glue;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.javabip.annotations.ComponentType;
+import org.javabip.api.BIPGlue;
+import org.javabip.api.PortBase;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-
-import org.javabip.annotations.ComponentType;
-import org.javabip.api.BIPGlue;
-import org.javabip.api.PortBase;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.annotation.Annotation;
+import java.util.*;
 
 /**
  * Provides functionality to build BIP Glue.
@@ -122,7 +115,7 @@ public abstract class GlueBuilder {
 
 	}
 
-	private void addRequire(Class<?> spec, String portId, List<PortBase> causes) {
+	protected void addRequire(Class<?> spec, String portId, List<PortBase> causes) {
 
 		RequireImpl requires;
 
@@ -144,7 +137,7 @@ public abstract class GlueBuilder {
 		}
 	}
 
-	private String getComponentType(Class<?> spec) {
+	protected String getComponentType(Class<?> spec) {
 
 		Annotation classAnnotation = spec.getAnnotation(ComponentType.class);
 		// get component type
@@ -157,7 +150,7 @@ public abstract class GlueBuilder {
 
 	}
 
-	private void addAccept(Class<?> spec, String portId, Collection<PortBase> causes) {
+	protected void addAccept(Class<?> spec, String portId, Collection<PortBase> causes) {
 
 		AcceptImpl accepts;
 
@@ -271,7 +264,7 @@ public abstract class GlueBuilder {
 
 	}
 
-	private ArrayList<PortBase> parseCauses(Class<?> currentSpec, Object... args) {
+	protected ArrayList<PortBase> parseCauses(Class<?> currentSpec, Object... args) {
 
 		ArrayList<PortBase> result = new ArrayList<PortBase>();
 
@@ -339,7 +332,20 @@ public abstract class GlueBuilder {
 			if (dataId.equals(""))
 				throw new IllegalArgumentException("DataId can not be an empty string.");
 
-			glue.addDataWire(new DataWireImpl(from, new PortBaseImpl(dataId, getComponentType(spec))));
+			glue.addDataWire(new DataWireImpl(from, new PortBaseImpl(dataId, getComponentType(spec)), false));
+
+		}
+
+		public void copyTo(Class<?> spec, String dataId) {
+
+			if (dataId == null)
+				throw new IllegalArgumentException("DataId can not be null.");
+			if (spec == null)
+				throw new IllegalArgumentException("Spec type can not be null");
+			if (dataId.equals(""))
+				throw new IllegalArgumentException("DataId can not be an empty string.");
+
+			glue.addDataWire(new DataWireImpl(from, new PortBaseImpl(dataId, getComponentType(spec)), true));
 
 		}
 
