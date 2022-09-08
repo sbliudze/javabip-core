@@ -1,6 +1,5 @@
 package org.javabip.verification.ast;
 
-import org.javabip.verification.visitors.PJEEvaluateNumericVisitor;
 import org.javabip.verification.visitors.PJEEvaluateVisitor;
 
 public class ProductExpression extends BinaryExpression implements ParsedJavaExpression {
@@ -31,11 +30,6 @@ public class ProductExpression extends BinaryExpression implements ParsedJavaExp
         } catch (ClassCastException e){
             //TODO process exception
         }
-        return null;
-    }
-
-    @Override
-    public Number accept(PJEEvaluateNumericVisitor v) {
         return null;
     }
 }

@@ -1,8 +1,6 @@
 package org.javabip.verification.ast;
 
-import org.javabip.verification.visitors.PJEEvaluateNumericVisitor;
 import org.javabip.verification.visitors.PJEEvaluateVisitor;
-import org.javabip.verification.visitors.PJEVisitor;
 
 public class DotSeparatedExpression implements ParsedJavaExpression {
     final ParsedJavaExpression left;
@@ -18,19 +16,19 @@ public class DotSeparatedExpression implements ParsedJavaExpression {
     }
 
     @Override
-    public Boolean accept(PJEEvaluateVisitor v) {
+    public Object accept(PJEEvaluateVisitor v) {
+        //basic case
+        if (left instanceof ThisExpression){
+            return right.accept(v);
+        }
+        if (left instanceof SuperExpression){
+            //TODO communicate with the parent class
+        }
+        else {
+            //TODO evaluate left part
+        }
+
         return null;
     }
-
-    @Override
-    public Number accept(PJEEvaluateNumericVisitor v) {
-        return null;
-    }
-
-    /*@Override
-    public boolean evaluate(Class<?> componentClass, Object bipComponent) throws Exception {
-        //TODO not implemented
-        return false;
-    }*/
 
 }

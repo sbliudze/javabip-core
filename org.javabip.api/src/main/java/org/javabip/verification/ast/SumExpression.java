@@ -1,8 +1,6 @@
 package org.javabip.verification.ast;
 
-import org.javabip.verification.visitors.PJEEvaluateNumericVisitor;
 import org.javabip.verification.visitors.PJEEvaluateVisitor;
-import org.javabip.verification.visitors.PJEVisitor;
 
 public class SumExpression extends BinaryExpression implements ParsedJavaExpression {
     public SumExpression(ParsedJavaExpression left, ParsedJavaExpression right, String separator) {
@@ -46,11 +44,6 @@ public class SumExpression extends BinaryExpression implements ParsedJavaExpress
             //TODO process exception
         }
 
-        return null;
-    }
-
-    @Override
-    public Number accept(PJEEvaluateNumericVisitor v) {
         return null;
     }
 }

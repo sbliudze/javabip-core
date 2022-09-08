@@ -15,7 +15,8 @@ public class ParsedJavaExpressionASTBuilderTest {
         JavaLexer lexer = new JavaLexer(CharStreams.fromString(test));
         JavaParser parser = new JavaParser(new CommonTokenStream(lexer));
         JavaParser.ExpressionContext expression = parser.expression();
-        ExpressionASTBuilder v = new ExpressionASTBuilder();
+        FakeSpecification f = new FakeSpecification(1,1,1, "1", true, new Double[]{1.0, 2.0});
+        ExpressionASTBuilder v = new ExpressionASTBuilder(f);
         ParsedJavaExpression result = v.build(expression);
         System.out.println(result);
         return result.toString();
@@ -62,7 +63,7 @@ public class ParsedJavaExpressionASTBuilderTest {
 
     @Test
     public void testLiteralFloat(){
-        String test = "1.0f";
+        String test = "1.0";
         assertEquals(go(test), test);
     }
 
@@ -113,13 +114,13 @@ public class ParsedJavaExpressionASTBuilderTest {
 
     @Test
     public void testIdentifier(){
-        String test = "idName";
+        String test = "bet";
         assertEquals(go(test), test);
     }
 
     @Test
     public void testMethodId(){
-        String test = "go()";
+        String test = "getWin()";
         assertEquals(go(test), test);
     }
 
@@ -135,11 +136,11 @@ public class ParsedJavaExpressionASTBuilderTest {
         assertEquals(go(test), test);
     }
 
-    @Test
+    /*@Test
     public void testMethodWithArguments(){
         String test = "go(true, 1)";
         assertEquals(go(test), test);
-    }
+    }*/
 
     @Test
     public void testArray(){
@@ -149,7 +150,7 @@ public class ParsedJavaExpressionASTBuilderTest {
 
     @Test
     public void testPostfix(){
-        String test = "count++";
+        String test = "bet++";
         assertEquals(go(test), test);
     }
 
@@ -161,19 +162,19 @@ public class ParsedJavaExpressionASTBuilderTest {
 
     @Test
     public void testSum(){
-        String test = "1+a";
+        String test = "1+bet";
         assertEquals(go(test), test);
     }
 
     @Test
     public void tesProduct(){
-        String test = "this.count * go(true)";
+        String test = "this.bet*this.pot";
         assertEquals(go(test), test);
     }
 
     @Test
     public void tesEq(){
-        String test = "a==b";
+        String test = "win==true";
         assertEquals(go(test), test);
     }
 
@@ -185,19 +186,19 @@ public class ParsedJavaExpressionASTBuilderTest {
 
     @Test
     public void tesDot(){
-        String test = "this.count().size";
+        String test = "this.win";
         assertEquals(go(test), test);
     }
 
     @Test
     public void tesRel(){
-        String test = "a>b";
+        String test = "pot>bet";
         assertEquals(go(test), test);
     }
 
     @Test
     public void tesLogic(){
-        String test = "a||b";
+        String test = "win||win";
         assertEquals(go(test), test);
     }
 }

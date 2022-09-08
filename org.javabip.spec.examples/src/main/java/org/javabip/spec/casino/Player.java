@@ -13,7 +13,7 @@ import static org.javabip.spec.casino.Constants.*;
 })
 
 @ComponentType(initial = GAME_AVAILABLE, name = PLAYER_SPEC)
-@Invariant(expr = "bet <= purse")
+@Invariant("bet <= purse")
 public class Player {
     final Integer id;
     Integer bet;

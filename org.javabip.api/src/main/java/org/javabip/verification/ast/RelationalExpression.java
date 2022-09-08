@@ -1,6 +1,5 @@
 package org.javabip.verification.ast;
 
-import org.javabip.verification.visitors.PJEEvaluateNumericVisitor;
 import org.javabip.verification.visitors.PJEEvaluateVisitor;
 
 public class RelationalExpression extends BinaryExpression implements ParsedJavaExpression {
@@ -14,31 +13,33 @@ public class RelationalExpression extends BinaryExpression implements ParsedJava
         //here we cast the result to double as a "base class" of a Number. However, if big values are expected, it should be changed to BigDecimal
 
         try {
-            double left = ((Number) leftExpression.accept(v)).doubleValue();
-            double right = ((Number) rightExpression.accept(v)).doubleValue();
+            Object leftResult = leftExpression.accept(v);
+            Object rightResult = rightExpression.accept(v);
 
-            switch (separator) {
-                case ">": return left > right;
-                case "<": return left < right;
-                case ">=": return left >= right;
-                case "<=": return left <= right;
+            if (leftResult != null && rightResult != null) {
 
-                default: {
-                    //TODO raise exception
-                    return null;
+                double left = ((Number) leftResult).doubleValue();
+                double right = ((Number) rightResult).doubleValue();
+
+                switch (separator) {
+                    case ">":
+                        return left > right;
+                    case "<":
+                        return left < right;
+                    case ">=":
+                        return left >= right;
+                    case "<=":
+                        return left <= right;
+
+                    default: {
+                        //TODO raise exception
+                        return null;
+                    }
                 }
-            }
+            } else return false;
         } catch (ClassCastException e){
             //TODO process exception
         }
         return null;
     }
-
-
-    @Override
-    public Number accept(PJEEvaluateNumericVisitor v) {
-        return null;
-    }
-
-
 }
