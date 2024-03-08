@@ -22,7 +22,7 @@
     <spring-osgi-core.version>1.2.1</spring-osgi-core.version>
     <antlr4.version>4.0</antlr4.version>
     <org.osgi.core.version>4.2.0</org.osgi.core.version>
-    <camel-core.version>3.2.0</camel-core.version>
+    <camel-core.version>3.21.4</camel-core.version>
     <!--<org.javabip.epfl.engine.version>0.1.0-SNAPSHOT</org.javabip.epfl.engine.version>-->
     <org.javabip.executor.impl.version>0.1.0-SNAPSHOT</org.javabip.executor.impl.version>
     <org.javabip.api.version>0.1.0-SNAPSHOT</org.javabip.api.version>
